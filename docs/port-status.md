@@ -15,8 +15,8 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Units, Measure, energy, rewards, PRO gate | `DistanceUnit`, `Measure`, `EnergyEstimate`, `GamificationManager`, `PlusGate` | `core/logic`, 122 tests; 58 badge rules | done |
 | Database | `Persistence/` | `core/data`: 15 Room tables (Core Data v24), stores, 224 tests | done |
 | Network and auth | `APIClient`, `TokenStore`, `AuthService` | `core/network`, 80 tests; Keystore AES-GCM tokens; Google login call | done (device Keystore check pending) |
-| Design system and tab bar | `Views/Theme/`, `CustomTabBar` | `core/designsystem`, `app` | in progress |
-| Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location` | in progress |
+| Design system and tab bar | `Views/Theme/`, `CustomTabBar` | `core/designsystem`, `app`: theme, Inter, house components, tab bar, five-tab shell, language and theme pickers; 81 tests and 40 screenshots | done |
+| Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location`: foreground service with live notification, raw GPS + own Kalman, crash recovery, drafts, Activity Recognition, car stereo, Android Auto, permissions and recording health; 75 tests | done (real-phone checks pending) |
 | Sync engine | `SyncQueue`, `Services/Sync/` | `core/sync`: queue, gates, push/pull, photos, WorkManager; 123 tests | done (AppGraph wiring with the screens) |
 | Trip list and detail | `Views/Feed`, `Views/TripDetail` | `app` | todo |
 | Atlas | `Views/MyMap/` | `app`, `core/map` | todo |
