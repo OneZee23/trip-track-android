@@ -3,10 +3,9 @@ package com.onezee.triptrack.logic
 import com.onezee.triptrack.model.*
 import java.time.Instant
 import kotlin.math.*
-import kotlin.test.assertTrue
 
-// iOS: Support/TrackTestKit.swift
-internal object TrackTestKit {
+// iOS: Support/TrackTestKit.swift. Test fixtures, so core:location replays the same drives.
+object TrackTestKit {
     val origin = GeoPoint(45.035, 38.975)
     const val metersPerDegree = 111_320.0
     val epoch: Instant = Instant.ofEpochSecond(1_780_000_000)
@@ -21,7 +20,7 @@ internal object TrackTestKit {
         val coordinate = coordinate(east, north)
         return LocationFix(coordinate.latitude, coordinate.longitude, altitude = 30.0,
             horizontalAccuracy = accuracy, verticalAccuracy = 3.0, course = course, speed = speed,
-            timestamp = epoch.addingSeconds(after))
+            timestamp = at(after))
     }
 
     // iOS: Support/TrackTestKit.swift, PointSpec
@@ -32,27 +31,20 @@ internal object TrackTestKit {
     )
 
     fun trip(points: List<PointSpec>, confirmation: TripConfirmation = TripConfirmation.confirmed): Trip = Trip(
-        startDate = epoch.addingSeconds(points.firstOrNull()?.seconds ?: 0.0),
-        endDate = epoch.addingSeconds(points.lastOrNull()?.seconds ?: 0.0), confirmation = confirmation,
+        startDate = at(points.firstOrNull()?.seconds ?: 0.0),
+        endDate = at(points.lastOrNull()?.seconds ?: 0.0), confirmation = confirmation,
         trackPoints = points.map { spec ->
             val coordinate = coordinate(spec.east, spec.north)
             TrackPoint(latitude = coordinate.latitude, longitude = coordinate.longitude,
                 altitude = spec.altitude, speed = spec.speed, course = 0.0,
-                horizontalAccuracy = spec.accuracy, timestamp = epoch.addingSeconds(spec.seconds),
+                horizontalAccuracy = spec.accuracy, timestamp = at(spec.seconds),
                 isInterpolated = spec.interpolated)
         },
     )
-}
 
-// iOS: TrackFidelityTests.swift, Noise (UInt64 overflow is intentional).
-internal class Noise(seed: Long) {
-    private var state = seed
-    fun next(): Double {
-        state = state * 6_364_136_223_846_793_005L + 1_442_695_040_888_963_407L
-        return ((state ushr 33) % 10_000).toDouble() / 10_000.0 * 2 - 1
+    // The same split as `Instant.addingSeconds`, which is internal to core:logic's main code.
+    fun at(seconds: Double): Instant {
+        val whole = floor(seconds).toLong()
+        return epoch.plusSeconds(whole).plusNanos(((seconds - whole) * 1e9).roundToLong())
     }
-}
-
-internal fun assertNear(expected: Double, actual: Double, accuracy: Double) {
-    assertTrue(abs(expected - actual) <= accuracy, "Expected $expected ± $accuracy, actual $actual")
 }

@@ -1,7 +1,7 @@
 package com.onezee.triptrack.logic
 
-// iOS: Support/SyntheticDrives.swift
-internal object SyntheticDrives {
+// iOS: Support/SyntheticDrives.swift. Test fixtures, shared with core:location.
+object SyntheticDrives {
     fun cityEvening(seconds: Int = 900, side: Double = 800.0): List<LocationFix> = (0..seconds).map { t ->
         val (east, north, course) = gridPosition(t * 10.0, side)
         val bad = t % 70 >= 40
