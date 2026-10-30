@@ -11,7 +11,7 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | API contract | `Services/Sync/`, `APIClient`, `AuthService` | `docs/api-contract.md`, 90 routes, verified against backend master | done |
 | Recording math (gates, Kalman, breaks, auto-trip policy, gap fill) | `Services/`, `Models/` | `core/logic`, 146 tests | done |
 | Geo and place math (geohash, polyline, places, segments, moments) | `Services/`, `Models/` | `core/logic`, 140 tests; polyline byte-identical to Swift vectors | done |
-| Journeys, history, Atlas data, regions | `JourneyManager`, `HistoryFolding`, `Services/Reveal/`, `RegionAtlas` | `core/logic` | in progress |
+| Journeys, history, Atlas data, regions | `JourneyManager`, `HistoryFolding`, `Services/Reveal/`, `RegionAtlas` | `core/logic`, 164 tests; MapRegions.json bundled | done |
 | Units, Measure, energy, rewards, PRO gate | `DistanceUnit`, `Measure`, `EnergyEstimate`, `GamificationManager`, `PlusGate` | `core/logic` | in progress |
 | Database | `Persistence/` | `core/data` | in progress |
 | Network and auth | `APIClient`, `TokenStore`, `AuthService` | `core/network`, 80 tests; Keystore AES-GCM tokens; Google login call | done (device Keystore check pending) |
