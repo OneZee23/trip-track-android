@@ -1,11 +1,11 @@
 package com.onezee.triptrack.location.auto
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 
 /**
@@ -25,6 +25,7 @@ class CarConnectionWatcher(
     private var receiver: BroadcastReceiver? = null
     private var lastConnected: Boolean? = null
 
+    @SuppressLint("InlinedApi")
     @Synchronized
     fun start() {
         if (receiver != null) return
@@ -32,10 +33,9 @@ class CarConnectionWatcher(
             override fun onReceive(context: Context, intent: Intent) = publish()
         }
         receiver = created
-        // Exported: Android Auto is another app.
-        val filter = IntentFilter(ACTION_CAR_CONNECTION_UPDATED)
-        if (Build.VERSION.SDK_INT >= 33) context.registerReceiver(created, filter, Context.RECEIVER_EXPORTED)
-        else context.registerReceiver(created, filter)
+        // Exported: Android Auto is another app. Before Android 13 the flag is ignored and a
+        // dynamic receiver is exported anyway.
+        context.registerReceiver(created, IntentFilter(ACTION_CAR_CONNECTION_UPDATED), Context.RECEIVER_EXPORTED)
         publish()
     }
 

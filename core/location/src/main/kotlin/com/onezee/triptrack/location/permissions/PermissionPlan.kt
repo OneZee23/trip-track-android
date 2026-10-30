@@ -1,10 +1,15 @@
 package com.onezee.triptrack.location.permissions
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 
-/** The runtime permissions recording and auto-record use, in the order they are asked. */
+/**
+ * The runtime permissions recording and auto-record use, in the order they are asked. The newer
+ * names are plain strings; `minSdk` keeps them from being asked where they do not exist.
+ */
+@SuppressLint("InlinedApi")
 enum class RecordingPermission(val manifestName: String, val minSdk: Int) {
     fineLocation(Manifest.permission.ACCESS_FINE_LOCATION, 23),
     backgroundLocation(Manifest.permission.ACCESS_BACKGROUND_LOCATION, 29),

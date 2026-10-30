@@ -1,5 +1,6 @@
 package com.onezee.triptrack.location.recording
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.onezee.triptrack.location.world.TripRewardsResult
@@ -123,6 +124,7 @@ class PreferencesRecorderSessionStore(private val preferences: SharedPreferences
                 .putLong(KEY_PAUSE_STARTED, session.pauseStartedAt?.toEpochMilli() ?: -1)
         }
         // Commit, not apply: the next thing that happens may be the process dying.
+        @SuppressLint("ApplySharedPref")
         editor.commit()
     }
 

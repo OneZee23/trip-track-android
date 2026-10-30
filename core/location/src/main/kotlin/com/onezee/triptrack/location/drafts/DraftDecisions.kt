@@ -1,5 +1,6 @@
 package com.onezee.triptrack.location.drafts
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -89,6 +90,7 @@ class PreferencesDraftDecisionQueue(private val preferences: SharedPreferences) 
         val editor = preferences.edit()
         if (list.isEmpty()) editor.remove(KEY) else editor.putString(KEY, Json.encodeToString(pairs, list.map { listOf(it.first, it.second) }))
         // Commit: the receiver that queued it may be the last thing this process does.
+        @SuppressLint("ApplySharedPref")
         editor.commit()
     }
 
