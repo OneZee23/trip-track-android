@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.edit
 import com.onezee.triptrack.designsystem.navigation.AppTab
 
 /**
@@ -18,6 +19,6 @@ class TabStore(private val preferences: SharedPreferences) {
     fun select(tab: AppTab) {
         if (tab == selected) return
         selected = tab
-        preferences.edit().putString(AppTab.storageKey, tab.rawValue).apply()
+        preferences.edit { putString(AppTab.storageKey, tab.rawValue) }
     }
 }

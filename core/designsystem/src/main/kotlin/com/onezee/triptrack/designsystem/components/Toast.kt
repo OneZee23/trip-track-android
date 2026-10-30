@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -154,7 +155,7 @@ fun ToastHost(item: ToastItem?, onDismiss: () -> Unit, modifier: Modifier = Modi
                 delay(toast.type.autoDismissMillis)
                 currentOnDismiss()
             }
-            var travel by remember(toast.id) { mutableStateOf(0f) }
+            var travel by remember(toast.id) { mutableFloatStateOf(0f) }
             ToastView(
                 toast,
                 onDismiss = { currentOnDismiss() },

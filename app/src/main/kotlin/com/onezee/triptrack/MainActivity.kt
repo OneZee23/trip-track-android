@@ -1,7 +1,6 @@
 package com.onezee.triptrack
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -12,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.graphics.drawable.toDrawable
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
 import com.onezee.triptrack.shell.AppShell
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { dark },
                 navigationBarStyle = SystemBarStyle.auto(LightNavigationScrim, DarkNavigationScrim) { dark },
             )
-            window.setBackgroundDrawable(ColorDrawable(AppTheme.colors(dark).bg.toArgb()))
+            window.setBackgroundDrawable(AppTheme.colors(dark).bg.toArgb().toDrawable())
             onDispose {}
         }
     }
