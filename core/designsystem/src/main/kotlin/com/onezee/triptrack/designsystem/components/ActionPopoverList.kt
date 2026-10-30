@@ -160,8 +160,8 @@ private data class PopoverPlacement(val arrowX: Float = Float.NaN, val arrowOnTo
     val origin: TransformOrigin get() = TransformOrigin(0.5f, if (arrowOnTop) 0f else 1f)
 }
 
-private val ArrowWidth = 22.dp
-private val ArrowHeight = 10.dp
+private val ArrowWidth = 26.dp
+private val ArrowHeight = 12.dp
 private val PopoverRadius = 13.dp
 
 @Composable

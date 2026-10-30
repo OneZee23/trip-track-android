@@ -66,11 +66,9 @@ private class IosShadowNode(
             is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
             is Outline.Generic -> outline.path
         }
-        val sigma = radius.toPx()
-        val skiaRadius = if (sigma <= 0.5f) 0.01f else (sigma - 0.5f) / 0.57735f
         // Opaque paint so the shadow takes the alpha of its own colour (Paint.setShadowLayer).
         paint.color = android.graphics.Color.BLACK
-        paint.setShadowLayer(skiaRadius, x.toPx(), y.toPx(), color.toArgb())
+        paint.setShadowLayer(skiaShadowRadius(radius.toPx()), x.toPx(), y.toPx(), color.toArgb())
         drawIntoCanvas { canvas ->
             val native = canvas.nativeCanvas
             val shapePath = path.asAndroidPath()
@@ -82,3 +80,6 @@ private class IosShadowNode(
         drawContent()
     }
 }
+
+/** The Skia shadow radius whose blur has [sigmaPx], Core Animation's shadow radius in pixels. */
+internal fun skiaShadowRadius(sigmaPx: Float): Float = if (sigmaPx <= 0.5f) 0.01f else (sigmaPx - 0.5f) / 0.57735f

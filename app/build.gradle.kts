@@ -77,6 +77,7 @@ tasks.withType<Test>().configureEach {
     systemProperty("roborazzi.test.record", record.toString())
     systemProperty("roborazzi.test.verify", (!record).toString())
     inputs.property("roborazziRecord", record)
-    inputs.dir("src/test/screenshots").optional().withPropertyName("screenshots")
+    // A file tree, not a directory: there is nothing to verify before the first recording.
+    inputs.files(fileTree("src/test/screenshots")).withPropertyName("screenshots").withPathSensitivity(PathSensitivity.RELATIVE)
     if (record) outputs.upToDateWhen { false }
 }
