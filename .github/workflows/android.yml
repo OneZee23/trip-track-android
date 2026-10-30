@@ -31,6 +31,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          # The default list still asks for the long-removed 'tools' package and fails.
+          packages: platform-tools
       - name: Install project SDK
         # core:map has no ndkVersion or externalNativeBuild yet. Add its pinned NDK here when it does.
         run: sdkmanager 'platforms;android-37.2' 'build-tools;36.0.0'
