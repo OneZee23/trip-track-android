@@ -7,7 +7,7 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Gradle skeleton | `project.yml` | root build, modules (AGP 9.5, Kotlin 2.4, JDK 17, compileSdk 37.2) | done |
 | Domain types | `TripTrack/Models/` | `core/model`, 83 tests | done |
 | Strings, 13 languages | `TripTrack/Localization/` | `tools/strings`, `core/designsystem` res and `AppStrings` facade: 175 of 180 logic functions ported, 93 tests, 10,647 Swift outputs matched | done |
-| Map and fog | `Views/MyMap/FogMetal/`, `Services/Reveal/` | decided by `spikes/fog` (docs/fog-spike.md): MapLibre GL ES + OpenFreeMap + C++ custom layer; production `core/map` next | in progress |
+| Map and fog | `Views/MyMap/FogMetal/`, `Services/Reveal/` | `core/map`: MapLibre 13.7.1 GL ES + OpenFreeMap, C++ fog layer (mist, night, cells, 3 LODs, live reveal), MapHost with iOS camera rules, routes and markers; 54 tests; header pin check | done (GPU timing and pixel read-back on a phone pending) |
 | API contract | `Services/Sync/`, `APIClient`, `AuthService` | `docs/api-contract.md`, 90 routes, verified against backend master | done |
 | Recording math (gates, Kalman, breaks, auto-trip policy, gap fill) | `Services/`, `Models/` | `core/logic`, 146 tests | done |
 | Geo and place math (geohash, polyline, places, segments, moments) | `Services/`, `Models/` | `core/logic`, 140 tests; polyline byte-identical to Swift vectors | done |
