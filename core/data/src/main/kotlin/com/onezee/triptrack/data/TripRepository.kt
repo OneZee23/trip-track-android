@@ -141,6 +141,12 @@ interface TripRepository {
     suspend fun markVehicleSynced(id: UUID, conflictVersion: Int)
     suspend fun deletePhotoHard(id: UUID)
     suspend fun markPhotoUploaded(photoId: UUID, remoteURL: String?, thumbnailURL: String, uploadStatus: PhotoUploadStatus)
+    /** iOS: PhotoStorageService.pendingUploads. Photos never uploaded at all, oldest first: (id, filename). */
+    suspend fun localOnlyPhotos(): List<Pair<UUID, String>>
+    /** iOS: PhotoStorageService.pendingOriginalUploads. A thumbnail is up, the original is not. */
+    suspend fun photosAwaitingOriginal(): List<UUID>
+    /** iOS: PhotoStorageService.markUploaded. The original landed; no sync stamp, it is bookkeeping. */
+    suspend fun markPhotoOriginalUploaded(photoId: UUID, remoteURL: String)
     suspend fun missingManualTrack(id: UUID): ManualTrackSnapshot?
     suspend fun applyMissingManualTrack(points: List<TrackPointPayload>, expected: ManualTrackSnapshot): Boolean
 
@@ -163,7 +169,7 @@ interface TripRepository {
 
     /** A derived value: does NOT flip `pendingUpload`; it travels with the next real edit. */
     suspend fun setPlaceId(checkpointId: UUID, placeId: UUID)
-    suspend fun checkpointsWithoutPlace(): List<Pair<TripCheckpoint, UUID>>
+    suspend fun checkpointsWithoutPlace(): List<CheckpointRef>
     suspend fun checkpointCoordinates(placeId: UUID): List<GeoPoint>
     /** Every place id ever stamped on a checkpoint, live places and tombstones alike. */
     suspend fun checkpointPlaceIds(): Set<UUID>

@@ -11,6 +11,9 @@ import com.onezee.triptrack.model.PlacePass
 import java.time.Instant
 import java.util.UUID
 
+/** iOS: the `(place:, isNew:)` tuple of `upsertPlace`. */
+data class UpsertedPlace(val place: Place, val isNew: Boolean)
+
 /**
  * Places and passes, their own store: no sync and no relationships with trips. `PlaceEntity` and
  * `PlacePassEntity` are relationless like `JourneyEntity`, so a trip deletion calls
@@ -20,7 +23,7 @@ interface PlaceStore {
     suspend fun fetchPlaces(): List<Place>
     suspend fun fetchPlace(id: UUID): Place?
     /** One cell, one place. An existing place gets a name only while it has none: the first name stays. */
-    suspend fun upsertPlace(cell: String, coordinate: GeoPoint, name: String?): Pair<Place, Boolean>
+    suspend fun upsertPlace(cell: String, coordinate: GeoPoint, name: String?): UpsertedPlace
     suspend fun recomputeCentroid(placeId: UUID, coordinates: List<GeoPoint>)
     /** True when the place was unnamed and took the name; a deleted place's tombstone creates nothing. */
     suspend fun adoptName(name: String, placeId: UUID): Boolean
@@ -58,14 +61,14 @@ class RoomPlaceStore(
 
     override suspend fun fetchPlace(id: UUID): Place? = dao.place(id)?.let(::place)
 
-    override suspend fun upsertPlace(cell: String, coordinate: GeoPoint, name: String?): Pair<Place, Boolean> =
+    override suspend fun upsertPlace(cell: String, coordinate: GeoPoint, name: String?): UpsertedPlace =
         db.withTransaction {
             val id = Place.id(cell)
             val existing = dao.place(id)
             if (existing != null) {
                 val named = if (existing.name == null && !name.isNullOrEmpty()) existing.copy(name = name) else existing
                 if (named !== existing) dao.upsertPlace(named)
-                return@withTransaction place(named) to false
+                return@withTransaction UpsertedPlace(place(named), isNew = false)
             }
             val created = PlaceEntity(
                 id = id,
@@ -76,7 +79,7 @@ class RoomPlaceStore(
                 createdAt = clock(),
             )
             dao.upsertPlace(created)
-            place(created) to true
+            UpsertedPlace(place(created), isNew = true)
         }
 
     override suspend fun recomputeCentroid(placeId: UUID, coordinates: List<GeoPoint>) {

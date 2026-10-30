@@ -116,8 +116,6 @@ class RoadStore(private val db: TripTrackDatabase) {
     suspend fun update(road: RoadEntity) {
         map.updateRoad(road)
     }
-
-    fun newRoadId(): UUID = UUID.randomUUID()
 }
 
 /**

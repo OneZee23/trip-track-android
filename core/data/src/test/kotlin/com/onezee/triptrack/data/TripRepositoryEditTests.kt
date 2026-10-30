@@ -229,6 +229,25 @@ class TripRepositoryEditTests : RoomTestCase() {
         assertEquals(PhotoUploadStatus.uploaded.rawValue, row.uploadStatus)
     }
 
+    /** iOS: PhotoStorageService's three upload queries, read from the rows. */
+    @Test
+    fun testPhotoUploadBookkeeping() = test {
+        val id = makeTrip()
+        val fresh = UUID.randomUUID()
+        val halfway = UUID.randomUUID()
+        db.tripDao().upsertPhoto(TripPhotoEntity(id = fresh, filename = "a.jpg", timestamp = start.plusSeconds(10), tripId = id))
+        db.tripDao().upsertPhoto(
+            TripPhotoEntity(id = halfway, filename = "b.jpg", timestamp = start, tripId = id, thumbnailURL = "t", uploadStatus = PhotoUploadStatus.uploading.rawValue),
+        )
+        assertEquals(listOf(fresh to "a.jpg"), repo.localOnlyPhotos())
+        assertEquals(listOf(halfway), repo.photosAwaitingOriginal())
+
+        repo.markPhotoOriginalUploaded(halfway, "photos/b")
+
+        assertTrue(repo.photosAwaitingOriginal().isEmpty())
+        assertEquals(PhotoUploadStatus.uploaded.rawValue, db.tripDao().photo(halfway)?.uploadStatus)
+    }
+
     // MARK: Badges and Cloud Sync
 
     @Test

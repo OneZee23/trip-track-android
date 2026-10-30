@@ -37,20 +37,20 @@ class PlaceStoreTests : RoomTestCase() {
     @Test
     fun testSameCellIsOnePlaceAndKeepsFirstName() = test {
         val first = store.upsertPlace(jubgaCell, jubga, null)
-        assertTrue(first.second)
-        assertEquals(Place.id(jubgaCell), first.first.id)
+        assertTrue(first.isNew)
+        assertEquals(Place.id(jubgaCell), first.place.id)
         val second = store.upsertPlace(jubgaCell, jubga, "Джубга")
-        assertFalse(second.second)
-        assertEquals(first.first.id, second.first.id)
-        assertEquals("Джубга", second.first.name, "the place takes a name while it has none")
+        assertFalse(second.isNew)
+        assertEquals(first.place.id, second.place.id)
+        assertEquals("Джубга", second.place.name, "the place takes a name while it has none")
         val third = store.upsertPlace(jubgaCell, jubga, "Поворот")
-        assertEquals("Джубга", third.first.name, "the first name stays")
+        assertEquals("Джубга", third.place.name, "the first name stays")
         assertEquals(1, store.fetchPlaces().size)
     }
 
     @Test
     fun testRenameOverwritesButAdoptNameDoesNot() = test {
-        val p = store.upsertPlace(jubgaCell, jubga, "Джубга").first
+        val p = store.upsertPlace(jubgaCell, jubga, "Джубга").place
         store.rename(p.id, "Поворот к морю")
         assertEquals("Поворот к морю", store.fetchPlace(p.id)?.name)
         store.adoptName("Джубга", p.id)
@@ -61,7 +61,7 @@ class PlaceStoreTests : RoomTestCase() {
 
     @Test
     fun testCentroidIsMeanOfCheckpoints() = test {
-        val p = store.upsertPlace(jubgaCell, jubga, null).first
+        val p = store.upsertPlace(jubgaCell, jubga, null).place
         store.recomputeCentroid(p.id, listOf(GeoPoint(44.3190, 38.7080), GeoPoint(44.3200, 38.7100)))
         val stored = store.fetchPlace(p.id)
         assertEquals(44.3195, stored?.latitude ?: 0.0, 1e-6)
@@ -124,7 +124,7 @@ class PlaceStoreTests : RoomTestCase() {
         store.replacePasses(place, tripB, listOf(pass(place, tripB, 200)))
         store.deletePasses(tripA)
         assertEquals(listOf(tripB), store.passes(place).map { it.tripId })
-        val p = store.upsertPlace(jubgaCell, jubga, null).first
+        val p = store.upsertPlace(jubgaCell, jubga, null).place
         store.replacePasses(p.id, tripB, listOf(pass(p.id, tripB, 200)))
         store.deletePlace(p.id)
         assertNull(store.fetchPlace(p.id))
@@ -159,9 +159,9 @@ class PlaceStoreTests : RoomTestCase() {
         val tripId = makeTrip(jubga)
         val pending = repo.checkpointsWithoutPlace()
         assertEquals(1, pending.size)
-        assertEquals(tripId, pending[0].second)
+        assertEquals(tripId, pending[0].tripId)
         val statusBefore = trip(tripId)?.syncStatus
-        repo.setPlaceId(pending[0].first.id, Place.id("szgs0u4"))
+        repo.setPlaceId(pending[0].checkpoint.id, Place.id("szgs0u4"))
         assertTrue(repo.checkpointsWithoutPlace().isEmpty())
         assertEquals(Place.id("szgs0u4"), repo.fetchTripDetail(tripId)?.checkpoints?.first()?.placeId)
         assertEquals(statusBefore, trip(tripId)?.syncStatus, "a derived placeId does not flip pendingUpload")

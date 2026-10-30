@@ -2,6 +2,7 @@
 // ManualTripTrackLoader.Snapshot, fetchTripStats tuple
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.model.TripCheckpoint
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
@@ -13,6 +14,9 @@ data class TripPreviewRef(val id: UUID, val startDate: Instant, val previewPolyl
 
     override fun hashCode(): Int = id.hashCode()
 }
+
+/** iOS: the `(checkpoint:, tripId:)` tuple of `checkpointsWithoutPlace`. */
+data class CheckpointRef(val checkpoint: TripCheckpoint, val tripId: UUID)
 
 /** iOS: GeocodeCacheResult. The reverse geocoder's answer for one geohash-5 cell. */
 data class GeocodeCacheResult(val locality: String?, val region: String?) {

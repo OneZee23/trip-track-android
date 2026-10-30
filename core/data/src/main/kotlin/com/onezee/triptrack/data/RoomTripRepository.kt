@@ -12,6 +12,7 @@ import com.onezee.triptrack.data.db.entity.TrackPointEntity
 import com.onezee.triptrack.data.db.entity.TripCheckpointEntity
 import com.onezee.triptrack.data.db.entity.TripEntity
 import com.onezee.triptrack.data.db.entity.TripPhotoEntity
+import com.onezee.triptrack.data.db.entity.UserSettingsEntity
 import com.onezee.triptrack.data.db.entity.VehicleEntity
 import com.onezee.triptrack.data.files.TripPhotoFiles
 import com.onezee.triptrack.data.sync.SyncAction
@@ -38,6 +39,7 @@ import com.onezee.triptrack.model.TripSegment
 import com.onezee.triptrack.model.TripSyncPayload
 import com.onezee.triptrack.model.VehicleFinish
 import com.onezee.triptrack.model.VehicleSyncPayload
+import java.time.Duration
 import java.time.Instant
 import java.util.Base64
 import java.util.UUID
@@ -544,10 +546,10 @@ class RoomTripRepository(
         }
     }
 
-    override suspend fun checkpointsWithoutPlace(): List<Pair<TripCheckpoint, UUID>> =
+    override suspend fun checkpointsWithoutPlace(): List<CheckpointRef> =
         trips.checkpointsWithoutPlace().mapNotNull { row ->
             val tripId = row.tripId ?: return@mapNotNull null
-            checkpoint(row).copy(placeId = null) to tripId
+            CheckpointRef(checkpoint(row).copy(placeId = null), tripId)
         }
 
     override suspend fun checkpointCoordinates(placeId: UUID): List<GeoPoint> =
@@ -569,7 +571,7 @@ class RoomTripRepository(
 
     override suspend fun cachedGeocode(geohash5: String): GeocodeCacheResult? {
         val row = map.geocode(geohash5) ?: return null
-        if (java.time.Duration.between(row.cachedAt, now()) > GeocodeCacheResult.ttl) {
+        if (Duration.between(row.cachedAt, now()) > GeocodeCacheResult.ttl) {
             map.deleteGeocode(row.pk)
             return null
         }
@@ -583,7 +585,7 @@ class RoomTripRepository(
         for (chunk in geohash5.toList().chunked(CHUNK)) {
             for (row in map.geocodes(chunk)) {
                 val locality = row.locality?.takeIf { it.isNotEmpty() } ?: continue
-                if (java.time.Duration.between(row.cachedAt, stamp) > GeocodeCacheResult.ttl) continue
+                if (Duration.between(row.cachedAt, stamp) > GeocodeCacheResult.ttl) continue
                 names[row.geohash5] = locality
             }
         }
@@ -916,7 +918,7 @@ class RoomTripRepository(
     override suspend fun applyRemoteSettings(payload: SettingsSyncPayload) {
         db.withTransaction {
             val existing = settings.settings()
-            var e = existing ?: com.onezee.triptrack.data.db.entity.UserSettingsEntity(id = payload.id)
+            var e = existing ?: UserSettingsEntity(id = payload.id)
             e = e.copy(
                 profileXP = maxOf(e.profileXP, payload.profileXp.toLong()),
                 profileLevel = maxOf(e.profileLevel, payload.profileLevel),
@@ -1062,6 +1064,17 @@ class RoomTripRepository(
                     lastModifiedAt = now(),
                 ),
             )
+        }
+    }
+
+    override suspend fun localOnlyPhotos(): List<Pair<UUID, String>> = trips.localOnlyPhotos().map { it.id to it.filename }
+
+    override suspend fun photosAwaitingOriginal(): List<UUID> = trips.photosAwaitingOriginal()
+
+    override suspend fun markPhotoOriginalUploaded(photoId: UUID, remoteURL: String) {
+        db.withTransaction {
+            val row = trips.photo(photoId) ?: return@withTransaction
+            trips.upsertPhoto(row.copy(uploadStatus = PhotoUploadStatus.uploaded.rawValue, remoteURL = remoteURL))
         }
     }
 

@@ -29,9 +29,6 @@ data class CoordinateRow(val latitude: Double, val longitude: Double)
 
 data class TimedCoordinateRow(val latitude: Double, val longitude: Double, val timestamp: Instant)
 
-/** A checkpoint together with its trip id, as `checkpointsWithoutPlace` hands them out. */
-data class CheckpointWithTrip(val checkpointId: UUID, val tripId: UUID)
-
 /**
  * The trip aggregate: trips and the three tables cascaded from them.
  *
