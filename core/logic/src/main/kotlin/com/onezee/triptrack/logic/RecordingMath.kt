@@ -29,6 +29,17 @@ class RecordingMath(initialTrip: Trip = Trip()) {
         }
     }
 
+    /**
+     * The points stored since the previous call, handed to storage and forgotten here: the recorder
+     * saves them in batches, as iOS saves the managed object, and a whole drive kept in this
+     * snapshot would be copied on every fix.
+     */
+    fun takeTrackPoints(): List<TrackPoint> {
+        val points = trip.trackPoints
+        trip = trip.copy(trackPoints = emptyList())
+        return points
+    }
+
     fun handleNewLocation(raw: LocationFix, now: Instant = Instant.now()): TrackPoint? {
         if (isPaused || trip.endDate != null) return null
         if (!(raw.horizontalAccuracy >= 0 && raw.horizontalAccuracy <= FixGate.recordingAccuracyLimit)) return null

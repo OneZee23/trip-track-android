@@ -1,6 +1,8 @@
 package com.onezee.triptrack.logic
 
 import com.onezee.triptrack.model.RecordingFixContinuity.Rejection
+import com.onezee.triptrack.model.TrackPoint
+import com.onezee.triptrack.model.Trip
 import kotlin.test.*
 
 // iOS: TripManager.swift, shouldStoreShapePoint / handleNewLocation (boundary checks).
@@ -84,5 +86,24 @@ class RecordingDecisionTests {
         assertEquals(0.3, measured.speedAccuracy)
         assertEquals(120.0, measured.course)
         assertEquals(5.0, measured.courseAccuracy)
+    }
+
+    // The batch drain hands each stored point to storage exactly once and keeps the running numbers.
+    @Test fun takenPointsLeaveTheSnapshotButNotTheOdometer() {
+        val math = RecordingMath(Trip(startDate = TrackTestKit.epoch))
+        val fixes = (0..30).map { TrackTestKit.fix(north = it * 10.0, speed = 10.0, after = it.toDouble()) }
+        val stored = mutableListOf<TrackPoint>()
+        fixes.forEachIndexed { index, fix ->
+            math.handleNewLocation(fix, fix.timestamp)
+            if (index % 7 == 0) stored += math.takeTrackPoints()
+        }
+        stored += math.takeTrackPoints()
+        assertEquals(stored.size, stored.map { it.id }.toSet().size)
+        assertTrue(math.trip.trackPoints.isEmpty())
+        val whole = RecordingMath(Trip(startDate = TrackTestKit.epoch))
+        fixes.forEach { whole.handleNewLocation(it, it.timestamp) }
+        assertEquals(whole.trip.trackPoints.map { it.timestamp }, stored.map { it.timestamp })
+        assertEquals(whole.trip.distance, math.trip.distance)
+        assertEquals(whole.trip.maxSpeed, math.trip.maxSpeed)
     }
 }

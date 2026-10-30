@@ -2,7 +2,10 @@ package com.onezee.triptrack.logic
 
 import com.onezee.triptrack.model.GeoPoint
 import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.junit.Test
+
 
 // iOS: GeometryUtilsTests.swift (haversine, gap splitting, RDP).
 class GeometryUtilsTests {
@@ -116,5 +119,54 @@ class GeometryUtilsTests {
             1e-9,
         )
         assertEquals(0.0, GeometryUtils.polylineLength(coords.take(1)))
+    }
+
+    @Test
+    fun simplifyRDPStraightLine() {
+        val coords = (0 until 10).map { GeoPoint(45.0 + it * 0.001, 38.0) }
+        assertEquals(2, GeometryUtils.simplifyRDP(coords, 0.0001).size)
+    }
+
+    @Test
+    fun simplifyRDPPreservesCurve() {
+        val coords = listOf(GeoPoint(45.0, 38.0), GeoPoint(45.0, 38.01), GeoPoint(45.01, 38.01))
+        assertEquals(3, GeometryUtils.simplifyRDP(coords, 0.0001).size)
+    }
+
+    // The iterative form must keep exactly what the recursive Swift function keeps.
+
+    @Test
+    fun iterativeFormMatchesTheRecursiveOne() {
+        val noise = Noise(7)
+        val coords = (0 until 2_000).map { i ->
+            GeoPoint(45.0 + i * 0.00002 + noise.next() * 0.00004, 38.0 + kotlin.math.sin(i / 40.0) * 0.001)
+        }
+        for (epsilon in listOf(0.00001, 0.00003, 0.0001)) {
+            assertEquals(recursive(coords, epsilon), GeometryUtils.simplifyRDP(coords, epsilon))
+        }
+    }
+
+    @Test
+    fun aZigZagKeepsEveryPoint() {
+        // Every split is one point off the end: the deepest possible recursion, here a loop.
+        val coords = (0 until 5_000).map { GeoPoint(45.0 + it * 0.0001, 38.0 + (it % 2) * 0.001) }
+        assertEquals(coords.size, GeometryUtils.simplifyRDP(coords, GeometryUtils.previewEpsilon).size)
+    }
+
+    private fun recursive(coords: List<GeoPoint>, epsilon: Double): List<GeoPoint> {
+        if (coords.size <= 2) return coords
+        var maxDistance = 0.0
+        var maxIndex = 0
+        for (i in 1 until coords.lastIndex) {
+            val d = GeometryUtils.perpendicularDistance(coords[i], coords.first(), coords.last())
+            if (d > maxDistance) {
+                maxDistance = d
+                maxIndex = i
+            }
+        }
+        if (maxDistance <= epsilon) return listOf(coords.first(), coords.last())
+        val left = recursive(coords.subList(0, maxIndex + 1), epsilon)
+        val right = recursive(coords.subList(maxIndex, coords.size), epsilon)
+        return left.dropLast(1) + right
     }
 }
