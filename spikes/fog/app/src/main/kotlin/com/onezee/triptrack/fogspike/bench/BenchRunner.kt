@@ -68,7 +68,7 @@ class BenchRunner(
         val cy = mapView.height / 2f
         phase("pinch")
         // Three times in and out, about 1.7 zoom levels each way, fingers never lifted.
-        driver.pinchSwing(cx, cy, mapView.width * 0.2f, mapView.width * 0.65f, cycles = 3, durationMs = 4500) {
+        driver.pinchSwing(cx, cy, mapView.width * 0.2f, mapView.width * 0.65f, cycles = 3.0, durationMs = 4500) {
             endPhase()
             settle { zoom() }
         }

@@ -72,7 +72,7 @@ class GestureDriver(private val view: View) {
     }
 
     /** Two fingers that stay down while their span swings between [small] and [large] [cycles] times. */
-    fun pinchSwing(cx: Float, cy: Float, small: Float, large: Float, cycles: Int, durationMs: Long, done: () -> Unit) {
+    fun pinchSwing(cx: Float, cy: Float, small: Float, large: Float, cycles: Double, durationMs: Long, done: () -> Unit) {
         fun points(t: Float): List<Pair<Float, Float>> {
             val span = small + (large - small) * (1 - cos(2 * Math.PI * cycles * t).toFloat()) / 2
             val angle = 0.6 * sin(2 * Math.PI * t)

@@ -202,10 +202,13 @@ class MainActivity : Activity() {
         val w = mapView.width.toFloat()
         val h = mapView.height.toFloat()
         Log.i(TAG, "gesture-start $kind")
-        if (kind == "pan") {
-            driver.drag(w * 0.8f, h / 2, w * 0.2f, h / 2, 6000, 200) { Log.i(TAG, "gesture-end") }
-        } else {
-            driver.pinch(w / 2, h / 2, w * 0.15f, w * 0.85f, 0.4, 6000) { Log.i(TAG, "gesture-end") }
+        when (kind) {
+            "pan" -> driver.drag(w * 0.8f, h / 2, w * 0.2f, h / 2, 6000, 200) { Log.i(TAG, "gesture-end") }
+            // A slow camera zoom: the same render path as a pinch, two levels in six seconds.
+            "zoom" -> map?.animateCamera(CameraUpdateFactory.zoomBy(2.0), 6000)
+            else -> driver.pinchSwing(w / 2, h / 2, w * 0.25f, w * 0.85f, cycles = 0.5, durationMs = 6000) {
+                Log.i(TAG, "gesture-end")
+            }
         }
     }
 
