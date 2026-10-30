@@ -1,0 +1,14 @@
+{"items":[{
+            "id":"11111111-1111-4111-8111-111111111111",
+            "author":{"id":"22222222-2222-4222-8222-222222222222","displayName":"Driver A","avatarEmoji":"🏎️","profileLevel":1},
+            "title":"Acceptance test private trip",
+            "startDate":"2026-08-10T18:19:21.136Z",
+            "distance":42.5,
+            "duration":0,
+            "drivingTime":3600,
+            "region":"Test Region",
+            "photoCount":0,
+            "reactionCount":0,
+            "reactionBreakdown":[],
+            "badgeIds":[]
+        }],"nextCursor":null}
