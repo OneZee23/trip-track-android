@@ -59,6 +59,42 @@ class GestureDriver(private val view: View) {
         }
     }
 
+    /** One finger following [position] (t from 0 to 1) without ever resting, then lifted. */
+    fun path(durationMs: Long, position: (Float) -> Pair<Float, Float>, done: () -> Unit) {
+        val down = SystemClock.uptimeMillis()
+        send(MotionEvent.ACTION_DOWN, down, down, listOf(position(0f)))
+        frames(durationMs, onFrame = { t ->
+            send(MotionEvent.ACTION_MOVE, down, SystemClock.uptimeMillis(), listOf(position(t)))
+        }) {
+            send(MotionEvent.ACTION_UP, down, SystemClock.uptimeMillis(), listOf(position(1f)))
+            done()
+        }
+    }
+
+    /** Two fingers that stay down while their span swings between [small] and [large] [cycles] times. */
+    fun pinchSwing(cx: Float, cy: Float, small: Float, large: Float, cycles: Int, durationMs: Long, done: () -> Unit) {
+        fun points(t: Float): List<Pair<Float, Float>> {
+            val span = small + (large - small) * (1 - cos(2 * Math.PI * cycles * t).toFloat()) / 2
+            val angle = 0.6 * sin(2 * Math.PI * t)
+            val dx = cos(angle).toFloat() * span / 2
+            val dy = sin(angle).toFloat() * span / 2
+            return listOf(cx - dx to cy - dy, cx + dx to cy + dy)
+        }
+        val down = SystemClock.uptimeMillis()
+        val start = points(0f)
+        send(MotionEvent.ACTION_DOWN, down, down, start.take(1))
+        send(MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), down, down, start)
+        frames(durationMs, onFrame = { t ->
+            send(MotionEvent.ACTION_MOVE, down, SystemClock.uptimeMillis(), points(t))
+        }) {
+            val now = SystemClock.uptimeMillis()
+            val end = points(1f)
+            send(MotionEvent.ACTION_POINTER_UP or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), down, now, end)
+            send(MotionEvent.ACTION_UP, down, now, end.take(1))
+            done()
+        }
+    }
+
     /** A fast swipe released while moving: MapLibre continues with its fling animation. */
     fun fling(x0: Float, y0: Float, x1: Float, y1: Float, durationMs: Long, done: () -> Unit) {
         val down = SystemClock.uptimeMillis()

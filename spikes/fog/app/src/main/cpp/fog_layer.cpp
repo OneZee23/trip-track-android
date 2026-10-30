@@ -108,6 +108,7 @@ struct Sample {
     double gpuMs;     // GPU time of both passes from a timer query, -1 if unknown
     double instances; // segments submitted
     double lod;       // 0 fine, 1 mid, 2 far, -1 probe or not drawn
+    double queryMs;   // of cpuMs, the two state queries: free on a phone, a round trip to the host GPU on the emulator
 };
 
 struct FogState {
@@ -325,7 +326,7 @@ public:
     void render(const mln::style::CustomLayerRenderParameters& p) override {
         const double started = nowMs();
         if (probe_ || coverage_ == 0) {
-            record({started, nowMs() - started, -1, 0, -1});
+            record({started, nowMs() - started, -1, 0, -1, 0});
             return;
         }
         syncMesh();
@@ -335,16 +336,18 @@ public:
             style = state_->style;
         }
 
+        // The composite pass has to land in MapLibre's framebuffer, so the layer asks which one it
+        // is. Every other piece of state MapLibre re-applies itself after render() returns.
         GLint previousFbo = 0;
-        GLint previousVao = 0;
         GLint viewport[4] = {0, 0, 0, 0};
+        const double queried = nowMs();
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFbo);
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousVao);
         glGetIntegerv(GL_VIEWPORT, viewport);
+        const double queryMs = nowMs() - queried;
         const int fbWidth = viewport[2];
         const int fbHeight = viewport[3];
         if (!style.visible || fbWidth <= 1 || fbHeight <= 1 || p.width <= 1 || p.height <= 1) {
-            record({started, nowMs() - started, -1, 0, -1});
+            record({started, nowMs() - started, -1, 0, -1, queryMs});
             return;
         }
 
@@ -357,7 +360,7 @@ public:
         if (!project(p, scale, ref.x, ref.y, s0x, s0y) ||
             !project(p, scale, ref.x + step, ref.y, s1x, s1y) ||
             !project(p, scale, ref.x, ref.y + step, s2x, s2y)) {
-            record({started, nowMs() - started, -1, 0, -1});
+            record({started, nowMs() - started, -1, 0, -1, queryMs});
             return;
         }
         const double a = (s1x - s0x) / step;
@@ -366,7 +369,7 @@ public:
         const double d = (s2y - s0y) / step;
         const double det = a * d - c * b;
         if (!(std::abs(det) > 0) || !std::isfinite(det)) {
-            record({started, nowMs() - started, -1, 0, -1});
+            record({started, nowMs() - started, -1, 0, -1, queryMs});
             return;
         }
         if (!centreChecked_) {
@@ -473,10 +476,10 @@ public:
 
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(static_cast<GLuint>(previousVao));
+        glBindVertexArray(0);
         glUseProgram(0);
         record({started, nowMs() - started, takeGpuMs(), static_cast<double>(instances),
-                static_cast<double>(lod)});
+                static_cast<double>(lod), queryMs});
     }
 
     void contextLost() override {
@@ -754,7 +757,7 @@ JNIEXPORT jdoubleArray JNICALL Java_com_onezee_triptrack_fogspike_fog_NativeFog_
         std::lock_guard<std::mutex> guard(state->lock);
         samples.swap(state->samples);
     }
-    const auto count = static_cast<jsize>(samples.size() * 5);
+    const auto count = static_cast<jsize>(samples.size() * 6);
     jdoubleArray out = env->NewDoubleArray(count);
     if (count > 0) {
         env->SetDoubleArrayRegion(out, 0, count, reinterpret_cast<const jdouble*>(samples.data()));

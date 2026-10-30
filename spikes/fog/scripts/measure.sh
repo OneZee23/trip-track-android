@@ -3,7 +3,7 @@
 # candidate and dataset, then screenshots at street, city and country zoom and in the middle of
 # a pinch. Results land in out/measure (gitignored); the doc copies what it cites.
 #
-#   scripts/measure.sh [bench|shots|all] [output dir]
+#   scripts/measure.sh [bench|rounds|shots|all] [output dir] [rounds]
 set -euo pipefail
 
 PKG=com.onezee.triptrack.fogspike
@@ -35,12 +35,13 @@ shot() {
 }
 
 bench() {
-  local cand=$1 data=$2 style=${3:-fog}
-  echo "bench $cand $data $style"
+  local cand=$1 data=$2 style=${3:-fog} suffix=${4:-}
+  # Other agents build on the same machine: the host load goes next to every result.
+  echo "bench $cand $data $style$suffix load $(sysctl -n vm.loadavg)"
   launch --es candidate "$cand" --es dataset "$data" --es style "$style" --es preset city --ez bench true
   wait_for "bench-done" 300 || return 0
-  adb exec-out run-as "$PKG" cat "files/bench-$cand-$data-$style.json" > "$OUT/bench/bench-$cand-$data-$style.json"
-  adb shell dumpsys meminfo "$PKG" > "$OUT/bench/meminfo-$cand-$data-$style.txt"
+  adb exec-out run-as "$PKG" cat "files/bench-$cand-$data-$style.json" > "$OUT/bench/bench-$cand-$data-$style$suffix.json"
+  adb shell dumpsys meminfo "$PKG" > "$OUT/bench/meminfo-$cand-$data-$style$suffix.txt"
 }
 
 if [[ $WHAT == bench || $WHAT == all ]]; then
@@ -52,6 +53,16 @@ if [[ $WHAT == bench || $WHAT == all ]]; then
   bench a ios fog
   bench a stress night
   bench a stress cells
+fi
+
+if [[ $WHAT == rounds ]]; then
+  # Repeated, interleaved rounds of the core comparison: noise from the shared host spreads
+  # over all candidates instead of landing on one.
+  for round in $(seq 1 "${3:-2}"); do
+    for data in small stress; do
+      for cand in none a b c; do bench "$cand" "$data" fog "-r$round"; done
+    done
+  done
 fi
 
 if [[ $WHAT == shots || $WHAT == all ]]; then

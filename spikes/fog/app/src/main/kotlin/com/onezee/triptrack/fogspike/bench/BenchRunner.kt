@@ -11,6 +11,8 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import kotlin.math.ceil
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * The scripted run: pan (drags and flings), pinch (two fingers in and out) and zoom (camera
@@ -44,60 +46,52 @@ class BenchRunner(
         }, 3000)
     }
 
+    // Every phase keeps the camera moving from its first frame to its last: a finger at rest
+    // renders nothing, and the gap would read as a slow frame.
     private fun pan() {
-        val w = mapView.width.toFloat()
-        val h = mapView.height.toFloat()
-        val cx = w / 2
-        val cy = h / 2
-        val dist = w * 0.4f
+        val cx = mapView.width / 2f
+        val cy = mapView.height / 2f
+        val r = mapView.width * 0.3f
         phase("pan")
-        driver.drag(cx + dist / 2, cy, cx - dist / 2, cy, 500, 120) {
-            driver.drag(cx - dist / 2, cy, cx + dist / 2, cy, 500, 120) {
-                driver.drag(cx, cy + dist / 2, cx, cy - dist / 2, 500, 120) {
-                    driver.drag(cx, cy - dist / 2, cx, cy + dist / 2, 500, 120) {
-                        driver.fling(cx - dist / 2, cy - dist / 2, cx + dist / 2, cy + dist / 2, 160) {
-                            handler.postDelayed({
-                                driver.fling(cx + dist / 2, cy + dist / 2, cx - dist / 2, cy - dist / 2, 160) {
-                                    handler.postDelayed({ endPhase(); settle { pinch() } }, 1400)
-                                }
-                            }, 1400)
-                        }
-                    }
-                }
-            }
+        // A finger tracing two circles: the map slides around the city and back.
+        driver.path(4500, position = { t ->
+            val a = 2 * Math.PI * 2 * t
+            (cx + r * cos(a).toFloat()) to (cy + r * sin(a).toFloat())
+        }) {
+            endPhase()
+            settle { pinch() }
         }
     }
 
     private fun pinch() {
         val cx = mapView.width / 2f
         val cy = mapView.height / 2f
-        val small = mapView.width * 0.2f
-        val large = mapView.width * 0.7f
         phase("pinch")
-        fun cycle(n: Int) {
-            if (n == 3) {
-                endPhase()
-                settle { zoom() }
-                return
-            }
-            val angle = n * 0.7
-            driver.pinch(cx, cy, small, large, angle, 700) {
-                driver.pinch(cx, cy, large, small, angle, 700) { cycle(n + 1) }
-            }
+        // Three times in and out, about 1.7 zoom levels each way, fingers never lifted.
+        driver.pinchSwing(cx, cy, mapView.width * 0.2f, mapView.width * 0.65f, cycles = 3, durationMs = 4500) {
+            endPhase()
+            settle { zoom() }
         }
-        cycle(0)
     }
 
+    // City to country to street and back, chained, across all three levels of detail.
     private fun zoom() {
         phase("zoom")
-        map.animateCamera(CameraUpdateFactory.zoomTo(5.0), 2500)
-        handler.postDelayed({
-            map.animateCamera(CameraUpdateFactory.zoomTo(15.5), 3000)
-            handler.postDelayed({
-                map.animateCamera(CameraUpdateFactory.zoomTo(12.0), 1000)
-                handler.postDelayed({ endPhase(); finish() }, 1300)
-            }, 3200)
-        }, 2700)
+        animate(5.0, 2500) {
+            animate(15.5, 3000) {
+                animate(12.0, 1000) {
+                    endPhase()
+                    finish()
+                }
+            }
+        }
+    }
+
+    private fun animate(zoom: Double, durationMs: Int, next: () -> Unit) {
+        map.animateCamera(CameraUpdateFactory.zoomTo(zoom), durationMs, object : MapLibreMap.CancelableCallback {
+            override fun onFinish() = next()
+            override fun onCancel() = next()
+        })
     }
 
     private fun settle(next: () -> Unit) {
@@ -129,16 +123,18 @@ class BenchRunner(
         val cpu = ArrayList<Double>()
         val gpu = ArrayList<Double>()
         val instances = ArrayList<Double>()
+        val encode = ArrayList<Double>()
         var i = 0
-        while (i + 4 < samples.size) {
+        while (i + 5 < samples.size) {
             val t = samples[i]
             if (t >= phase.start && t <= phase.end) {
                 times += t
                 cpu += samples[i + 1]
                 if (samples[i + 2] >= 0) gpu += samples[i + 2]
                 instances += samples[i + 3]
+                encode += samples[i + 1] - samples[i + 5]
             }
-            i += 5
+            i += 6
         }
         val intervals = times.zipWithNext { a, b -> b - a }
         val inPhase = mapFrames.filter { it[0] >= phase.start && it[0] <= phase.end }
@@ -150,10 +146,12 @@ class BenchRunner(
             .put("over25ms", intervals.count { it > 25.0 })
             .put("over50ms", intervals.count { it > 50.0 })
             .put("fogCpuMs", percentiles(cpu))
+            .put("fogEncodeMs", percentiles(encode))
             .put("fogGpuMs", percentiles(gpu))
             .put("segmentsPerFrame", percentiles(instances))
-            .put("mapEncodingRaw", percentiles(inPhase.map { it[1] }))
-            .put("mapRenderingRaw", percentiles(inPhase.map { it[2] }))
+            // MapLibre reports seconds. With the GL backend the GPU commands are issued while the
+            // frame is encoded, so this is the map's whole CPU cost per frame, the fog included.
+            .put("mapFrameCpuMs", percentiles(inPhase.map { it[1] * 1000 }))
             .put("mapDrawCalls", percentiles(inPhase.map { it[3] }))
     }
 

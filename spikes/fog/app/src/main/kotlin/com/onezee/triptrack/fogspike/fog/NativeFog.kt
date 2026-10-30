@@ -19,7 +19,7 @@ object NativeFog {
 
     @JvmStatic external fun setStyle(state: Long, r: Float, g: Float, b: Float, alpha: Float, cells: Boolean, visible: Boolean)
 
-    /** Five numbers per rendered frame: time ms, CPU ms, GPU ms (-1 unknown), segments, LOD. */
+    /** Six numbers per rendered frame: time ms, CPU ms, GPU ms (-1 unknown), segments, LOD, query ms. */
     @JvmStatic external fun takeSamples(state: Long): DoubleArray
 
     /** GPU timer available, last upload ms, last upload bytes, centre error dp, shader failed. */
