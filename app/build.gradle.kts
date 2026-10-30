@@ -55,7 +55,10 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core:location"))
     implementation(project(":core:designsystem"))
+    implementation(libs.room.runtime)
+    implementation(libs.coroutines.core)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.appcompat)

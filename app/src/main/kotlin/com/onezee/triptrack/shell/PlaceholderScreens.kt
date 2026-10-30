@@ -81,29 +81,48 @@ internal fun PlacesPlaceholder() = PlaceholderScreen(appStrings.tabPlaces(), rem
 @Composable
 internal fun RecordPlaceholder(onClose: () -> Unit) {
     val strings = appStrings
-    val interaction = remember { MutableInteractionSource() }
     Box(Modifier.fillMaxSize().testTag("screen_record")) {
-        Box(
-            Modifier
-                .windowInsetsPadding(WindowInsets.statusBars)
-                .padding(start = AppSpacing.screenSide, top = 8.dp)
-                .size(44.dp)
-                .plainPressFeedback(interaction)
-                .background(Color.Black.copy(alpha = 0.4f), CircleShape)
-                .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClose)
-                .semantics { contentDescription = strings.back() }
-                .testTag("tracking_back"),
-            contentAlignment = Alignment.Center,
-        ) {
-            // iOS: an 18 pt semibold chevron.left in white.
-            Glyph(AppGlyph.chevronLeft, contentDescription = null, tint = Color.White, size = 22.dp)
-        }
+        TrackingBackButton(onClose)
         Text(
             strings.recordTripCta(),
             style = AppType.sheetTitle,
             color = AppTheme.colors.text,
             modifier = Modifier.align(Alignment.Center).padding(horizontal = AppSpacing.screenSide),
         )
+    }
+}
+
+/**
+ * The record tab with the recording screen from core:location. The full designed screen replaces
+ * it later; until then it keeps the same way back as the placeholder.
+ */
+@Composable
+internal fun RecordTab(graph: com.onezee.triptrack.AppGraph, resumeTick: Int, onClose: () -> Unit) {
+    Box(Modifier.fillMaxSize().testTag("screen_record")) {
+        com.onezee.triptrack.recording.RecordingRoute(graph.location, graph.strings, resumeTick)
+        TrackingBackButton(onClose)
+    }
+}
+
+/** iOS `TrackingView.backButton`: a dark disc over the map that returns to Лента. */
+@Composable
+private fun TrackingBackButton(onClose: () -> Unit) {
+    val strings = appStrings
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        Modifier
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(start = AppSpacing.screenSide, top = 8.dp)
+            .size(44.dp)
+            .plainPressFeedback(interaction)
+            .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClose)
+            .semantics { contentDescription = strings.back() }
+            .testTag("tracking_back"),
+        contentAlignment = Alignment.Center,
+    ) {
+        // iOS: an 18 pt semibold chevron.left in white.
+        Glyph(AppGlyph.chevronLeft, contentDescription = null, tint = Color.White, size = 22.dp)
     }
 }
 

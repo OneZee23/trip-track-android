@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.drawable.toDrawable
@@ -22,6 +23,9 @@ import com.onezee.triptrack.shell.AppShell
  * floats over the content.
  */
 class MainActivity : AppCompatActivity() {
+    // Bumped on every return to the screen: permission and health answers are read again then.
+    private val resumeTick = mutableIntStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -30,9 +34,15 @@ class MainActivity : AppCompatActivity() {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
             SystemBarsFollowTheme(dark)
             TripTrackTheme(isDark = dark, language = graph.languageManager.current(LocalConfiguration.current)) {
-                AppShell(graph)
+                AppShell(graph, resumeTick.intValue)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumeTick.intValue++
+        (application as TripTrackApplication).appGraph.location.onAppForeground()
     }
 
     /**

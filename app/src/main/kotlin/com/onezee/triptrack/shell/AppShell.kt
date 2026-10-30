@@ -45,7 +45,7 @@ import com.onezee.triptrack.designsystem.theme.AppTheme
  * Android's navigation principles ask of a start destination.
  */
 @Composable
-fun AppShell(graph: AppGraph) {
+fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
     val tabs = graph.tabStore
     val visibility = remember { TabBarVisibility() }
     val saveable = rememberSaveableStateHolder()
@@ -67,7 +67,7 @@ fun AppShell(graph: AppGraph) {
                 label = "tab",
             ) { tab ->
                 saveable.SaveableStateProvider(tab.rawValue) {
-                    TabScreen(tab, graph, feedScrollToTop, onClose = { tabs.select(AppTab.home) })
+                    TabScreen(tab, graph, feedScrollToTop, resumeTick, onClose = { tabs.select(AppTab.home) })
                 }
             }
             AnimatedVisibility(
@@ -91,11 +91,11 @@ fun AppShell(graph: AppGraph) {
 private val TabSwitch = spring<Float>(dampingRatio = 0.85f, stiffness = 815.7f)
 
 @Composable
-private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, onClose: () -> Unit) {
+private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resumeTick: Int, onClose: () -> Unit) {
     when (tab) {
         AppTab.home -> FeedPlaceholder(feedScrollToTop)
         AppTab.maps -> AtlasPlaceholder()
-        AppTab.record -> RecordPlaceholder(onClose)
+        AppTab.record -> RecordTab(graph, resumeTick, onClose)
         AppTab.places -> PlacesPlaceholder()
         AppTab.profile -> MePlaceholder(graph.themeManager, graph.languageManager)
     }

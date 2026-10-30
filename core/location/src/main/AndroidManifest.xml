@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- The trip title asks the geocoder only when there is a network. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Auto-record: a start from the background needs location «all the time». -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />

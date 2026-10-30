@@ -175,6 +175,7 @@ class LocationGraph(
 
     /** The record screen's start. The service is started here, while the app is in front. */
     suspend fun startRecording(vehicleId: UUID? = null, isTransfer: Boolean = false): StartResult {
+        awaitStarted()
         refreshDistanceUnit()
         val result = recorder.start(vehicleId, isTransfer)
         if (result is StartResult.Started && !RecordingService.start(context)) {
@@ -190,6 +191,7 @@ class LocationGraph(
 
     /** «Continue» on the recovery question. */
     suspend fun continueRecovered(): Boolean {
+        awaitStarted()
         val adopted = recorder.adoptRecoverable()
         if (adopted) RecordingService.start(context)
         return adopted
@@ -197,6 +199,7 @@ class LocationGraph(
 
     /** «Finish and save» on the recovery question: adopt, then the normal stop. */
     suspend fun finishRecovered(): StopOutcome {
+        awaitStarted()
         if (!recorder.adoptRecoverable()) return StopOutcome.NotRecording
         return recorder.stop()
     }
