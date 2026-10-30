@@ -9,4 +9,6 @@ data class EnergyEstimate(
     val litres: Double,
     val electricCost: Double? = null,
     val fuelCost: Double? = null,
-)
+) {
+    companion object {}
+}

@@ -18,6 +18,8 @@ enum class DashboardUnits(val rawValue: String) {
 
     companion object {
         fun fromRawValue(value: String): DashboardUnits? = entries.find { it.rawValue == value }
-        fun parse(value: String?): DashboardUnits? = value?.let(::fromRawValue)
+        fun parse(value: String?): DashboardUnits? = value?.trim {
+            it == '\t' || it == '\u200b' || Character.getType(it) == Character.SPACE_SEPARATOR.toInt()
+        }?.lowercase(java.util.Locale.ROOT)?.let(::fromRawValue)
     }
 }

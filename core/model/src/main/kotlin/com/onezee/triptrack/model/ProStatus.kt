@@ -13,6 +13,8 @@ enum class ProRowDestination {
 
 // iOS: ProStatus.swift
 sealed interface ProStatus {
+    companion object {}
+
     data object None : ProStatus
     data class Trial(val until: Instant?) : ProStatus
     data class Active(val until: Instant?) : ProStatus

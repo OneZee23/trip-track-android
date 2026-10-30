@@ -5,6 +5,8 @@ import java.time.Instant
 
 // iOS: ProManageModel.swift
 sealed interface ProManageLine {
+    companion object {}
+
     data class TrialRenews(val until: Instant, val price: String, val period: PlusProductInfo.Period) : ProManageLine
     data class Renews(val on: Instant, val price: String, val period: PlusProductInfo.Period) : ProManageLine
     data class EndsOn(val value: Instant) : ProManageLine
