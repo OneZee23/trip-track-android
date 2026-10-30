@@ -5,6 +5,9 @@ import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.network.*
 import java.util.UUID
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 // iOS: ManualTripTrackLoader.swift. Failed hydration leaves the upload pending.
 class ManualTripTrackLoader(
@@ -12,7 +15,31 @@ class ManualTripTrackLoader(
     private val client: ApiClient,
     private val accountId: () -> UUID?,
     private val cloudSyncEnabled: () -> Boolean,
+    private val afterLoad: suspend (UUID) -> Unit = {},
 ) {
+    // iOS: ManualTripTrackLoader.loadIfNeeded. The caller supplies its worker dispatcher.
+    suspend fun loadIfNeeded(id: UUID): Trip? {
+        currentCoroutineContext().ensureActive()
+        if (!cloudSyncEnabled()) return null
+        val owner = accountId() ?: return null
+        val snapshot = repository.missingManualTrack(id) ?: return null
+        return try {
+            val payload: TripSyncPayload = client.post(ApiEndpoint.tripDetail, TripDetailRequest(id, true))
+            val points = validatedPoints(payload, snapshot) ?: return null
+            currentCoroutineContext().ensureActive()
+            if (!cloudSyncEnabled() || accountId() != owner || repository.missingManualTrack(id) != snapshot ||
+                !repository.applyMissingManualTrack(points, snapshot)) return null
+            afterLoad(id)
+            currentCoroutineContext().ensureActive()
+            if (accountId() != owner) return null
+            repository.fetchTripDetail(id).also {
+                currentCoroutineContext().ensureActive()
+                if (accountId() != owner) return null
+            }
+        } catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { null }
+    }
+
     suspend fun prepareUpload(id: UUID, zoneActive: Boolean) {
         val trip = repository.fetchTripDetail(id) ?: return
         if (!mustLoadBeforeUpload(trip.source, trip.isPrivate, trip.trackPoints.isNotEmpty(), trip.isOnServer, zoneActive)) return

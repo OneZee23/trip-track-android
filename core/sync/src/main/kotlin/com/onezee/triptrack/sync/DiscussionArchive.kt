@@ -25,6 +25,11 @@ class DiscussionArchive(private val client: ApiClient, private val directory: Fi
             catch (_: ApiError) { break }
         }
         if (comments.isEmpty()) return
+        save(tripId, comments)
+    }
+
+    // iOS: DiscussionArchive.save, also called after a successful comments first-page read.
+    suspend fun save(tripId: UUID, comments: List<TripComment>) {
         withContext(Dispatchers.IO) {
             val file = AtomicFile(File(directory, "$tripId.json"))
             val bytes = NetworkJson.wire.encodeToString(ListSerializer(TripComment.serializer()), comments).toByteArray()
