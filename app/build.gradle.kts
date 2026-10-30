@@ -34,6 +34,7 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -59,6 +60,17 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(libs.room.runtime)
     implementation(libs.coroutines.core)
+    implementation(project(":core:model"))
+    implementation(project(":core:logic"))
+    implementation(project(":core:data"))
+    implementation(project(":core:network"))
+    implementation(project(":core:sync"))
+    implementation(libs.lifecycle.viewmodel.ktx)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.room.runtime)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.appcompat)

@@ -22,6 +22,7 @@ junit = "4.13.2"
 # exact tag (core/map/maplibre-abi.properties): bumping it fails the build until they are re-copied.
 maplibre = "13.7.1"
 playServicesLocation = "21.4.0"
+lifecycle = "2.9.4"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
@@ -50,6 +51,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref =
 maplibre-opengl = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "maplibre" }
 # Activity Recognition transitions (IN_VEHICLE) exist only in Google Play services; used by core:location.
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
