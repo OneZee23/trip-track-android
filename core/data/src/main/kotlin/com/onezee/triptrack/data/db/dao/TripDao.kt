@@ -19,6 +19,9 @@ data class TripPreviewRow(val id: UUID, val startDate: Instant, val previewPolyl
 /** id and preview: what the revealed-layer store reads. */
 data class TripPolylineRow(val id: UUID, val previewPolyline: ByteArray?)
 
+/** The same with the dates, for a read cut into chunks that has to restore order and window itself. */
+data class TripRevealRow(val id: UUID, val previewPolyline: ByteArray?, val startDate: Instant, val endDate: Instant?)
+
 /** What the odometer and reward sums need from a trip. */
 data class TripDistanceRow(val vehicleId: UUID?, val distance: Double, val source: String?)
 
@@ -143,8 +146,8 @@ interface TripDao {
     )
     suspend fun revealPreviews(endedBefore: Instant): List<TripPolylineRow>
 
-    @Query("SELECT id, previewPolyline FROM TripEntity WHERE ${WorldSql.COMPLETED} AND id IN (:ids) ORDER BY startDate ASC")
-    suspend fun revealPreviews(ids: List<UUID>): List<TripPolylineRow>
+    @Query("SELECT id, previewPolyline, startDate, endDate FROM TripEntity WHERE ${WorldSql.COMPLETED} AND id IN (:ids)")
+    suspend fun revealRows(ids: List<UUID>): List<TripRevealRow>
 
     /** iOS: TripManager.cleanupOrphanedTrips, a recording the app was killed in. */
     @Query("SELECT * FROM TripEntity WHERE endDate IS NULL")
@@ -152,6 +155,10 @@ interface TripDao {
 
     @Query("UPDATE TripEntity SET syncStatus = ${WorldSql.PENDING_UPLOAD} WHERE userId = :userId")
     suspend fun markTripsPendingUpload(userId: UUID)
+
+    /** iOS: PersistenceController.migrateUserIdIfNeeded. */
+    @Query("UPDATE TripEntity SET userId = :userId WHERE userId IS NULL")
+    suspend fun stampMissingUserId(userId: UUID)
 
     @Query(
         "SELECT * FROM TripEntity WHERE (syncStatus = ${WorldSql.PENDING_UPLOAD} " +

@@ -29,6 +29,10 @@ interface VehicleDao {
     @Query("UPDATE VehicleEntity SET syncStatus = ${WorldSql.PENDING_UPLOAD} WHERE userId = :userId")
     suspend fun markVehiclesPendingUpload(userId: UUID)
 
+    /** iOS: PersistenceController.migrateUserIdIfNeeded. */
+    @Query("UPDATE VehicleEntity SET userId = :userId WHERE userId IS NULL")
+    suspend fun stampMissingUserId(userId: UUID)
+
     @Query("SELECT * FROM VehicleEntity WHERE syncStatus = ${WorldSql.PENDING_UPLOAD} AND userId = :userId")
     suspend fun pendingVehicles(userId: UUID): List<VehicleEntity>
 
