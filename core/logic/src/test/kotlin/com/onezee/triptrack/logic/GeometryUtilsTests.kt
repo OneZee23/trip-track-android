@@ -2,10 +2,7 @@ package com.onezee.triptrack.logic
 
 import com.onezee.triptrack.model.GeoPoint
 import kotlin.test.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import org.junit.Test
-
 
 // iOS: GeometryUtilsTests.swift (haversine, gap splitting, RDP).
 class GeometryUtilsTests {
