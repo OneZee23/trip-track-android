@@ -35,8 +35,8 @@ jobs:
           # The default list still asks for the long-removed 'tools' package and fails.
           packages: platform-tools
       - name: Install project SDK
-        # core:map has no ndkVersion or externalNativeBuild yet. Add its pinned NDK here when it does.
-        run: sdkmanager 'platforms;android-37.2' 'build-tools;36.0.0'
+        # core:map builds its fog layer with the NDK and CMake pinned in core/map/build.gradle.kts.
+        run: sdkmanager 'platforms;android-37.2' 'build-tools;36.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
