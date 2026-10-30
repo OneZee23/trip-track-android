@@ -9,9 +9,10 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Strings, 13 languages | `TripTrack/Localization/` | `tools/strings`, `core/designsystem` res: 1571 strings, 25 plurals per language; 180 functions with logic left for manual porting | done |
 | Map and fog | `Views/MyMap/FogMetal/`, `Services/Reveal/` | `spikes/fog`, then `core/map` | in progress |
 | API contract | `Services/Sync/`, `APIClient`, `AuthService` | `docs/api-contract.md`, 90 routes, verified against backend master | done |
-| Algorithms (gates, Kalman, breaks, geohash, polyline) | `Services/`, `Models/` | `core/logic` | todo |
-| Database | `Persistence/` | `core/data` | todo |
-| Network and auth | `APIClient`, `TokenStore`, `AuthService` | `core/network` | todo |
+| Recording math (gates, Kalman, breaks, auto-trip policy, gap fill) | `Services/`, `Models/` | `core/logic`, 146 tests | done |
+| Geo and place math (geohash, polyline, places, segments, moments) | `Services/`, `Models/` | `core/logic` | in progress |
+| Database | `Persistence/` | `core/data` | in progress |
+| Network and auth | `APIClient`, `TokenStore`, `AuthService` | `core/network`, 80 tests; Keystore AES-GCM tokens; Google login call | done (device Keystore check pending) |
 | Design system and tab bar | `Views/Theme/`, `CustomTabBar` | `core/designsystem`, `app` | todo |
 | Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location` | todo |
 | Sync engine | `SyncQueue`, `Services/Sync/` | `core/sync` | todo |
