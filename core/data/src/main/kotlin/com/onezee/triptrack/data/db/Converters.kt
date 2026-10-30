@@ -24,13 +24,26 @@ class Converters {
     @TypeConverter
     fun textToUuid(value: String?): UUID? = value?.let(UUID::fromString)
 
+    /**
+     * Saturating: an instant beyond 1677–2262 becomes the end of the range instead of an overflow.
+     * Only the iOS `distantPast`/`distantFuture` bounds of a query reach that far, and for a
+     * comparison «the end of the range» is exactly what they mean.
+     */
     @TypeConverter
-    fun instantToNanos(value: Instant?): Long? = value?.let { Math.addExact(Math.multiplyExact(it.epochSecond, NANOS), it.nano.toLong()) }
+    fun instantToNanos(value: Instant?): Long? = value?.let {
+        when {
+            it.epochSecond >= MAX_SECONDS -> Long.MAX_VALUE
+            it.epochSecond < MIN_SECONDS -> Long.MIN_VALUE
+            else -> it.epochSecond * NANOS + it.nano
+        }
+    }
 
     @TypeConverter
     fun nanosToInstant(value: Long?): Instant? = value?.let { Instant.ofEpochSecond(Math.floorDiv(it, NANOS), Math.floorMod(it, NANOS)) }
 
     private companion object {
         const val NANOS = 1_000_000_000L
+        const val MAX_SECONDS = Long.MAX_VALUE / NANOS
+        const val MIN_SECONDS = Long.MIN_VALUE / NANOS
     }
 }

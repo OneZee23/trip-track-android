@@ -663,10 +663,14 @@ class RoomTripRepository(
         } else {
             base.previewPolyline
         }
-        // Segments replace the list whole when the key came; dangling ones are dropped on read.
-        val segmentsJSON = p.segments?.let { list ->
-            JsonColumns.encodeSegments(list.map { TripSegment(it.id, it.fromCheckpointId, it.toCheckpointId, it.name) })
-        } ?: base.segmentsJSON
+        // Segments replace the list whole when the key came, an empty list clearing them (deleted on
+        // the other phone); an absent key keeps ours. Dangling ones are dropped on read.
+        val remoteSegments = p.segments
+        val segmentsJSON = if (remoteSegments != null) {
+            JsonColumns.encodeSegments(remoteSegments.map { TripSegment(it.id, it.fromCheckpointId, it.toCheckpointId, it.name) })
+        } else {
+            base.segmentsJSON
+        }
 
         trips.upsertTrip(
             base.copy(

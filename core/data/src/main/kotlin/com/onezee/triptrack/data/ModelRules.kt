@@ -3,6 +3,7 @@
 // VehicleModTags.swift, Drive2Link.swift, VehicleType.swift (init(storage:), hasPlate)
 package com.onezee.triptrack.data
 
+import android.icu.text.BreakIterator
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.RoadFillState
 import com.onezee.triptrack.model.Trip
@@ -13,7 +14,6 @@ import com.onezee.triptrack.model.VehicleType
 import com.onezee.triptrack.model.serialization.ModelJson
 import java.net.URI
 import java.net.URISyntaxException
-import java.text.BreakIterator
 import java.time.Instant
 import java.util.UUID
 import kotlin.math.floor
@@ -108,6 +108,7 @@ internal object VehicleModTags {
     fun encodeJSON(tags: List<String>): String = ModelJson.storage.encodeToString(strings, sanitized(tags))
 
     // Swift's `prefix` counts characters as the reader sees them (grapheme clusters), not UTF-16 units.
+    // ICU's iterator, not java.text's: the JVM one splits an emoji from its skin-tone modifier.
     private fun prefixCharacters(text: String, count: Int): String {
         val iterator = BreakIterator.getCharacterInstance()
         iterator.setText(text)
