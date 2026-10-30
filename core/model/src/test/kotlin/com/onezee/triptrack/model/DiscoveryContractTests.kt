@@ -20,6 +20,15 @@ class DiscoveryContractTests {
         assertEquals(UUID.fromString("8A37654B-9D15-5AAB-92F6-ED2C3B8B4406"), found(DiscoveryKind.secret, "komsomolsky").id)
         assertEquals(UUID.fromString("08304055-7D26-538F-86AD-7659E445FE74"), found(DiscoveryKind.riddle, "lighthouse-anapa").id)
         assertEquals(UUID.fromString("B9C27CE7-4F53-50E8-AA0A-4A8F87CA0A17"), found(DiscoveryKind.milestone, "above2000:2026-09-16").id)
+        assertEquals(Discovery.id(DiscoveryKind.secret, "komsomolsky"), Discovery.id(DiscoveryKind.secret, "komsomolsky"))
+    }
+
+    // iOS: DiscoveryIdentityTests.swift (testDiscoveryDerivesItsOwnId).
+    @Test fun discoveryDerivesItsOwnId() {
+        val value = Discovery(kind = DiscoveryKind.riddle, key = "lighthouse-anapa", tripId = UUID.randomUUID(),
+            coordinate = GeoPoint(44.894, 37.316), foundAt = Instant.now(), symbol = SealSymbol.lighthouse, title = "Анапский маяк")
+        assertEquals(Discovery.id(DiscoveryKind.riddle, "lighthouse-anapa"), value.id)
+        assertFalse(value.verified)
     }
 
     @Test fun kindSeparatesKeys() {
