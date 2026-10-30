@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -20,4 +21,15 @@ android {
 
 kotlin {
     jvmToolchain(17)
+}
+
+dependencies {
+    api(project(":core:model"))
+    api(libs.serialization.json)
+    api(libs.okhttp)
+    api(libs.coroutines.core)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.junit)
+    testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.coroutines.test)
 }
