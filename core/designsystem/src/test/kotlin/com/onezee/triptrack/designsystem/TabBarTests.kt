@@ -1,6 +1,7 @@
 package com.onezee.triptrack.designsystem
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +19,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.navigation.AppTab
 import com.onezee.triptrack.designsystem.navigation.CustomTabBar
+import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
+import com.onezee.triptrack.designsystem.navigation.LocalTabBarVisibility
 import com.onezee.triptrack.designsystem.navigation.TabBarMetrics
+import com.onezee.triptrack.designsystem.navigation.TabBarVisibility
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import org.junit.Rule
@@ -29,7 +33,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 // iOS: CustomTabBar.swift, CustomTabBarLiftTests.swift, AppTabTests.swift.
 @RunWith(RobolectricTestRunner::class)
@@ -130,5 +136,22 @@ class TabBarTests {
         unseen = false
         compose.waitForIdle()
         compose.onNodeWithTag("tab_profile_unseen", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    /** iOS `.hideAppTabBar()`: any screen that asks hides the bar, for as long as it is shown. */
+    @Test fun aScreenHidesTheBarForAsLongAsItIsShown() {
+        val visibility = TabBarVisibility()
+        var asking by mutableStateOf(true)
+        compose.setContent {
+            CompositionLocalProvider(LocalTabBarVisibility provides visibility) {
+                if (asking) HideAppTabBar()
+                HideAppTabBar(hide = false)
+            }
+        }
+        compose.waitForIdle()
+        assertTrue(visibility.isHiddenByScreen)
+        asking = false
+        compose.waitForIdle()
+        assertFalse(visibility.isHiddenByScreen)
     }
 }
