@@ -1,6 +1,17 @@
 package com.onezee.triptrack.designsystem
 
 import androidx.activity.ComponentActivity
+import kotlin.test.assertTrue
+import com.onezee.triptrack.designsystem.components.AppGlyph
+import com.onezee.triptrack.designsystem.components.ActionPopoverItem
+import com.onezee.triptrack.designsystem.components.ActionPopover
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.test.isPopup
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -136,5 +147,64 @@ class SheetAndToastTests {
         compose.setContent { Themed(dark = false) { ToastHost(item, onDismiss = {}) } }
         compose.onNodeWithTag("toast_undo").assertDoesNotExist()
         compose.onNodeWithTag("toast").assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
+    }
+
+    /** The sheet slides in from below: on its very first frame it is not on screen yet. */
+    @Test fun theSheetStartsBelowTheScreen() {
+        compose.mainClock.autoAdvance = false
+        showPicker(listOf("A", "B"), selection = "A", mutableListOf())
+        compose.mainClock.advanceTimeByFrame()
+        val bottom = compose.onNodeWithTag("sheet_scrim").getBoundsInRoot().bottom
+        val top = compose.onNodeWithTag("sheet").getBoundsInRoot().top
+        assertTrue(top >= bottom - 1.dp, "sheet top $top, screen bottom $bottom")
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        assertTrue(compose.onNodeWithTag("sheet").getBoundsInRoot().top < bottom)
+    }
+
+    /** The popover's shadow margin is still a tap outside it. */
+    @Test fun aTapBesideThePopoverClosesIt() {
+        var expanded by mutableStateOf(true)
+        var chosen = false
+        compose.setContent {
+            Themed(dark = false) {
+                Box(Modifier.padding(top = 80.dp, start = 120.dp)) {
+                    Box(Modifier.size(40.dp))
+                    ActionPopover(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        items = listOf(ActionPopoverItem("Изменить", AppGlyph.pencil) { chosen = true }),
+                    )
+                }
+            }
+        }
+        compose.onNode(isPopup()).performTouchInput { click(Offset(4f, 4f)) }
+        compose.waitForIdle()
+        assertEquals(false, expanded)
+        assertEquals(false, chosen)
+    }
+
+    @Test fun aPopoverRowClosesThePopoverThenActs() {
+        val events = mutableListOf<String>()
+        var expanded by mutableStateOf(true)
+        compose.setContent {
+            Themed(dark = false) {
+                Box(Modifier.padding(top = 80.dp, start = 120.dp)) {
+                    Box(Modifier.size(40.dp))
+                    ActionPopover(
+                        expanded = expanded,
+                        onDismissRequest = {
+                            events += "close"
+                            expanded = false
+                        },
+                        items = listOf(ActionPopoverItem("Изменить", AppGlyph.pencil, testTag = "edit") { events += "edit, open=$expanded" }),
+                    )
+                }
+            }
+        }
+        compose.onNodeWithTag("edit").performClick()
+        compose.waitForIdle()
+        assertEquals(listOf("close", "edit, open=false"), events)
+        compose.onNode(isPopup()).assertDoesNotExist()
     }
 }

@@ -158,8 +158,9 @@ fun ContentSizedSheet(
                         else Modifier.heightIn(min = minimumHeight, max = maxSheet),
                     )
                     .onSizeChanged { sheetHeight = it.height.toFloat() }
+                    // The layer's own height: the slide needs nothing measured from outside it.
                     .graphicsLayer {
-                        translationY = (1f - presence.value) * sheetHeight + drag.coerceAtLeast(0f)
+                        translationY = (1f - presence.value) * size.height + drag.coerceAtLeast(0f)
                     }
                     .draggable(
                         state = rememberDraggableState { delta -> drag = (drag + delta).coerceAtLeast(0f) },

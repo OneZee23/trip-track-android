@@ -10,6 +10,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -144,7 +146,12 @@ fun ActionPopover(
             enter = fadeIn(tween(180)) + scaleIn(spring(dampingRatio = 0.86f, stiffness = 700f), initialScale = 0.88f, transformOrigin = current.origin),
             exit = fadeOut(tween(140)) + scaleOut(tween(140), targetScale = 0.94f, transformOrigin = current.origin),
         ) {
-            PopoverSurface(arrowX = current.arrowX, arrowOnTop = current.arrowOnTop) {
+            // The shadow's margin is part of the popup window: a tap there is a tap outside.
+            PopoverSurface(
+                arrowX = current.arrowX,
+                arrowOnTop = current.arrowOnTop,
+                modifier = Modifier.pointerInput(Unit) { detectTapGestures { onDismissRequest() } },
+            ) {
                 ActionPopoverList(items, width = width, onItemClick = { item ->
                     haptics.tap()
                     onDismissRequest()
@@ -165,12 +172,12 @@ private val ArrowHeight = 12.dp
 private val PopoverRadius = 13.dp
 
 @Composable
-private fun PopoverSurface(arrowX: Float, arrowOnTop: Boolean, content: @Composable () -> Unit) {
+private fun PopoverSurface(arrowX: Float, arrowOnTop: Boolean, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val colors = AppTheme.colors
     val shape = remember(arrowX, arrowOnTop) { PopoverShape(arrowX, arrowOnTop) }
     val shadow = Color.Black.copy(alpha = if (AppTheme.isDark) 0.45f else 0.14f)
     Box(
-        Modifier
+        modifier
             .padding(PopoverShadowRoom)
             .iosShadow(shape, shadow, radius = 18.dp, y = 6.dp)
             .background(colors.surfaceElevated, shape)
