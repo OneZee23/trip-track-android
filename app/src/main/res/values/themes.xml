@@ -1,0 +1,8 @@
+<resources>
+    <!-- AppCompat for the per-app language below Android 13. Everything visible is drawn by Compose;
+         the window ground is the theme background (AppColors.bg), here for the system theme and
+         replaced at runtime when the app's own theme differs. -->
+    <style name="Theme.TripTrack" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

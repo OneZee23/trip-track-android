@@ -1,0 +1,4 @@
+<resources>
+    <!-- AppColors.dark.bg -->
+    <color name="window_background">#121214</color>
+</resources>

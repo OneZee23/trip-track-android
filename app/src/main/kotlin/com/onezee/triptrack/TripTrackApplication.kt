@@ -8,6 +8,6 @@ class TripTrackApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appGraph = AppGraph()
+        appGraph = AppGraph(this)
     }
 }
