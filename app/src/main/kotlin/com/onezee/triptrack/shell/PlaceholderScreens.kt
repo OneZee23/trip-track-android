@@ -142,7 +142,12 @@ internal fun MePlaceholder(themeManager: ThemeManager, languageManager: Language
             footnote = strings.languagePickerFootnote(),
             badge = { it.badge },
             label = { it.endonym },
-            onSelect = languageManager::choose,
+            // Close first: the choice recreates the activity, and a picker still open in the saved
+            // state would come back in the new language.
+            onSelect = {
+                picking = null
+                languageManager.choose(it)
+            },
             onDismissRequest = { picking = null },
             testTagPrefix = "settings_language",
         )
