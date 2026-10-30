@@ -1,0 +1,13 @@
+{"items":[{
+            "id":"9c29078a-3b90-4a48-8469-206f4d641912",
+            "author":{"id":"a1db2427-2a15-4496-9dd5-efc29edea5f8","displayName":"Driver A","avatarEmoji":"🏎️","profileLevel":1},
+            "title":"Genuinely private companion trip",
+            "startDate":"2026-08-10T18:19:21.136Z",
+            "distance":42.5,
+            "duration":0,
+            "isPrivate":true,
+            "photoCount":0,
+            "reactionCount":0,
+            "reactionBreakdown":[],
+            "badgeIds":[]
+        }],"nextCursor":null}
