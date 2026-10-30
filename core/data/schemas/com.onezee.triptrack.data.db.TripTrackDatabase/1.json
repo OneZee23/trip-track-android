@@ -1,0 +1,1665 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "222af0032984ec51c256f47f917e7460",
+    "entities": [
+      {
+        "tableName": "TripEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `averageSpeed` REAL NOT NULL DEFAULT 0.0, `badgesJSON` TEXT, `distance` REAL NOT NULL DEFAULT 0.0, `elevation` REAL NOT NULL DEFAULT 0.0, `endDate` INTEGER, `fuelUsed` REAL NOT NULL DEFAULT 0.0, `isPrivate` INTEGER NOT NULL DEFAULT 1, `maxSpeed` REAL NOT NULL DEFAULT 0.0, `previewPolyline` BLOB, `region` TEXT, `startDate` INTEGER NOT NULL, `titleIsCustom` INTEGER NOT NULL DEFAULT 0, `title` TEXT, `tripDescription` TEXT, `lastModifiedAt` INTEGER, `syncStatus` INTEGER NOT NULL DEFAULT 0, `isTransfer` INTEGER NOT NULL DEFAULT 0, `isTrackProcessed` INTEGER NOT NULL DEFAULT 0, `fuelCurrency` TEXT, `vehicleId` TEXT, `xpEarned` INTEGER NOT NULL DEFAULT 0, `placesMatchedAt` INTEGER, `userId` TEXT, `serverCreatedAt` INTEGER, `conflictVersion` INTEGER NOT NULL DEFAULT 0, `companionsJSON` TEXT, `recordingBreaksJSON` TEXT, `segmentsJSON` TEXT, `source` TEXT DEFAULT 'recorded', `confirmation` TEXT DEFAULT 'confirmed', `energyMode` TEXT, `roadFillState` TEXT DEFAULT 'unchecked', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "averageSpeed",
+            "columnName": "averageSpeed",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "badgesJSON",
+            "columnName": "badgesJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "distance",
+            "columnName": "distance",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "elevation",
+            "columnName": "elevation",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "endDate",
+            "columnName": "endDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fuelUsed",
+            "columnName": "fuelUsed",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "isPrivate",
+            "columnName": "isPrivate",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "maxSpeed",
+            "columnName": "maxSpeed",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "previewPolyline",
+            "columnName": "previewPolyline",
+            "affinity": "BLOB"
+          },
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startDate",
+            "columnName": "startDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleIsCustom",
+            "columnName": "titleIsCustom",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tripDescription",
+            "columnName": "tripDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isTransfer",
+            "columnName": "isTransfer",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isTrackProcessed",
+            "columnName": "isTrackProcessed",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "fuelCurrency",
+            "columnName": "fuelCurrency",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "vehicleId",
+            "columnName": "vehicleId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "xpEarned",
+            "columnName": "xpEarned",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "placesMatchedAt",
+            "columnName": "placesMatchedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "serverCreatedAt",
+            "columnName": "serverCreatedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "conflictVersion",
+            "columnName": "conflictVersion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "companionsJSON",
+            "columnName": "companionsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "recordingBreaksJSON",
+            "columnName": "recordingBreaksJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "segmentsJSON",
+            "columnName": "segmentsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "defaultValue": "'recorded'"
+          },
+          {
+            "fieldPath": "confirmation",
+            "columnName": "confirmation",
+            "affinity": "TEXT",
+            "defaultValue": "'confirmed'"
+          },
+          {
+            "fieldPath": "energyMode",
+            "columnName": "energyMode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "roadFillState",
+            "columnName": "roadFillState",
+            "affinity": "TEXT",
+            "defaultValue": "'unchecked'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "TripEntity_byStartDate",
+            "unique": false,
+            "columnNames": [
+              "startDate"
+            ],
+            "orders": [
+              "DESC"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `TripEntity_byStartDate` ON `${TABLE_NAME}` (`startDate` DESC)"
+          }
+        ]
+      },
+      {
+        "tableName": "TrackPointEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `altitude` REAL NOT NULL DEFAULT 0.0, `course` REAL NOT NULL DEFAULT -1.0, `horizontalAccuracy` REAL NOT NULL DEFAULT 0.0, `isInterpolated` INTEGER NOT NULL DEFAULT 0, `latitude` REAL NOT NULL DEFAULT 0.0, `longitude` REAL NOT NULL DEFAULT 0.0, `speed` REAL NOT NULL DEFAULT 0.0, `timestamp` INTEGER NOT NULL, `tripId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`tripId`) REFERENCES `TripEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitude",
+            "columnName": "altitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "course",
+            "columnName": "course",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "-1.0"
+          },
+          {
+            "fieldPath": "horizontalAccuracy",
+            "columnName": "horizontalAccuracy",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "isInterpolated",
+            "columnName": "isInterpolated",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "speed",
+            "columnName": "speed",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "TrackPointEntity_byTripTimestamp",
+            "unique": false,
+            "columnNames": [
+              "tripId",
+              "timestamp"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `TrackPointEntity_byTripTimestamp` ON `${TABLE_NAME}` (`tripId`, `timestamp`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TripEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tripId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TripPhotoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `caption` TEXT, `capturedAt` INTEGER, `exifLatitude` REAL, `exifLongitude` REAL, `filename` TEXT NOT NULL DEFAULT '', `lastModifiedAt` INTEGER, `sortOrder` INTEGER NOT NULL DEFAULT 0, `syncStatus` INTEGER NOT NULL DEFAULT 0, `timestamp` INTEGER NOT NULL, `remoteURL` TEXT, `uploadStatus` INTEGER NOT NULL DEFAULT 0, `thumbnailURL` TEXT, `serverCreatedAt` INTEGER, `tripId` TEXT, `tripOrder` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`), FOREIGN KEY(`tripId`) REFERENCES `TripEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "caption",
+            "columnName": "caption",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "capturedAt",
+            "columnName": "capturedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "exifLatitude",
+            "columnName": "exifLatitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "exifLongitude",
+            "columnName": "exifLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "filename",
+            "columnName": "filename",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteURL",
+            "columnName": "remoteURL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "uploadStatus",
+            "columnName": "uploadStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "thumbnailURL",
+            "columnName": "thumbnailURL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "serverCreatedAt",
+            "columnName": "serverCreatedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tripOrder",
+            "columnName": "tripOrder",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "TripPhotoEntity_trip",
+            "unique": false,
+            "columnNames": [
+              "tripId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `TripPhotoEntity_trip` ON `${TABLE_NAME}` (`tripId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TripEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tripId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TripCheckpointEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER, `distanceFromStart` REAL NOT NULL DEFAULT 0.0, `elapsedFromStart` REAL NOT NULL DEFAULT 0.0, `lastModifiedAt` INTEGER, `latitude` REAL NOT NULL DEFAULT 0.0, `longitude` REAL NOT NULL DEFAULT 0.0, `name` TEXT, `photoId` TEXT, `photoIdsJSON` TEXT, `placeId` TEXT, `syncStatus` INTEGER NOT NULL DEFAULT 0, `timestamp` INTEGER NOT NULL, `userId` TEXT, `tripId` TEXT, `tripOrder` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`), FOREIGN KEY(`tripId`) REFERENCES `TripEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "distanceFromStart",
+            "columnName": "distanceFromStart",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "elapsedFromStart",
+            "columnName": "elapsedFromStart",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "photoId",
+            "columnName": "photoId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "photoIdsJSON",
+            "columnName": "photoIdsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "placeId",
+            "columnName": "placeId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tripOrder",
+            "columnName": "tripOrder",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "TripCheckpointEntity_trip",
+            "unique": false,
+            "columnNames": [
+              "tripId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `TripCheckpointEntity_trip` ON `${TABLE_NAME}` (`tripId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TripEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tripId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "VehicleEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `drive2URL` TEXT, `modTagsJSON` TEXT, `paintFinish` TEXT, `modsJSON` TEXT, `catalogModelId` TEXT, `catalogGenerationId` TEXT, `catalogVariantId` TEXT, `about` TEXT, `make` TEXT, `model` TEXT, `year` INTEGER NOT NULL DEFAULT 0, `bodyType` TEXT, `photosVisible` INTEGER NOT NULL DEFAULT 0, `mapVisible` INTEGER NOT NULL DEFAULT 1, `isArchived` INTEGER NOT NULL DEFAULT 0, `soldAt` INTEGER, `avatarEmoji` TEXT DEFAULT '🏎️', `avatarStyle` TEXT DEFAULT 'car', `cityConsumption` REAL NOT NULL DEFAULT 10.0, `createdAt` INTEGER, `fuelPrice` REAL NOT NULL DEFAULT 56.0, `highwayConsumption` REAL NOT NULL DEFAULT 6.0, `lastModifiedAt` INTEGER, `name` TEXT DEFAULT '', `fuelCurrency` TEXT, `dashboardUnits` TEXT DEFAULT 'app', `powertrain` TEXT DEFAULT 'fuel', `electricConsumption` REAL NOT NULL DEFAULT 0.0, `electricityPrice` REAL NOT NULL DEFAULT 0.0, `electricRangeKm` REAL NOT NULL DEFAULT 0.0, `odometerKm` REAL NOT NULL DEFAULT 0.0, `manualOdometerKm` REAL, `plate` TEXT, `plateVisible` INTEGER NOT NULL DEFAULT 0, `stickersJSON` TEXT, `syncStatus` INTEGER NOT NULL DEFAULT 0, `vehicleLevel` INTEGER NOT NULL DEFAULT 1, `vehicleType` TEXT DEFAULT 'car', `visibleToOthers` INTEGER NOT NULL DEFAULT 1, `userId` TEXT, `conflictVersion` INTEGER NOT NULL DEFAULT 0, `cardStyle` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "drive2URL",
+            "columnName": "drive2URL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "modTagsJSON",
+            "columnName": "modTagsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "paintFinish",
+            "columnName": "paintFinish",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "modsJSON",
+            "columnName": "modsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "catalogModelId",
+            "columnName": "catalogModelId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "catalogGenerationId",
+            "columnName": "catalogGenerationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "catalogVariantId",
+            "columnName": "catalogVariantId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "about",
+            "columnName": "about",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "make",
+            "columnName": "make",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "bodyType",
+            "columnName": "bodyType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "photosVisible",
+            "columnName": "photosVisible",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "mapVisible",
+            "columnName": "mapVisible",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "isArchived",
+            "columnName": "isArchived",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "soldAt",
+            "columnName": "soldAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "avatarEmoji",
+            "columnName": "avatarEmoji",
+            "affinity": "TEXT",
+            "defaultValue": "'🏎️'"
+          },
+          {
+            "fieldPath": "avatarStyle",
+            "columnName": "avatarStyle",
+            "affinity": "TEXT",
+            "defaultValue": "'car'"
+          },
+          {
+            "fieldPath": "cityConsumption",
+            "columnName": "cityConsumption",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "10.0"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fuelPrice",
+            "columnName": "fuelPrice",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "56.0"
+          },
+          {
+            "fieldPath": "highwayConsumption",
+            "columnName": "highwayConsumption",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "6.0"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "fuelCurrency",
+            "columnName": "fuelCurrency",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dashboardUnits",
+            "columnName": "dashboardUnits",
+            "affinity": "TEXT",
+            "defaultValue": "'app'"
+          },
+          {
+            "fieldPath": "powertrain",
+            "columnName": "powertrain",
+            "affinity": "TEXT",
+            "defaultValue": "'fuel'"
+          },
+          {
+            "fieldPath": "electricConsumption",
+            "columnName": "electricConsumption",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "electricityPrice",
+            "columnName": "electricityPrice",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "electricRangeKm",
+            "columnName": "electricRangeKm",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "odometerKm",
+            "columnName": "odometerKm",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "manualOdometerKm",
+            "columnName": "manualOdometerKm",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "plate",
+            "columnName": "plate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "plateVisible",
+            "columnName": "plateVisible",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "stickersJSON",
+            "columnName": "stickersJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "vehicleLevel",
+            "columnName": "vehicleLevel",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "vehicleType",
+            "columnName": "vehicleType",
+            "affinity": "TEXT",
+            "defaultValue": "'car'"
+          },
+          {
+            "fieldPath": "visibleToOthers",
+            "columnName": "visibleToOthers",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "conflictVersion",
+            "columnName": "conflictVersion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "cardStyle",
+            "columnName": "cardStyle",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "VehiclePhotoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `vehicleId` TEXT, `filename` TEXT NOT NULL DEFAULT '', `isMain` INTEGER NOT NULL DEFAULT 0, `sortOrder` INTEGER NOT NULL DEFAULT 0, `timestamp` INTEGER NOT NULL, `sourceTripId` TEXT, `remoteURL` TEXT, `thumbnailURL` TEXT, `uploadStatus` INTEGER NOT NULL DEFAULT 0, `syncStatus` INTEGER NOT NULL DEFAULT 0, `lastModifiedAt` INTEGER, `serverCreatedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vehicleId",
+            "columnName": "vehicleId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "filename",
+            "columnName": "filename",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "isMain",
+            "columnName": "isMain",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceTripId",
+            "columnName": "sourceTripId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "remoteURL",
+            "columnName": "remoteURL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "thumbnailURL",
+            "columnName": "thumbnailURL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "uploadStatus",
+            "columnName": "uploadStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "serverCreatedAt",
+            "columnName": "serverCreatedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "UserSettingsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `avatarEmoji` TEXT DEFAULT '🏎️', `bestStreak` INTEGER NOT NULL DEFAULT 0, `currentStreak` INTEGER NOT NULL DEFAULT 0, `distanceUnit` TEXT DEFAULT 'km', `fuelConsumption` REAL NOT NULL DEFAULT 7.8, `fuelCurrency` TEXT DEFAULT '€', `fuelPrice` REAL NOT NULL DEFAULT 56.0, `language` TEXT DEFAULT 'ru', `lastModifiedAt` INTEGER, `lastTripDate` INTEGER, `profileLevel` INTEGER NOT NULL DEFAULT 1, `profileXP` INTEGER NOT NULL DEFAULT 0, `selectedVehicleId` TEXT, `syncStatus` INTEGER NOT NULL DEFAULT 0, `themeMode` TEXT DEFAULT 'dark', `volumeUnit` TEXT DEFAULT 'liters', `conflictVersion` INTEGER NOT NULL DEFAULT 0, `avatarFrame` TEXT, `showPlusBadge` INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avatarEmoji",
+            "columnName": "avatarEmoji",
+            "affinity": "TEXT",
+            "defaultValue": "'🏎️'"
+          },
+          {
+            "fieldPath": "bestStreak",
+            "columnName": "bestStreak",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "currentStreak",
+            "columnName": "currentStreak",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "distanceUnit",
+            "columnName": "distanceUnit",
+            "affinity": "TEXT",
+            "defaultValue": "'km'"
+          },
+          {
+            "fieldPath": "fuelConsumption",
+            "columnName": "fuelConsumption",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "7.8"
+          },
+          {
+            "fieldPath": "fuelCurrency",
+            "columnName": "fuelCurrency",
+            "affinity": "TEXT",
+            "defaultValue": "'€'"
+          },
+          {
+            "fieldPath": "fuelPrice",
+            "columnName": "fuelPrice",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "56.0"
+          },
+          {
+            "fieldPath": "language",
+            "columnName": "language",
+            "affinity": "TEXT",
+            "defaultValue": "'ru'"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastTripDate",
+            "columnName": "lastTripDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "profileLevel",
+            "columnName": "profileLevel",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "profileXP",
+            "columnName": "profileXP",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "selectedVehicleId",
+            "columnName": "selectedVehicleId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "themeMode",
+            "columnName": "themeMode",
+            "affinity": "TEXT",
+            "defaultValue": "'dark'"
+          },
+          {
+            "fieldPath": "volumeUnit",
+            "columnName": "volumeUnit",
+            "affinity": "TEXT",
+            "defaultValue": "'liters'"
+          },
+          {
+            "fieldPath": "conflictVersion",
+            "columnName": "conflictVersion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "avatarFrame",
+            "columnName": "avatarFrame",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "showPlusBadge",
+            "columnName": "showPlusBadge",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "VisitedGeohashEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firstVisited` INTEGER, `hash6` TEXT, `lastVisited` INTEGER, `visitCount` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstVisited",
+            "columnName": "firstVisited",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "hash6",
+            "columnName": "hash6",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastVisited",
+            "columnName": "lastVisited",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "visitCount",
+            "columnName": "visitCount",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "pk"
+          ]
+        },
+        "indices": [
+          {
+            "name": "VisitedGeohashEntity_byHash6",
+            "unique": false,
+            "columnNames": [
+              "hash6"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `VisitedGeohashEntity_byHash6` ON `${TABLE_NAME}` (`hash6`)"
+          }
+        ]
+      },
+      {
+        "tableName": "GeocodeCacheEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cachedAt` INTEGER NOT NULL, `geohash5` TEXT NOT NULL DEFAULT '', `locality` TEXT, `region` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cachedAt",
+            "columnName": "cachedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "geohash5",
+            "columnName": "geohash5",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "locality",
+            "columnName": "locality",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "pk"
+          ]
+        },
+        "indices": [
+          {
+            "name": "GeocodeCacheEntity_byGeohash5",
+            "unique": false,
+            "columnNames": [
+              "geohash5"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `GeocodeCacheEntity_byGeohash5` ON `${TABLE_NAME}` (`geohash5`)"
+          }
+        ]
+      },
+      {
+        "tableName": "RoadEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `distanceKm` REAL NOT NULL DEFAULT 0.0, `endGeohash` TEXT, `firstDriven` INTEGER, `geohashSequence` TEXT, `id` TEXT, `lastDriven` INTEGER, `level` INTEGER NOT NULL DEFAULT 1, `name` TEXT, `rarity` TEXT DEFAULT 'common', `startGeohash` TEXT, `timesDriven` INTEGER NOT NULL DEFAULT 1)",
+        "fields": [
+          {
+            "fieldPath": "pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceKm",
+            "columnName": "distanceKm",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "endGeohash",
+            "columnName": "endGeohash",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstDriven",
+            "columnName": "firstDriven",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "geohashSequence",
+            "columnName": "geohashSequence",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastDriven",
+            "columnName": "lastDriven",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rarity",
+            "columnName": "rarity",
+            "affinity": "TEXT",
+            "defaultValue": "'common'"
+          },
+          {
+            "fieldPath": "startGeohash",
+            "columnName": "startGeohash",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "timesDriven",
+            "columnName": "timesDriven",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "pk"
+          ]
+        }
+      },
+      {
+        "tableName": "JourneyEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `userId` TEXT, `title` TEXT, `startDate` INTEGER NOT NULL, `endDate` INTEGER, `excludedTripIdsJSON` TEXT, `coverPhotoId` TEXT, `isPrivate` INTEGER NOT NULL DEFAULT 1, `syncStatus` INTEGER NOT NULL DEFAULT 0, `conflictVersion` INTEGER NOT NULL DEFAULT 1, `lastModifiedAt` INTEGER, `serverCreatedAt` INTEGER, `createdAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startDate",
+            "columnName": "startDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endDate",
+            "columnName": "endDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "excludedTripIdsJSON",
+            "columnName": "excludedTripIdsJSON",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coverPhotoId",
+            "columnName": "coverPhotoId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isPrivate",
+            "columnName": "isPrivate",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "conflictVersion",
+            "columnName": "conflictVersion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "lastModifiedAt",
+            "columnName": "lastModifiedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "serverCreatedAt",
+            "columnName": "serverCreatedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "JourneyEntity_byStartDate",
+            "unique": false,
+            "columnNames": [
+              "startDate"
+            ],
+            "orders": [
+              "DESC"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `JourneyEntity_byStartDate` ON `${TABLE_NAME}` (`startDate` DESC)"
+          }
+        ]
+      },
+      {
+        "tableName": "PlaceEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `cell` TEXT NOT NULL, `latitude` REAL NOT NULL DEFAULT 0.0, `longitude` REAL NOT NULL DEFAULT 0.0, `name` TEXT, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cell",
+            "columnName": "cell",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "PlaceEntity_byCell",
+            "unique": false,
+            "columnNames": [
+              "cell"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `PlaceEntity_byCell` ON `${TABLE_NAME}` (`cell`)"
+          }
+        ]
+      },
+      {
+        "tableName": "PlacePassEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `placeId` TEXT NOT NULL, `tripId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `elapsedFromStart` REAL NOT NULL DEFAULT 0.0, `distanceFromStart` REAL NOT NULL DEFAULT 0.0, `course` REAL NOT NULL DEFAULT -1.0, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "placeId",
+            "columnName": "placeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elapsedFromStart",
+            "columnName": "elapsedFromStart",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "distanceFromStart",
+            "columnName": "distanceFromStart",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "course",
+            "columnName": "course",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "-1.0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "PlacePassEntity_byPlace",
+            "unique": false,
+            "columnNames": [
+              "placeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `PlacePassEntity_byPlace` ON `${TABLE_NAME}` (`placeId`)"
+          },
+          {
+            "name": "PlacePassEntity_byTrip",
+            "unique": false,
+            "columnNames": [
+              "tripId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `PlacePassEntity_byTrip` ON `${TABLE_NAME}` (`tripId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "RevealedCellEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cellCount` INTEGER NOT NULL DEFAULT 0, `cells` BLOB, `geometry` BLOB, `key` TEXT, `updatedAt` INTEGER, `version` INTEGER NOT NULL DEFAULT 1)",
+        "fields": [
+          {
+            "fieldPath": "pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cellCount",
+            "columnName": "cellCount",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "cells",
+            "columnName": "cells",
+            "affinity": "BLOB"
+          },
+          {
+            "fieldPath": "geometry",
+            "columnName": "geometry",
+            "affinity": "BLOB"
+          },
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "pk"
+          ]
+        },
+        "indices": [
+          {
+            "name": "RevealedCellEntity_byKey",
+            "unique": true,
+            "columnNames": [
+              "key"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `RevealedCellEntity_byKey` ON `${TABLE_NAME}` (`key`)"
+          }
+        ]
+      },
+      {
+        "tableName": "DiscoveryEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `finders` INTEGER, `firstFinderAt` INTEGER, `firstFinderName` TEXT, `foundAt` INTEGER NOT NULL, `key` TEXT NOT NULL, `kind` TEXT NOT NULL, `latitude` REAL NOT NULL DEFAULT 0.0, `longitude` REAL NOT NULL DEFAULT 0.0, `rarity` TEXT, `story` TEXT, `symbol` TEXT NOT NULL, `title` TEXT, `tripId` TEXT NOT NULL, `verified` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "finders",
+            "columnName": "finders",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "firstFinderAt",
+            "columnName": "firstFinderAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "firstFinderName",
+            "columnName": "firstFinderName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "foundAt",
+            "columnName": "foundAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
+          },
+          {
+            "fieldPath": "rarity",
+            "columnName": "rarity",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "story",
+            "columnName": "story",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "symbol",
+            "columnName": "symbol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified",
+            "columnName": "verified",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '222af0032984ec51c256f47f917e7460')"
+    ]
+  }
+}
