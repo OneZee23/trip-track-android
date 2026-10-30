@@ -1,0 +1,41 @@
+name: Android
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test Python tools
+        run: |
+          python3 -m unittest discover -s tools/strings -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/parity -p 'test_*.py' -v
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install project SDK
+        # core:map has no ndkVersion or externalNativeBuild yet. Add its pinned NDK here when it does.
+        run: sdkmanager 'platforms;android-37.2' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+      - name: Test and build debug APK
+        run: ./gradlew --no-daemon test :app:assembleDebug

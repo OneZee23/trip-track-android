@@ -1,6 +1,12 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+}
+
+val appVersion = Properties().apply {
+    rootProject.layout.projectDirectory.file("version.properties").asFile.inputStream().use(::load)
 }
 
 android {
@@ -14,8 +20,8 @@ android {
         applicationId = "com.onezee.triptrack"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = appVersion.getProperty("versionCode").toInt()
+        versionName = requireNotNull(appVersion.getProperty("versionName"))
     }
     buildTypes {
         debug {
