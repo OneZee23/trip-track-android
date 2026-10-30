@@ -174,7 +174,8 @@ class FogLayer private constructor(private val state: Long) : AutoCloseable {
         if (mapView.isDestroyed) return
         try {
             mapView.queueEvent {
-                synchronized(lock) { if (!closed) NativeFog.nReleaseCoverage(state) }
+                val released = synchronized(lock) { !closed && NativeFog.nReleaseCoverage(state) }
+                Log.d(TAG, "coverage texture released on the GL thread: $released")
             }
         } catch (_: IllegalStateException) {
             // No renderer yet: nothing has been drawn, so nothing is held.

@@ -91,7 +91,14 @@ internal class MapController(
     // Inputs
 
     fun setFog(value: MapFog?) {
-        if (value == fog) return
+        // The layer by identity, as FogMeshSignature does: a data class comparison would walk every
+        // point of a large library on the main thread at each recomposition.
+        val previous = fog
+        if (value === previous || (value != null && previous != null && value.revealed === previous.revealed &&
+                value.look == previous.look && value.liveReveal == previous.liveReveal)
+        ) {
+            return
+        }
         fog = value
         val layer = if (value != null) ensureFog() else fogLayer
         layer ?: return
