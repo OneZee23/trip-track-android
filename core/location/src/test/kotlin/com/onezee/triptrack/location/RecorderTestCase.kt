@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.onezee.triptrack.data.DataEnvironment
 import com.onezee.triptrack.data.RoomPlaceStore
 import com.onezee.triptrack.data.RoomRecordingStore
+import com.onezee.triptrack.data.RoomRoadStore
 import com.onezee.triptrack.data.RoomSettingsStore
 import com.onezee.triptrack.data.RoomTripRepository
 import com.onezee.triptrack.data.RoomVehiclePhotoStore
@@ -24,6 +25,7 @@ import com.onezee.triptrack.location.recording.TripFinisher
 import com.onezee.triptrack.location.recording.TripNotices
 import com.onezee.triptrack.location.recording.TripRecorder
 import com.onezee.triptrack.location.world.BadgeLedgerStore
+import com.onezee.triptrack.location.world.StoreRoadCollector
 import com.onezee.triptrack.location.world.TrackPostProcessing
 import com.onezee.triptrack.location.world.TripNamer
 import com.onezee.triptrack.location.world.TripRewards
@@ -104,7 +106,10 @@ abstract class RecorderTestCase {
             repo, store, settings, vehicles, badges,
             zone = { ZoneOffset.UTC }, weekFields = { WeekFields.of(Locale.ROOT) }, clock = { now },
         )
-        world = TripWorldEntry(repo, rewards, places, sync = sink, localUserId = { localUserId }, clock = { now })
+        world = TripWorldEntry(
+            repo, rewards, places, sync = sink, localUserId = { localUserId },
+            roads = StoreRoadCollector(RoomRoadStore(db)) { now }, clock = { now },
+        )
         postProcessing = TrackPostProcessing(repo, store, sink)
         val namer = TripNamer(repo, store, { null }, sink, isOffline = { true }, autoTitle = { "auto" })
         lateinit var current: TripRecorder

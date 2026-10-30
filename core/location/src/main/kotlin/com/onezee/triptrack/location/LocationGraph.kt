@@ -7,6 +7,7 @@ import com.onezee.triptrack.data.DataEnvironment
 import com.onezee.triptrack.data.GeohashOf
 import com.onezee.triptrack.data.PlaceStore
 import com.onezee.triptrack.data.RoomRecordingStore
+import com.onezee.triptrack.data.RoomRoadStore
 import com.onezee.triptrack.data.SettingsStore
 import com.onezee.triptrack.data.TerritoryStore
 import com.onezee.triptrack.data.TripRepository
@@ -42,7 +43,7 @@ import com.onezee.triptrack.location.service.RecordingTexts
 import com.onezee.triptrack.location.world.AndroidReverseGeocoder
 import com.onezee.triptrack.location.world.PreferencesBadgeLedgerStore
 import com.onezee.triptrack.location.world.RevealIngest
-import com.onezee.triptrack.location.world.RoadCollector
+import com.onezee.triptrack.location.world.StoreRoadCollector
 import com.onezee.triptrack.location.world.TrackPostProcessing
 import com.onezee.triptrack.location.world.TripNamer
 import com.onezee.triptrack.location.world.TripRewards
@@ -88,7 +89,7 @@ class LocationGraph(
     /** iOS: TripAutoTitle.generate. */
     autoTitle: (Instant) -> String,
     isOffline: () -> Boolean,
-    roads: RoadCollector = RoadCollector.None,
+    /** The fog module's ingest of a finished track; nothing until core:map provides it. */
     reveal: RevealIngest = RevealIngest.None,
 ) {
     val scope = CoroutineScope(
@@ -108,7 +109,7 @@ class LocationGraph(
 
     private val recordingStore = RoomRecordingStore(db, environment)
     private val rewards = TripRewards(trips, recordingStore, settings, vehicles, PreferencesBadgeLedgerStore(context))
-    val world = TripWorldEntry(trips, rewards, places, sync, { environment.localUserId() }, roads, reveal)
+    val world = TripWorldEntry(trips, rewards, places, sync, { environment.localUserId() }, StoreRoadCollector(RoomRoadStore(db)), reveal)
     val postProcessing = TrackPostProcessing(trips, recordingStore, sync)
     val namer = TripNamer(trips, recordingStore, AndroidReverseGeocoder(context), sync, isOffline, autoTitle)
     private var recorderRef: TripRecorder? = null

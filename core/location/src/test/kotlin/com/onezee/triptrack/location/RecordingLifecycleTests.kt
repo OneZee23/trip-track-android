@@ -159,6 +159,24 @@ class RecordingLifecycleTests : RecorderTestCase() {
         assertFalse(recorder.state.value.isFinishing)
     }
 
+    // iOS: RoadCollectionManager.processTrip through TripWorldEntry.rewards.
+    @Test
+    fun theSameRoadTwiceLevelsTheRoadAndCountsBothTrips() = test {
+        started()
+        drive(straight(0..180))
+        val first = assertIs<StopOutcome.Saved>(recorder.stop()).rewards.roadCard!!
+        assertTrue(first.isNew)
+        assertEquals(1, first.timesDriven)
+        now = TrackTestKit.at(4_000.0)
+        started()
+        drive(straight(4_000..4_180))
+        val second = assertIs<StopOutcome.Saved>(recorder.stop()).rewards.roadCard!!
+        assertEquals(2, second.timesDriven, "the history count includes the earlier trip")
+        assertFalse(second.isNew)
+        val road = db.mapDao().roads().single()
+        assertEquals(2, road.timesDriven)
+    }
+
     @Test
     fun aShortHopIsDeletedAsJunkWithItsJournal() = test {
         val id = started()
