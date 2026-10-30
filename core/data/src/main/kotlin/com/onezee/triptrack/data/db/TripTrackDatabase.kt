@@ -10,6 +10,7 @@ import com.onezee.triptrack.data.db.dao.DiscoveryDao
 import com.onezee.triptrack.data.db.dao.JourneyDao
 import com.onezee.triptrack.data.db.dao.MapDao
 import com.onezee.triptrack.data.db.dao.PlaceDao
+import com.onezee.triptrack.data.db.dao.RecordingDao
 import com.onezee.triptrack.data.db.dao.SettingsDao
 import com.onezee.triptrack.data.db.dao.TripDao
 import com.onezee.triptrack.data.db.dao.VehicleDao
@@ -71,6 +72,7 @@ abstract class TripTrackDatabase : RoomDatabase() {
     abstract fun discoveryDao(): DiscoveryDao
     abstract fun mapDao(): MapDao
     abstract fun wipeDao(): WipeDao
+    abstract fun recordingDao(): RecordingDao
 
     companion object {
         const val FILE_NAME = "TripTrack.db"
