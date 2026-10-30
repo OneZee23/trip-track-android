@@ -70,14 +70,19 @@ class AutoTripController(
     private val notices: AutoTripNotices,
     /** Make this car the next trip's, if it may take trips (archived and sold cars may not). */
     private val selectVehicle: suspend (UUID) -> Unit,
-    /** Start the foreground service for a recording that has just begun. */
-    private val ensureRecordingService: () -> Unit,
+    /** Start the foreground service for a recording that has just begun; false if the system refused. */
+    private val ensureRecordingService: () -> Boolean,
     private val scope: CoroutineScope,
     private val clock: () -> Instant = Instant::now,
+    /** The auto-stop timer's wait; tests replace it to fire the timer without waiting minutes. */
+    private val wait: suspend (millis: Long) -> Unit = { delay(it) },
 ) : RecorderListener {
     private val tracker = RecordingMovementTracker()
     private val lastEvents = mutableMapOf<Pair<Boolean, String>, Instant>()
-    private var stopTimer: Job? = null
+    internal var stopTimer: Job? = null
+        private set
+    internal var pendingRestart: Job? = null
+        private set
 
     /** iOS: effectiveStopMode, «who started it stops it». */
     private val effectiveStopMode: AutoRecordMode
@@ -143,8 +148,8 @@ class AutoTripController(
                 cancelAutoStopTimer()
                 autoStopTrip()
                 // A moment for the stop notice to show before the new trip starts.
-                scope.launch {
-                    delay(1_000)
+                pendingRestart = scope.launch {
+                    wait(1_000)
                     if (!recorder.state.value.isRecording) triggerTripStart(null)
                 }
             } else {
@@ -284,7 +289,12 @@ class AutoTripController(
             }
             is StartResult.Started -> Unit
         }
-        ensureRecordingService()
+        if (!ensureRecordingService()) {
+            // No service, no GPS: a recording that would write nothing. Say so instead.
+            recorder.stop()
+            notices.autoStartFailed(StartRefusal.unknown)
+            return
+        }
         if (confirmation == TripConfirmation.draft) memory.hasRemindedForCurrentTrip = true
         estimatedStart?.let { start -> if (start < clock()) recorder.backdate(start) }
     }
@@ -309,7 +319,13 @@ class AutoTripController(
         synchronized(this) {
             stopTimer?.cancel()
             stopTimer = scope.launch {
-                delay((AutoTripPolicy.autoStopDelaySeconds(minutes) * 1000).toLong())
+                wait((AutoTripPolicy.autoStopDelaySeconds(minutes) * 1000).toLong())
+                // Fired: the stop below ends the recording, and the end cancels the timer; it must
+                // not cancel this very coroutine halfway through the finish.
+                val self = coroutineContext[Job]
+                synchronized(this@AutoTripController) {
+                    if (stopTimer === self) stopTimer = null
+                }
                 autoStopTrip()
             }
         }

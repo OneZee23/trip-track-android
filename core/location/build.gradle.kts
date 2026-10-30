@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.play.services.location)
 
     testImplementation(testFixtures(project(":core:logic")))
+    testImplementation(libs.room.runtime)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.robolectric)
