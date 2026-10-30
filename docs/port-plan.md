@@ -17,7 +17,7 @@ who moves from an iPhone to an Android phone keeps their trips, atlas, places an
 | Network | OkHttp and kotlinx.serialization behind a thin `ApiClient` mirroring iOS `APIClient` | The envelope, error codes and refresh logic are ported, not reinvented |
 | Background | Foreground service of type `location` for recording, WorkManager for sync | Android 14+ rules |
 | Auto-start | Activity Recognition `IN_VEHICLE`, Bluetooth A2DP connection of the chosen car stereo, Android Auto `CarConnection` | Equivalents of the iOS motion, audio-route and CarPlay triggers |
-| Map | Decided by the fog spike (`docs/fog-spike.md`) | Candidates: MapLibre Native with OpenFreeMap vector tiles; Google Maps SDK (needs a billing-enabled Cloud project) |
+| Map | MapLibre Native, OpenGL ES build pinned to 13.7.1, OpenFreeMap vector tiles; the fog is a C++ custom layer running the iOS 0.8.0 Metal passes on GLES 3.0 | Decided by the fog spike (`docs/fog-spike.md`): the fog draws in the map's own frame, costs 0.07–0.22 ms per frame; no key, no billing |
 | Tests | JUnit 4 and kotlin.test on the JVM, Robolectric where Android types are needed, Roborazzi for screenshots | Agents can verify UI without an emulator |
 | Ids | `applicationId` `com.onezee.triptrack`, debug suffix `.dev` | Debug and release install side by side, like the iOS `.dev` bundle |
 
