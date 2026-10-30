@@ -1,0 +1,26 @@
+# Gradle and build output
+.gradle/
+.gradle-home/
+build/
+.kotlin/
+local.properties
+*.apk
+*.aab
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Signing and secrets never live in this public repository
+*.jks
+*.keystore
+keystore.properties
+secrets.properties
+google-services.json
+
+# Agent scratch
+.codex-out/
