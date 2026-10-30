@@ -38,8 +38,22 @@ object MeResponseSerializer : IosObjectSerializer<MeResponse>({ MeResponse.gener
         tolerate("photos", ListSerializer(ProfilePhotoDTO.serializer()), json)
         tolerate("pinnedTripIds", ListSerializer(UUIDSerializer), json)
     })
+
+    override fun write(value: JsonObject): JsonObject = JsonObject(value.toMutableMap().apply {
+        // Presence is local decoder state; preserve an explicit bio clear.
+        val provided = remove("bioProvided") == JsonPrimitive(true)
+        if (provided) putIfAbsent("bio", JsonNull)
+    })
 }
 
 object PlusStatusResponseSerializer : IosObjectSerializer<PlusStatusResponse>({ PlusStatusResponse.generatedSerializer() }) {
     override fun read(value: JsonObject, json: Json): JsonObject = value.withoutNulls(setOf("active", "isTrial"))
+}
+
+// iOS: ProfilePhotoDTO.swift (optional gallery metadata must not break me)
+object ProfilePhotoDTOSerializer : IosObjectSerializer<ProfilePhotoDTO>({ ProfilePhotoDTO.generatedSerializer() }) {
+    override fun read(value: JsonObject, json: Json): JsonObject = JsonObject(value.toMutableMap().apply {
+        for (key in listOf("thumbnailUrl", "originalUrl", "takenAt")) tolerate(key, String.serializer(), json)
+        tolerate("sortOrder", Int.serializer(), json)
+    })
 }

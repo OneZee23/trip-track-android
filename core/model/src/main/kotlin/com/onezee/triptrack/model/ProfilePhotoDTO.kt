@@ -4,14 +4,17 @@
 
 package com.onezee.triptrack.model
 
+import com.onezee.triptrack.model.serialization.ProfilePhotoDTOSerializer
 import com.onezee.triptrack.model.serialization.UUIDSerializer
 import java.util.UUID
 import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 // iOS: ProfilePhotoDTO.swift
-@Serializable
+@KeepGeneratedSerializer
+@Serializable(with = ProfilePhotoDTOSerializer::class)
 @kotlinx.serialization.json.JsonIgnoreUnknownKeys
 data class ProfilePhotoDTO(
     val id: UUID,
