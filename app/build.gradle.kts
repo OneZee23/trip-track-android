@@ -41,6 +41,13 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    bundle {
+        language {
+            // The in-app language picker switches to any of the 13 languages at once; Play's
+            // per-language splits would leave the ones the phone did not install missing.
+            enableSplit = false
+        }
+    }
 }
 
 kotlin {
