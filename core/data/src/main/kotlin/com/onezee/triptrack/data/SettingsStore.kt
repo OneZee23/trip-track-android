@@ -7,6 +7,20 @@ import com.onezee.triptrack.data.db.entity.UserSettingsEntity
 import java.time.Instant
 import java.util.UUID
 
+/** iOS: the settings half of SettingsManager. The row's id is the local user id. */
+interface SettingsStore {
+    suspend fun settings(): UserSettingsEntity?
+    /** The first launch creates the row with a fresh identity. */
+    suspend fun loadOrCreate(): UserSettingsEntity
+    /** Writes and stamps `lastModifiedAt`; `syncStatus` is left alone. Null when there is no row. */
+    suspend fun save(transform: (UserSettingsEntity) -> UserSettingsEntity): UserSettingsEntity?
+    suspend fun migrateUserIdIfNeeded(userId: UUID, flags: DataFlags)
+
+    companion object {
+        const val USER_ID_MIGRATION_KEY = "didMigrateUserId"
+    }
+}
+
 /**
  * The settings row. Its id is the local user id every entity is stamped with.
  *
@@ -16,21 +30,21 @@ import java.util.UUID
  * looked a year old, and every pull wiped it. Scheduling the upload (five seconds later on iOS) is
  * the caller's.
  */
-class SettingsStore(
+class RoomSettingsStore(
     private val db: TripTrackDatabase,
     private val clock: () -> Instant = Instant::now,
-) {
+) : SettingsStore {
     private val dao = db.settingsDao()
 
-    suspend fun settings(): UserSettingsEntity? = dao.settings()
+    override suspend fun settings(): UserSettingsEntity? = dao.settings()
 
     /** iOS: loadSettings. The first launch creates the row with a fresh identity. */
-    suspend fun loadOrCreate(): UserSettingsEntity = db.withTransaction {
+    override suspend fun loadOrCreate(): UserSettingsEntity = db.withTransaction {
         dao.settings() ?: UserSettingsEntity(id = UUID.randomUUID()).also { dao.upsert(it) }
     }
 
     /** iOS: saveSettings. Every path to saving carries the stamp, including ones nobody routed here. */
-    suspend fun save(transform: (UserSettingsEntity) -> UserSettingsEntity): UserSettingsEntity? = db.withTransaction {
+    override suspend fun save(transform: (UserSettingsEntity) -> UserSettingsEntity): UserSettingsEntity? = db.withTransaction {
         val current = dao.settings() ?: return@withTransaction null
         val saved = transform(current).copy(id = current.id, lastModifiedAt = clock())
         dao.upsert(saved)
@@ -42,16 +56,12 @@ class SettingsStore(
      * existed get it once. Cars created later stay without it on iOS as well, which is why the
      * vehicle photo recovery does not filter by user.
      */
-    suspend fun migrateUserIdIfNeeded(userId: UUID, flags: DataFlags) {
-        if (flags.get(USER_ID_MIGRATION_KEY)) return
+    override suspend fun migrateUserIdIfNeeded(userId: UUID, flags: DataFlags) {
+        if (flags.get(SettingsStore.USER_ID_MIGRATION_KEY)) return
         db.withTransaction {
             db.tripDao().stampMissingUserId(userId)
             db.vehicleDao().stampMissingUserId(userId)
         }
-        flags.set(USER_ID_MIGRATION_KEY, true)
-    }
-
-    companion object {
-        const val USER_ID_MIGRATION_KEY = "didMigrateUserId"
+        flags.set(SettingsStore.USER_ID_MIGRATION_KEY, true)
     }
 }

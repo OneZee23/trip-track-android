@@ -649,12 +649,13 @@ class RoomTripRepository(
         val base = existing ?: TripEntity(id = p.id, startDate = p.startDate)
 
         // Old servers omit the breaks: an older peer knowing only points must not erase a pause.
-        val breaks = if (!hasLocalEdits && p.recordingBreaks != null) JsonColumns.encodeBreaks(p.recordingBreaks!!)
-        else base.recordingBreaksJSON
+        val remoteBreaks = p.recordingBreaks
+        val breaks = if (!hasLocalEdits && remoteBreaks != null) JsonColumns.encodeBreaks(remoteBreaks) else base.recordingBreaksJSON
         // Source (0.8.0) and energy mode (0.8.3): absent key or an unsent edit leaves the local
         // value. A known mode is the other phone's answer, «Auto» included (stored as NULL); an
         // unknown one is silence.
-        val source = if (!hasLocalEdits && p.source != null) p.source!!.rawValue else base.source
+        val remoteSource = p.source
+        val source = if (!hasLocalEdits && remoteSource != null) remoteSource.rawValue else base.source
         val remoteMode = TripEnergyMode.fromRawValue(p.energyMode ?: "")
         val energyMode = if (!hasLocalEdits && remoteMode != null) remoteMode.stored else base.energyMode
         // The server's preview is the ECHO of ours, and under the home privacy zone (0.8.2) it comes

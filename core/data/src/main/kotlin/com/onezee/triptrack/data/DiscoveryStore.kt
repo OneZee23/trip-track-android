@@ -13,18 +13,12 @@ import java.time.Instant
 import java.util.UUID
 
 /**
- * Finds in the database: one row per find, keyed by the derived id.
+ * iOS: DiscoveryStore. Finds in the database, one row per find, keyed by the derived id.
  *
  * **The first find wins.** A repeated upsert leaves an existing row alone: the seal carries the
  * date the person was there FIRST, and a second pass must not redate it or move it to a new trip.
- * Hence [upsert] returns ONLY what was not there: «found the same thing twice» is an empty list.
- *
- * The history cache of milestones (`discoveries.extremes`) is the caller's to wipe alongside
- * [wipe]: it lives in preferences, not here.
  */
-class DiscoveryStore(private val db: TripTrackDatabase) {
-    private val dao = db.discoveryDao()
-
+interface DiscoveryStore {
     /**
      * A find that arrived by pull. Its own type for one field: the coordinate is OPTIONAL. Zeros in
      * a `Discovery` are a point in the ocean, not «unknown».
@@ -43,8 +37,35 @@ class DiscoveryStore(private val db: TripTrackDatabase) {
         val verified: Boolean,
     )
 
+    /** Records finds; returns ONLY those the database did not have. */
+    suspend fun upsert(items: List<Discovery>): List<Discovery>
+    suspend fun wipe()
+    /** Appends the server's answer to a find; false for an unknown or wiped id. */
+    suspend fun apply(reveal: SecretRevealResponse): Boolean
+    /** Finds from the second phone; true when anything changed. */
+    suspend fun applyRemote(items: List<Remote>): Boolean
+    suspend fun discovery(id: UUID): Discovery?
+    /** Everything found, newest first. */
+    suspend fun all(): List<Discovery>
+    suspend fun discoveries(kind: DiscoveryKind): List<Discovery>
+    suspend fun contains(id: UUID): Boolean
+}
+
+/**
+ * iOS: DiscoveryStore on Room.
+ *
+ * **The first find wins.** A repeated upsert leaves an existing row alone: the seal carries the
+ * date the person was there FIRST, and a second pass must not redate it or move it to a new trip.
+ * Hence [upsert] returns ONLY what was not there: «found the same thing twice» is an empty list.
+ *
+ * The history cache of milestones (`discoveries.extremes`) is the caller's to wipe alongside
+ * [wipe]: it lives in preferences, not here.
+ */
+class RoomDiscoveryStore(private val db: TripTrackDatabase) : DiscoveryStore {
+    private val dao = db.discoveryDao()
+
     /** Records finds and returns only those the database did not have. */
-    suspend fun upsert(items: List<Discovery>): List<Discovery> {
+    override suspend fun upsert(items: List<Discovery>): List<Discovery> {
         if (items.isEmpty()) return emptyList()
         return db.withTransaction {
             // One read for the whole batch: a parsed track brings dozens of finds.
@@ -58,7 +79,7 @@ class DiscoveryStore(private val db: TripTrackDatabase) {
     }
 
     /** iOS: wipe(). The account deletion; the extremes cache is cleared by the caller. */
-    suspend fun wipe() {
+    override suspend fun wipe() {
         dao.deleteAll()
     }
 
@@ -69,7 +90,7 @@ class DiscoveryStore(private val db: TripTrackDatabase) {
      * from the server is «no text yet», not «no text any more». An answer for an unknown or wiped
      * id is ignored (false).
      */
-    suspend fun apply(reveal: SecretRevealResponse): Boolean {
+    override suspend fun apply(reveal: SecretRevealResponse): Boolean {
         val kind = DiscoveryKind.fromRawValue(reveal.kind) ?: return false
         val id = Discovery.id(kind, reveal.id)
         return db.withTransaction {
@@ -92,7 +113,7 @@ class DiscoveryStore(private val db: TripTrackDatabase) {
      * `foundAt`); a NEW row is created only where place AND trip are known, or it would be a seal in
      * the Gulf of Guinea with nothing to open. Returns whether anything changed.
      */
-    suspend fun applyRemote(items: List<Remote>): Boolean {
+    override suspend fun applyRemote(items: List<DiscoveryStore.Remote>): Boolean {
         if (items.isEmpty()) return false
         return db.withTransaction {
             val known = items.map { it.id }.distinct().chunked(CHUNK)
@@ -126,14 +147,14 @@ class DiscoveryStore(private val db: TripTrackDatabase) {
     }
 
     /** One find by its derived id, for a retried reveal: the queue holds the id only. */
-    suspend fun discovery(id: UUID): Discovery? = dao.discovery(id)?.let(::discovery)
+    override suspend fun discovery(id: UUID): Discovery? = dao.discovery(id)?.let(::discovery)
 
     /** Everything found, newest first. */
-    suspend fun all(): List<Discovery> = dao.all().mapNotNull(::discovery)
+    override suspend fun all(): List<Discovery> = dao.all().mapNotNull(::discovery)
 
-    suspend fun discoveries(kind: DiscoveryKind): List<Discovery> = dao.ofKind(kind.rawValue).mapNotNull(::discovery)
+    override suspend fun discoveries(kind: DiscoveryKind): List<Discovery> = dao.ofKind(kind.rawValue).mapNotNull(::discovery)
 
-    suspend fun contains(id: UUID): Boolean = dao.discovery(id) != null
+    override suspend fun contains(id: UUID): Boolean = dao.discovery(id) != null
 
     private fun entity(item: Discovery) = DiscoveryEntity(
         id = item.id,

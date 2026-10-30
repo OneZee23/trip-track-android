@@ -334,10 +334,10 @@ class TripRepositoryEditTests : RoomTestCase() {
     fun testMissingUserIdIsStampedOnce() = test {
         val orphan = makeTrip(userId = null)
         val flags = DataFlags.InMemory()
-        SettingsStore(db).migrateUserIdIfNeeded(localUserId, flags)
+        RoomSettingsStore(db).migrateUserIdIfNeeded(localUserId, flags)
         assertEquals(localUserId, trip(orphan)?.userId)
         val later = makeTrip(userId = null)
-        SettingsStore(db).migrateUserIdIfNeeded(localUserId, flags)
+        RoomSettingsStore(db).migrateUserIdIfNeeded(localUserId, flags)
         assertNull(trip(later)?.userId, "a one-shot migration: the latch holds")
     }
 }

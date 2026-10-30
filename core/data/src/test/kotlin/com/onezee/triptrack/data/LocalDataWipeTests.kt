@@ -79,7 +79,7 @@ class LocalDataWipeTests : RoomTestCase() {
     @Test
     fun testTerritoryBackfillDoesNotLatchWithoutTrackPoints() = test {
         val flags = DataFlags.InMemory()
-        assertNull(TerritoryStore(db).backfillIfNeeded(flags, geohash))
+        assertNull(RoomTerritoryStore(db).backfillIfNeeded(flags, geohash))
         assertFalse(flags.get(TerritoryStore.BACKFILL_KEY), "no points yet is not the same as no territory")
     }
 
@@ -91,12 +91,12 @@ class LocalDataWipeTests : RoomTestCase() {
         )
         val flags = DataFlags.InMemory()
 
-        val added = TerritoryStore(db).backfillIfNeeded(flags, geohash)
+        val added = RoomTerritoryStore(db).backfillIfNeeded(flags, geohash)
 
         assertEquals(3, added?.size)
         assertTrue(flags.get(TerritoryStore.BACKFILL_KEY))
-        assertNull(TerritoryStore(db).backfillIfNeeded(flags, geohash), "latched work does not run twice")
-        assertEquals(3, TerritoryStore(db).visitedHashes().size)
+        assertNull(RoomTerritoryStore(db).backfillIfNeeded(flags, geohash), "latched work does not run twice")
+        assertEquals(3, RoomTerritoryStore(db).visitedHashes().size)
     }
 
     @Test
@@ -109,8 +109,8 @@ class LocalDataWipeTests : RoomTestCase() {
         }
         db.mapDao().insertVisited(listOf(VisitedGeohashEntity(hash6 = "stale")))
 
-        assertEquals(setOf("50.00,30.00"), TerritoryStore(db).rebuildFromTrips(geohash))
-        assertEquals(setOf("50.00,30.00"), TerritoryStore(db).visitedHashes())
+        assertEquals(setOf("50.00,30.00"), RoomTerritoryStore(db).rebuildFromTrips(geohash))
+        assertEquals(setOf("50.00,30.00"), RoomTerritoryStore(db).visitedHashes())
     }
 
     // MARK: RevealedLayerStoreTests, store half
@@ -122,7 +122,7 @@ class LocalDataWipeTests : RoomTestCase() {
 
     @Test
     fun testTilesAreUniqueByKeyAndWipedWithTheirLatch() = test {
-        val tiles = RevealedTileStore(db)
+        val tiles = RoomRevealedTileStore(db)
         tiles.upsert(listOf(RevealedCellEntity(key = "szgs0", cells = byteArrayOf(1), cellCount = 1, updatedAt = now)))
         tiles.upsert(listOf(RevealedCellEntity(key = "szgs0", cells = byteArrayOf(1, 2), cellCount = 2, updatedAt = now)))
 
@@ -143,7 +143,7 @@ class LocalDataWipeTests : RoomTestCase() {
         val early = insert(TripEntity(id = UUID.randomUUID(), startDate = now, endDate = now.plusSeconds(100), previewPolyline = byteArrayOf(1)))
         insert(TripEntity(id = UUID.randomUUID(), startDate = now, endDate = null, previewPolyline = byteArrayOf(3)))
         insert(TripEntity(id = UUID.randomUUID(), startDate = now, endDate = now, syncStatus = pendingDelete, previewPolyline = byteArrayOf(4)))
-        val tiles = RevealedTileStore(db)
+        val tiles = RoomRevealedTileStore(db)
 
         assertEquals(listOf(early, late), tiles.previews().map { it.id })
         assertEquals(listOf(early), tiles.previews(endedBefore = now.plusSeconds(150)).map { it.id })

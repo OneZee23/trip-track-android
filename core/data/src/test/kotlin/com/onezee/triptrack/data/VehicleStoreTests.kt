@@ -24,13 +24,13 @@ import org.junit.Before
 import org.junit.Test
 
 class VehicleStoreTests : RoomTestCase() {
-    private lateinit var photos: VehiclePhotoStore
-    private lateinit var store: VehicleStore
+    private lateinit var photos: RoomVehiclePhotoStore
+    private lateinit var store: RoomVehicleStore
 
     @Before
     fun makeStores() {
-        photos = VehiclePhotoStore(db, vehiclePhotos, sink)
-        store = VehicleStore(db, repo, photos, environment, sink)
+        photos = RoomVehiclePhotoStore(db, vehiclePhotos, sink)
+        store = RoomVehicleStore(db, repo, photos, environment, sink)
     }
 
     private suspend fun entity(id: UUID): VehicleEntity = assertNotNull(db.vehicleDao().vehicle(id))

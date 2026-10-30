@@ -116,7 +116,7 @@ class RemoteSettingsMergeTests : RoomTestCase() {
     /** A local save is dated, or an incoming pull reads it as older than itself and wipes it. */
     @Test
     fun testSavingStampsTheRow() = test {
-        val store = SettingsStore(db)
+        val store = RoomSettingsStore(db)
         store.loadOrCreate()
         val before = Instant.now().minusSeconds(1)
         store.save { it.copy(distanceUnit = "miles") }
@@ -126,7 +126,7 @@ class RemoteSettingsMergeTests : RoomTestCase() {
 
     @Test
     fun testIncomingDoesNotOverwriteAnEditWaitingToBeSent() = test {
-        val store = SettingsStore(db)
+        val store = RoomSettingsStore(db)
         val row = store.loadOrCreate()
         store.save { it.copy(distanceUnit = "miles") }
 
@@ -137,7 +137,7 @@ class RemoteSettingsMergeTests : RoomTestCase() {
 
     @Test
     fun testAGenuinelyNewerRemoteChoiceWins() = test {
-        val store = SettingsStore(db)
+        val store = RoomSettingsStore(db)
         val row = store.loadOrCreate()
         store.save { it.copy(distanceUnit = "km") }
         db.settingsDao().upsert(local().copy(lastModifiedAt = Instant.now().minusSeconds(3_600)))
@@ -161,7 +161,7 @@ class RemoteSettingsMergeTests : RoomTestCase() {
 
     @Test
     fun testLoadOrCreateMakesOneRowWithAFreshIdentity() = test {
-        val store = SettingsStore(db)
+        val store = RoomSettingsStore(db)
         val first = store.loadOrCreate()
         val second = store.loadOrCreate()
         assertEquals(first.id, second.id)

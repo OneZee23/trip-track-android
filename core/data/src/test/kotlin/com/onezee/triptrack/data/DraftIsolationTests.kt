@@ -63,8 +63,8 @@ class DraftIsolationTests : RoomTestCase() {
         val draft = makeTrip(TripConfirmation.draft)
         val real = makeTrip(TripConfirmation.confirmed)
         for (id in listOf(draft, real)) update(id) { it.copy(previewPolyline = byteArrayOf(1, 2, 3)) }
-        assertEquals(listOf(real), RevealedTileStore(db).previews().map { it.id })
-        assertEquals(listOf(real), RevealedTileStore(db).previews(ids = setOf(draft, real)).map { it.id })
+        assertEquals(listOf(real), RoomRevealedTileStore(db).previews().map { it.id })
+        assertEquals(listOf(real), RoomRevealedTileStore(db).previews(ids = setOf(draft, real)).map { it.id })
     }
 
     @Test
@@ -87,11 +87,11 @@ class DraftIsolationTests : RoomTestCase() {
         makeTrip(TripConfirmation.confirmed)
         makeTrip(TripConfirmation.draft, eastDegrees = 0.4) // thirty kilometres to the side: its own cells
         val flags = DataFlags.InMemory()
-        val added = TerritoryStore(db).backfillIfNeeded(flags, coarseGeohash).orEmpty()
+        val added = RoomTerritoryStore(db).backfillIfNeeded(flags, coarseGeohash).orEmpty()
         val draftCell = coarseGeohash.encode(45.0, 38.9 + 0.4)
         assertTrue(added.isNotEmpty())
         assertFalse(draftCell in added)
-        assertFalse(draftCell in TerritoryStore(db).visitedHashes())
+        assertFalse(draftCell in RoomTerritoryStore(db).visitedHashes())
     }
 
     @Test

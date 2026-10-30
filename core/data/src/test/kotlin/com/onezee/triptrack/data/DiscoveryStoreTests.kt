@@ -19,11 +19,11 @@ import org.junit.Test
 
 /** Writes only what is new, reads newest first; the same find twice is an empty answer, not a second seal. */
 class DiscoveryStoreTests : RoomTestCase() {
-    private lateinit var store: DiscoveryStore
+    private lateinit var store: RoomDiscoveryStore
 
     @Before
     fun makeStore() {
-        store = DiscoveryStore(db)
+        store = RoomDiscoveryStore(db)
     }
 
     private fun make(
