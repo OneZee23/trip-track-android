@@ -13,6 +13,9 @@ import com.onezee.triptrack.designsystem.strings.AppLanguage
  * (`autoStoreLocales` in the manifest). So there is no `appLanguage` key of ours; choosing
  * recreates the activity in the new language, as any configuration change does.
  *
+ * AppCompat reads and writes the choice through a live AppCompat activity, so this is used from
+ * the activity's composition, never from the application before one exists.
+ *
  * Until something is chosen, the app follows the phone with the iOS rule: walk the phone's
  * language list and take the first language the app has, else English. iOS also SAVES that first
  * guess (its widget reads the saved key); here it stays unsaved, so «system default» in the
