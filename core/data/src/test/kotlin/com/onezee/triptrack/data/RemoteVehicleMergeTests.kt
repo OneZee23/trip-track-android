@@ -2,6 +2,9 @@
 // VehicleDashboardUnitsWireTests.swift (pull half), VehicleStateTests.swift (sold/unsold over the wire)
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.logic.VehicleModTags
+import com.onezee.triptrack.logic.Drive2Link
+
 import com.onezee.triptrack.data.db.entity.VehicleEntity
 import com.onezee.triptrack.model.DashboardUnits
 import com.onezee.triptrack.model.Powertrain

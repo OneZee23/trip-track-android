@@ -3,6 +3,8 @@
 // VehiclePhotoRecoveryTests.swift (the store half)
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.logic.VehicleModTags
+
 import com.onezee.triptrack.data.db.entity.VehicleEntity
 import com.onezee.triptrack.data.db.entity.VehiclePhotoEntity
 import com.onezee.triptrack.data.sync.SyncAction

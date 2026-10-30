@@ -163,6 +163,13 @@ interface TripDao {
     )
     suspend fun pendingTrips(userId: UUID): List<TripEntity>
 
+    /** iOS: SyncCoordinator.countSyncedAlive/reuploadMissing. */
+    @Query("SELECT * FROM TripEntity WHERE syncStatus = ${WorldSql.SYNCED}")
+    suspend fun syncedTrips(): List<TripEntity>
+
+    @Query("SELECT * FROM TripPhotoEntity WHERE syncStatus = ${WorldSql.SYNCED}")
+    suspend fun syncedPhotos(): List<TripPhotoEntity>
+
     // MARK: Track points
 
     /** iOS: TripEntity.orderedTrackPoints. Time, then id, so equal seconds never swap places. */

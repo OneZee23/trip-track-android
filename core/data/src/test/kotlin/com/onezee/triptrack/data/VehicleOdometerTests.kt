@@ -2,6 +2,8 @@
 // (the reward/odometer split), VehicleStateTests.swift (recordable rule)
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.logic.VehicleLevelSystem
+
 import com.onezee.triptrack.data.db.entity.TripEntity
 import com.onezee.triptrack.data.db.entity.VehicleEntity
 import com.onezee.triptrack.model.TripOrigin

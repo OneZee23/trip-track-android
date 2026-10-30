@@ -3,6 +3,7 @@
 // SettingsManager.vehicleFromEntity (stickersJSON); VehicleModTags.swift; VehicleMod.swift
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.logic.RecordingBreaks
 import com.onezee.triptrack.model.TripCompanion
 import com.onezee.triptrack.model.TripSegment
 import com.onezee.triptrack.model.VehicleMod
@@ -49,11 +50,11 @@ internal object JsonColumns {
 
     /** Pause boundaries, normalized on the way in and on the way out. Empty is NULL. */
     fun encodeBreaks(breaks: List<Instant>): String? {
-        val normalized = normalizedBreaks(breaks)
+        val normalized = RecordingBreaks.normalized(breaks)
         return if (normalized.isEmpty()) null else json.encodeToString(instants, normalized)
     }
 
-    fun decodeBreaks(text: String?): List<Instant> = normalizedBreaks(decode(instants, text))
+    fun decodeBreaks(text: String?): List<Instant> = RecordingBreaks.normalized(decode(instants, text))
 
     /** Earned badge ids, `[String]`. */
     fun encodeStrings(list: List<String>): String = json.encodeToString(strings, list)
@@ -70,13 +71,6 @@ internal object JsonColumns {
 
     /** iOS: VehicleMod.decodeJSON. */
     fun decodeMods(text: String?): List<VehicleMod> = decode(mods, text)
-
-    /**
-     * iOS: RecordingBreaks.normalized: a set, sorted. `Instant` cannot hold the non-finite dates iOS
-     * filters out. Inlined here while `core:logic` ports RecordingBreaks; there must be one copy
-     * once both are merged.
-     */
-    fun normalizedBreaks(breaks: List<Instant>): List<Instant> = breaks.distinct().sorted()
 
     fun parseUuid(text: String): UUID? = if (uuidText.matches(text)) UUID.fromString(text) else null
 

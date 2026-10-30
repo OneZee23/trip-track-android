@@ -19,6 +19,13 @@ import com.onezee.triptrack.data.sync.SyncAction
 import com.onezee.triptrack.data.sync.SyncEntityType
 import com.onezee.triptrack.data.sync.SyncRequest
 import com.onezee.triptrack.data.sync.SyncRequestSink
+import com.onezee.triptrack.logic.Drive2Link
+import com.onezee.triptrack.logic.RecordingBreaks
+import com.onezee.triptrack.logic.VehicleLevelSystem
+import com.onezee.triptrack.logic.VehicleModTags
+import com.onezee.triptrack.logic.contains
+import com.onezee.triptrack.logic.earnsRewards
+import com.onezee.triptrack.logic.parse
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.JourneySyncPayload
@@ -847,7 +854,7 @@ class RoomTripRepository(
             p.drive2Url?.let { e = e.copy(drive2URL = Drive2Link.normalized(it) ?: "") }
             p.modTags?.let { e = e.copy(modTagsJSON = VehicleModTags.encodeJSON(it)) }
             p.paintFinish?.let { raw ->
-                val finish = if (raw.isEmpty()) VehicleFinish.gloss else vehicleFinish(raw)
+                val finish = if (raw.isEmpty()) VehicleFinish.gloss else VehicleFinish.parse(raw)
                 finish?.let { e = e.copy(paintFinish = it.rawValue) }
             }
             p.mods?.let { e = e.copy(modsJSON = JsonColumns.encodeMods(it)) }
@@ -1224,7 +1231,7 @@ class RoomTripRepository(
             distance = e.distance,
             maxSpeed = e.maxSpeed,
             averageSpeed = e.averageSpeed,
-            trackPoints = points.map(::trackPoint),
+            trackPoints = RecordingBreaks.annotate(points.map(::trackPoint), JsonColumns.decodeBreaks(e.recordingBreaksJSON)),
             photos = photoRows.map(::photo),
             checkpoints = checkpoints,
             segments = segments,

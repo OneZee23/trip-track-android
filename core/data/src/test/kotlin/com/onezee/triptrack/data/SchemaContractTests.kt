@@ -2,6 +2,9 @@
 // VehicleModTags), CoreDataV23MigrationTests.swift (the unordered points and their index)
 package com.onezee.triptrack.data
 
+import com.onezee.triptrack.logic.VehicleModTags
+import com.onezee.triptrack.logic.Drive2Link
+
 import com.onezee.triptrack.data.db.dao.WorldSql
 import com.onezee.triptrack.data.db.entity.TrackPointEntity
 import com.onezee.triptrack.data.db.entity.TripEntity
