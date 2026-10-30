@@ -49,4 +49,6 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
+    // The map demo screen (src/debug) exists only in debug builds; no release screen uses the map yet.
+    debugImplementation(project(":core:map"))
 }
