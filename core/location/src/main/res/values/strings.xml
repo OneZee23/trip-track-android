@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android-only words: the iPhone app has no counterpart for background location settings, battery
+  optimization or vendor power managers, so tools/strings has nothing to generate them from.
+  English and Russian are written here; the other eleven languages fall back to English until
+  they are translated (docs/divergences.md).
+-->
+<resources>
+    <string name="android_permission_background_hint">On the next screen choose «Allow all the time», so a trip can start by itself when you get in the car.</string>
+    <string name="android_health_title">Recording reliability</string>
+    <string name="android_health_ok">Nothing on this phone stops a recording.</string>
+    <string name="android_health_location_off">Location is turned off on this phone.</string>
+    <string name="android_health_precise_off">Precise location is off: a trip cannot be recorded.</string>
+    <string name="android_health_background_off">Location «All the time» is off: trips will not start by themselves.</string>
+    <string name="android_health_notifications_off">Notifications are off: you will not see the recording or the question about a draft.</string>
+    <string name="android_health_battery_optimized">Battery optimization can stop a recording while the screen is off.</string>
+    <string name="android_health_restricted">Background activity of TripTrack is restricted.</string>
+    <string name="android_health_power_save">Battery saver is on: the GPS may update less often.</string>
+    <string name="android_health_activity_off">Physical activity access is off: drives are not detected.</string>
+    <string name="android_health_bluetooth_off">Nearby devices access is off: the car stereo is not recognised.</string>
+    <string name="android_health_open_settings">Open settings</string>
+    <string name="android_health_oem_samsung">Samsung: Settings → Battery → Background usage limits → Never sleeping apps → add TripTrack.</string>
+    <string name="android_health_oem_xiaomi">Xiaomi: Settings → Apps → TripTrack → turn on Autostart, and set Battery saver to No restrictions.</string>
+    <string name="android_health_oem_huawei">Huawei: Settings → Battery → App launch → TripTrack → Manage manually, with all three switches on.</string>
+</resources>
