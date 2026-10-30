@@ -26,7 +26,7 @@ class FogMesh(val lods: List<MeshLod>) {
 
     companion object {
         /** Built off the main thread: a mature library is hundreds of thousands of segments. */
-        fun build(layer: RevealedLayerLite): FogMesh = FogMesh(List(3) { buildLod(layer.lod(it)) })
+        fun build(layer: RevealedLayerLite): FogMesh = FogMesh(List(3) { buildLod(layer.lod(it), FogRules.chunkSize(it)) })
 
         private class Bucket(val originX: Double, val originY: Double) {
             val floats = FloatList(256)
@@ -36,9 +36,8 @@ class FogMesh(val lods: List<MeshLod>) {
             var maxY = Double.NEGATIVE_INFINITY
         }
 
-        private fun buildLod(runs: List<Run>): MeshLod {
+        private fun buildLod(runs: List<Run>, size: Double): MeshLod {
             val buckets = LinkedHashMap<Long, Bucket>()
-            val size = FogRules.CHUNK_SIZE
             for (run in runs) {
                 val n = run.size / 2
                 if (n < 2) continue

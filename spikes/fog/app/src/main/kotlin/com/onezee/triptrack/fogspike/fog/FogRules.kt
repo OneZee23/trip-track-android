@@ -31,6 +31,15 @@ object FogRules {
     // A 32768 map point square (about 5 km): Float32 offsets inside it are millimetre precise.
     const val CHUNK_SIZE = 32768.0
 
+    // Android only: the mid and far levels use 2^20 map point chunks (about 160 km). On GL every
+    // chunk costs a uniform, an attribute pointer and a draw call, and a library spread over a
+    // region has ~900 chunks per level; zoomed out that was 9-11 ms of CPU a frame on the
+    // emulator. Float32 inside a 2^20 chunk is precise to 0.125 map point, which at the zoom of
+    // these levels is under a thousandth of a screen point.
+    const val COARSE_CHUNK_SIZE = 1048576.0
+
+    fun chunkSize(lod: Int): Double = if (lod == 0) CHUNK_SIZE else COARSE_CHUNK_SIZE
+
     // Map points across the world, as MKMapSize.world.
     const val WORLD = 268435456.0
 

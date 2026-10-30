@@ -124,8 +124,9 @@ class BenchRunner(
         val gpu = ArrayList<Double>()
         val instances = ArrayList<Double>()
         val encode = ArrayList<Double>()
+        val fragments = ArrayList<Double>()
         var i = 0
-        while (i + 5 < samples.size) {
+        while (i + 6 < samples.size) {
             val t = samples[i]
             if (t >= phase.start && t <= phase.end) {
                 times += t
@@ -133,8 +134,9 @@ class BenchRunner(
                 if (samples[i + 2] >= 0) gpu += samples[i + 2]
                 instances += samples[i + 3]
                 encode += samples[i + 1] - samples[i + 5]
+                fragments += samples[i + 6] / 1e6
             }
-            i += 6
+            i += 7
         }
         val intervals = times.zipWithNext { a, b -> b - a }
         val inPhase = mapFrames.filter { it[0] >= phase.start && it[0] <= phase.end }
@@ -149,6 +151,7 @@ class BenchRunner(
             .put("fogEncodeMs", percentiles(encode))
             .put("fogGpuMs", percentiles(gpu))
             .put("segmentsPerFrame", percentiles(instances))
+            .put("coverageMegaFragments", percentiles(fragments))
             // MapLibre reports seconds. With the GL backend the GPU commands are issued while the
             // frame is encoded, so this is the map's whole CPU cost per frame, the fog included.
             .put("mapFrameCpuMs", percentiles(inPhase.map { it[1] * 1000 }))

@@ -17,9 +17,9 @@ object NativeFog {
 
     @JvmStatic external fun commitMesh(state: Long)
 
-    @JvmStatic external fun setStyle(state: Long, r: Float, g: Float, b: Float, alpha: Float, cells: Boolean, visible: Boolean)
+    @JvmStatic external fun setStyle(state: Long, r: Float, g: Float, b: Float, alpha: Float, cells: Boolean, visible: Boolean, halfRes: Boolean)
 
-    /** Six numbers per rendered frame: time ms, CPU ms, GPU ms (-1 unknown), segments, LOD, query ms. */
+    /** Seven numbers per rendered frame: time ms, CPU ms, GPU ms (-1 unknown), segments, LOD, query ms, fragments. */
     @JvmStatic external fun takeSamples(state: Long): DoubleArray
 
     /** GPU timer available, last upload ms, last upload bytes, centre error dp, shader failed. */
@@ -40,6 +40,10 @@ object NativeFog {
 
     fun setStyle(state: Long, style: FogStyle, visible: Boolean = true) {
         val p = style.palette
-        setStyle(state, p.red / 255f, p.green / 255f, p.blue / 255f, p.alpha, style.cells, visible)
+        setStyle(state, p.red / 255f, p.green / 255f, p.blue / 255f, p.alpha, style.cells, visible, halfResCoverage)
     }
+
+    /** Candidate A's option: coverage at half size. Set before the style. */
+    @Volatile
+    var halfResCoverage = false
 }

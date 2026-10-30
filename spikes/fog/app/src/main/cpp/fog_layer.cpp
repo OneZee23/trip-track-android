@@ -100,6 +100,9 @@ struct StyleState {
     float alpha = 0.87f;
     bool cells = false;
     bool visible = true;
+    // Coverage at half the framebuffer size, read back with bilinear filtering: a quarter of
+    // the fragments of the coverage pass. Not in the iPhone picture; an option to measure.
+    bool halfRes = false;
 };
 
 struct Sample {
@@ -109,6 +112,7 @@ struct Sample {
     double instances; // segments submitted
     double lod;       // 0 fine, 1 mid, 2 far, -1 probe or not drawn
     double queryMs;   // of cpuMs, the two state queries: free on a phone, a round trip to the host GPU on the emulator
+    double fragments; // estimated fragments of the coverage pass: quads drawn × their area in pixels
 };
 
 struct FogState {
@@ -235,7 +239,7 @@ uniform sampler2D u_coverage;
 uniform vec3 u_colour;
 uniform float u_alpha;
 uniform vec2 u_pxPerDp;
-uniform float u_fbHeight;
+uniform vec2 u_fbSize;
 uniform float u_side;
 uniform vec4 u_gm;
 uniform vec4 u_ginv;
@@ -243,11 +247,11 @@ uniform vec2 u_gorigin;
 uniform vec2 u_cellOrigin;
 out vec4 o_colour;
 
+// Coverage is addressed in normalised coordinates so that the same code reads the full-size
+// texture (nearest: exactly the pixel the coverage pass wrote) and the half-size option.
 float sampleDp(vec2 p) {
-    ivec2 size = textureSize(u_coverage, 0);
-    ivec2 texel = ivec2(clamp(vec2(p.x * u_pxPerDp.x, u_fbHeight - p.y * u_pxPerDp.y),
-                              vec2(0.0), vec2(size - 1)));
-    return texelFetch(u_coverage, texel, 0).r;
+    vec2 uv = vec2(p.x * u_pxPerDp.x, u_fbSize.y - p.y * u_pxPerDp.y) / u_fbSize;
+    return texture(u_coverage, clamp(uv, vec2(0.0), vec2(1.0))).r;
 }
 
 float cellCoverage(vec2 p) {
@@ -270,10 +274,10 @@ float cellCoverage(vec2 p) {
 void main() {
     float coverage;
     if (u_side > 0.0) {
-        vec2 p = vec2(gl_FragCoord.x / u_pxPerDp.x, (u_fbHeight - gl_FragCoord.y) / u_pxPerDp.y);
+        vec2 p = vec2(gl_FragCoord.x / u_pxPerDp.x, (u_fbSize.y - gl_FragCoord.y) / u_pxPerDp.y);
         coverage = cellCoverage(p);
     } else {
-        coverage = texelFetch(u_coverage, ivec2(gl_FragCoord.xy), 0).r;
+        coverage = texture(u_coverage, gl_FragCoord.xy / u_fbSize).r;
     }
     float a = u_alpha * (1.0 - coverage);
     o_colour = vec4(u_colour * a, a);
@@ -309,7 +313,7 @@ public:
         uColour_ = glGetUniformLocation(composite_, "u_colour");
         uAlpha_ = glGetUniformLocation(composite_, "u_alpha");
         uPxPerDp_ = glGetUniformLocation(composite_, "u_pxPerDp");
-        uFbHeight_ = glGetUniformLocation(composite_, "u_fbHeight");
+        uFbSize_ = glGetUniformLocation(composite_, "u_fbSize");
         uSide_ = glGetUniformLocation(composite_, "u_side");
         uGm_ = glGetUniformLocation(composite_, "u_gm");
         uGinv_ = glGetUniformLocation(composite_, "u_ginv");
@@ -326,7 +330,7 @@ public:
     void render(const mln::style::CustomLayerRenderParameters& p) override {
         const double started = nowMs();
         if (probe_ || coverage_ == 0) {
-            record({started, nowMs() - started, -1, 0, -1, 0});
+            record({started, nowMs() - started, -1, 0, -1, 0, 0});
             return;
         }
         syncMesh();
@@ -347,7 +351,7 @@ public:
         const int fbWidth = viewport[2];
         const int fbHeight = viewport[3];
         if (!style.visible || fbWidth <= 1 || fbHeight <= 1 || p.width <= 1 || p.height <= 1) {
-            record({started, nowMs() - started, -1, 0, -1, queryMs});
+            record({started, nowMs() - started, -1, 0, -1, queryMs, 0});
             return;
         }
 
@@ -360,7 +364,7 @@ public:
         if (!project(p, scale, ref.x, ref.y, s0x, s0y) ||
             !project(p, scale, ref.x + step, ref.y, s1x, s1y) ||
             !project(p, scale, ref.x, ref.y + step, s2x, s2y)) {
-            record({started, nowMs() - started, -1, 0, -1, queryMs});
+            record({started, nowMs() - started, -1, 0, -1, queryMs, 0});
             return;
         }
         const double a = (s1x - s0x) / step;
@@ -369,7 +373,7 @@ public:
         const double d = (s2y - s0y) / step;
         const double det = a * d - c * b;
         if (!(std::abs(det) > 0) || !std::isfinite(det)) {
-            record({started, nowMs() - started, -1, 0, -1, queryMs});
+            record({started, nowMs() - started, -1, 0, -1, queryMs, 0});
             return;
         }
         if (!centreChecked_) {
@@ -407,11 +411,13 @@ public:
         const double pad = (halfWidth + feather) / pointsPerMapPoint;
 
         beginTimer();
-        ensureCoverageTexture(fbWidth, fbHeight);
+        const int coverageWidth = style.halfRes ? (fbWidth + 1) / 2 : fbWidth;
+        const int coverageHeight = style.halfRes ? (fbHeight + 1) / 2 : fbHeight;
+        ensureCoverageTexture(coverageWidth, coverageHeight, style.halfRes);
 
         // Pass 1: corridors into the R8 coverage texture.
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
-        glViewport(0, 0, fbWidth, fbHeight);
+        glViewport(0, 0, coverageWidth, coverageHeight);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
         glDisable(GL_SCISSOR_TEST);
@@ -469,7 +475,7 @@ public:
         glUniform1f(uAlpha_, style.alpha);
         glUniform2f(uPxPerDp_, static_cast<float>(fbWidth / p.width),
                     static_cast<float>(fbHeight / p.height));
-        glUniform1f(uFbHeight_, static_cast<float>(fbHeight));
+        glUniform2f(uFbSize_, static_cast<float>(fbWidth), static_cast<float>(fbHeight));
         setCells(style.cells, a, b, c, d, det, pointsPerMapPoint, ref, s0x, s0y, minX, minY);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         endTimer();
@@ -478,8 +484,9 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         glUseProgram(0);
+        const double quadPx = 2.0 * (halfWidth + feather) * (fbWidth / p.width) * (style.halfRes ? 0.5 : 1.0);
         record({started, nowMs() - started, takeGpuMs(), static_cast<double>(instances),
-                static_cast<double>(lod), queryMs});
+                static_cast<double>(lod), queryMs, instances * quadPx * quadPx});
     }
 
     void contextLost() override {
@@ -552,13 +559,15 @@ private:
         glUniform2f(uCellOrigin_, static_cast<float>(originX), static_cast<float>(originY));
     }
 
-    void ensureCoverageTexture(int width, int height) {
-        if (coverageTexture_ != 0 && textureWidth_ == width && textureHeight_ == height) return;
+    void ensureCoverageTexture(int width, int height, bool linear) {
+        if (coverageTexture_ != 0 && textureWidth_ == width && textureHeight_ == height && textureLinear_ == linear) return;
         if (coverageTexture_ == 0) glGenTextures(1, &coverageTexture_);
         glBindTexture(GL_TEXTURE_2D, coverageTexture_);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        // Nearest at full size, as on the iPhone; bilinear only for the half-size option.
+        const GLint filter = linear ? GL_LINEAR : GL_NEAREST;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
@@ -569,6 +578,7 @@ private:
         }
         textureWidth_ = width;
         textureHeight_ = height;
+        textureLinear_ = linear;
     }
 
     // The newest committed mesh goes to the GPU whole; a frame in flight keeps the old one.
@@ -664,12 +674,13 @@ private:
     GLuint coverageTexture_ = 0;
     int textureWidth_ = 0;
     int textureHeight_ = 0;
+    bool textureLinear_ = false;
     std::array<GLuint, 3> vbo_{0, 0, 0};
     std::array<std::shared_ptr<const LodData>, 3> gpuData_{};
     uint64_t uploadedVersion_ = 0;
     bool centreChecked_ = false;
     GLint uM_ = -1, uTranslation_ = -1, uViewport_ = -1, uHalfWidth_ = -1, uFeather_ = -1;
-    GLint uCoverage_ = -1, uColour_ = -1, uAlpha_ = -1, uPxPerDp_ = -1, uFbHeight_ = -1;
+    GLint uCoverage_ = -1, uColour_ = -1, uAlpha_ = -1, uPxPerDp_ = -1, uFbSize_ = -1;
     GLint uSide_ = -1, uGm_ = -1, uGinv_ = -1, uGorigin_ = -1, uCellOrigin_ = -1;
     GenQueries genQueries_ = nullptr;
     DeleteQueries deleteQueries_ = nullptr;
@@ -743,10 +754,11 @@ JNIEXPORT void JNICALL Java_com_onezee_triptrack_fogspike_fog_NativeFog_commitMe
 }
 
 JNIEXPORT void JNICALL Java_com_onezee_triptrack_fogspike_fog_NativeFog_setStyle(
-    JNIEnv*, jclass, jlong handle, jfloat r, jfloat g, jfloat b, jfloat alpha, jboolean cells, jboolean visible) {
+    JNIEnv*, jclass, jlong handle, jfloat r, jfloat g, jfloat b, jfloat alpha, jboolean cells, jboolean visible,
+    jboolean halfRes) {
     auto& state = stateOf(handle);
     std::lock_guard<std::mutex> guard(state->lock);
-    state->style = StyleState{r, g, b, alpha, cells == JNI_TRUE, visible == JNI_TRUE};
+    state->style = StyleState{r, g, b, alpha, cells == JNI_TRUE, visible == JNI_TRUE, halfRes == JNI_TRUE};
 }
 
 JNIEXPORT jdoubleArray JNICALL Java_com_onezee_triptrack_fogspike_fog_NativeFog_takeSamples(
@@ -757,7 +769,7 @@ JNIEXPORT jdoubleArray JNICALL Java_com_onezee_triptrack_fogspike_fog_NativeFog_
         std::lock_guard<std::mutex> guard(state->lock);
         samples.swap(state->samples);
     }
-    const auto count = static_cast<jsize>(samples.size() * 6);
+    const auto count = static_cast<jsize>(samples.size() * 7);
     jdoubleArray out = env->NewDoubleArray(count);
     if (count > 0) {
         env->SetDoubleArrayRegion(out, 0, count, reinterpret_cast<const jdouble*>(samples.data()));

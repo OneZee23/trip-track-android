@@ -72,6 +72,7 @@ class MainActivity : Activity() {
         candidate = FogCandidate.of(intent.getStringExtra("candidate"))
         dataset = Dataset.of(intent.getStringExtra("dataset"))
         fogStyle = FogStyle.of(intent.getStringExtra("style"))
+        NativeFog.halfResCoverage = intent.getStringExtra("coverage") == "half"
 
         MapLibre.getInstance(this)
         // Candidate C serves its tiles through this client; every other request passes through.
@@ -181,12 +182,14 @@ class MainActivity : Activity() {
             result.put("candidate", candidate.key)
             result.put("dataset", dataset.key)
             result.put("style", fogStyle.key)
+            result.put("coverage", if (NativeFog.halfResCoverage) "half" else "full")
             result.put("device", "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE}")
             result.put("density", resources.displayMetrics.density)
             result.put("viewPx", "${mapView.width}x${mapView.height}")
             result.put("prepare", prepared?.timings)
             result.put("candidateReport", JSONObject(candidate.report()))
-            val file = File(filesDir, "bench-${candidate.key}-${dataset.key}-${fogStyle.key}.json")
+            val half = if (NativeFog.halfResCoverage) "-half" else ""
+            val file = File(filesDir, "bench-${candidate.key}-${dataset.key}-${fogStyle.key}$half.json")
             file.writeText(result.toString(2))
             Log.i(TAG, "bench-done ${file.absolutePath}")
             status.text = summary(result)
@@ -213,9 +216,13 @@ class MainActivity : Activity() {
             for (name in phases.keys()) {
                 val p = phases.getJSONObject(name)
                 val interval = p.getJSONObject("intervalMs")
-                val cpu = p.getJSONObject("fogCpuMs")
+                val encode = p.getJSONObject("fogEncodeMs")
+                val gpu = p.getJSONObject("fogGpuMs")
                 append("$name: ${"%.0f".format(p.getDouble("fps"))} fps, frame p50 ${fmt(interval, "p50")} p95 ${fmt(interval, "p95")} p99 ${fmt(interval, "p99")} ms")
-                if (candidate.key == "a") append(", fog cpu p95 ${fmt(cpu, "p95")} ms")
+                if (candidate.key == "a") {
+                    append(", fog cpu p95 ${fmt(encode, "p95")}")
+                    append(", gpu p50 ${fmt(gpu, "p50")} p95 ${fmt(gpu, "p95")} ms")
+                }
                 append('\n')
             }
         }
@@ -256,6 +263,11 @@ class MainActivity : Activity() {
             updateStatus()
         }
         for (preset in PRESETS.keys) button(preset) { goTo(preset) }
+        button("Cov ${if (NativeFog.halfResCoverage) "half" else "full"}") { b ->
+            NativeFog.halfResCoverage = !NativeFog.halfResCoverage
+            b.text = "Cov ${if (NativeFog.halfResCoverage) "half" else "full"}"
+            style?.let { candidate.setFogStyle(it, fogStyle) }
+        }
         button("Bench") { bench() }
         return HorizontalScrollView(this).apply { addView(row) }
     }
@@ -268,6 +280,7 @@ class MainActivity : Activity() {
         val next = Intent(this, MainActivity::class.java)
         intent.extras?.let { next.putExtras(it) }
         next.putExtra("candidate", candidate.key).putExtra("dataset", dataset.key).putExtra("style", fogStyle.key)
+            .putExtra("coverage", if (NativeFog.halfResCoverage) "half" else "full")
         next.removeExtra("bench")
         next.removeExtra("gesture")
         next.putExtra(key, value)
