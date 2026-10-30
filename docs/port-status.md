@@ -16,8 +16,8 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Database | `Persistence/` | `core/data`: 15 Room tables (Core Data v24), stores, 224 tests | done |
 | Network and auth | `APIClient`, `TokenStore`, `AuthService` | `core/network`, 80 tests; Keystore AES-GCM tokens; Google login call | done (device Keystore check pending) |
 | Design system and tab bar | `Views/Theme/`, `CustomTabBar` | `core/designsystem`, `app` | in progress |
-| Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location` | todo |
-| Sync engine | `SyncQueue`, `Services/Sync/` | `core/sync` | todo |
+| Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location` | in progress |
+| Sync engine | `SyncQueue`, `Services/Sync/` | `core/sync`: queue, gates, push/pull, photos, WorkManager; 123 tests | done (AppGraph wiring with the screens) |
 | Trip list and detail | `Views/Feed`, `Views/TripDetail` | `app` | todo |
 | Atlas | `Views/MyMap/` | `app`, `core/map` | todo |
 | Places, journeys, segments | `PlaceManager`, `JourneyManager` | | todo |
