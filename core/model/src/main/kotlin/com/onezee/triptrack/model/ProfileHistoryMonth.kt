@@ -11,4 +11,6 @@ data class ProfileHistoryMonth(
     val distance: Double,
     val tripCount: Int,
     val regionCount: Int,
-)
+) {
+    companion object {}
+}

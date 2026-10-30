@@ -14,6 +14,7 @@ data class JourneyAggregate(
     val firstStart: GeoPoint? = null,
     val farthestEnd: GeoPoint? = null,
 ) {
+    companion object {}
 
     // iOS: JourneyAggregate.swift
     sealed interface Item {

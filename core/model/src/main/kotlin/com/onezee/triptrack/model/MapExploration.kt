@@ -9,7 +9,9 @@ data class MapExploration(
     var regions: List<MapRegionStat> = emptyList(),
     var trips: List<MapTripPin> = emptyList(),
     var totalKm: Double = 0.0,
-)
+) {
+    companion object {}
+}
 
 // iOS: MapExploration.swift
 data class MapRegionStat(

@@ -17,4 +17,6 @@ data class PreparedProfileHistory(
     val historicalLevels: Map<UUID, Int>? = null,
     val pinned: List<Trip>,
     val chapters: List<ProfileHistoryMonth>,
-)
+) {
+    companion object {}
+}

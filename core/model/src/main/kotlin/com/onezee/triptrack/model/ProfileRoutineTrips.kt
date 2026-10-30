@@ -6,4 +6,6 @@ data class ProfileRoutineTrips(
     val trips: List<Trip>,
     val distance: Double,
     val titleTrips: List<Trip>,
-)
+) {
+    companion object {}
+}
