@@ -1,0 +1,639 @@
+{
+  "phases": {
+    "pan": {
+      "durationMs": 4525.737669000169,
+      "frames": 230,
+      "fps": 50.82044449359608,
+      "intervalMs": {
+        "n": 229,
+        "p50": 18.044667000183836,
+        "p90": 24.99624999985099,
+        "p95": 27.792791000101715,
+        "p99": 43.17712499992922,
+        "max": 46.95987499994226,
+        "mean": 19.565334799126052
+      },
+      "over25ms": 22,
+      "over50ms": 0,
+      "fogCpuMs": {
+        "n": 230,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 8.399994112551212E-5,
+        "max": 1.2500002048909664E-4,
+        "mean": 3.0960877547445506E-5
+      },
+      "fogEncodeMs": {
+        "n": 230,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 8.399994112551212E-5,
+        "max": 1.2500002048909664E-4,
+        "mean": 3.0960877547445506E-5
+      },
+      "fogGpuMs": {
+        "n": 0
+      },
+      "segmentsPerFrame": {
+        "n": 230,
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "mapFrameCpuMs": {
+        "n": 230,
+        "p50": 16.45845900020504,
+        "p90": 23.873001000083605,
+        "p95": 25.08487500017509,
+        "p99": 42.19879199990828,
+        "max": 44.9109999999564,
+        "mean": 17.3817831826237
+      },
+      "mapDrawCalls": {
+        "n": 230,
+        "p50": 141,
+        "p90": 210,
+        "p95": 213,
+        "p99": 221,
+        "max": 224,
+        "mean": 145.1695652173913
+      }
+    },
+    "pinch": {
+      "durationMs": 4514.433459999971,
+      "frames": 203,
+      "fps": 44.966882732612326,
+      "intervalMs": {
+        "n": 202,
+        "p50": 21.077500000130385,
+        "p90": 31.973167000105605,
+        "p95": 34.012084000045434,
+        "p99": 42.38958299998194,
+        "max": 75.63795899995603,
+        "mean": 22.181517544554058
+      },
+      "over25ms": 56,
+      "over50ms": 1,
+      "fogCpuMs": {
+        "n": 203,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 1.2500002048909664E-4,
+        "max": 1.2500002048909664E-4,
+        "mean": 3.424137968368131E-5
+      },
+      "fogEncodeMs": {
+        "n": 203,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 1.2500002048909664E-4,
+        "max": 1.2500002048909664E-4,
+        "mean": 3.424137968368131E-5
+      },
+      "fogGpuMs": {
+        "n": 0
+      },
+      "segmentsPerFrame": {
+        "n": 203,
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "mapFrameCpuMs": {
+        "n": 203,
+        "p50": 19.754292000015994,
+        "p90": 30.501957999831575,
+        "p95": 33.496999999897525,
+        "p99": 40.21191600008933,
+        "max": 45.1326249997237,
+        "mean": 20.440690970442205
+      },
+      "mapDrawCalls": {
+        "n": 203,
+        "p50": 149,
+        "p90": 233,
+        "p95": 258,
+        "p99": 258,
+        "max": 261,
+        "mean": 152.35960591133005
+      }
+    },
+    "zoom": {
+      "durationMs": 6535.4547529998235,
+      "frames": 347,
+      "fps": 53.095004573434515,
+      "intervalMs": {
+        "n": 346,
+        "p50": 17.24908300000243,
+        "p90": 27.38991600018926,
+        "p95": 31.345791999949142,
+        "p99": 44.490042000077665,
+        "max": 64.32179099996574,
+        "mean": 18.84259960115645
+      },
+      "over25ms": 48,
+      "over50ms": 2,
+      "fogCpuMs": {
+        "n": 347,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 8.399994112551212E-5,
+        "max": 2.500000409781933E-4,
+        "mean": 3.0118150110504127E-5
+      },
+      "fogEncodeMs": {
+        "n": 347,
+        "p50": 4.100007936358452E-5,
+        "p90": 4.200008697807789E-5,
+        "p95": 4.200008697807789E-5,
+        "p99": 8.399994112551212E-5,
+        "max": 2.500000409781933E-4,
+        "mean": 3.0118150110504127E-5
+      },
+      "fogGpuMs": {
+        "n": 0
+      },
+      "segmentsPerFrame": {
+        "n": 347,
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "mapFrameCpuMs": {
+        "n": 347,
+        "p50": 12.41766699990876,
+        "p90": 25.004417000218382,
+        "p95": 30.066625000017666,
+        "p99": 40.082582999957594,
+        "max": 63.37604200007263,
+        "mean": 14.760552247825183
+      },
+      "mapDrawCalls": {
+        "n": 347,
+        "p50": 91,
+        "p90": 183,
+        "p95": 193,
+        "p99": 252,
+        "max": 263,
+        "mean": 102.31700288184437
+      }
+    }
+  },
+  "memory": {
+    "totalPssKb": "142562",
+    "graphicsKb": "0",
+    "nativeHeapKb": "86112",
+    "javaHeapKb": "12816",
+    "javaUsedKb": 6617,
+    "nativeAllocatedKb": 96013
+  },
+  "candidate": "b",
+  "dataset": "small",
+  "style": "fog",
+  "device": "Google sdk_gphone64_arm64, Android 15",
+  "density": 2.625,
+  "viewPx": "1080x2400",
+  "prepare": {
+    "trips": 12,
+    "tripPoints": 13195,
+    "generateMs": 64.855,
+    "revealMs": 224.576708,
+    "meshMs": 51.3965,
+    "cells": 3480,
+    "segmentsFine": 3047,
+    "segmentsMid": 938,
+    "segmentsFar": 286,
+    "runsFine": 118,
+    "chunksFine": 57,
+    "chunksMid": 57,
+    "chunksFar": 52,
+    "meshBytes": 68336,
+    "installMs": 8.70875
+  },
+  "candidateReport": {
+    "builds": [
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 702.006542,
+        "jsonMs": 2.81925,
+        "jsonBytes": 13394,
+        "requestToMapMs": 705
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 118.664584,
+        "jsonMs": 3.456916,
+        "jsonBytes": 20240,
+        "requestToMapMs": 122
+      },
+      {
+        "band": 13,
+        "lod": 0,
+        "halfWidthMetres": 85.9651719225738,
+        "inputVertices": 523,
+        "outputVertices": 1532,
+        "holes": 1,
+        "bufferMs": 102.498583,
+        "jsonMs": 3.68275,
+        "jsonBytes": 34002,
+        "requestToMapMs": 113
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 63.781291,
+        "jsonMs": 2.460459,
+        "jsonBytes": 20240,
+        "requestToMapMs": 70
+      },
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 88.085084,
+        "jsonMs": 1.366,
+        "jsonBytes": 13394,
+        "requestToMapMs": 90
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 38.138875,
+        "jsonMs": 2.009792,
+        "jsonBytes": 20240,
+        "requestToMapMs": 45
+      },
+      {
+        "band": 13,
+        "lod": 0,
+        "halfWidthMetres": 85.9651719225738,
+        "inputVertices": 523,
+        "outputVertices": 1532,
+        "holes": 1,
+        "bufferMs": 31.550875,
+        "jsonMs": 3.706916,
+        "jsonBytes": 34002,
+        "requestToMapMs": 50
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 33.40125,
+        "jsonMs": 1.93475,
+        "jsonBytes": 20240,
+        "requestToMapMs": 41
+      },
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 48.920625,
+        "jsonMs": 1.333583,
+        "jsonBytes": 13394,
+        "requestToMapMs": 64
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 32.209583,
+        "jsonMs": 2.06125,
+        "jsonBytes": 20240,
+        "requestToMapMs": 35
+      },
+      {
+        "band": 13,
+        "lod": 0,
+        "halfWidthMetres": 85.9651719225738,
+        "inputVertices": 523,
+        "outputVertices": 1532,
+        "holes": 1,
+        "bufferMs": 23.428875,
+        "jsonMs": 3.620459,
+        "jsonBytes": 34002,
+        "requestToMapMs": 28
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 31.988417,
+        "jsonMs": 1.707042,
+        "jsonBytes": 20240,
+        "requestToMapMs": 34
+      },
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 54.800583,
+        "jsonMs": 1.271875,
+        "jsonBytes": 13394,
+        "requestToMapMs": 57
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 22.557167,
+        "jsonMs": 1.638333,
+        "jsonBytes": 20240,
+        "requestToMapMs": 25
+      },
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 63.879334,
+        "jsonMs": 3.906083,
+        "jsonBytes": 13394,
+        "requestToMapMs": 69
+      },
+      {
+        "band": 10,
+        "lod": 0,
+        "halfWidthMetres": 687.7213753805904,
+        "inputVertices": 325,
+        "outputVertices": 377,
+        "holes": 1,
+        "bufferMs": 80.991792,
+        "jsonMs": 1.263458,
+        "jsonBytes": 8436,
+        "requestToMapMs": 83
+      },
+      {
+        "band": 9,
+        "lod": 1,
+        "halfWidthMetres": 1375.4427507611808,
+        "inputVertices": 155,
+        "outputVertices": 169,
+        "holes": 1,
+        "bufferMs": 42.962709,
+        "jsonMs": 0.34,
+        "jsonBytes": 3860,
+        "requestToMapMs": 44
+      },
+      {
+        "band": 8,
+        "lod": 1,
+        "halfWidthMetres": 2750.8855015223617,
+        "inputVertices": 117,
+        "outputVertices": 119,
+        "holes": 1,
+        "bufferMs": 42.374916,
+        "jsonMs": 0.264959,
+        "jsonBytes": 2760,
+        "requestToMapMs": 43
+      },
+      {
+        "band": 7,
+        "lod": 1,
+        "halfWidthMetres": 5501.771003044723,
+        "inputVertices": 101,
+        "outputVertices": 87,
+        "holes": 1,
+        "bufferMs": 27.967042,
+        "jsonMs": 1.946917,
+        "jsonBytes": 2056,
+        "requestToMapMs": 31
+      },
+      {
+        "band": 6,
+        "lod": 1,
+        "halfWidthMetres": 11003.542006089447,
+        "inputVertices": 95,
+        "outputVertices": 66,
+        "holes": 1,
+        "bufferMs": 92.310542,
+        "jsonMs": 0.827291,
+        "jsonBytes": 1594,
+        "requestToMapMs": 93
+      },
+      {
+        "band": 5,
+        "lod": 2,
+        "halfWidthMetres": 22007.084012178893,
+        "inputVertices": 94,
+        "outputVertices": 62,
+        "holes": 1,
+        "bufferMs": 87.096417,
+        "jsonMs": 0.138125,
+        "jsonBytes": 1506,
+        "requestToMapMs": 88
+      },
+      {
+        "band": 6,
+        "lod": 1,
+        "halfWidthMetres": 11003.542006089447,
+        "inputVertices": 95,
+        "outputVertices": 66,
+        "holes": 1,
+        "bufferMs": 34.860792,
+        "jsonMs": 0.153792,
+        "jsonBytes": 1594,
+        "requestToMapMs": 35
+      },
+      {
+        "band": 7,
+        "lod": 1,
+        "halfWidthMetres": 5501.771003044723,
+        "inputVertices": 101,
+        "outputVertices": 87,
+        "holes": 1,
+        "bufferMs": 35.764084,
+        "jsonMs": 0.184583,
+        "jsonBytes": 2056,
+        "requestToMapMs": 37
+      },
+      {
+        "band": 8,
+        "lod": 1,
+        "halfWidthMetres": 2750.8855015223617,
+        "inputVertices": 117,
+        "outputVertices": 119,
+        "holes": 1,
+        "bufferMs": 33.857458,
+        "jsonMs": 0.232125,
+        "jsonBytes": 2760,
+        "requestToMapMs": 35
+      },
+      {
+        "band": 9,
+        "lod": 1,
+        "halfWidthMetres": 1375.4427507611808,
+        "inputVertices": 155,
+        "outputVertices": 169,
+        "holes": 1,
+        "bufferMs": 25.820167,
+        "jsonMs": 0.390208,
+        "jsonBytes": 3860,
+        "requestToMapMs": 26
+      },
+      {
+        "band": 10,
+        "lod": 0,
+        "halfWidthMetres": 687.7213753805904,
+        "inputVertices": 325,
+        "outputVertices": 377,
+        "holes": 1,
+        "bufferMs": 44.870834,
+        "jsonMs": 0.599958,
+        "jsonBytes": 8436,
+        "requestToMapMs": 46
+      },
+      {
+        "band": 11,
+        "lod": 0,
+        "halfWidthMetres": 343.8606876902952,
+        "inputVertices": 385,
+        "outputVertices": 602,
+        "holes": 1,
+        "bufferMs": 26.782792,
+        "jsonMs": 0.93325,
+        "jsonBytes": 13394,
+        "requestToMapMs": 28
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 21.066042,
+        "jsonMs": 4.976583,
+        "jsonBytes": 20240,
+        "requestToMapMs": 27
+      },
+      {
+        "band": 13,
+        "lod": 0,
+        "halfWidthMetres": 85.9651719225738,
+        "inputVertices": 523,
+        "outputVertices": 1532,
+        "holes": 1,
+        "bufferMs": 17.363959,
+        "jsonMs": 2.412583,
+        "jsonBytes": 34002,
+        "requestToMapMs": 22
+      },
+      {
+        "band": 14,
+        "lod": 0,
+        "halfWidthMetres": 50,
+        "inputVertices": 602,
+        "outputVertices": 1857,
+        "holes": 1,
+        "bufferMs": 20.045292,
+        "jsonMs": 6.519625,
+        "jsonBytes": 41132,
+        "requestToMapMs": 29
+      },
+      {
+        "band": 15,
+        "lod": 0,
+        "halfWidthMetres": 50,
+        "inputVertices": 602,
+        "outputVertices": 1857,
+        "holes": 1,
+        "bufferMs": 14.649667,
+        "jsonMs": 2.588167,
+        "jsonBytes": 41132,
+        "requestToMapMs": 18
+      },
+      {
+        "band": 14,
+        "lod": 0,
+        "halfWidthMetres": 50,
+        "inputVertices": 602,
+        "outputVertices": 1857,
+        "holes": 1,
+        "bufferMs": 23.921376,
+        "jsonMs": 3.148125,
+        "jsonBytes": 41132,
+        "requestToMapMs": 28
+      },
+      {
+        "band": 13,
+        "lod": 0,
+        "halfWidthMetres": 85.9651719225738,
+        "inputVertices": 523,
+        "outputVertices": 1532,
+        "holes": 1,
+        "bufferMs": 20.159125,
+        "jsonMs": 7.147792,
+        "jsonBytes": 34002,
+        "requestToMapMs": 28
+      },
+      {
+        "band": 12,
+        "lod": 0,
+        "halfWidthMetres": 171.9303438451476,
+        "inputVertices": 442,
+        "outputVertices": 911,
+        "holes": 1,
+        "bufferMs": 18.625959,
+        "jsonMs": 1.784333,
+        "jsonBytes": 20240,
+        "requestToMapMs": 21
+      }
+    ]
+  }
+}

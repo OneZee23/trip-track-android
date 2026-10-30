@@ -1,0 +1,25 @@
+bench none small fog-r1 load { 18.80 23.92 24.75 }
+bench a small fog-r1 load { 17.92 23.35 24.53 }
+bench b small fog-r1 load { 19.58 23.26 24.45 }
+bench c small fog-r1 load { 21.05 23.33 24.44 }
+bench none stress fog-r1 load { 20.48 23.01 24.30 }
+bench a stress fog-r1 load { 19.83 22.59 24.10 }
+bench b stress fog-r1 load { 23.11 23.15 24.26 }
+bench c stress fog-r1 load { 23.29 23.16 24.22 }
+bench none small fog-r2 load { 20.77 22.57 23.98 }
+bench a small fog-r2 load { 22.99 22.98 24.09 }
+bench b small fog-r2 load { 23.48 23.10 24.10 }
+bench c small fog-r2 load { 22.50 22.89 23.99 }
+bench none stress fog-r2 load { 23.03 22.98 23.99 }
+bench a stress fog-r2 load { 22.98 22.95 23.95 }
+bench b stress fog-r2 load { 20.38 22.39 23.72 }
+bench c stress fog-r2 load { 21.10 22.37 23.67 }
+bench none small fog-r3 load { 21.92 22.44 23.65 }
+bench a small fog-r3 load { 20.78 22.13 23.51 }
+bench b small fog-r3 load { 20.24 21.87 23.37 }
+bench c small fog-r3 load { 17.96 21.18 23.08 }
+bench none stress fog-r3 load { 19.94 21.35 23.08 }
+bench a stress fog-r3 load { 25.90 22.66 23.50 }
+bench b stress fog-r3 load { 31.24 24.23 24.04 }
+bench c stress fog-r3 load { 22.27 22.69 23.48 }
+exit 0
