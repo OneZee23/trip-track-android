@@ -45,7 +45,7 @@ Feature screens start in `app/`, one package each. They move into modules if bui
 |---|---|---|
 | 0 | Gradle skeleton and domain types; strings generator; fog and map spike; API contract document | running |
 | 1 | `core/logic`; `core/data`; `core/network` with the auth client; design system and the tab shell | next |
-| 2 | Recording (service, Kalman, gates, drafts, auto-start); sync engine; sign-in (Google and Apple web flow, backend endpoint on a branch); trip list and trip detail; Atlas on the chosen map stack | |
+| 2 | Recording (service, Kalman, gates, drafts, auto-start); sync engine; Google sign-in (backend endpoint on a branch); trip list and trip detail; Atlas on the chosen map stack | |
 | 3 | Places, journeys, checkpoints and segments, photos, profile and social feed, garage, settings, manual trip, notifications | |
 | 4 | Release: Play listing, background location declaration and video, closed test (12 testers for 14 days, required for this personal Play account), production | |
 
@@ -54,13 +54,15 @@ branch. The orchestrator reviews, runs the tests, merges into `master` and pushe
 
 ## Decisions taken
 
-- Android starts without in-app purchases. Google Play stopped paying developers whose payout
-  bank is in Russia (December 2024), and RuStore pays only an ИП or a company (February 2026).
-  PRO bought on iPhone is honoured through the account. Purchases on Android come later, with the
-  payout channel the owner chooses.
-- Sign-in: Google (Credential Manager, ID token checked by the backend) and Apple through the web
-  flow, so iPhone accounts keep working. The backend needs a Google login endpoint; it is prepared
-  on a branch and deployed by the owner.
+- Accounts (owner, 30 October 2026): Android signs in with Google only, iOS keeps Sign in with Apple
+  only. They are separate accounts: no email login, no linking of sign-in methods and no sync
+  between an iPhone and an Android phone for now. The backend gets a Google login endpoint on a
+  branch; the owner deploys it. Storage is chosen so that linking can be added later.
+- Android starts without in-app purchases, and PRO is hidden the way the iOS app hides it in the
+  Russian storefront. Google Play stopped paying developers whose payout bank is in Russia
+  (December 2024), and RuStore pays only an ИП or a company (February 2026).
+- Sync inside Android works like on iOS: publishing and the feed go through the same queue, and
+  Cloud Sync between two Android phones of the same Google account stays opt-in.
 - CarPlay maps to Android Auto later; widgets and Live Activities map to an ongoing notification
   with live numbers, which the foreground service needs anyway.
 
