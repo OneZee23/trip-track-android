@@ -58,4 +58,7 @@ dependencies {
     implementation("org.maplibre.gl:android-sdk-opengl:13.7.1")
     // Candidate B buffers and unions corridors into fog polygons with holes.
     implementation("org.locationtech.jts:jts-core:1.20.0")
+    // Candidate C hands its tiles to MapLibre through an interceptor on MapLibre's own client.
+    // MapLibre declares OkHttp as a runtime dependency only, so it is named here.
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
