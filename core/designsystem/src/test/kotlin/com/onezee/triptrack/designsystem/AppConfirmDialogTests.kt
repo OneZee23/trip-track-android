@@ -1,5 +1,7 @@
 package com.onezee.triptrack.designsystem
 
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -220,5 +222,27 @@ class AppConfirmDialogTests {
         compose.waitForIdle()
         compose.onNodeWithTag("app_dialog").assertDoesNotExist()
         assertEquals(false, answered)
+    }
+
+    /** Our scrim, our entrance, the whole screen, and the status bar glyphs of the app's theme. */
+    @Test fun theWindowIsPlainFullScreenAndKeepsTheThemesGlyphs() {
+        var dark by mutableStateOf(false)
+        compose.setContent {
+            Themed(dark = dark) {
+                AppConfirm(isPresented = true, onDismissRequest = {}, title = "?", actions = listOf(AppDialogAction("Да")))
+            }
+        }
+        for (theme in listOf(false, true)) {
+            dark = theme
+            compose.waitForIdle()
+            val window = ShadowDialog.getLatestDialog().window!!
+            val attributes = window.attributes
+            assertEquals(WindowManager.LayoutParams.MATCH_PARENT, attributes.width)
+            assertEquals(WindowManager.LayoutParams.MATCH_PARENT, attributes.height)
+            assertEquals(0, attributes.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            assertEquals(0, attributes.windowAnimations)
+            val darkGlyphs = window.insetsController!!.systemBarsAppearance and WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            assertEquals(if (theme) 0 else WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, darkGlyphs, "dark=$theme")
+        }
     }
 }

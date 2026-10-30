@@ -1,5 +1,9 @@
 package com.onezee.triptrack.designsystem.components
 
+import android.os.Build
+import android.view.View
+import android.view.Window
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseIn
@@ -47,6 +51,8 @@ import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.ContinuousRoundedRectangle
 import com.onezee.triptrack.designsystem.theme.InterLineHeight
 import com.onezee.triptrack.designsystem.theme.InterWeight
+import com.onezee.triptrack.designsystem.theme.LocalIsDarkTheme
+import com.onezee.triptrack.designsystem.theme.LocalWindowIsDark
 import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.iosShadow
@@ -280,18 +286,35 @@ internal val TrimmedLineSpacing = LineHeightStyle(alignment = LineHeightStyle.Al
 /**
  * The house modals draw their own scrim and their own entrance, so the window gets neither the
  * platform dim nor the platform animation, and it spans the whole screen: with
- * `decorFitsSystemWindows = false` Compose lays the dialog out edge to edge, bars included.
+ * `decorFitsSystemWindows = false` Compose lays the dialog out edge to edge, bars included. Being
+ * the top window over the status bar, it also decides the bar's glyphs: they keep the app's
+ * colour (dark over the light theme's scrim, white over the dark one) instead of the dialog
+ * window's default white.
  */
 @Composable
 internal fun PlainModalWindow() {
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+    val darkWindow = LocalWindowIsDark.current ?: LocalIsDarkTheme.current
     SideEffect {
         if (window != null) {
             window.setDimAmount(0f)
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             window.setWindowAnimations(0)
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.useDarkSystemBarGlyphs(!darkWindow)
         }
+    }
+}
+
+@Suppress("DEPRECATION")
+private fun Window.useDarkSystemBarGlyphs(dark: Boolean) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val mask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+        insetsController?.setSystemBarsAppearance(if (dark) mask else 0, mask)
+    } else {
+        val flags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        val current = decorView.systemUiVisibility
+        decorView.systemUiVisibility = if (dark) current or flags else current and flags.inv()
     }
 }
 
