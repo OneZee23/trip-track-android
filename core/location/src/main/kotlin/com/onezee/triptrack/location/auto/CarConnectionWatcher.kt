@@ -25,6 +25,7 @@ class CarConnectionWatcher(
     private var receiver: BroadcastReceiver? = null
     private var lastConnected: Boolean? = null
 
+    @Synchronized
     fun start() {
         if (receiver != null) return
         val created = object : BroadcastReceiver() {
@@ -38,6 +39,7 @@ class CarConnectionWatcher(
         publish()
     }
 
+    @Synchronized
     fun stop() {
         receiver?.let { runCatching { context.unregisterReceiver(it) } }
         receiver = null
@@ -55,6 +57,7 @@ class CarConnectionWatcher(
         CONNECTION_TYPE_NOT_CONNECTED
     }
 
+    @Synchronized
     private fun publish() {
         val connected = connectionType() != CONNECTION_TYPE_NOT_CONNECTED
         if (connected == lastConnected) return

@@ -48,6 +48,7 @@ class RecordingService : Service() {
         } catch (refused: Exception) {
             // No location permission any more, or a background start the system did not allow.
             Log.w(TAG, "foreground start refused", refused)
+            graph.scope.launch { graph.serviceRefused() }
             stopSelf()
             return START_NOT_STICKY
         }
@@ -65,9 +66,7 @@ class RecordingService : Service() {
     private suspend fun run() {
         graph.awaitStarted()
         if (!graph.recorder.state.value.isRecording && !graph.recorder.state.value.isFinishing) return finish()
-        source.start(TrackingMode.recording) { fix, age ->
-            graph.scope.launch { graph.recorder.onProviderFix(fix, age) }
-        }
+        var gpsOn = false
         coroutineScope {
             val ticks = launch {
                 while (isActive) {
@@ -78,13 +77,22 @@ class RecordingService : Service() {
             // At most one repost a second (a StateFlow skips what a slow collector missed); the
             // chronometer ticks on its own in between.
             graph.recorder.state.first { state ->
-                if (!state.isRecording) {
-                    // GPS goes as soon as the recording ends; the notice stays while it is finished.
-                    source.stop()
-                    if (!state.isFinishing) return@first true
-                    graph.notifications.updateFinishing()
-                } else {
-                    graph.notifications.updateOngoing(state)
+                // GPS follows the recording: off as soon as it ends, on again if the next trip
+                // starts while the previous one is still being finished.
+                if (state.isRecording != gpsOn) {
+                    gpsOn = state.isRecording
+                    if (gpsOn) {
+                        source.start(TrackingMode.recording) { fix, age ->
+                            graph.scope.launch { graph.recorder.onProviderFix(fix, age) }
+                        }
+                    } else {
+                        source.stop()
+                    }
+                }
+                when {
+                    state.isRecording -> graph.notifications.updateOngoing(state)
+                    state.isFinishing -> graph.notifications.updateFinishing()
+                    else -> return@first true
                 }
                 delay(UPDATE_MS)
                 false

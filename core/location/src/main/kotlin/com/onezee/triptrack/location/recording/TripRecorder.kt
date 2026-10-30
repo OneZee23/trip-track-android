@@ -218,21 +218,26 @@ class TripRecorder(
             val recording = math ?: return StopOutcome.NotRecording
             // Out of the recording state before the slow part, so a second stop bails here.
             math = null
-            flush(recording)
-            rawFixLog.end()
-            val tripId = recording.trip.id
-            val points = store.trackPoints(tripId)
-            val now = clock()
-            val start = recording.trip.startDate
-            val end = RecordingEnd.endDate(points, start, suggestedEndDate, now)
-            val live = recording.trip
-            val stats = RecordingEnd.finalStats(points, live.recordingBreaks, live.distance, live.maxSpeed)
-            val elapsed = secondsBetween(start, end)
-            val average = if (points.size > 1) (if (elapsed > 0) stats.distance / elapsed else 0.0) else live.averageSpeed
-            store.finish(tripId, end, stats.distance, stats.maxSpeed, average, RecordingEnd.previewPolyline(points))
             _state.value = RecorderState(gpsAccuracy = _state.value.gpsAccuracy, isFinishing = true)
             session.save(null)
-            trips.fetchTripDetail(tripId)?.let { it.withRecordingBreaks(it.recordingBreaks) }
+            try {
+                flush(recording)
+                rawFixLog.end()
+                val tripId = recording.trip.id
+                val points = store.trackPoints(tripId)
+                val start = recording.trip.startDate
+                val end = RecordingEnd.endDate(points, start, suggestedEndDate, clock())
+                val live = recording.trip
+                val stats = RecordingEnd.finalStats(points, live.recordingBreaks, live.distance, live.maxSpeed)
+                val elapsed = secondsBetween(start, end)
+                val average = if (points.size > 1) (if (elapsed > 0) stats.distance / elapsed else 0.0) else live.averageSpeed
+                store.finish(tripId, end, stats.distance, stats.maxSpeed, average, RecordingEnd.previewPolyline(points))
+                trips.fetchTripDetail(tripId)?.let { it.withRecordingBreaks(it.recordingBreaks) }
+            } catch (failure: Exception) {
+                // The row keeps no end, so the next launch recovers it as an orphan.
+                _state.value = _state.value.copy(isFinishing = false)
+                throw failure
+            }
         }
         listener.recordingDidEnd()
         try {

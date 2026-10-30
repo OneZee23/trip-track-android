@@ -215,6 +215,19 @@ class LocationGraph(
         }
     }
 
+    /**
+     * The system refused the foreground service (no location permission, or a background start it
+     * did not allow). A recording without its service writes nothing: end it and say why, as iOS
+     * says when an automatic start is refused.
+     */
+    suspend fun serviceRefused() {
+        awaitStarted()
+        if (!recorder.state.value.isRecording) return
+        recorder.stop()
+        val background = context.checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+        notifications.autoStartFailed(if (hasLocationPermission() && background) StartRefusal.unknown else StartRefusal.locationDenied)
+    }
+
     /** iOS: DraftDecisionQueue.enqueue, written before anything else can fail. */
     fun queueDraftDecision(tripId: UUID, decision: DraftDecision) = draftQueue.enqueue(tripId, decision)
 
