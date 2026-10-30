@@ -1,0 +1,74 @@
+package com.onezee.triptrack.map
+
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.onezee.triptrack.logic.RevealedLayer
+import com.onezee.triptrack.map.camera.MapCameraCommand
+import com.onezee.triptrack.map.fog.FogLook
+import com.onezee.triptrack.map.fog.FogMeshInfo
+import com.onezee.triptrack.map.fog.FogRules
+import com.onezee.triptrack.map.fog.FogStats
+import com.onezee.triptrack.model.GeoPoint
+
+/** The fog on a map: the revealed world, how it looks, and the live hole around the car if any. */
+data class MapFog(
+    val revealed: RevealedLayer,
+    val look: FogLook = FogLook(),
+    val liveReveal: LiveReveal? = null,
+)
+
+/** iOS: FogMetalVeil.setLiveReveal. [progress] grows 0 → 1 over the reveal animation. */
+data class LiveReveal(val point: GeoPoint, val progress: Double, val metres: Double = FogRules.REVEAL_METRES)
+
+/** Where the camera stands after a move: MapLibre zoom, heading and the scale at the centre. */
+data class MapCamera(val centre: GeoPoint, val zoom: Double, val bearing: Double, val metresPerPoint: Double)
+
+/** OpenFreeMap: free vector tiles with the OpenMapTiles schema, no key and no account. */
+object MapStyles {
+    const val OPEN_FREE_MAP_LIBERTY = "https://tiles.openfreemap.org/styles/liberty"
+}
+
+/**
+ * The handle a screen keeps for its [MapHost]: camera commands and what the map reports back. Commands
+ * given before the map is ready and laid out wait for it (iOS: a camera applied to an MKMapView with a
+ * zero frame lands at a broken zoom). Main thread only.
+ */
+@Stable
+class MapHostState {
+    private val pending = ArrayList<MapCameraCommand>()
+
+    internal var controller: MapController? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                pending.forEach(value::execute)
+                pending.clear()
+            }
+        }
+
+    fun execute(command: MapCameraCommand) {
+        controller?.execute(command) ?: pending.add(command)
+    }
+
+    /** The camera after the last completed move; null until the map has one. */
+    var camera: MapCamera? by mutableStateOf(null)
+        internal set
+
+    /** The mesh the fog draws now; null until the first one is built. */
+    var fogMesh: FogMeshInfo? by mutableStateOf(null)
+        internal set
+
+    /** Null until known; false when this device cannot draw the fog and the map shows without it. */
+    var fogAvailable: Boolean? by mutableStateOf(null)
+        internal set
+
+    /** Native counters of the fog layer; for the debug screen. */
+    fun fogStats(): FogStats? = controller?.fogStats()
+
+    /** GPU timer queries in the fog layer, where the driver has them; for the debug screen. */
+    fun setFogDiagnostics(enabled: Boolean) {
+        controller?.setFogDiagnostics(enabled)
+    }
+}

@@ -97,11 +97,26 @@ class FogLayer private constructor(private val state: Long) : AutoCloseable {
         }
     }
 
+    private var look = FogLook()
+    private var visible = true
+
     /**
      * Palette, cells and coverage resolution as one value, and one frame for all of them: a style set
      * in two steps once showed a frame that belongs to no style (see [FogLook]).
      */
     fun setLook(look: FogLook, visible: Boolean = true) {
+        this.look = look
+        this.visible = visible
+        applyStyle()
+    }
+
+    /** Hides the fog without forgetting its look or its mesh. */
+    fun setVisible(visible: Boolean) {
+        this.visible = visible
+        applyStyle()
+    }
+
+    private fun applyStyle() {
         val p = look.palette
         synchronized(lock) {
             if (closed) return

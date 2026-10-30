@@ -1,0 +1,104 @@
+package com.onezee.triptrack.map
+
+import android.content.ComponentCallbacks2
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.onezee.triptrack.map.camera.MapInsets
+import com.onezee.triptrack.map.marker.MapMarker
+import com.onezee.triptrack.map.route.MapRoutes
+import org.maplibre.android.MapLibre
+import org.maplibre.android.maps.MapView
+
+/**
+ * The map: MapLibre with OpenFreeMap tiles, the Atlas fog drawn inside its frame, routes and markers
+ * above the fog, and camera commands through [state].
+ *
+ * The map is drawn edge to edge: [chromeInsets] is what the screen's own chrome covers (a sheet, a
+ * header), added to the system bars, which together play the role of MapKit's safe area. Camera fits
+ * clear it, and MapLibre's logo, attribution and compass stay outside it.
+ *
+ * No tilt, rotation allowed: the fog's frame is affine only without perspective, as on iOS.
+ */
+@Composable
+fun MapHost(
+    state: MapHostState,
+    modifier: Modifier = Modifier,
+    fog: MapFog? = null,
+    routes: MapRoutes? = null,
+    markers: List<MapMarker> = emptyList(),
+    onMarkerTap: (MapMarker) -> Unit = {},
+    chromeInsets: MapInsets = MapInsets.Zero,
+    styleUri: String = MapStyles.OPEN_FREE_MAP_LIBERTY,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current.density
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val mapView = remember {
+        MapLibre.getInstance(context.applicationContext)
+        MapView(context).also { it.onCreate(null) }
+    }
+    val controller = remember(mapView) { MapController(mapView, state, density, styleUri) }
+
+    DisposableEffect(lifecycle, controller) {
+        val observer = LifecycleEventObserver { _, event -> controller.moveTo(event.targetState) }
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+            controller.dispose()
+        }
+    }
+
+    DisposableEffect(context, controller) {
+        val callbacks = object : ComponentCallbacks2 {
+            // Since Android 14 only TRIM_MEMORY_UI_HIDDEN and TRIM_MEMORY_BACKGROUND arrive, and both
+            // after the map stopped; the controller already gave the texture back at that point.
+            override fun onTrimMemory(level: Int) {
+                @Suppress("DEPRECATION")
+                if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) controller.trimMemory(lowMemory = false)
+            }
+
+            override fun onConfigurationChanged(newConfig: Configuration) = Unit
+
+            @Deprecated("Deprecated in Java")
+            override fun onLowMemory() = controller.trimMemory(lowMemory = true)
+        }
+        context.registerComponentCallbacks(callbacks)
+        onDispose { context.unregisterComponentCallbacks(callbacks) }
+    }
+
+    DisposableEffect(state, controller) {
+        state.controller = controller
+        onDispose { if (state.controller === controller) state.controller = null }
+    }
+
+    // Insets are absolute left and right, like UIEdgeInsets, whatever the reading direction.
+    val system = WindowInsets.safeDrawing.asPaddingValues()
+    val safeArea = MapInsets(
+        top = system.calculateTopPadding().value.toDouble(),
+        left = system.calculateLeftPadding(LayoutDirection.Ltr).value.toDouble(),
+        bottom = system.calculateBottomPadding().value.toDouble(),
+        right = system.calculateRightPadding(LayoutDirection.Ltr).value.toDouble(),
+    ) + chromeInsets
+    SideEffect {
+        controller.onMarkerTap = onMarkerTap
+        controller.setSafeArea(safeArea)
+        controller.setFog(fog)
+        controller.setRoutes(routes)
+        controller.setMarkers(markers)
+    }
+
+    AndroidView(factory = { mapView }, modifier = modifier)
+}
