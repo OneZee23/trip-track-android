@@ -38,6 +38,7 @@ class Resource:
     line: int
     integer_tokens: set = field(default_factory=set)
     foundation_format: bool = False
+    language_placeholders: bool = False
 
 
 def android_escape(value):
@@ -219,6 +220,7 @@ class Generator:
         self.tables = {}
         self.used_keys = set()
         self.fallbacks = {lang: [] for lang in LANGUAGES}
+        self.source_functions = {}
 
     def source(self, path):
         relative = path.relative_to(self.ios).as_posix()
@@ -355,6 +357,7 @@ class Generator:
         self.inventory.append(dict(file=source, line=function.line, function=prefix + function.name, complete=complete, resources=sorted(set(extracted))))
 
     def collect(self):
+        source_functions = self.source_functions
         localization = self.ios / "TripTrack/Localization"
         for lang in LANGUAGES[2:]:
             path = localization / f"Translations/Translations+{lang.upper()}.swift"
@@ -367,6 +370,7 @@ class Generator:
             source, tokens = self.source(path)
             for function in functions(tokens):
                 self.extract_function(function, source)
+                source_functions[function.name] = (source, function)
             for name, line, initializer in bindings(tokens):
                 try:
                     value = literal(initializer)
@@ -377,6 +381,9 @@ class Generator:
         source, tokens = self.source(path)
         for function in functions(tokens):
             self.extract_function(function, source, "live_")
+            source_functions["live_" + function.name] = (source, function)
+        from logic_resources import extract_logic
+        extract_logic(self, source_functions)
         permissions = {}
         for lang in LANGUAGES:
             path = self.ios / f"TripTrack/Resources/{lang}.lproj/InfoPlist.strings"
@@ -410,7 +417,10 @@ class Generator:
         rendered = {lang: [] for lang in LANGUAGES}
         for (_, _), resource in sorted(self.resources.items()):
             english = resource.values["en"]
-            schema = placeholder_schema(english.values(), resource.integer_tokens)
+            schema_texts = list(english.values())
+            if resource.language_placeholders:
+                schema_texts += [text for forms in resource.values.values() for text in forms.values()]
+            schema = placeholder_schema(schema_texts, resource.integer_tokens)
             formatted = bool(schema) or resource.foundation_format
             values = {}
             for lang in LANGUAGES:
@@ -419,10 +429,10 @@ class Generator:
                     fallback = english.get(category, english.get("other", english.get("text")))
                     expected_tokens = set(TOKEN.findall(fallback))
                     try:
-                        if set(TOKEN.findall(text)) != expected_tokens:
+                        if not resource.language_placeholders and set(TOKEN.findall(text)) != expected_tokens:
                             raise Unsupported("placeholder tokens differ from English")
                         normalized = format_text(text, schema, resource.foundation_format)
-                        if formatted and signature(normalized) != signature(format_text(fallback, schema, resource.foundation_format)):
+                        if formatted and not resource.language_placeholders and signature(normalized) != signature(format_text(fallback, schema, resource.foundation_format)):
                             raise Unsupported("format arguments differ from English")
                     except (Unsupported, KeyError) as error:
                         self.issue(resource.source, resource.line, resource.name, f"{lang}/{category}: {error}; English fallback emitted")
@@ -432,16 +442,25 @@ class Generator:
                 values[lang] = converted
                 if resource.kind == "string":
                     attribute = '' if formatted else ' formatted="false"'
+                    if resource.language_placeholders:
+                        attribute += ' tools:ignore="StringFormatCount"'
                     rendered[lang].append(f'    <string name="{resource.name}"{attribute}>{android_escape(converted["text"])}</string>')
                 else:
-                    rendered[lang].append(f'    <plurals name="{resource.name}">')
+                    # iOS returns counted words separately; the caller supplies the visible count.
+                    ignored = "ImpliedQuantity,StringFormatCount" if resource.language_placeholders else "ImpliedQuantity"
+                    rendered[lang].append(f'    <plurals name="{resource.name}" tools:ignore="{ignored}">')
                     for category, value in converted.items():
                         rendered[lang].append(f'        <item quantity="{category}">{android_escape(value)}</item>')
                     rendered[lang].append("    </plurals>")
             records.append(dict(name=resource.name, kind=resource.kind, file=resource.source, line=resource.line, placeholders=schema, formatted=formatted,
                                 signatures={cat: signature(value) if formatted else {} for cat, value in values["en"].items()}))
+            if resource.language_placeholders:
+                records[-1]["language_signatures"] = {
+                    lang: {cat: signature(value) if formatted else {} for cat, value in forms.items()}
+                    for lang, forms in values.items()
+                }
         for lang in LANGUAGES:
-            output[f"res/{DIRECTORIES[lang]}/strings.xml"] = '<?xml version="1.0" encoding="utf-8"?>\n<!-- Generated by tools/strings/generate.py. Edit the iOS source. -->\n<resources>\n' + "\n".join(rendered[lang]) + "\n</resources>\n"
+            output[f"res/{DIRECTORIES[lang]}/strings.xml"] = '<?xml version="1.0" encoding="utf-8"?>\n<!-- Generated by tools/strings/generate.py. Edit the iOS source. -->\n<resources xmlns:tools="http://schemas.android.com/tools">\n' + "\n".join(rendered[lang]) + "\n</resources>\n"
         output["res/xml/locales_config.xml"] = '<?xml version="1.0" encoding="utf-8"?>\n<locale-config xmlns:android="http://schemas.android.com/apk/res/android">\n' + "".join(f'    <locale android:name="{lang}" />\n' for lang in LANGUAGES) + "</locale-config>\n"
         counts = Counter(resource.kind for resource in self.resources.values())
         manifest = dict(sources=self.sources, languages=list(LANGUAGES), directories=DIRECTORIES, categories=CATEGORIES,
@@ -449,9 +468,19 @@ class Generator:
                         fallbacks={lang: sorted(set(keys)) for lang, keys in self.fallbacks.items()},
                         functions=self.inventory, resources=records,
                         manual=sorted(self.manual, key=lambda item: (item["file"], item["line"], item["name"], item["reason"])))
+        from facade import render_facade, render_token_rules
+        if self.source_functions:
+            output["kotlin/ResourceAppStrings.kt"] = render_facade(self, self.source_functions)
+            output["kotlin/ResourceTokenRules.kt"] = render_token_rules(self)
         output["tools/manifest.json"] = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
-        lines = ["# Ручной порт строк", "", "Список обновляет `generate.py`. Шаблоны `tr` из этих функций уже выгружены, если их удалось разобрать.", "", "| Файл:строка | Функция / ключ | Что осталось |", "|---|---|---|"]
+        lines = ["# Ручной порт строк", "", "Список обновляет `generate.py`. Kotlin-тест проверяет наличие каждой функции или явную причину пропуска. Шаблоны `tr` уже выгружены, если их удалось разобрать.", "", "| Файл:строка | Функция / ключ | Причина ручного порта / пропуска |", "|---|---|---|"]
+        skipped = json.loads((Path(__file__).resolve().parent / "porting-status.json").read_text())
         for item in manifest["manual"]:
+            reason = skipped.get(item["name"])
+            if "/Translations/" in item["file"]:
+                reason = "Intentionally skipped: translation-table key, not a standalone Swift function; dynamic metadata is outside this facade."
+            if reason:
+                item = dict(item, reason=reason)
             lines.append(f'| `{item["file"]}:{item["line"]}` | `{item["name"]}` | {item["reason"]} |')
         output["tools/manual-porting.md"] = "\n".join(lines) + "\n"
         return output, manifest
@@ -471,7 +500,7 @@ def main():
         changed = []
         for name, content in output.items():
             base, relative = name.split("/", 1)
-            path = (args.res if base == "res" else args.metadata) / relative
+            path = (args.res if base == "res" else ROOT / "core/designsystem/src/main/kotlin/com/onezee/triptrack/designsystem/strings" if base == "kotlin" else args.metadata) / relative
             if not path.exists() or path.read_text(encoding="utf-8") != content:
                 changed.append(str(path))
                 if not args.check:

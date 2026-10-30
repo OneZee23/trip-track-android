@@ -35,6 +35,9 @@ python3 tools/strings/validate.py \
 - `TripTrackShared/LiveActivityStrings.swift`: ключи с префиксом `live_`.
 
 Ресурсы лежат в `core/designsystem/src/main/res/values*/strings.xml`.
+Генератор также пишет `ResourceAppStrings.kt` с типизированными методами для простых
+функций и `ResourceTokenRules.kt` с порядком подстановок. Сложные ветки разбирает
+`logic_resources.py`: текст берётся из Swift, выбор числа или состояния остаётся в Kotlin.
 `res/xml/locales_config.xml` содержит все 13 языков. Подключить его к manifest приложения
 через `android:localeConfig="@xml/locales_config"` должен агент, который собирает приложение.
 
@@ -42,7 +45,7 @@ python3 tools/strings/validate.py \
 подстановки, числа строк, английские fallback и учёт каждой просмотренной функции.
 [manual-porting.md](manual-porting.md) перечисляет ручной порт с файлами и строками.
 Генератор обновляет оба файла. Статический `tr` внутри сложной функции выгружается,
-а сама функция остаётся в списке до переноса её логики в Kotlin.
+а сама функция остаётся в списке как часть проверяемого Kotlin-инвентаря.
 
 Неизвестное выражение не вычисляется. Функция попадает в ручной порт. Неизвестная
 структура таблицы, повреждённый Swift или конфликт ресурсов останавливают генерацию.
@@ -72,8 +75,8 @@ python3 tools/strings/validate.py \
 Соответствие токенов и индексов записано в `manifest.json`.
 
 Шаблоны Foundation из `String(format:)` превращаются в позиционные Java-аргументы:
-`%@` в `%N$s`, `%d` в `%N$d`. Обёртка форматирования остаётся в ручном порте.
-Строку с аргументами нужно получать с аргументами через Android API форматирования.
+`%@` в `%N$s`, `%d` в `%N$d`. Строки с аргументами получает Kotlin-фасад: он
+форматирует Foundation-шаблоны и сохраняет порядок замен `{token}`.
 Литеральный `%` в такой строке записан как `%%`. Строки без аргументов имеют
 `formatted="false"` и сохраняют обычный `%`, чтобы `getString(id)` не показывал `%%`.
 XML-символы, кавычки, апострофы, обратные слеши, переводы строк, начальные `@`/`?`
@@ -101,17 +104,52 @@ XML-символы, кавычки, апострофы, обратные сле�
 языков использует iOS `many`. Набор категорий сверён с
 [CLDR cardinal rules](https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json).
 
-Android выбирает категорию через системный ICU. В iOS правило `fil` упрощено до
-`abs(n) <= 1`; CLDR использует и последнюю цифру. Сейчас у всех 25 филиппинских
-plural-ресурсов `one` и `other` совпадают, поэтому текст не расходится. При новых
-разных формах понадобится проверка вызовов. iOS для `pt` использует `pt_BR`,
-для Android сохранён общий `pt`, поэтому региональный выбор локали тоже нужно
-учесть при переносе `LanguageManager`.
+`AppStrings.plural` сначала выбирает форму по правилам iOS, затем запрашивает её
+через `getQuantityString`. Для Filipino это сохраняет `abs(n) <= 1`: системный CLDR
+иначе относит 2 к singular. Это уже влияет на местоимения в сообщении о выходе.
+Фасад использует `pt_BR`, как iOS; каталог ресурсов остаётся общим `values-pt`.
 
 Android `getQuantityString` принимает целое число и не знает о видимых десятичных
-знаках. Функции единиц с `fractionDigits`, переключением км/миль и форматом `Measure`
-остаются в ручном порте вместе с `live_distanceShort` и `live_speedShort`.
-Это задача будущего порта Measure, а не изменение округления в ресурсах.
+знаках. Фасад выбирает формы единиц по `fractionDigits`; украинские «2 фути» и
+«1.5 фута» хранятся отдельно. Его интерфейс `MeasureWords` подключает ресурсы к Measure.
 
 Тексты iOS-разрешений и упоминания iPhone, Apple, PRO-покупок сохраняются дословно.
 Их наличие в ресурсах не включает системные разрешения Android или покупки.
+
+## Kotlin-фасад
+
+```kotlin
+val strings = AppStrings(context, AppLanguage.ru)
+strings.journeyDays(from = 2, to = 4)
+Measure.distance(8400.0, DistanceUnit.miles, strings.language.code, strings)
+val german = strings.withLanguage(AppLanguage.de)
+```
+
+Выбор языка явный. Конструктор без языка читает locale переданного configuration
+context. При смене настройки приложение передаёт новый язык или создаёт новый фасад.
+Даты используют locale этого языка и переданный `ZoneId` (по умолчанию системный).
+`LocalizedDateFormatter.patterns/templates` кеширует форматтеры по шаблону и часовому
+поясу, вызовы форматирования синхронизированы.
+
+Подстановки `{token}` сохраняют порядок вызовов `replacingOccurrences` в Swift.
+Токен, попавший в значение предыдущего параметра, тоже заменится на следующем шаге.
+Foundation-форматы `%@`/`%d` идут через locale-aware форматирование. В ресурсах
+`logic_*` набор аргументов может различаться по языкам: например, немецкая ветка
+`earnedTimes` опускает существительное. `language_signatures` в manifest проверяет
+каждую такую ветку отдельно. Lint-исключения ограничены этими форматами и plural-словами,
+у которых число выводит вызывающий код.
+
+Пять пропущенных функций с причинами записаны в `porting-status.json` и выводятся
+в `manual-porting.md`. Robolectric проверяет наличие остальных функций.
+
+Эталоны для сложных функций получаются запуском исходного Swift на macOS:
+
+```sh
+python3 tools/strings/ios_fixtures.py
+./gradlew :core:designsystem:testDebugUnitTest :core:designsystem:lintDebug
+```
+
+Swift-функции, таблицы переводов, Foundation и UnitNumber исполняются без изменений.
+Скрипт подставляет только типы связей с остальным приложением. Robolectric работает
+на SDK 35 с JDK 17; SDK 36 требует Java 21. Для sandbox с готовым runtime можно добавить
+`-Drobolectric.dependency.dir="$HOME/.m2/repository/org/robolectric/android-all-instrumented/15-robolectric-13954326-i7"`.

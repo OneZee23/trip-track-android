@@ -23,6 +23,8 @@
     "TripTrack/Localization/AppStringsCore.swift": "62c9436e1830c5ee7f2f0311e6aa76b3be25d0630483d4090fa68f76ecb10be8",
     "TripTrack/Localization/AtlasCopy.swift": "4ea1ef7158d47287854e7715bea6164dd980f70618bc2caddc8e370529d7e16d",
     "TripTrackShared/LiveActivityStrings.swift": "253208fcb1c1320689c6f3db0c0bc3060bb1fceca1889c60ee84214990102484",
+    "TripTrack/Models/DistanceUnit+Current.swift": "95f11e2cef5daac22692e0889f62f3479499df1adf5c396f2eb74fcbfa59b037",
+    "TripTrack/Models/Badge.swift": "18652681dbbd8fc7082aa1c571fe3ff4f90d2d5a37bfa925e2cca835399cc1b5",
     "TripTrack/Resources/en.lproj/InfoPlist.strings": "b9b4efe2a19f492d2993dc717b13d1b716f7bf7b298974f05a524ccf976a8719",
     "TripTrack/Resources/ru.lproj/InfoPlist.strings": "1309453322f3f66294ab9c8448426fcfc9c0a2df04dffc27d31f10041937b426",
     "TripTrack/Resources/de.lproj/InfoPlist.strings": "764900098070f802e7644ca628eb9c0f1a06e6c2f3eed46295622695786dcfd5",
@@ -132,68 +134,68 @@
   },
   "counts": {
     "en": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1571,
-      "plurals": 25,
+      "strings": 1677,
+      "plurals": 30,
       "english_fallbacks": 24
     }
   },
@@ -15274,6 +15276,381 @@
       }
     },
     {
+      "name": "logic_publishedTripsSignOutMessage_noun",
+      "kind": "plurals",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1714,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "one": {},
+        "other": {}
+      },
+      "language_signatures": {
+        "en": {
+          "one": {},
+          "other": {}
+        },
+        "ru": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "de": {
+          "one": {},
+          "other": {}
+        },
+        "es": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "fr": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "it": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "pl": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "id": {
+          "other": {}
+        },
+        "tr": {
+          "one": {},
+          "other": {}
+        },
+        "fil": {
+          "one": {},
+          "other": {}
+        },
+        "uk": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "kk": {
+          "one": {},
+          "other": {}
+        },
+        "pt": {
+          "one": {},
+          "many": {},
+          "other": {}
+        }
+      }
+    },
+    {
+      "name": "logic_publishedTripsSignOutMessage_pron",
+      "kind": "plurals",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1714,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "one": {},
+        "other": {}
+      },
+      "language_signatures": {
+        "en": {
+          "one": {},
+          "other": {}
+        },
+        "ru": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "de": {
+          "one": {},
+          "other": {}
+        },
+        "es": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "fr": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "it": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "pl": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "id": {
+          "other": {}
+        },
+        "tr": {
+          "one": {},
+          "other": {}
+        },
+        "fil": {
+          "one": {},
+          "other": {}
+        },
+        "uk": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "kk": {
+          "one": {},
+          "other": {}
+        },
+        "pt": {
+          "one": {},
+          "many": {},
+          "other": {}
+        }
+      }
+    },
+    {
+      "name": "logic_statsMemoriesLine_noun",
+      "kind": "plurals",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6371,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "one": {},
+        "other": {}
+      },
+      "language_signatures": {
+        "en": {
+          "one": {},
+          "other": {}
+        },
+        "ru": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "de": {
+          "one": {},
+          "other": {}
+        },
+        "es": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "fr": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "it": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "pl": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "id": {
+          "other": {}
+        },
+        "tr": {
+          "one": {},
+          "other": {}
+        },
+        "fil": {
+          "one": {},
+          "other": {}
+        },
+        "uk": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "kk": {
+          "one": {},
+          "other": {}
+        },
+        "pt": {
+          "one": {},
+          "many": {},
+          "other": {}
+        }
+      }
+    },
+    {
+      "name": "logic_statsNewPlacesLine_noun",
+      "kind": "plurals",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6237,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "one": {},
+        "other": {}
+      },
+      "language_signatures": {
+        "en": {
+          "one": {},
+          "other": {}
+        },
+        "ru": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "de": {
+          "one": {},
+          "other": {}
+        },
+        "es": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "fr": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "it": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "pl": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "id": {
+          "other": {}
+        },
+        "tr": {
+          "one": {},
+          "other": {}
+        },
+        "fil": {
+          "one": {},
+          "other": {}
+        },
+        "uk": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "kk": {
+          "one": {},
+          "other": {}
+        },
+        "pt": {
+          "one": {},
+          "many": {},
+          "other": {}
+        }
+      }
+    },
+    {
+      "name": "logic_syncAttemptsLabel_word",
+      "kind": "plurals",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3321,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "one": {},
+        "other": {}
+      },
+      "language_signatures": {
+        "en": {
+          "one": {},
+          "other": {}
+        },
+        "ru": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "de": {
+          "one": {},
+          "other": {}
+        },
+        "es": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "fr": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "it": {
+          "one": {},
+          "many": {},
+          "other": {}
+        },
+        "pl": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "id": {
+          "other": {}
+        },
+        "tr": {
+          "one": {},
+          "other": {}
+        },
+        "fil": {
+          "one": {},
+          "other": {}
+        },
+        "uk": {
+          "one": {},
+          "few": {},
+          "many": {},
+          "other": {}
+        },
+        "kk": {
+          "one": {},
+          "other": {}
+        },
+        "pt": {
+          "one": {},
+          "many": {},
+          "other": {}
+        }
+      }
+    },
+    {
       "name": "nounCheckpoints",
       "kind": "plurals",
       "file": "TripTrack/Localization/AppStringsCore.swift",
@@ -17541,6 +17918,72 @@
       }
     },
     {
+      "name": "badgeRarity.common",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badgeRarity.epic",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badgeRarity.exclusive",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badgeRarity.legendary",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badgeRarity.rare",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badgeRarity.uncommon",
+      "kind": "string",
+      "file": "TripTrack/Models/Badge.swift",
+      "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "badges",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -19422,6 +19865,17 @@
       }
     },
     {
+      "name": "daysUnitShort",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2015,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "defaultVehicleName",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -19756,6 +20210,17 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 2085,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "discussionSeeAllPillHead",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1972,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -23070,6 +23535,6207 @@
       }
     },
     {
+      "name": "logic_achievementsEarnedBy",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5714,
+      "placeholders": {
+        "percent": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_activityAchievementUnlocked",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4414,
+      "placeholders": {
+        "badge": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_activityCommented_text",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4366,
+      "placeholders": {
+        "text": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_activityCommented_trip",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4366,
+      "placeholders": {
+        "trip": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_activityReactedTo",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4345,
+      "placeholders": {
+        "trip": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_badgeLastEarned",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2825,
+      "placeholders": {
+        "day": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_blockedSince",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4751,
+      "placeholders": {
+        "date": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_chartKmMark",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2994,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_chartMileMark",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2943,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        },
+        "ordinal": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_clubWaitingCount",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 468,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_commentReplyingTo",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5234,
+      "placeholders": {
+        "name": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_companionPhotoUploadPartial",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5550,
+      "placeholders": {
+        "ratio": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_companionsAndMore",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5468,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_companionsPendingSuffix_many",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5425,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_companionsPendingSuffix_one",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5425,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_contentFilterTooLong",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6842,
+      "placeholders": {
+        "max": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_cosmeticRetainedChoice",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings+CosmeticRetention.swift",
+      "line": 7,
+      "placeholders": {
+        "kind": {
+          "index": 1,
+          "type": "s"
+        },
+        "name": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_earnedTimes",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1233,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "s"
+        },
+        "t": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_exploredPercent",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1812,
+      "placeholders": {
+        "percent": {
+          "index": 1,
+          "type": "s"
+        },
+        "place": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_fuelPricePerUnit",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4150,
+      "placeholders": {
+        "unit": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_groupsWaitlistCount",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 403,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        },
+        "people": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_inGarageSince",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4022,
+      "placeholders": {
+        "when": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_levelsNextRank",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5976,
+      "placeholders": {
+        "tail": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_levelsToNextLevel",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5958,
+      "placeholders": {
+        "level": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_levelsXpTotal",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6034,
+      "placeholders": {
+        "xp": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_mapKmDriven",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1571,
+      "placeholders": {
+        "u": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_mapRoadTrips",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1642,
+      "placeholders": {
+        "t": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_myProfileAvatarRetired",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5827,
+      "placeholders": {
+        "emoji": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_nameHelper",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5040,
+      "placeholders": {
+        "max": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_notifTripStartBody",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2296,
+      "placeholders": {
+        "deviceName": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_notifTripStopBody_ask",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2744,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_notifTripStopBody_tail",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2744,
+      "placeholders": {
+        "mins": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_onboardingConsentMarkdown",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1173,
+      "placeholders": {
+        "terms": {
+          "index": 1,
+          "type": "s"
+        },
+        "privacy": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_onboardingConsentMarkdown_privacy",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1173,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_onboardingConsentMarkdown_terms",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1173,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_ordinal_0",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_1",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_2",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_3",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_4",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_5",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_ordinal_6",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 2974,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_outOf",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3786,
+      "placeholders": {
+        "have": {
+          "index": 1,
+          "type": "s"
+        },
+        "all": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_photosAdded",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5506,
+      "placeholders": {
+        "p": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_pricePerLiter",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 966,
+      "placeholders": {
+        "c": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_publicAboutBy",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3723,
+      "placeholders": {
+        "name": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_publicProfileTripsTotal",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6917,
+      "placeholders": {
+        "total": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_publishedTripsSignOutMessage_head",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1714,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "s"
+        },
+        "noun": {
+          "index": 2,
+          "type": "s"
+        },
+        "pron": {
+          "index": 3,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s",
+          "3": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_publishedTripsSignOutMessage_tail",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1714,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_rarityCount_common",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_rarityCount_epic",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_rarityCount_exclusive",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_rarityCount_legendary",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_rarityCount_rare",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_rarityCount_uncommon",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5737,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_recordingDiscardReason_noDrivingSpeed",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings+RecordingOutcome.swift",
+      "line": 59,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_recordingDiscardReason_tooShort",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings+RecordingOutcome.swift",
+      "line": 59,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_relTimeDaysAgo",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6981,
+      "placeholders": {
+        "days": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_relTimeMinutesAgo",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6860,
+      "placeholders": {
+        "mins": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_relTimeTodayAt",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6879,
+      "placeholders": {
+        "time": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_relTimeYesterdayAt",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6897,
+      "placeholders": {
+        "time": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_repeatRouteTimes",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5094,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_signInLegalMarkdown",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3380,
+      "placeholders": {
+        "terms": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_sinceYear",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4040,
+      "placeholders": {
+        "year": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsKmByMonth_km",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4859,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_statsKmByMonth_miles",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4859,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_statsKmTotal",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4829,
+      "placeholders": {
+        "u": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsMemoriesLine",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6371,
+      "placeholders": {
+        "head": {
+          "index": 1,
+          "type": "s"
+        },
+        "countedTrips": {
+          "index": 2,
+          "type": "s"
+        },
+        "trips": {
+          "index": 3,
+          "type": "s"
+        },
+        "noun": {
+          "index": 4,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "3": "s",
+            "4": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "3": "s",
+            "4": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsNewPlacesLine",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6237,
+      "placeholders": {
+        "head": {
+          "index": 1,
+          "type": "s"
+        },
+        "firstPlace": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsNewPlacesLine_head",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6237,
+      "placeholders": {
+        "period": {
+          "index": 1,
+          "type": "s"
+        },
+        "roads": {
+          "index": 2,
+          "type": "s"
+        },
+        "noun": {
+          "index": 3,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s",
+          "3": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s",
+            "3": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsRecordBestDay_km",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6294,
+      "placeholders": {
+        "u": {
+          "index": 1,
+          "type": "s"
+        },
+        "capitalizedUnit": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsRecordBestDay_miles",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6294,
+      "placeholders": {
+        "u": {
+          "index": 1,
+          "type": "s"
+        },
+        "capitalizedUnit": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsVsPrevious_less_month",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6199,
+      "placeholders": {
+        "previous": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsVsPrevious_less_year",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6199,
+      "placeholders": {
+        "previous": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsVsPrevious_more_month",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6199,
+      "placeholders": {
+        "previous": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsVsPrevious_more_year",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6199,
+      "placeholders": {
+        "previous": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_statsWithTripTrackSince",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 6349,
+      "placeholders": {
+        "date": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_streakDaysInARow",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 5076,
+      "placeholders": {
+        "n": {
+          "index": 1,
+          "type": "s"
+        },
+        "d": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "2": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_syncUpdatedAgo",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4582,
+      "placeholders": {
+        "relative": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_totalKm",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1058,
+      "placeholders": {
+        "u": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_unitDistanceShort_few",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 797,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitDistanceShort_fraction",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 797,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitDistanceShort_many",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 797,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitDistanceShort_one",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 797,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitElevationShort_few",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 847,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitElevationShort_fraction",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 847,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitElevationShort_many",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 847,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitElevationShort_one",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 847,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "logic_unitSpeedShort",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 828,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      },
+      "language_signatures": {
+        "en": {
+          "text": {}
+        },
+        "ru": {
+          "text": {}
+        },
+        "de": {
+          "text": {}
+        },
+        "es": {
+          "text": {}
+        },
+        "fr": {
+          "text": {}
+        },
+        "it": {
+          "text": {}
+        },
+        "pl": {
+          "text": {}
+        },
+        "id": {
+          "text": {}
+        },
+        "tr": {
+          "text": {}
+        },
+        "fil": {
+          "text": {}
+        },
+        "uk": {
+          "text": {}
+        },
+        "kk": {
+          "text": {}
+        },
+        "pt": {
+          "text": {}
+        }
+      }
+    },
+    {
+      "name": "logic_vehicleLevelAndAbove",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4249,
+      "placeholders": {
+        "level": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_vehicleLevelToNext",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4210,
+      "placeholders": {
+        "d": {
+          "index": 1,
+          "type": "s"
+        },
+        "level": {
+          "index": 2,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "2": "s",
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s",
+            "2": "s"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_vehicleSoldState",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3624,
+      "placeholders": {
+        "when": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      },
+      "language_signatures": {
+        "en": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "ru": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "de": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "es": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "it": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pl": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "id": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "tr": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "fil": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "uk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "kk": {
+          "text": {
+            "1": "s"
+          }
+        },
+        "pt": {
+          "text": {
+            "1": "s"
+          }
+        }
+      }
+    },
+    {
       "name": "logsEmpty",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -23652,6 +30318,17 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 1666,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "mapTripsSectionHead",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 1636,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -30282,6 +36959,17 @@
       }
     },
     {
+      "name": "signInLegalTermsWord",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 3381,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "signInLoading",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -31305,6 +37993,28 @@
       }
     },
     {
+      "name": "syncFailedCountHead",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4725,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "syncLastAtHead",
+      "kind": "string",
+      "file": "TripTrack/Localization/AppStrings.swift",
+      "line": 4722,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "syncOffState",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -32144,6 +38854,17 @@
       }
     },
     {
+      "name": "unitKilometersFull",
+      "kind": "string",
+      "file": "TripTrack/Models/DistanceUnit+Current.swift",
+      "line": 67,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "unitLitresShort",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -32159,6 +38880,17 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 768,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "unitMilesFull",
+      "kind": "string",
+      "file": "TripTrack/Models/DistanceUnit+Current.swift",
+      "line": 68,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -34501,54 +41233,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -34587,42 +41271,6 @@
       "file": "TripTrack/Localization/Translations/Translations+DE.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+DE.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "de: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -35629,54 +42277,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -35715,42 +42315,6 @@
       "file": "TripTrack/Localization/Translations/Translations+ES.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ES.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "es: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -36757,54 +43321,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -36843,42 +43359,6 @@
       "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FIL.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "fil: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -37885,54 +44365,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -37971,42 +44403,6 @@
       "file": "TripTrack/Localization/Translations/Translations+FR.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+FR.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "fr: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -39013,54 +45409,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -39099,42 +45447,6 @@
       "file": "TripTrack/Localization/Translations/Translations+ID.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+ID.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "id: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -40141,54 +46453,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -40227,42 +46491,6 @@
       "file": "TripTrack/Localization/Translations/Translations+IT.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+IT.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "it: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -41269,54 +47497,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -41355,42 +47535,6 @@
       "file": "TripTrack/Localization/Translations/Translations+KK.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+KK.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "kk: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -42397,54 +48541,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -42483,42 +48579,6 @@
       "file": "TripTrack/Localization/Translations/Translations+PL.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PL.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "pl: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -43525,54 +49585,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -43611,42 +49623,6 @@
       "file": "TripTrack/Localization/Translations/Translations+PT.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+PT.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "pt: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -44653,54 +50629,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -44739,42 +50667,6 @@
       "file": "TripTrack/Localization/Translations/Translations+TR.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+TR.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "tr: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {
@@ -45781,54 +51673,6 @@
     },
     {
       "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 260,
-      "name": "mapTripsSectionHead",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 300,
-      "name": "discussionSeeAllPillHead",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 309,
-      "name": "daysUnitShort",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 450,
-      "name": "signInLegalTermsWord",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 687,
-      "name": "syncLastAtHead",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 688,
-      "name": "syncFailedCountHead",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1018,
-      "name": "unitKilometersFull",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1019,
-      "name": "unitMilesFull",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
       "line": 1020,
       "name": "unitLitersFull",
       "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
@@ -45867,42 +51711,6 @@
       "file": "TripTrack/Localization/Translations/Translations+UK.swift",
       "line": 1026,
       "name": "badgeCategory.exclusive",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1027,
-      "name": "badgeRarity.common",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1028,
-      "name": "badgeRarity.uncommon",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1029,
-      "name": "badgeRarity.rare",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1030,
-      "name": "badgeRarity.epic",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1031,
-      "name": "badgeRarity.legendary",
-      "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
-    },
-    {
-      "file": "TripTrack/Localization/Translations/Translations+UK.swift",
-      "line": 1032,
-      "name": "badgeRarity.exclusive",
       "reason": "uk: translation has no extractable English tr key; inspect manual function or stale table row"
     },
     {

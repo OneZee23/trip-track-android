@@ -101,7 +101,8 @@ def validate(res, metadata):
             for category, text in items.items():
                 if TOKEN.search(text):
                     raise ValueError(f"{lang}/{identity}: unconverted placeholder token")
-                expected = record["signatures"].get(category, record["signatures"].get("other", {}))
+                signatures = record.get("language_signatures", {}).get(lang, record["signatures"])
+                expected = signatures.get(category, signatures.get("other", {}))
                 actual = signature(text) if record["formatted"] else {}
                 if {str(index): value for index, value in actual.items()} != expected:
                     raise ValueError(f"{lang}/{identity}/{category}: inconsistent positional placeholders")

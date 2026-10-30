@@ -1,0 +1,7 @@
+{
+  "accountAppleIdLine": "Intentionally skipped: iOS-only Apple ID account row; Android signs in with Google.",
+  "notifAutoStartFailedBody": "Intentionally skipped: UI-only MapViewModel.StartRefusal is not ported; notifStartFailedNoGeo/Recovery/Manual resources are available for the recording UI adapter.",
+  "table": "Intentionally skipped: private Foundation DateFormatter builder; LocalizedDateFormatter.patterns/templates build Android ICU formatters.",
+  "live_pick": "Intentionally skipped: private widget language-table selector; Android uses the chosen-language resource context.",
+  "live_slavic": "Intentionally skipped: private widget duplicate of pluralForm; live_distanceShort delegates to the shared facade."
+}
