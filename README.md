@@ -12,7 +12,7 @@ and [docs/port-status.md](docs/port-status.md).
 
 ## Building
 
-Requires JDK 21 and the Android SDK (platform 36).
+Requires JDK 17 and the Android SDK (platform 37.2, build-tools 36.0.0).
 
 ```bash
 ./gradlew :app:assembleDebug

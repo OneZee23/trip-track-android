@@ -8,8 +8,8 @@ who moves from an iPhone to an Android phone keeps their trips, atlas, places an
 
 | Area | Choice | Why |
 |---|---|---|
-| Language | Kotlin, JDK 21 toolchain, latest stable AGP and Gradle, version catalog | Standard for a native Android app |
-| SDK levels | minSdk 29 (Android 10), target and compile 36 | Android 10 is where background location and activity recognition became runtime permissions; it covers almost every active phone |
+| Language | Kotlin, JDK 17 toolchain, latest stable AGP and Gradle, version catalog | Standard for a native Android app |
+| SDK levels | minSdk 29 (Android 10), targetSdk 36, compileSdk 37.2 | Android 10 adds background location and activity recognition runtime permissions; Compose requires compile SDK 37 |
 | UI | Jetpack Compose with a design system ported from iOS (`AppTheme`, `AppType`, Inter) | The app must look like TripTrack, not like a Material sample |
 | Async | Coroutines and Flow | |
 | DI | Manual `AppGraph` built in `Application` | No code generation; mirrors the iOS singletons and keeps builds fast |

@@ -34,7 +34,7 @@ numbers, wire contract, strings and look. Read `docs/port-plan.md` before your f
 
 ## Building
 
-- Use the Gradle wrapper with the JDK 21 toolchain. Build and test only the modules you touch,
+- Use the Gradle wrapper with the JDK 17 toolchain. Build and test only the modules you touch,
   for example `./gradlew :core:logic:test`. One Gradle build at a time in your checkout.
 - The machine has 16 GB of RAM and other agents build in parallel: never raise the Gradle or
   Kotlin daemon memory, never start an emulator unless your task says so, and shut down any
