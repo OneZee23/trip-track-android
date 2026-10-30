@@ -41,8 +41,9 @@ class StorageContractTests {
         assertEquals(0.3048, DistanceUnit.metresPerFoot)
         assertEquals(listOf("fuel", "electric", "pluginHybrid"), Powertrain.entries.map { it.rawValue })
         for (raw in listOf(null, "", "hydrogen", "FUEL")) assertNull(Powertrain.parse(raw))
-        for (raw in listOf(null, "", "imperial_uk", "METRIC")) assertNull(DashboardUnits.parse(raw))
+        for (raw in listOf(null, "", "imperial_uk")) assertNull(DashboardUnits.parse(raw))
         assertEquals(DashboardUnits.imperial, DashboardUnits.parse("imperial"))
+        assertEquals(DashboardUnits.metric, DashboardUnits.parse(" METRIC "))
         assertEquals(Powertrain.pluginHybrid, Powertrain.parse("pluginHybrid"))
     }
 

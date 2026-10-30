@@ -1,0 +1,247 @@
+en	meProNone	TripTrack PRO
+en	meProNoneSub	Backgrounds, frames, line colour, hand-entered trips
+en	meProActiveSub	until {date} · manage
+en	meProTrialSub	One week free until {date} · manage
+en	meProExpired	PRO ended {date}
+en	meProExpiredSub	Your look comes back with the subscription; hand-entered trips stay
+en	meProGraceSub	Payment didn't go through, update it in the App Store
+en	meProPendingSub	Waiting for purchase approval
+en	proManageTrialRenewsYear	Free trial until {date}, then {price} a year
+en	proManageTrialRenewsMonth	Free trial until {date}, then {price} a month
+en	proManageRenewsYear	Renews {date} · {price} a year
+en	proManageRenewsMonth	Renews {date} · {price} a month
+en	proManageEndsOn	Renewal is off. PRO works until {date}
+en	proManageUntil	PRO until {date}
+en	unitKilometersFull	Kilometers
+en	unitMilesFull	Miles
+en	dashboardUnitsApp	Same as app
+en	dashboardUnitsMetricFuel	Kilometres and litres
+en	dashboardUnitsImperialFuel	Miles and gallons
+ru	meProNone	TripTrack PRO
+ru	meProNoneSub	Фоны, рамки, цвет линии, ручная поездка
+ru	meProActiveSub	до {date} · управлять
+ru	meProTrialSub	Неделя бесплатно до {date} · управлять
+ru	meProExpired	PRO закончился {date}
+ru	meProExpiredSub	Оформление вернётся с подпиской, вписанные поездки на месте
+ru	meProGraceSub	Не прошла оплата, обновите способ в App Store
+ru	meProPendingSub	Ждём подтверждения покупки
+ru	proManageTrialRenewsYear	Пробный период до {date}, потом {price} в год
+ru	proManageTrialRenewsMonth	Пробный период до {date}, потом {price} в месяц
+ru	proManageRenewsYear	Продлится {date} · {price} в год
+ru	proManageRenewsMonth	Продлится {date} · {price} в месяц
+ru	proManageEndsOn	Продление отключено. PRO работает до {date}
+ru	proManageUntil	PRO до {date}
+ru	unitKilometersFull	Километры
+ru	unitMilesFull	Мили
+ru	dashboardUnitsApp	Как в приложении
+ru	dashboardUnitsMetricFuel	Километры и литры
+ru	dashboardUnitsImperialFuel	Мили и галлоны
+de	meProNone	TripTrack PRO
+de	meProNoneSub	Hintergründe, Rahmen, Linienfarbe, manuelle Fahrten
+de	meProActiveSub	bis {date} · verwalten
+de	meProTrialSub	Eine Woche gratis bis {date} · verwalten
+de	meProExpired	PRO endete am {date}
+de	meProExpiredSub	Ihr Look kommt mit dem Abo zurück; manuelle Fahrten bleiben
+de	meProGraceSub	Zahlung fehlgeschlagen, aktualisieren Sie sie im App Store
+de	meProPendingSub	Warten auf Bestätigung des Kaufs
+de	proManageTrialRenewsYear	Testphase bis {date}, danach {price} im Jahr
+de	proManageTrialRenewsMonth	Testphase bis {date}, danach {price} im Monat
+de	proManageRenewsYear	Verlängert sich am {date} · {price} im Jahr
+de	proManageRenewsMonth	Verlängert sich am {date} · {price} im Monat
+de	proManageEndsOn	Verlängerung ist aus. PRO gilt bis {date}
+de	proManageUntil	PRO bis {date}
+de	unitKilometersFull	Kilometer
+de	unitMilesFull	Meilen
+de	dashboardUnitsApp	Wie in der App
+de	dashboardUnitsMetricFuel	Kilometer und Liter
+de	dashboardUnitsImperialFuel	Meilen und Gallonen
+es	meProNone	TripTrack PRO
+es	meProNoneSub	Fondos, marcos, color de línea, viajes añadidos a mano
+es	meProActiveSub	hasta {date} · gestionar
+es	meProTrialSub	Una semana gratis hasta {date} · gestionar
+es	meProExpired	PRO terminó el {date}
+es	meProExpiredSub	Su aspecto vuelve con la suscripción; los viajes añadidos a mano se quedan
+es	meProGraceSub	El pago no se ha completado, actualícelo en la App Store
+es	meProPendingSub	Esperando la confirmación de la compra
+es	proManageTrialRenewsYear	Prueba gratuita hasta el {date}, después {price} al año
+es	proManageTrialRenewsMonth	Prueba gratuita hasta el {date}, después {price} al mes
+es	proManageRenewsYear	Se renueva el {date} · {price} al año
+es	proManageRenewsMonth	Se renueva el {date} · {price} al mes
+es	proManageEndsOn	La renovación está desactivada. PRO funciona hasta el {date}
+es	proManageUntil	PRO hasta el {date}
+es	unitKilometersFull	Kilómetros
+es	unitMilesFull	Millas
+es	dashboardUnitsApp	Igual que la app
+es	dashboardUnitsMetricFuel	Kilómetros y litros
+es	dashboardUnitsImperialFuel	Millas y galones
+fr	meProNone	TripTrack PRO
+fr	meProNoneSub	Fonds, cadres, couleur du tracé, trajets ajoutés à la main
+fr	meProActiveSub	jusqu’au {date} · gérer
+fr	meProTrialSub	Une semaine offerte jusqu’au {date} · gérer
+fr	meProExpired	PRO a pris fin le {date}
+fr	meProExpiredSub	Votre style revient avec l’abonnement ; les trajets ajoutés restent
+fr	meProGraceSub	Le paiement n’a pas abouti, mettez-le à jour dans l’App Store
+fr	meProPendingSub	En attente de confirmation de l’achat
+fr	proManageTrialRenewsYear	Essai gratuit jusqu’au {date}, puis {price} par an
+fr	proManageTrialRenewsMonth	Essai gratuit jusqu’au {date}, puis {price} par mois
+fr	proManageRenewsYear	Renouvellement le {date} · {price} par an
+fr	proManageRenewsMonth	Renouvellement le {date} · {price} par mois
+fr	proManageEndsOn	Le renouvellement est désactivé. PRO reste actif jusqu’au {date}
+fr	proManageUntil	PRO jusqu’au {date}
+fr	unitKilometersFull	Kilomètres
+fr	unitMilesFull	Miles
+fr	dashboardUnitsApp	Comme dans l'app
+fr	dashboardUnitsMetricFuel	Kilomètres et litres
+fr	dashboardUnitsImperialFuel	Miles et gallons
+it	meProNone	TripTrack PRO
+it	meProNoneSub	Sfondi, cornici, colore del percorso, viaggi inseriti a mano
+it	meProActiveSub	fino al {date} · gestisci
+it	meProTrialSub	Una settimana gratis fino al {date} · gestisci
+it	meProExpired	PRO è terminato il {date}
+it	meProExpiredSub	Il Suo aspetto torna con l’abbonamento; i viaggi inseriti restano
+it	meProGraceSub	Il pagamento non è andato a buon fine, lo aggiorni nell’App Store
+it	meProPendingSub	In attesa di conferma dell’acquisto
+it	proManageTrialRenewsYear	Prova gratuita fino al {date}, poi {price} all’anno
+it	proManageTrialRenewsMonth	Prova gratuita fino al {date}, poi {price} al mese
+it	proManageRenewsYear	Si rinnova il {date} · {price} all’anno
+it	proManageRenewsMonth	Si rinnova il {date} · {price} al mese
+it	proManageEndsOn	Il rinnovo è disattivato. PRO resta attivo fino al {date}
+it	proManageUntil	PRO fino al {date}
+it	unitKilometersFull	Chilometri
+it	unitMilesFull	Miglia
+it	dashboardUnitsApp	Come nell'app
+it	dashboardUnitsMetricFuel	Chilometri e litri
+it	dashboardUnitsImperialFuel	Miglia e galloni
+pl	meProNone	TripTrack PRO
+pl	meProNoneSub	Tła, ramki, kolor trasy, trasy dopisane ręcznie
+pl	meProActiveSub	do {date} · zarządzanie
+pl	meProTrialSub	Tydzień bezpłatnie do {date} · zarządzanie
+pl	meProExpired	PRO skończył się {date}
+pl	meProExpiredSub	Wygląd wróci z subskrypcją; dopisane trasy zostają
+pl	meProGraceSub	Płatność nie przeszła, należy ją zaktualizować w App Store
+pl	meProPendingSub	Czekamy na potwierdzenie zakupu
+pl	proManageTrialRenewsYear	Okres próbny do {date}, potem {price} na rok
+pl	proManageTrialRenewsMonth	Okres próbny do {date}, potem {price} na miesiąc
+pl	proManageRenewsYear	Odnowi się {date} · {price} na rok
+pl	proManageRenewsMonth	Odnowi się {date} · {price} na miesiąc
+pl	proManageEndsOn	Odnawianie wyłączone. PRO działa do {date}
+pl	proManageUntil	PRO do {date}
+pl	unitKilometersFull	Kilometry
+pl	unitMilesFull	Mile
+pl	dashboardUnitsApp	Jak w aplikacji
+pl	dashboardUnitsMetricFuel	Kilometry i litry
+pl	dashboardUnitsImperialFuel	Mile i galony
+id	meProNone	TripTrack PRO
+id	meProNoneSub	Latar, bingkai, warna rute, perjalanan isian manual
+id	meProActiveSub	sampai {date} · kelola
+id	meProTrialSub	Satu minggu gratis sampai {date} · kelola
+id	meProExpired	PRO berakhir {date}
+id	meProExpiredSub	Tampilan Anda kembali bersama langganan; perjalanan isian manual tetap ada
+id	meProGraceSub	Pembayaran gagal, perbarui di App Store
+id	meProPendingSub	Menunggu konfirmasi pembelian
+id	proManageTrialRenewsYear	Uji coba gratis sampai {date}, lalu {price} per tahun
+id	proManageTrialRenewsMonth	Uji coba gratis sampai {date}, lalu {price} per bulan
+id	proManageRenewsYear	Diperpanjang {date} · {price} per tahun
+id	proManageRenewsMonth	Diperpanjang {date} · {price} per bulan
+id	proManageEndsOn	Perpanjangan dimatikan. PRO aktif sampai {date}
+id	proManageUntil	PRO sampai {date}
+id	unitKilometersFull	Kilometer
+id	unitMilesFull	Mil
+id	dashboardUnitsApp	Sama seperti aplikasi
+id	dashboardUnitsMetricFuel	Kilometer dan liter
+id	dashboardUnitsImperialFuel	Mil dan galon
+tr	meProNone	TripTrack PRO
+tr	meProNoneSub	Arka planlar, çerçeveler, rota rengi, elle eklenen yolculuklar
+tr	meProActiveSub	{date} tarihine kadar · yönet
+tr	meProTrialSub	{date} tarihine kadar bir hafta ücretsiz · yönet
+tr	meProExpired	PRO {date} tarihinde bitti
+tr	meProExpiredSub	Görünümünüz abonelikle geri gelir; elle eklenen yolculuklar kalır
+tr	meProGraceSub	Ödeme alınamadı, App Store’da güncelleyin
+tr	meProPendingSub	Satın alma onayı bekleniyor
+tr	proManageTrialRenewsYear	{date} tarihine kadar ücretsiz deneme, sonra yılda {price}
+tr	proManageTrialRenewsMonth	{date} tarihine kadar ücretsiz deneme, sonra ayda {price}
+tr	proManageRenewsYear	{date} tarihinde yenilenir · yılda {price}
+tr	proManageRenewsMonth	{date} tarihinde yenilenir · ayda {price}
+tr	proManageEndsOn	Yenileme kapalı. PRO {date} tarihine kadar çalışır
+tr	proManageUntil	PRO {date} tarihine kadar
+tr	unitKilometersFull	Kilometre
+tr	unitMilesFull	Mil
+tr	dashboardUnitsApp	Uygulamadaki gibi
+tr	dashboardUnitsMetricFuel	Kilometre ve litre
+tr	dashboardUnitsImperialFuel	Mil ve galon
+fil	meProNone	TripTrack PRO
+fil	meProNoneSub	Mga background, frame, kulay ng ruta, mga biyaheng idinagdag nang manu-mano
+fil	meProActiveSub	hanggang {date} · pamahalaan
+fil	meProTrialSub	Isang linggong libre hanggang {date} · pamahalaan
+fil	meProExpired	Natapos ang PRO noong {date}
+fil	meProExpiredSub	Babalik ang inyong itsura kasama ng subscription; nananatili ang mga manu-manong biyahe
+fil	meProGraceSub	Hindi natuloy ang bayad, i-update po ito sa App Store
+fil	meProPendingSub	Hinihintay ang kumpirmasyon ng pagbili
+fil	proManageTrialRenewsYear	Libreng trial hanggang {date}, pagkatapos {price} kada taon
+fil	proManageTrialRenewsMonth	Libreng trial hanggang {date}, pagkatapos {price} kada buwan
+fil	proManageRenewsYear	Magre-renew sa {date} · {price} kada taon
+fil	proManageRenewsMonth	Magre-renew sa {date} · {price} kada buwan
+fil	proManageEndsOn	Naka-off ang pag-renew. Gumagana ang PRO hanggang {date}
+fil	proManageUntil	PRO hanggang {date}
+fil	unitKilometersFull	Kilometro
+fil	unitMilesFull	Milya
+fil	dashboardUnitsApp	Katulad ng app
+fil	dashboardUnitsMetricFuel	Kilometro at litro
+fil	dashboardUnitsImperialFuel	Milya at galon
+uk	meProNone	TripTrack PRO
+uk	meProNoneSub	Фони, рамки, колір лінії, поїздки, дописані вручну
+uk	meProActiveSub	до {date} · керувати
+uk	meProTrialSub	Тиждень безкоштовно до {date} · керувати
+uk	meProExpired	PRO закінчився {date}
+uk	meProExpiredSub	Оформлення повернеться з підпискою, дописані поїздки на місці
+uk	meProGraceSub	Оплата не пройшла, оновіть спосіб в App Store
+uk	meProPendingSub	Чекаємо підтвердження покупки
+uk	proManageTrialRenewsYear	Пробний період до {date}, потім {price} на рік
+uk	proManageTrialRenewsMonth	Пробний період до {date}, потім {price} на місяць
+uk	proManageRenewsYear	Продовжиться {date} · {price} на рік
+uk	proManageRenewsMonth	Продовжиться {date} · {price} на місяць
+uk	proManageEndsOn	Продовження вимкнено. PRO працює до {date}
+uk	proManageUntil	PRO до {date}
+uk	unitKilometersFull	Кілометри
+uk	unitMilesFull	Милі
+uk	dashboardUnitsApp	Як у застосунку
+uk	dashboardUnitsMetricFuel	Кілометри і літри
+uk	dashboardUnitsImperialFuel	Милі і галони
+kk	meProNone	TripTrack PRO
+kk	meProNoneSub	Фондар, жақтаулар, маршрут түсі, қолмен қосылған сапарлар
+kk	meProActiveSub	{date} дейін · басқару
+kk	meProTrialSub	{date} дейін бір апта тегін · басқару
+kk	meProExpired	PRO {date} бітті
+kk	meProExpiredSub	Безендіру жазылыммен қайтады, қолмен қосылған сапарлар орнында
+kk	meProGraceSub	Төлем өтпеді, App Store-да жаңартыңыз
+kk	meProPendingSub	Сатып алуды растауды күтіп отырмыз
+kk	proManageTrialRenewsYear	{date} дейін тегін сынақ, содан кейін жылына {price}
+kk	proManageTrialRenewsMonth	{date} дейін тегін сынақ, содан кейін айына {price}
+kk	proManageRenewsYear	{date} жаңарады · жылына {price}
+kk	proManageRenewsMonth	{date} жаңарады · айына {price}
+kk	proManageEndsOn	Жаңарту өшірулі. PRO {date} дейін жұмыс істейді
+kk	proManageUntil	PRO {date} дейін
+kk	unitKilometersFull	Километрлер
+kk	unitMilesFull	Мильдер
+kk	dashboardUnitsApp	Қолданбадағыдай
+kk	dashboardUnitsMetricFuel	Километр және литр
+kk	dashboardUnitsImperialFuel	Миля және галлон
+pt	meProNone	TripTrack PRO
+pt	meProNoneSub	Fundos, molduras, cor da rota, viagens adicionadas à mão
+pt	meProActiveSub	até {date} · gerenciar
+pt	meProTrialSub	Uma semana grátis até {date} · gerenciar
+pt	meProExpired	PRO terminou em {date}
+pt	meProExpiredSub	Seu visual volta com a assinatura; as viagens adicionadas ficam
+pt	meProGraceSub	O pagamento não foi aprovado, atualize na App Store
+pt	meProPendingSub	Aguardando confirmação da compra
+pt	proManageTrialRenewsYear	Teste grátis até {date}, depois {price} ao ano
+pt	proManageTrialRenewsMonth	Teste grátis até {date}, depois {price} por mês
+pt	proManageRenewsYear	Renova em {date} · {price} ao ano
+pt	proManageRenewsMonth	Renova em {date} · {price} por mês
+pt	proManageEndsOn	A renovação está desligada. O PRO funciona até {date}
+pt	proManageUntil	PRO até {date}
+pt	unitKilometersFull	Quilômetros
+pt	unitMilesFull	Milhas
+pt	dashboardUnitsApp	Igual ao app
+pt	dashboardUnitsMetricFuel	Quilômetros e litros
+pt	dashboardUnitsImperialFuel	Milhas e galões
