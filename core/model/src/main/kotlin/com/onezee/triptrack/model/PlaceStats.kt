@@ -13,6 +13,7 @@ data class PlaceStats(
     val isFrequentGuest: Boolean,
     val directions: List<Direction>,
 ) {
+    companion object {}
 
     // iOS: PlaceStats.swift
     data class Direction(

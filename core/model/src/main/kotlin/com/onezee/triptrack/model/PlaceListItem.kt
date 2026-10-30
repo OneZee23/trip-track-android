@@ -6,4 +6,6 @@ data class PlaceListItem(
     val place: Place,
     val stats: PlaceStats,
     val usual: Double? = null,
-)
+) {
+    companion object {}
+}

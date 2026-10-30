@@ -85,7 +85,9 @@ data class Trip(
     var energyMode: TripEnergyMode = TripEnergyMode.auto,
     @EncodeDefault
     var recordingBreaks: List<Instant> = emptyList(),
-)
+) {
+    companion object {}
+}
 
 // iOS: Trip.swift
 object TripJunkClassifier {
