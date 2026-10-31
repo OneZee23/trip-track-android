@@ -40,5 +40,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
-      - name: Test and build debug APK
-        run: ./gradlew --no-daemon test :app:assembleDebug
+      - name: Test, lint and build APKs
+        # The baselines are recorded on macOS; Ubuntu renders the same tests without image comparison.
+        # The root lintDebug selector includes every Android core module as well as app.
+        run: ./gradlew --no-daemon -Proborazzi.test.verify=false test lintDebug :app:assembleDebug :app:assembleRelease
