@@ -18,6 +18,7 @@ roborazzi = "1.77.0"
 foojay = "1.0.0"
 gradle = "9.8.2"
 junit = "4.13.2"
+lifecycle = "2.9.4"
 # The OpenGL ES build of MapLibre. The fog's C++ host is compiled against headers copied from this
 # exact tag (core/map/maplibre-abi.properties): bumping it fails the build until they are re-copied.
 maplibre = "13.7.1"
@@ -47,6 +48,7 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
 junit = { module = "junit:junit", version.ref = "junit" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 maplibre-opengl = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "maplibre" }
 # Activity Recognition transitions (IN_VEHICLE) exist only in Google Play services; used by core:location.

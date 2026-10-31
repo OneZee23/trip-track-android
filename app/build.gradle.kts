@@ -66,6 +66,8 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:sync"))
     implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(project(":core:map"))
+    implementation(libs.serialization.json)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.coroutines.test)
@@ -76,8 +78,6 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
-    // The map demo screen (src/debug) exists only in debug builds; no release screen uses the map yet.
-    debugImplementation(project(":core:map"))
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
     testImplementation(libs.roborazzi)
