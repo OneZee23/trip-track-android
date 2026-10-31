@@ -176,12 +176,15 @@ class AuthService(
     fun addMeListener(listener: (MeResponse) -> Unit) { meListeners += listener }
 
     /**
-     * Launch: read the session three ways (value, missing, locked), start the engine of the account
-     * found there, revive a soft expiry and backfill a name the server never confirmed.
+     * Launch: read the session three ways (value, missing, locked) at once, so a signed-in person
+     * never sees the guest card; then, once the install's identity is loaded ([identityLoaded]),
+     * start the engine of the account found there, revive a soft expiry and backfill a name the
+     * server never confirmed.
      */
-    fun start() {
+    fun start(identityLoaded: suspend () -> Unit = {}) {
         scope.launch {
             withContext(io) { tokenStore.hydrate() }
+            identityLoaded()
             sync.switchAccount(tokenStore.state.value.accountId)
             reviveSessionIfPossible()
             backfillNameIfNeeded()

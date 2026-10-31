@@ -178,16 +178,16 @@ class AppGraph(private val context: Context) {
     ).also { sessionEvents.listener = it }
 
     /**
-     * The settings row first (it is the identity), then the recording side's launch recovery, then
-     * the session, whose engine needs the identity for its pending recovery.
+     * The settings row first (it is the identity), then the recording side's launch recovery. The
+     * session is read at once; its engine waits for the identity, which its pending recovery needs.
      */
     fun start() {
+        auth.start { userIdLoaded.await() }
         scope.launch {
             val id = settings.loadOrCreate().id
             userId = id
             userIdLoaded.complete(id)
             location.start()
-            auth.start()
         }
         // A launch before the first unlock reads the session as «unknown»; read it again then.
         ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
