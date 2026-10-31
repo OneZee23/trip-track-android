@@ -18,7 +18,7 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Design system and tab bar | `Views/Theme/`, `CustomTabBar` | `core/designsystem`, `app`: theme, Inter, house components, tab bar, five-tab shell, language and theme pickers; 81 tests and 40 screenshots | done |
 | Recording and auto-start | `TripManager`, `LocationManager`, `AutoTripService`, `AutoTripPolicy` | `core/location`: foreground service with live notification, raw GPS + own Kalman, crash recovery, drafts, Activity Recognition, car stereo, Android Auto, permissions and recording health; 75 tests | done (real-phone checks pending) |
 | Sync engine | `SyncQueue`, `Services/Sync/` | `core/sync`: queue, gates, push/pull, photos, WorkManager; 123 tests | done (AppGraph wiring with the screens) |
-| Trip list and detail | `Views/Feed`, `Views/TripDetail` | `app/feature/feed`, `trip`, `journey`, `drafts`: view models and state with tests; GPX/CSV export | view models done, screens next |
+| Trip list and detail | `Views/Feed`, `Views/TripDetail` | feed, trip detail (live map hero, fullscreen, moments, photos, checkpoints, segments, charts, export), journeys, drafts; 34 screenshots; debug SeedActivity | done (replay, trip edit, comments, share later) |
 | Atlas | `Views/MyMap/` | `app/feature/atlas` view models and state with tests, `core/map` | view models done, screens next |
 | Places, journeys, segments | `PlaceManager`, `JourneyManager` | `app/feature/places`, `journey` view models; logic in `core/logic` | view models done, screens next |
 | Profile, social, garage, settings | `Views/Profile`, `Views/Garage`, `Social/` | `app/feature/me`, `garage`, `settings` view models; CarCatalog in `core/logic` | view models done, screens next |
