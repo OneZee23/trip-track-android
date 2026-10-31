@@ -114,6 +114,6 @@ private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resume
         AppTab.maps -> AtlasPlaceholder()
         AppTab.record -> RecordTab(graph, resumeTick, onClose = { onSelect(AppTab.home) })
         AppTab.places -> PlacesPlaceholder()
-        AppTab.profile -> MeTab(graph.tripsFeature) { below -> MePlaceholder(graph.themeManager, graph.languageManager, below, account = { AccountEntry(graph) }) }
+        AppTab.profile -> com.onezee.triptrack.feature.me.MeTab(graph, resumeTick)
     }
 }

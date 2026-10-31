@@ -16,6 +16,8 @@ import java.util.Locale
 import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 // iOS: ProfileHeroCard.swift. The identity/profile-sync owner supplies this snapshot.
 data class ProfileIdentity(
@@ -23,11 +25,14 @@ data class ProfileIdentity(
     val name: String = "",
     val avatarEmoji: String = "😎",
     val bio: String = "",
+    val username: String = "",
+    val country: String = "",
     val level: Int = 1,
     val xp: Int = 0,
     val effectiveBackground: ProfileBackground = ProfileBackground.none,
     val coverPhotoIds: List<UUID> = emptyList(),
     val mainVehiclePhotos: Map<UUID, String> = emptyMap(),
+    val mainVehiclePhotoUrls: Map<UUID, String> = emptyMap(),
     val selectedVehicleId: UUID? = null,
     val unlockedBadgeIds: Set<String> = emptySet(),
     val badgeEarnCounts: Map<String, Int> = emptyMap(),
@@ -41,7 +46,7 @@ interface ProfileIdentitySource {
 }
 
 // iOS: VehicleStage.swift / ProfileGarageHeader.swift.
-data class HeroCarStage(val vehicle: Vehicle, val photoFilename: String?, val stage: VehicleStageState)
+data class HeroCarStage(val vehicle: Vehicle, val photoFilename: String?, val stage: VehicleStageState, val remoteURL: String? = null)
 
 // iOS: ProfileHeroCard.swift.
 data class ProfileHeroState(
@@ -99,6 +104,7 @@ class MeViewModel(
     private val localizedRegion: (String?) -> String? = { it },
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val mutableState = MutableStateFlow(MeState(mode = preferences.string("profileHistoryMode")?.let { raw -> HistoryMode.entries.firstOrNull { it.name == raw } } ?: HistoryMode.list))
+    private val pinEdits = Mutex()
     val state = mutableState.asStateFlow()
     private var library = ProfileHistoryLibrary(emptyList())
     private var journeys = emptyList<Journey>()
@@ -149,7 +155,7 @@ class MeViewModel(
     fun expandRoutine(id: UUID) { mutableState.update { it.copy(expandedRoutines = it.expandedRoutines + id) } }
     fun visibleRoutineTrips(routine: ProfileRoutineTrips): List<Trip> = if (routine.id in state.value.expandedRoutines) routine.trips else routine.trips.take(7)
     fun togglePin(id: UUID) {
-        viewModelScope.launch {
+        viewModelScope.launch { pinEdits.withLock {
             try {
                 val pins = identitySource.identity.value.pinnedTripIds
                 if (id in pins) { identitySource.setPinnedTrips(pins - id); return@launch }
@@ -159,7 +165,7 @@ class MeViewModel(
                 identitySource.setPinnedTrips(pins + id)
             } catch (error: CancellationException) { throw error }
             catch (_: Exception) { mutableState.update { it.copy(failed = true) } }
-        }
+        } }
     }
     fun dismissPinLimit() { mutableState.update { it.copy(pinLimitReached = false) } }
     fun open(destination: MeDestination) { mutableState.update { it.copy(destination = destination) } }
@@ -173,19 +179,21 @@ class MeViewModel(
             val pins = identitySource.identity.value.pinnedTripIds
             val prepared = PreparedProfileHistory.build(library, journeys, snapshot.query, snapshot.from, snapshot.to,
                 locale, zone, pins, localizedRegion = localizedRegion, now = now())
+            val regionCounts = prepared.visibleTrips.groupBy { it.startDate.atZone(zone).toLocalDate().withDayOfMonth(1).atStartOfDay(zone).toInstant() }
+                .mapValues { (_, trips) -> trips.mapNotNull { it.region?.takeIf(String::isNotEmpty)?.let(ProfileRegionDisplay::canonical) }.toSet().size }
             ensureActive()
-            mutableState.update { it.copy(history = prepared, showcaseElsewhere = pins.filterNot { id -> library.trips.any { trip -> trip.id == id } }) }
+            mutableState.update { it.copy(history = prepared.copy(chapters = prepared.chapters.map { chapter -> chapter.copy(regionCount = regionCounts[chapter.id] ?: 0) }), showcaseElsewhere = pins.filterNot { id -> library.trips.any { trip -> trip.id == id } }) }
         }
     }
     private fun refreshHero() {
         val identity = identitySource.identity.value
         val cars = vehicles.filter { it.soldAt == null }.sortedBy { if (it.id == identity.selectedVehicleId) 0 else 1 }
-            .map { HeroCarStage(it, identity.mainVehiclePhotos[it.id], VehicleStageState.build(it, identity.mainVehiclePhotos[it.id], identity.isPlus)) }
+            .map { HeroCarStage(it, identity.mainVehiclePhotos[it.id], VehicleStageState.build(it, identity.mainVehiclePhotos[it.id], identity.isPlus), identity.mainVehiclePhotoUrls[it.id]) }
         val badges = BadgeDefinitions.all.filter { !it.isHidden || it.id in identity.unlockedBadgeIds }.map {
             AchievementRow(it.id, it.category, it.rarity, it.id in identity.unlockedBadgeIds, identity.badgeEarnCounts[it.id] ?: 0)
         }
         mutableState.update { it.copy(hero = ProfileHeroState(identity, RoadSceneTime.slot(now(), zone),
             identity.effectiveBackground == ProfileBackground.none && identity.coverPhotoIds.isEmpty(), cars, library.trips.size,
-            library.trips.sumOf { trip -> trip.distance }, library.trips.mapNotNull { trip -> trip.region }.toSet().size), achievements = badges) }
+            library.trips.sumOf { trip -> trip.distance }, library.trips.mapNotNull { trip -> trip.region?.takeIf(String::isNotEmpty)?.let(ProfileRegionDisplay::canonical) }.toSet().size), achievements = badges) }
     }
 }

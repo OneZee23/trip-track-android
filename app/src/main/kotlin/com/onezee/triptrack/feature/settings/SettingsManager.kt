@@ -31,8 +31,11 @@ data class HomeState(
 // iOS: HomeSettings.activeZone.
 data class HomeZone(val centre: GeoPoint, val radius: Double)
 
+// iOS: AvgSpeedMode.swift. Stored separately from dashboard units and never synced as vehicle data.
+enum class AvgSpeedMode(val rawValue: String) { overall("overall"), moving("moving") }
+
 // iOS: SettingsView.swift / SettingsOptionPicker.swift.
-enum class SettingsSheet { settings, units, theme, language, autoRecord, stereo, cloudSync, privacy, home, notifications }
+enum class SettingsSheet { settings, units, theme, language, autoRecord, stereo, cloudSync, privacy, home, notifications, appPreferences, averageSpeed, logs, about }
 
 // iOS: SettingsManager.swift.
 data class SettingsState(
@@ -40,6 +43,7 @@ data class SettingsState(
     val localUserId: UUID? = null,
     val distanceUnit: DistanceUnit = DistanceUnit.km,
     val volumeUnit: VolumeUnit = VolumeUnit.liters,
+    val averageSpeed: AvgSpeedMode = AvgSpeedMode.overall,
     val theme: String = "dark",
     val language: String = "ru",
     val autoRecordMode: AutoRecordMode = AutoRecordMode.off,
@@ -105,6 +109,7 @@ class SettingsManager(
             autoRecordMode = autoRecord.mode, autoStopTimeout = autoRecord.autoStopTimeout,
             stereos = autoRecord.savedDevices, cloudSyncEnabled = preferences.string(CLOUD_KEY)?.toBooleanStrictOrNull() ?: false,
             showOnPublicMap = preferences.string(PUBLIC_MAP_KEY)?.toBooleanStrictOrNull() ?: false,
+            averageSpeed = preferences.string("com.triptrack.settings.avgSpeedMode")?.let { raw -> AvgSpeedMode.entries.firstOrNull { it.rawValue == raw } } ?: AvgSpeedMode.overall,
             home = home?.let { value -> HomeState(if (value.latitude != null && value.longitude != null) GeoPoint(value.latitude!!, value.longitude!!) else null,
                 value.radius, value.showsOnMap, value.trimsPublicTracks) } ?: HomeState(), failed = false) }
     }
@@ -117,6 +122,10 @@ class SettingsManager(
     fun setTheme(theme: String) { require(theme in setOf("dark", "light", "system")); saveRow({ it.copy(themeMode = theme) }) { it.copy(theme = theme) } }
     fun setLanguage(language: String) { require(language in LANGUAGES); saveRow({ it.copy(language = language) }) { it.copy(language = language) } }
     fun selectVehicle(id: UUID?) = saveRow({ it.copy(selectedVehicleId = id) }) { it.copy(selectedVehicleId = id) }
+    fun setAverageSpeed(mode: AvgSpeedMode) {
+        preferences.set("com.triptrack.settings.avgSpeedMode", mode.rawValue)
+        mutableState.update { it.copy(averageSpeed = mode) }
+    }
     fun setCloudSync(enabled: Boolean) = edit {
         preferences.set(CLOUD_KEY, enabled.toString())
         mutableState.update { it.copy(cloudSyncEnabled = enabled) }
@@ -154,6 +163,7 @@ class SettingsManager(
     }
     fun openSheet(sheet: SettingsSheet) { mutableState.update { if (it.sheet == sheet) it else it.copy(sheets = it.sheets + sheet) } }
     fun dismissSheet() { mutableState.update { it.copy(sheets = it.sheets.dropLast(1)) } }
+    fun closeSheets() { mutableState.update { it.copy(sheets = emptyList()) } }
     private fun saveRow(transform: (UserSettingsEntity) -> UserSettingsEntity, present: (SettingsState) -> SettingsState) = edit {
         val row = settingsStore.save { stored ->
             transform(stored.copy(

@@ -19,7 +19,7 @@ class RoomWorldChanges(private val database: TripTrackDatabase) : WorldChanges {
     override val events: Flow<WorldChange> = callbackFlow {
         val observer = object : InvalidationTracker.Observer(
             "TripEntity", "PlaceEntity", "PlacePassEntity", "VisitedGeohashEntity", "RevealedCellEntity",
-            "DiscoveryEntity", "VehicleEntity", "UserSettingsEntity", "JourneyEntity",
+            "DiscoveryEntity", "VehicleEntity", "VehiclePhotoEntity", "UserSettingsEntity", "JourneyEntity",
         ) {
             override fun onInvalidated(tables: Set<String>) {
                 tables.mapNotNull { table -> when (table) {
@@ -28,7 +28,7 @@ class RoomWorldChanges(private val database: TripTrackDatabase) : WorldChanges {
                     "VisitedGeohashEntity" -> WorldChange.territory
                     "RevealedCellEntity" -> WorldChange.revealed
                     "DiscoveryEntity" -> WorldChange.discoveries
-                    "VehicleEntity" -> WorldChange.garage
+                    "VehicleEntity", "VehiclePhotoEntity" -> WorldChange.garage
                     "UserSettingsEntity" -> WorldChange.settings
                     else -> null
                 } }.distinct().forEach { trySend(it) }

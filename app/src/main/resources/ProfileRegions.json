@@ -1,0 +1,804 @@
+[
+  {
+    "en": "Moscow",
+    "ru": "Москва",
+    "names": [
+      "Moscow",
+      "Москва",
+      "Москва"
+    ]
+  },
+  {
+    "en": "Saint Petersburg",
+    "ru": "Санкт-Петербург",
+    "names": [
+      "Saint Petersburg",
+      "Санкт-Петербург",
+      "Санкт-Петербург",
+      "St Petersburg",
+      "St. Petersburg"
+    ]
+  },
+  {
+    "en": "Sevastopol",
+    "ru": "Севастополь",
+    "names": [
+      "Sevastopol",
+      "Севастополь",
+      "Севастополь"
+    ]
+  },
+  {
+    "en": "Amur Oblast",
+    "ru": "Амурская обл.",
+    "names": [
+      "Amur Oblast",
+      "Амурская область",
+      "Амурская обл."
+    ]
+  },
+  {
+    "en": "Arkhangelsk Oblast",
+    "ru": "Архангельская обл.",
+    "names": [
+      "Arkhangelsk Oblast",
+      "Архангельская область",
+      "Архангельская обл."
+    ]
+  },
+  {
+    "en": "Astrakhan Oblast",
+    "ru": "Астраханская обл.",
+    "names": [
+      "Astrakhan Oblast",
+      "Астраханская область",
+      "Астраханская обл."
+    ]
+  },
+  {
+    "en": "Belgorod Oblast",
+    "ru": "Белгородская обл.",
+    "names": [
+      "Belgorod Oblast",
+      "Белгородская область",
+      "Белгородская обл."
+    ]
+  },
+  {
+    "en": "Bryansk Oblast",
+    "ru": "Брянская обл.",
+    "names": [
+      "Bryansk Oblast",
+      "Брянская область",
+      "Брянская обл."
+    ]
+  },
+  {
+    "en": "Chelyabinsk Oblast",
+    "ru": "Челяб. обл.",
+    "names": [
+      "Chelyabinsk Oblast",
+      "Челябинская область",
+      "Челяб. обл."
+    ]
+  },
+  {
+    "en": "Irkutsk Oblast",
+    "ru": "Иркутская обл.",
+    "names": [
+      "Irkutsk Oblast",
+      "Иркутская область",
+      "Иркутская обл."
+    ]
+  },
+  {
+    "en": "Ivanovo Oblast",
+    "ru": "Ивановская обл.",
+    "names": [
+      "Ivanovo Oblast",
+      "Ивановская область",
+      "Ивановская обл."
+    ]
+  },
+  {
+    "en": "Kaliningrad Oblast",
+    "ru": "Калинингр. обл.",
+    "names": [
+      "Kaliningrad Oblast",
+      "Калининградская область",
+      "Калинингр. обл."
+    ]
+  },
+  {
+    "en": "Kaluga Oblast",
+    "ru": "Калужская обл.",
+    "names": [
+      "Kaluga Oblast",
+      "Калужская область",
+      "Калужская обл."
+    ]
+  },
+  {
+    "en": "Kemerovo Oblast",
+    "ru": "Кемеровская обл.",
+    "names": [
+      "Kemerovo Oblast",
+      "Кемеровская область",
+      "Кемеровская обл.",
+      "Kuzbass"
+    ]
+  },
+  {
+    "en": "Kirov Oblast",
+    "ru": "Кировская обл.",
+    "names": [
+      "Kirov Oblast",
+      "Кировская область",
+      "Кировская обл."
+    ]
+  },
+  {
+    "en": "Kostroma Oblast",
+    "ru": "Костромская обл.",
+    "names": [
+      "Kostroma Oblast",
+      "Костромская область",
+      "Костромская обл."
+    ]
+  },
+  {
+    "en": "Kurgan Oblast",
+    "ru": "Курганская обл.",
+    "names": [
+      "Kurgan Oblast",
+      "Курганская область",
+      "Курганская обл."
+    ]
+  },
+  {
+    "en": "Kursk Oblast",
+    "ru": "Курская обл.",
+    "names": [
+      "Kursk Oblast",
+      "Курская область",
+      "Курская обл."
+    ]
+  },
+  {
+    "en": "Leningrad Oblast",
+    "ru": "Ленингр. обл.",
+    "names": [
+      "Leningrad Oblast",
+      "Ленинградская область",
+      "Ленингр. обл."
+    ]
+  },
+  {
+    "en": "Lipetsk Oblast",
+    "ru": "Липецкая обл.",
+    "names": [
+      "Lipetsk Oblast",
+      "Липецкая область",
+      "Липецкая обл."
+    ]
+  },
+  {
+    "en": "Magadan Oblast",
+    "ru": "Магаданская обл.",
+    "names": [
+      "Magadan Oblast",
+      "Магаданская область",
+      "Магаданская обл."
+    ]
+  },
+  {
+    "en": "Moscow Oblast",
+    "ru": "Моск. обл.",
+    "names": [
+      "Moscow Oblast",
+      "Московская область",
+      "Моск. обл.",
+      "Moskovskaya Oblast"
+    ]
+  },
+  {
+    "en": "Murmansk Oblast",
+    "ru": "Мурманская обл.",
+    "names": [
+      "Murmansk Oblast",
+      "Мурманская область",
+      "Мурманская обл."
+    ]
+  },
+  {
+    "en": "Nizhny Novgorod Oblast",
+    "ru": "Нижегор. обл.",
+    "names": [
+      "Nizhny Novgorod Oblast",
+      "Нижегородская область",
+      "Нижегор. обл."
+    ]
+  },
+  {
+    "en": "Novgorod Oblast",
+    "ru": "Новгородская обл.",
+    "names": [
+      "Novgorod Oblast",
+      "Новгородская область",
+      "Новгородская обл."
+    ]
+  },
+  {
+    "en": "Novosibirsk Oblast",
+    "ru": "Новосиб. обл.",
+    "names": [
+      "Novosibirsk Oblast",
+      "Новосибирская область",
+      "Новосиб. обл."
+    ]
+  },
+  {
+    "en": "Omsk Oblast",
+    "ru": "Омская обл.",
+    "names": [
+      "Omsk Oblast",
+      "Омская область",
+      "Омская обл."
+    ]
+  },
+  {
+    "en": "Orenburg Oblast",
+    "ru": "Оренбургская обл.",
+    "names": [
+      "Orenburg Oblast",
+      "Оренбургская область",
+      "Оренбургская обл."
+    ]
+  },
+  {
+    "en": "Oryol Oblast",
+    "ru": "Орловская обл.",
+    "names": [
+      "Oryol Oblast",
+      "Орловская область",
+      "Орловская обл.",
+      "Orel Oblast"
+    ]
+  },
+  {
+    "en": "Penza Oblast",
+    "ru": "Пензенская обл.",
+    "names": [
+      "Penza Oblast",
+      "Пензенская область",
+      "Пензенская обл."
+    ]
+  },
+  {
+    "en": "Pskov Oblast",
+    "ru": "Псковская обл.",
+    "names": [
+      "Pskov Oblast",
+      "Псковская область",
+      "Псковская обл."
+    ]
+  },
+  {
+    "en": "Rostov Oblast",
+    "ru": "Ростовская обл.",
+    "names": [
+      "Rostov Oblast",
+      "Ростовская область",
+      "Ростовская обл."
+    ]
+  },
+  {
+    "en": "Ryazan Oblast",
+    "ru": "Рязанская обл.",
+    "names": [
+      "Ryazan Oblast",
+      "Рязанская область",
+      "Рязанская обл."
+    ]
+  },
+  {
+    "en": "Sakhalin Oblast",
+    "ru": "Сахалинская обл.",
+    "names": [
+      "Sakhalin Oblast",
+      "Сахалинская область",
+      "Сахалинская обл."
+    ]
+  },
+  {
+    "en": "Samara Oblast",
+    "ru": "Самарская обл.",
+    "names": [
+      "Samara Oblast",
+      "Самарская область",
+      "Самарская обл."
+    ]
+  },
+  {
+    "en": "Saratov Oblast",
+    "ru": "Саратовская обл.",
+    "names": [
+      "Saratov Oblast",
+      "Саратовская область",
+      "Саратовская обл."
+    ]
+  },
+  {
+    "en": "Smolensk Oblast",
+    "ru": "Смоленская обл.",
+    "names": [
+      "Smolensk Oblast",
+      "Смоленская область",
+      "Смоленская обл."
+    ]
+  },
+  {
+    "en": "Sverdlovsk Oblast",
+    "ru": "Свердл. обл.",
+    "names": [
+      "Sverdlovsk Oblast",
+      "Свердловская область",
+      "Свердл. обл."
+    ]
+  },
+  {
+    "en": "Tambov Oblast",
+    "ru": "Тамбовская обл.",
+    "names": [
+      "Tambov Oblast",
+      "Тамбовская область",
+      "Тамбовская обл."
+    ]
+  },
+  {
+    "en": "Tomsk Oblast",
+    "ru": "Томская обл.",
+    "names": [
+      "Tomsk Oblast",
+      "Томская область",
+      "Томская обл."
+    ]
+  },
+  {
+    "en": "Tula Oblast",
+    "ru": "Тульская обл.",
+    "names": [
+      "Tula Oblast",
+      "Тульская область",
+      "Тульская обл."
+    ]
+  },
+  {
+    "en": "Tver Oblast",
+    "ru": "Тверская обл.",
+    "names": [
+      "Tver Oblast",
+      "Тверская область",
+      "Тверская обл."
+    ]
+  },
+  {
+    "en": "Tyumen Oblast",
+    "ru": "Тюменская обл.",
+    "names": [
+      "Tyumen Oblast",
+      "Тюменская область",
+      "Тюменская обл."
+    ]
+  },
+  {
+    "en": "Ulyanovsk Oblast",
+    "ru": "Ульяновская обл.",
+    "names": [
+      "Ulyanovsk Oblast",
+      "Ульяновская область",
+      "Ульяновская обл."
+    ]
+  },
+  {
+    "en": "Vladimir Oblast",
+    "ru": "Владимирская обл.",
+    "names": [
+      "Vladimir Oblast",
+      "Владимирская область",
+      "Владимирская обл."
+    ]
+  },
+  {
+    "en": "Volgograd Oblast",
+    "ru": "Волгоградская обл.",
+    "names": [
+      "Volgograd Oblast",
+      "Волгоградская область",
+      "Волгоградская обл."
+    ]
+  },
+  {
+    "en": "Vologda Oblast",
+    "ru": "Вологодская обл.",
+    "names": [
+      "Vologda Oblast",
+      "Вологодская область",
+      "Вологодская обл."
+    ]
+  },
+  {
+    "en": "Voronezh Oblast",
+    "ru": "Воронежская обл.",
+    "names": [
+      "Voronezh Oblast",
+      "Воронежская область",
+      "Воронежская обл."
+    ]
+  },
+  {
+    "en": "Yaroslavl Oblast",
+    "ru": "Ярославская обл.",
+    "names": [
+      "Yaroslavl Oblast",
+      "Ярославская область",
+      "Ярославская обл."
+    ]
+  },
+  {
+    "en": "Altai Krai",
+    "ru": "Алтайский край",
+    "names": [
+      "Altai Krai",
+      "Алтайский край",
+      "Алтайский край"
+    ]
+  },
+  {
+    "en": "Kamchatka Krai",
+    "ru": "Камчатский край",
+    "names": [
+      "Kamchatka Krai",
+      "Камчатский край",
+      "Камчатский край"
+    ]
+  },
+  {
+    "en": "Khabarovsk Krai",
+    "ru": "Хабаровский край",
+    "names": [
+      "Khabarovsk Krai",
+      "Хабаровский край",
+      "Хабаровский край"
+    ]
+  },
+  {
+    "en": "Krasnodar Krai",
+    "ru": "Краснодар. край",
+    "names": [
+      "Krasnodar Krai",
+      "Краснодарский край",
+      "Краснодар. край",
+      "Krasnodarskiy Kray"
+    ]
+  },
+  {
+    "en": "Krasnoyarsk Krai",
+    "ru": "Краснояр. край",
+    "names": [
+      "Krasnoyarsk Krai",
+      "Красноярский край",
+      "Краснояр. край"
+    ]
+  },
+  {
+    "en": "Perm Krai",
+    "ru": "Пермский край",
+    "names": [
+      "Perm Krai",
+      "Пермский край",
+      "Пермский край"
+    ]
+  },
+  {
+    "en": "Primorsky Krai",
+    "ru": "Приморский край",
+    "names": [
+      "Primorsky Krai",
+      "Приморский край",
+      "Приморский край",
+      "Primorye"
+    ]
+  },
+  {
+    "en": "Stavropol Krai",
+    "ru": "Ставроп. край",
+    "names": [
+      "Stavropol Krai",
+      "Ставропольский край",
+      "Ставроп. край"
+    ]
+  },
+  {
+    "en": "Zabaykalsky Krai",
+    "ru": "Забайкальский край",
+    "names": [
+      "Zabaykalsky Krai",
+      "Забайкальский край",
+      "Забайкальский край",
+      "Transbaikal Krai"
+    ]
+  },
+  {
+    "en": "Adygea",
+    "ru": "Адыгея",
+    "names": [
+      "Adygea",
+      "Республика Адыгея",
+      "Адыгея",
+      "Republic of Adygea"
+    ]
+  },
+  {
+    "en": "Altai Republic",
+    "ru": "Респ. Алтай",
+    "names": [
+      "Altai Republic",
+      "Республика Алтай",
+      "Респ. Алтай"
+    ]
+  },
+  {
+    "en": "Bashkortostan",
+    "ru": "Башкортостан",
+    "names": [
+      "Bashkortostan",
+      "Республика Башкортостан",
+      "Башкортостан",
+      "Republic of Bashkortostan"
+    ]
+  },
+  {
+    "en": "Buryatia",
+    "ru": "Бурятия",
+    "names": [
+      "Buryatia",
+      "Республика Бурятия",
+      "Бурятия",
+      "Republic of Buryatia"
+    ]
+  },
+  {
+    "en": "Chechnya",
+    "ru": "Чечня",
+    "names": [
+      "Chechnya",
+      "Чеченская Республика",
+      "Чечня",
+      "Chechen Republic"
+    ]
+  },
+  {
+    "en": "Chuvashia",
+    "ru": "Чувашия",
+    "names": [
+      "Chuvashia",
+      "Чувашская Республика",
+      "Чувашия",
+      "Chuvash Republic"
+    ]
+  },
+  {
+    "en": "Crimea",
+    "ru": "Крым",
+    "names": [
+      "Crimea",
+      "Республика Крым",
+      "Крым",
+      "Republic of Crimea"
+    ]
+  },
+  {
+    "en": "Dagestan",
+    "ru": "Дагестан",
+    "names": [
+      "Dagestan",
+      "Республика Дагестан",
+      "Дагестан",
+      "Republic of Dagestan"
+    ]
+  },
+  {
+    "en": "Ingushetia",
+    "ru": "Ингушетия",
+    "names": [
+      "Ingushetia",
+      "Республика Ингушетия",
+      "Ингушетия",
+      "Republic of Ingushetia"
+    ]
+  },
+  {
+    "en": "Kabardino-Balkaria",
+    "ru": "Кабардино-Балкария",
+    "names": [
+      "Kabardino-Balkaria",
+      "Кабардино-Балкарская Республика",
+      "Кабардино-Балкария",
+      "Kabardino-Balkarian Republic"
+    ]
+  },
+  {
+    "en": "Kalmykia",
+    "ru": "Калмыкия",
+    "names": [
+      "Kalmykia",
+      "Республика Калмыкия",
+      "Калмыкия",
+      "Republic of Kalmykia"
+    ]
+  },
+  {
+    "en": "Karachay-Cherkessia",
+    "ru": "Карачаево-Черкесия",
+    "names": [
+      "Karachay-Cherkessia",
+      "Карачаево-Черкесская Республика",
+      "Карачаево-Черкесия",
+      "Karachay-Cherkess Republic"
+    ]
+  },
+  {
+    "en": "Karelia",
+    "ru": "Карелия",
+    "names": [
+      "Karelia",
+      "Республика Карелия",
+      "Карелия",
+      "Republic of Karelia"
+    ]
+  },
+  {
+    "en": "Khakassia",
+    "ru": "Хакасия",
+    "names": [
+      "Khakassia",
+      "Республика Хакасия",
+      "Хакасия",
+      "Republic of Khakassia"
+    ]
+  },
+  {
+    "en": "Komi",
+    "ru": "Коми",
+    "names": [
+      "Komi",
+      "Республика Коми",
+      "Коми",
+      "Komi Republic"
+    ]
+  },
+  {
+    "en": "Mari El",
+    "ru": "Марий Эл",
+    "names": [
+      "Mari El",
+      "Республика Марий Эл",
+      "Марий Эл",
+      "Mari El Republic"
+    ]
+  },
+  {
+    "en": "Mordovia",
+    "ru": "Мордовия",
+    "names": [
+      "Mordovia",
+      "Республика Мордовия",
+      "Мордовия",
+      "Republic of Mordovia"
+    ]
+  },
+  {
+    "en": "North Ossetia",
+    "ru": "Сев. Осетия",
+    "names": [
+      "North Ossetia",
+      "Республика Северная Осетия — Алания",
+      "Сев. Осетия",
+      "North Ossetia-Alania",
+      "Republic of North Ossetia-Alania"
+    ]
+  },
+  {
+    "en": "Sakha",
+    "ru": "Якутия",
+    "names": [
+      "Sakha",
+      "Республика Саха (Якутия)",
+      "Якутия",
+      "Sakha Republic",
+      "Yakutia",
+      "Sakha (Yakutia)"
+    ]
+  },
+  {
+    "en": "Tatarstan",
+    "ru": "Татарстан",
+    "names": [
+      "Tatarstan",
+      "Республика Татарстан",
+      "Татарстан",
+      "Republic of Tatarstan"
+    ]
+  },
+  {
+    "en": "Tuva",
+    "ru": "Тыва",
+    "names": [
+      "Tuva",
+      "Республика Тыва",
+      "Тыва",
+      "Tyva Republic",
+      "Republic of Tuva"
+    ]
+  },
+  {
+    "en": "Udmurtia",
+    "ru": "Удмуртия",
+    "names": [
+      "Udmurtia",
+      "Удмуртская Республика",
+      "Удмуртия",
+      "Udmurt Republic"
+    ]
+  },
+  {
+    "en": "Chukotka",
+    "ru": "Чукотка",
+    "names": [
+      "Chukotka",
+      "Чукотский автономный округ",
+      "Чукотка",
+      "Chukotka Autonomous Okrug"
+    ]
+  },
+  {
+    "en": "Khanty-Mansi Autonomous Okrug",
+    "ru": "ХМАО",
+    "names": [
+      "Khanty-Mansi Autonomous Okrug",
+      "Ханты-Мансийский автономный округ — Югра",
+      "ХМАО",
+      "Khanty-Mansiysk Autonomous Okrug",
+      "Yugra"
+    ]
+  },
+  {
+    "en": "Nenets Autonomous Okrug",
+    "ru": "НАО",
+    "names": [
+      "Nenets Autonomous Okrug",
+      "Ненецкий автономный округ",
+      "НАО"
+    ]
+  },
+  {
+    "en": "Yamalo-Nenets Autonomous Okrug",
+    "ru": "ЯНАО",
+    "names": [
+      "Yamalo-Nenets Autonomous Okrug",
+      "Ямало-Ненецкий автономный округ",
+      "ЯНАО",
+      "Yamal-Nenets Autonomous Okrug"
+    ]
+  },
+  {
+    "en": "Jewish Autonomous Oblast",
+    "ru": "Еврейская АО",
+    "names": [
+      "Jewish Autonomous Oblast",
+      "Еврейская автономная область",
+      "Еврейская АО"
+    ]
+  }
+]

@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val graph = (application as TripTrackApplication).appGraph
+        com.onezee.triptrack.feature.me.MeLaunch.apply(graph, intent)
         setContent {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
             SystemBarsFollowTheme(dark)
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         resumeTick.intValue++
+        (application as TripTrackApplication).appGraph.me.analytics.foreground()
         (application as TripTrackApplication).appGraph.location.onAppForeground()
     }
 

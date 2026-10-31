@@ -20,6 +20,7 @@ enum class CatalogStep { model, generation, year, variant }
 data class VehicleCatalogState(
     val query: String = "",
     val hits: List<ModelHit> = emptyList(),
+    val legacyMakes: List<VehicleCatalog.Make> = emptyList(),
     val hit: ModelHit? = null,
     val generations: List<Generation> = emptyList(),
     val generation: Generation? = null,
@@ -35,6 +36,7 @@ class VehicleCatalogViewModel(
     private val catalog: com.onezee.triptrack.logic.CarCatalog,
     private val type: VehicleType,
     dispatcher: CoroutineDispatcher,
+    private val legacy: LegacyVehicleCatalog = LegacyVehicleCatalog(),
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val mutableState = MutableStateFlow(VehicleCatalogState())
     val state = mutableState.asStateFlow()
@@ -44,10 +46,18 @@ class VehicleCatalogViewModel(
         mutableState.update { it.copy(query = query) }
         searchTask?.cancel()
         searchTask = viewModelScope.launch {
-            val hits = catalog.search(query)
+            val hits = if (type == VehicleType.car) catalog.search(query) else emptyList()
+            val makes = legacy.search(query, type)
             ensureActive()
-            mutableState.update { it.copy(hits = hits) }
+            mutableState.update { it.copy(hits = hits, legacyMakes = makes) }
         }
+    }
+    fun chooseLegacy(make: VehicleCatalog.Make, model: VehicleCatalog.Model) {
+        mutableState.update { it.copy(selection = VehicleCatalogSelection(make.name, model.name, legacy.defaultBody(model, type))) }
+    }
+    fun chooseTyped() {
+        val make = state.value.query.trim()
+        if (make.isNotEmpty()) mutableState.update { it.copy(selection = VehicleCatalogSelection(make, "", VehicleAvatar.styles(type).first())) }
     }
     fun chooseModel(hit: ModelHit) { viewModelScope.launch {
         val generations = catalog.generations(hit.model.id, hit.matchedYear)
@@ -97,6 +107,7 @@ data class VehicleEditState(
     val saving: Boolean = false,
     val savedId: UUID? = null,
     val failed: Boolean = false,
+    val energy: VehicleEnergyDraft = VehicleEnergyDraft.from(vehicle, DistanceUnit.km),
 ) { val canSave get() = vehicle.name.trim().isNotEmpty() && !saving }
 
 // iOS: VehicleEditFormView.swift (passport, catalog, dashboard and manual odometer fields).
@@ -107,26 +118,39 @@ class VehicleEditViewModel(
     dispatcher: CoroutineDispatcher,
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val existing = vehicle
-    private val initial = vehicle ?: Vehicle()
+    private var persistedId = vehicle?.id
+    private val initial = vehicle ?: Vehicle(avatarEmoji = "pixel_car_orange")
     private val text = OdometerField.fieldText(initial.manualOdometerKm, initial.dashboardUnit(appUnit))
-    private val mutableState = MutableStateFlow(VehicleEditState(initial.copy(), text, text))
+    private val mutableState = MutableStateFlow(VehicleEditState(initial.copy(), text, text, energy = VehicleEnergyDraft.from(initial, initial.dashboardUnit(appUnit))))
     val state = mutableState.asStateFlow()
     fun setName(name: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(name = name)) } }
+    fun setAvatar(color: String, style: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(avatarEmoji = "pixel_car_$color", avatarStyle = style)) } }
+    fun setPlate(plate: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(plate = plate)) } }
+    fun setPowertrain(powertrain: Powertrain) { mutableState.update { it.copy(vehicle = it.vehicle.copy(powertrain = powertrain)) } }
+    fun setCurrency(symbol: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(fuelCurrency = symbol)) } }
+    internal fun setEnergy(field: VehicleEnergyField, text: String) { mutableState.update { it.copy(energy = it.energy.edit(field, text, it.vehicle.dashboardUnit(appUnit))) } }
+    fun setVisibility(visible: Boolean = state.value.vehicle.visibleToOthers, plate: Boolean = state.value.vehicle.plateVisible,
+                      map: Boolean = state.value.vehicle.mapVisible, photos: Boolean = state.value.vehicle.photosVisible) {
+        mutableState.update { it.copy(vehicle = it.vehicle.copy(visibleToOthers = visible, plateVisible = plate, mapVisible = map, photosVisible = photos)) }
+    }
     fun setOdometer(text: String) { mutableState.update { it.copy(odometerText = text.filter { char -> char in '0'..'9' }) } }
     fun setDashboardUnits(units: DashboardUnits) {
         mutableState.update { old ->
             val previous = old.vehicle.dashboardUnit(appUnit)
             val next = units.resolved(appUnit)
             old.copy(vehicle = old.vehicle.copy(dashboardUnits = units),
+                energy = old.energy.converted(previous, next),
                 odometerText = OdometerField.fieldText(OdometerField.storedKm(old.odometerText, previous), next),
                 initialOdometerText = OdometerField.fieldText(OdometerField.storedKm(old.initialOdometerText, previous), next))
         }
     }
     fun selectCatalog(selection: VehicleCatalogSelection) { mutableState.update { it.copy(catalogSelection = selection.copy(),
-        vehicle = it.vehicle.copy(make = selection.make, model = selection.model, year = selection.year ?: it.vehicle.year, bodyType = selection.body), showsCatalog = false) } }
+        vehicle = it.vehicle.copy(make = selection.make, model = selection.model, year = selection.year ?: it.vehicle.year, bodyType = selection.body,
+            avatarStyle = selection.body), showsCatalog = false) } }
     fun setPassport(make: String, model: String, year: Int, body: String, about: String) { mutableState.update {
+        val changed = it.vehicle.make != make || it.vehicle.model != model || it.vehicle.year != year || it.vehicle.bodyType != body
         it.copy(vehicle = it.vehicle.copy(make = make, model = model, year = year, bodyType = body, about = about),
-            catalogSelection = VehicleCatalogSelection(make, model, body, year, "", "", ""))
+            catalogSelection = if (changed) VehicleCatalogSelection(make, model, body, year, "", "", "") else it.catalogSelection)
     } }
     fun setType(type: VehicleType) { mutableState.update { it.copy(vehicle = it.vehicle.copy(type = type, avatarStyle = catalogBody(null, type.rawValue), bodyType = catalogBody(null, type.rawValue)),
         catalogSelection = VehicleCatalogSelection(it.vehicle.make, it.vehicle.model, catalogBody(null, type.rawValue), it.vehicle.year, "", "", "")) } }
@@ -139,12 +163,33 @@ class VehicleEditViewModel(
         viewModelScope.launch {
             try {
                 val vehicle = snapshot.vehicle.copy(name = snapshot.vehicle.name.trim())
-                val id = existing?.id ?: vehicleStore.addVehicle(vehicle.name, vehicle.avatarEmoji, vehicle.avatarStyle, vehicle.type,
-                    vehicle.plate, vehicle.plateVisible, vehicle.visibleToOthers)
-                if (existing != null) vehicleStore.updateVehicleIdentity(id, vehicle.name, vehicle.avatarEmoji, vehicle.type,
+                val id = persistedId ?: run {
+                    check(vehicleStore.vehicles().count { it.soldAt == null } < 5)
+                    vehicleStore.addVehicle(vehicle.name, vehicle.avatarEmoji, vehicle.avatarStyle, vehicle.type,
+                        vehicle.plate, vehicle.plateVisible, vehicle.visibleToOthers).also { persistedId = it }
+                }
+                vehicleStore.updateVehicleIdentity(id, vehicle.name, vehicle.avatarEmoji, vehicle.type,
                     vehicle.plate, vehicle.plateVisible, vehicle.visibleToOthers, vehicle.avatarStyle)
                 vehicleStore.updateVehiclePassport(id, vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, vehicle.about)
+                if (existing == null || existing.visibleToOthers != vehicle.visibleToOthers || existing.plateVisible != vehicle.plateVisible || existing.mapVisible != vehicle.mapVisible || existing.photosVisible != vehicle.photosVisible)
+                    vehicleStore.updateVehicleVisibility(id, vehicle.visibleToOthers, vehicle.plateVisible, vehicle.mapVisible, vehicle.photosVisible)
                 if (existing?.dashboardUnits != vehicle.dashboardUnits) vehicleStore.setDashboardUnits(id, vehicle.dashboardUnits)
+                if (existing?.fuelCurrency != vehicle.fuelCurrency) vehicleStore.updateVehicleCurrency(id, vehicle.fuelCurrency)
+                if (existing?.powertrain != vehicle.powertrain) vehicleStore.setPowertrain(id, vehicle.powertrain)
+                val draft = snapshot.energy
+                val fuelUnit = ConsumptionUnit.forDashboard(vehicle.dashboardUnit(appUnit))
+                val electricUnit = ElectricUnit.forDashboard(vehicle.dashboardUnit(appUnit))
+                fun number(field: VehicleEnergyField) = VehicleEnergyDraft.number(draft.text(field))
+                if (listOf(VehicleEnergyField.city, VehicleEnergyField.highway, VehicleEnergyField.price).any(draft::changed))
+                    vehicleStore.updateVehicleFuel(id,
+                        if (draft.changed(VehicleEnergyField.city)) number(VehicleEnergyField.city)?.let(fuelUnit::toPer100) ?: vehicle.cityConsumption else vehicle.cityConsumption,
+                        if (draft.changed(VehicleEnergyField.highway)) number(VehicleEnergyField.highway)?.let(fuelUnit::toPer100) ?: vehicle.highwayConsumption else vehicle.highwayConsumption,
+                        if (draft.changed(VehicleEnergyField.price)) number(VehicleEnergyField.price)?.let(fuelUnit::priceToPerLitre) ?: vehicle.fuelPrice else vehicle.fuelPrice)
+                if (listOf(VehicleEnergyField.electricConsumption, VehicleEnergyField.electricityPrice, VehicleEnergyField.electricRange).any(draft::changed))
+                    vehicleStore.updateVehicleEnergy(id,
+                        if (draft.changed(VehicleEnergyField.electricConsumption)) number(VehicleEnergyField.electricConsumption)?.let(electricUnit::toPer100) ?: 0.0 else vehicle.electricConsumption,
+                        if (draft.changed(VehicleEnergyField.electricityPrice)) number(VehicleEnergyField.electricityPrice) ?: 0.0 else vehicle.electricityPrice,
+                        if (draft.changed(VehicleEnergyField.electricRange)) OdometerField.storedKm(draft.text(VehicleEnergyField.electricRange), vehicle.dashboardUnit(appUnit)) ?: 0.0 else vehicle.electricRangeKm)
                 // Re-parsing rounded miles would create an edit on every name-only save.
                 if (snapshot.odometerText.trim() != snapshot.initialOdometerText)
                     vehicleStore.setManualOdometer(id, OdometerField.storedKm(snapshot.odometerText, vehicle.dashboardUnit(appUnit)))

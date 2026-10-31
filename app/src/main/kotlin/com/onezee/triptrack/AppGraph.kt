@@ -126,8 +126,9 @@ class AppGraph(private val context: Context) {
     // engine's transport reads the files it uploads.
     val tripPhotoFiles = DirectoryTripPhotoFiles(File(context.noBackupFilesDir, "TripPhotos"))
     private val vehiclePhotoFiles = DirectoryVehiclePhotoFiles(File(context.noBackupFilesDir, "VehiclePhotos"))
+    private val meVehiclePhotos = RoomVehiclePhotoStore(database, vehiclePhotoFiles, syncHost)
     val trips = RoomTripRepository(database, environment, tripPhotoFiles, syncHost)
-    val vehicles = RoomVehicleStore(database, trips, RoomVehiclePhotoStore(database, vehiclePhotoFiles, syncHost), environment, syncHost)
+    val vehicles = RoomVehicleStore(database, trips, meVehiclePhotos, environment, syncHost)
 
     val strings: AppStrings get() = AppStrings(context)
 
@@ -142,12 +143,14 @@ class AppGraph(private val context: Context) {
 
     val tokenStore = TokenStore(KeystoreTokenVault(context, apiBaseUrl))
     private val sessionEvents = SessionEvents()
+    val meDiagnostics = com.onezee.triptrack.feature.settings.MeDiagnostics(File(context.noBackupFilesDir, "Diagnostics/network.log"))
     val apiClient = ApiClient(
         tokenStore, apiBaseUrl,
         onSessionExpired = sessionEvents::sessionExpired,
         onSessionRecovered = sessionEvents::sessionRecovered,
         onHardSignOut = sessionEvents::hardSignOut,
         onIdentityChanged = sessionEvents::identityChanged,
+        logger = com.onezee.triptrack.network.ApiLogger(meDiagnostics::append),
     )
 
     @Volatile private var settingsManagerReady = false
@@ -189,6 +192,10 @@ class AppGraph(private val context: Context) {
 
     /** Writes stamp the settings row's id: anything writing at launch waits for it. */
     suspend fun awaitSettings() { userIdLoaded.await() }
+
+    val me by lazy { com.onezee.triptrack.feature.me.MeFeatures(this, presentationPreferences, meVehiclePhotos,
+        com.onezee.triptrack.location.world.PreferencesBadgeLedgerStore(context), context.noBackupFilesDir) }
+    init { accountState.register { me.identity.purge(); me.profilePhotos.wipe(); meDiagnostics.clear(); com.onezee.triptrack.feature.me.ProfileMapCache.clear(); com.onezee.triptrack.feature.me.MePhotoCache.clear() } }
 
     /**
      * The settings row first (it is the identity), then the recording side's launch recovery. The
@@ -244,7 +251,7 @@ class AppGraph(private val context: Context) {
         cloudSyncEnabled = { accountSettings.cloudSyncEnabled },
         zone = ::privacyZone,
         isRecording = { location.recorder.state.value.isRecording },
-        syncAccountProfile = { auth.backfillNameIfNeeded() },
+        syncAccountProfile = { auth.backfillNameIfNeeded(); me.identity.syncJournal(); me.profilePhotos.sync() },
         purgeVehiclePreferences = { vehicleId ->
             location.autoRecord.removeDevices(vehicleId)
         },

@@ -49,7 +49,7 @@ class NotificationPreferencesViewModel(
             val response = service.load()
             apply(response)
         } catch (error: CancellationException) { throw error }
-        catch (_: Exception) { mutableState.update { it.copy(loaded = true, failed = true) } }
+        catch (_: Exception) { mutableState.update { it.copy(loaded = false, failed = true) } }
     } }
     // iOS: NotificationSwitches.swift. Muting preserves the person's category selection.
     fun setMaster(on: Boolean) {

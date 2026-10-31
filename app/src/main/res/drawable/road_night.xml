@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS: RoadScene/night.svg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="408dp" android:height="211dp"
+    android:viewportWidth="408" android:viewportHeight="211">
+    <path android:fillColor="#243450" android:pathData="M0,0h408v211h-408z" />
+    <path android:fillColor="#e9d3a6" android:pathData="M364 21h10v2h-10zM360 23h10v2h-10zM358 25h10v2h-10zM358 27h8v2h-8zM356 29h8v2h-8zM356 31h8v2h-8zM356 33h8v2h-8zM356 35h8v2h-8zM356 37h8v2h-8zM358 39h8v2h-8zM358 41h10v2h-10zM360 43h10v2h-10zM364 45h10v2h-10z" />
+    <path android:fillColor="#9ab4bd" android:pathData="M29 34h4v4h-4zM105 50h4v4h-4zM190 24h4v4h-4zM260 84h3v3h-3zM48 85h3v3h-3z" />
+    <path android:fillColor="#985a57" android:pathData="M0,107h408v104h-408z" />
+    <path android:fillColor="#3e5963" android:pathData="M0 149v-39h36v-19h38v19h36V91h44v16h43V93h31v17h44V88h39v21h39V94h58v117H0z" />
+    <path android:fillColor="#243e4b" android:pathData="M0 164v-22h49v-14h40v18h51v-11h39v15h37v-17h47v16h42v-13h46v11h57v64H0z" />
+    <path android:fillColor="#62434b" android:pathData="M0 182h408v29H0z" />
+    <path android:fillColor="#7d6b5e" android:pathData="M0 184h408v6H0z" />
+    <path android:fillColor="#35424a" android:pathData="M0 192h408v19H0z" />
+    <path android:fillColor="#efc58e" android:pathData="M0 202h44v3H0zm80 0h48v3H80zm82 0h48v3h-48zm81 0h48v3h-48zm80 0h35v3h-35z" />
+</vector>

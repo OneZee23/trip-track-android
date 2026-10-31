@@ -70,8 +70,8 @@ class GarageViewModel(
     fun addVehicle() { mutableState.update { it.copy(showsAddForm = true) } }
     fun dismiss() { mutableState.update { it.copy(passportId = null, showsAddForm = false, deleteCandidateId = null) } }
     fun askDelete(id: UUID) { mutableState.update { it.copy(deleteCandidateId = id) } }
-    fun confirmDelete() {
-        val id = state.value.deleteCandidateId ?: return
+    fun confirmDelete(id: UUID? = state.value.deleteCandidateId) {
+        id ?: return
         mutableState.update { it.copy(deleteCandidateId = null) }
         viewModelScope.launch {
             try { vehicleStore.deleteVehicle(id); reload() }
@@ -100,7 +100,7 @@ data class VehiclePassport(
     val maxDayDurationSeconds: Double = 0.0,
 )
 // iOS: VehicleDetailView.swift.
-enum class VehicleSheet { edit, drive2, dashboardUnits, photos, trips, map, privacy, autoRecord, level, delete }
+enum class VehicleSheet { edit, drive2, dashboardUnits, photos, tripPhotos, trips, map, privacy, autoRecord, level, delete }
 // iOS: VehicleDetailView.swift.
 data class VehiclePassportState(
     val vehicle: Vehicle? = null,
