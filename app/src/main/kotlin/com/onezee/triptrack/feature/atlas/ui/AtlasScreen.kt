@@ -209,8 +209,10 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
             strings = strings,
             onMarker = { marker ->
                 haptics.tap()
+                val trip = tripIdOf(marker)
                 when {
                     marker.id == HOME_MARKER -> vm.selectHome()
+                    trip != null -> vm.select(AtlasSelection.Trip(trip))
                     else -> placeIdOf(marker)?.let(vm::selectPlace)
                 }
             },

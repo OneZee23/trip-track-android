@@ -1,11 +1,12 @@
 // iOS: AtlasPlaceTapTests (the target), MapZoomLevel, Coordinator.trips(near:) and handleTap after the
-// pins, PlaceUsuallyLineTests.
+// pins, syncTripPins, PlaceUsuallyLineTests.
 package com.onezee.triptrack.world
 
 import com.onezee.triptrack.feature.atlas.ui.AtlasMapTap
 import com.onezee.triptrack.feature.atlas.ui.MapZoomLevel
 import com.onezee.triptrack.feature.atlas.ui.RoadHits
 import com.onezee.triptrack.feature.atlas.ui.RouteIndex
+import com.onezee.triptrack.feature.atlas.ui.tripPhotoPins
 import com.onezee.triptrack.map.MapTap
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.MapTripPin
@@ -18,9 +19,9 @@ import kotlin.test.assertTrue
 import org.junit.Test
 
 class AtlasRulesTests {
-    private fun trip(vararg points: Pair<Double, Double>, id: UUID = UUID.randomUUID(), days: Long = 0) = MapTripPin(
+    private fun trip(vararg points: Pair<Double, Double>, id: UUID = UUID.randomUUID(), days: Long = 0, photo: String? = null) = MapTripPin(
         id, GeoPoint(points[0].first, points[0].second), points.map { GeoPoint(it.first, it.second) }, null,
-        Instant.ofEpochSecond(1_760_000_000 - days * 86_400), 10_000.0, 1_200.0, 10.0, 20.0, null, null,
+        Instant.ofEpochSecond(1_760_000_000 - days * 86_400), 10_000.0, 1_200.0, 10.0, 20.0, photo, null,
     )
 
     @Test fun zoomLevelsByLatitudeSpan() {
@@ -70,6 +71,18 @@ class AtlasRulesTests {
         val miss = AtlasMapTap.resolve(MapTap(GeoPoint(45.1, 38.95), 13.0), latitudeSpan = 0.2, routes = routes)
         assertIs<AtlasMapTap.Ground>(miss)
         assertFalse(miss.zoomToRegion)
+    }
+
+    /** «Фото из поездок»: a pin per trip with a photo; an open trip keeps only its own; off is none. */
+    @Test fun tripPhotoPinsFollowTheToggleAndTheOpenTrip() {
+        val withPhoto = trip(45.0 to 39.0, photo = "a.jpg")
+        val alsoWithPhoto = trip(45.1 to 39.1, photo = "b.jpg")
+        val withoutPhoto = trip(45.2 to 39.2)
+        val trips = listOf(withPhoto, alsoWithPhoto, withoutPhoto)
+        assertEquals(listOf(withPhoto, alsoWithPhoto), tripPhotoPins(trips, showsPhotos = true, openTrip = null))
+        assertTrue(tripPhotoPins(trips, showsPhotos = false, openTrip = null).isEmpty())
+        assertEquals(listOf(alsoWithPhoto), tripPhotoPins(trips, showsPhotos = true, openTrip = alsoWithPhoto.id))
+        assertTrue(tripPhotoPins(trips, showsPhotos = true, openTrip = withoutPhoto.id).isEmpty(), "an open trip without a photo has no pin")
     }
 
     @Test fun routesWithOnePointAreNotIndexed() {

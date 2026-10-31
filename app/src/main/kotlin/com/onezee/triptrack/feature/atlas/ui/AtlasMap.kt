@@ -12,9 +12,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -23,6 +26,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
+import com.onezee.triptrack.feature.atlas.AtlasSelection
 import com.onezee.triptrack.feature.atlas.AtlasState
 import com.onezee.triptrack.map.MapFog
 import com.onezee.triptrack.map.MapHost
@@ -41,6 +45,8 @@ import com.onezee.triptrack.model.AtlasPlacePin
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.MapTripPin
 import com.onezee.triptrack.ui.LocalLiveMaps
+import com.onezee.triptrack.ui.LocalTripPhotoImages
+import com.onezee.triptrack.ui.PhotoSource
 import java.util.UUID
 import kotlin.math.hypot
 import kotlin.math.max
@@ -171,8 +177,26 @@ fun AtlasMapLayer(
     val calloutPin = state.selectedPlace
     val callout = remember(calloutPin, strings) { calloutPin?.let { placeCallout(context, density, it, strings) } }
     val house = remember(density) { homeGlyphBitmap(density) }
-    val markers = remember(state.placePins, state.selectedPlaceId, showsPlaces, callout, state.home.mapPin, house) {
+    val openTrip = (state.selection as? AtlasSelection.Trip)?.id
+    val photoTrips = remember(state.exploration.trips, state.appearance.showsPhotos, openTrip) {
+        tripPhotoPins(state.exploration.trips, state.appearance.showsPhotos, openTrip)
+    }
+    val images = LocalTripPhotoImages.current
+    val thumbs by produceState(emptyMap<UUID, Bitmap>(), photoTrips, images) {
+        if (images == null) return@produceState
+        val loaded = HashMap<UUID, Bitmap>()
+        for (trip in photoTrips) {
+            val filename = trip.photoFilename ?: continue
+            images.load(PhotoSource.Local(filename), (TRIP_THUMB_POINTS * density).toInt())?.let { loaded[trip.id] = it.asAndroidBitmap() }
+        }
+        value = loaded
+    }
+    val markers = remember(state.placePins, state.selectedPlaceId, showsPlaces, callout, state.home.mapPin, house, photoTrips, thumbs, openTrip) {
         buildList {
+            for (trip in photoTrips) {
+                // A disc until the thumbnail arrives, as iOS shows its glyph until then.
+                add(MapMarker("$TRIP_MARKER${trip.id}", trip.coordinate, MapMarker.Kind.PHOTO, image = thumbs[trip.id], selected = trip.id == openTrip))
+            }
             if (showsPlaces) for (pin in state.placePins) {
                 val selected = pin.id == state.selectedPlaceId
                 add(MapMarker("place:${pin.id}", pin.coordinate, if (pin.inPeriod) MapMarker.Kind.PLACE else MapMarker.Kind.PLACE_MUTED,
@@ -204,6 +228,23 @@ fun AtlasMapLayer(
 }
 
 const val HOME_MARKER = "home"
+
+/** The id prefix of a trip's photo pin. */
+private const val TRIP_MARKER = "trip:"
+
+/** iOS TripPinView loads its thumbnail at 64 (`PhotoStorageService.loadThumbnail(maxSize: 64)`). */
+private const val TRIP_THUMB_POINTS = 64
+
+/**
+ * iOS syncTripPins: with «Фото из поездок» on, a pin for every trip that has a photo, and only the open
+ * trip's own while one is open. Trips without a photo get none: their roads take the tap.
+ */
+fun tripPhotoPins(trips: List<MapTripPin>, showsPhotos: Boolean, openTrip: UUID?): List<MapTripPin> =
+    if (!showsPhotos) emptyList() else trips.filter { it.photoFilename != null && (openTrip == null || it.id == openTrip) }
+
+/** The marker id of a trip's photo pin back to the trip. */
+fun tripIdOf(marker: MapMarker): UUID? = marker.id.removePrefix(TRIP_MARKER).takeIf { marker.id.startsWith(TRIP_MARKER) }
+    ?.let { runCatching { UUID.fromString(it) }.getOrNull() }
 
 /** ARGB from 0…255 channels and a 0…1 alpha, the form the map module takes colours in. */
 fun worldArgb(red: Int, green: Int, blue: Int, alpha: Double): Int =
