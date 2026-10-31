@@ -110,6 +110,17 @@ class TokenStore(private val vault: SecureVault) {
     @Synchronized
     fun clearAccessToken() = update { it.remove(accessTokenKey) }
 
+    /**
+     * iOS: `KeychainHelper.saveString(name, for: Keys.userName)` in AuthService. The name the person
+     * typed, or the one sign-in resolved, kept with the session it belongs to: a soft expiry keeps
+     * it, every hard sign-out clears it with the rest of the snapshot. Blank removes it.
+     */
+    @Synchronized
+    fun setUserName(name: String?) = update { values ->
+        val trimmed = name?.trim().orEmpty()
+        if (trimmed.isEmpty()) values.remove(userNameKey) else values[userNameKey] = trimmed
+    }
+
     @Synchronized
     private fun readKey(key: String): SecureRead<String> = when (val result = vault.read()) {
         SecureRead.Missing -> SecureRead.Missing

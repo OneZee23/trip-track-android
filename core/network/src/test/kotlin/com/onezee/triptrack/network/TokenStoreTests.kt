@@ -44,6 +44,18 @@ class TokenStoreTests {
         assertEquals("true", vault.values?.get(TokenStore.expiredKey))
     }
 
+    @Test fun testUserNameSurvivesSoftExpiryAndLeavesWithTheSession() {
+        val vault = FakeVault(); val store = signedInStore(vault)
+        store.setUserName("  Road Runner ")
+        assertEquals("Road Runner", store.state.value.displayName)
+        store.sessionExpired()
+        assertEquals("Road Runner", TokenStore(vault).apply { hydrate() }.state.value.displayName)
+        store.setUserName(" ")
+        assertNull(store.state.value.displayName)
+        store.setUserName("Again"); store.clear(HardSignOutReason.userSignOut)
+        assertNull(TokenStore(vault).apply { hydrate() }.state.value.displayName)
+    }
+
     @Test fun testSessionExpiredIsIdempotent() {
         val store = signedInStore()
         store.sessionExpired(); store.sessionExpired()
