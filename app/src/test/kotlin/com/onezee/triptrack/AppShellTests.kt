@@ -84,7 +84,9 @@ class AppShellTests {
         val window = compose.activity.window
         val bars = WindowCompat.getInsetsController(window, window.decorView)
         compose.onNodeWithTag("tab_profile").performClick()
+        compose.onNodeWithTag("profile_gear").performClick()
         compose.onNodeWithTag("settings_theme").performClick()
+        assertEquals(com.onezee.triptrack.feature.settings.SettingsSheet.theme, graph.settingsManager.state.value.sheet)
         compose.onNodeWithTag("settings_theme_row_2").performClick()
         compose.waitForIdle()
         assertEquals(ThemeMode.dark, graph.themeManager.mode)
@@ -104,6 +106,7 @@ class AppShellTests {
         assertNull(graph.languageManager.chosen)
         assertEquals(AppLanguage.ru, graph.languageManager.current(compose.activity.resources.configuration))
         compose.onNodeWithTag("tab_profile").performClick()
+        compose.onNodeWithTag("profile_gear").performClick()
         compose.onNodeWithTag("settings_language").performClick()
         // Display order: ru, en, de…
         compose.onNodeWithTag("settings_language_row_2").performClick()

@@ -17,7 +17,7 @@ import org.robolectric.annotation.GraphicsMode
 
 /**
  * The shell on a phone (Pixel 7 width and density), light and dark: Лента with the bar, Я with
- * the settings card. Robolectric draws no system bars, so the content starts at the very top.
+ * the profile hero. Robolectric draws no system bars, so the content starts at the very top.
  */
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -43,7 +43,10 @@ class ShellScreenshotTests(private val dark: Boolean) {
 
     @Test fun me() {
         prepare()
+        val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
+        compose.runOnUiThread { graph.me.roadTimeOverride = com.onezee.triptrack.model.RoadSceneTime.day }
         compose.onNodeWithTag("tab_profile").performClick()
+        compose.waitUntil(5000) { graph.me.profile.state.value.loaded && graph.settingsManager.state.value.loaded }
         compose.waitForIdle()
         compose.onRoot().captureRoboImage("src/test/screenshots/shell_me_$theme.png")
     }
