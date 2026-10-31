@@ -245,7 +245,7 @@ abstract class TripsScreenTest {
                 reactionBreakdown = listOf(ReactionTally("🔥", 4), ReactionTally("🌅", 2)), myReaction = "🔥", badgeIds = emptyList(), commentCountRaw = 3,
             ),
             SocialFeedTrip(
-                id = own.id, author = SocialAuthor(owner, displayName = "Никита", avatarEmoji = "🏎️", profileLevel = 7),
+                id = own.id, author = SocialAuthor(owner, displayName = "Саша", avatarEmoji = "🏎️", profileLevel = 7),
                 title = own.title, startDate = own.startDate, endDate = own.endDate, distance = own.distance,
                 duration = Duration.between(own.startDate, own.endDate ?: own.startDate).seconds.toInt(), region = own.region, isPrivate = false,
                 previewPolyline = own.previewPolyline?.let { Base64.getEncoder().encodeToString(it) }, photoCount = 0,
