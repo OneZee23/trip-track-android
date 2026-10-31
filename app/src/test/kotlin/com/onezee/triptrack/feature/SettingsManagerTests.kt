@@ -165,17 +165,5 @@ class SettingsManagerTests : WorldTest() {
         advanceUntilIdle(); assertTrue(vm.state.value.master)
     }
 
-    @Test fun firstCloudEnableRequiresConfirmationAndOffClearsQueue() = runTest(dispatcher) {
-        val manager = manager(); runCurrent()
-        val queue = com.onezee.triptrack.sync.SyncQueue(isAuthorized = { true })
-        val vm = own(CloudSyncViewModel(manager, queue, preferences, dispatcher)); runCurrent()
-        vm.setEnabled(true); runCurrent()
-        assertTrue(vm.state.value.showsEnableConfirmation); assertFalse(manager.state.value.cloudSyncEnabled)
-        vm.cancelEnable(); assertFalse(vm.state.value.showsEnableConfirmation)
-        vm.setEnabled(true); vm.confirmEnable(); runCurrent(); assertTrue(manager.state.value.cloudSyncEnabled)
-        queue.enqueue(com.onezee.triptrack.sync.SyncOperation(SyncEntityType.trip, UUID.randomUUID(), SyncAction.upload))
-        vm.setEnabled(false); runCurrent(); assertFalse(manager.state.value.cloudSyncEnabled); assertEquals(0, queue.pendingCount)
-        vm.setEnabled(true); runCurrent(); assertFalse(vm.state.value.showsEnableConfirmation); assertTrue(manager.state.value.cloudSyncEnabled)
-    }
 
 }

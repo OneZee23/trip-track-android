@@ -12,13 +12,15 @@ fun interface RecordingSettings {
 }
 
 // iOS: CloudSyncView.swift / SyncCoordinator.swift. Gates, photo recovery and retries remain in core:sync.
+// The engine is the signed-in account's (rebuilt per account); with nobody signed in there is none.
 class SyncSettingsEffects(
-    private val syncEngine: SyncEngine,
+    private val engine: () -> SyncEngine?,
     private val settingsStore: SettingsStore,
     private val recordingSettings: RecordingSettings,
     private val profilePrivacyService: ProfilePrivacyService,
 ) : SettingsEffects {
     override suspend fun cloudSyncChanged(enabled: Boolean) {
+        val syncEngine = engine() ?: return
         if (!enabled) { syncEngine.clearAccountWork(); return }
         syncEngine.trips.markAllPendingUpload()
         for (trip in syncEngine.trips.fetchAllTrips()) syncEngine.requests.enqueue(SyncRequest(SyncEntityType.trip, trip.id, SyncAction.upload))
@@ -28,7 +30,7 @@ class SyncSettingsEffects(
         // The coordinator recovers journeys and both photo queues using their existing gates.
         syncEngine.coordinator.runFullSync()
     }
-    override suspend fun homeZoneChanged(before: HomeZone?, after: HomeZone?) { syncEngine.coordinator.privacyZoneChanged() }
+    override suspend fun homeZoneChanged(before: HomeZone?, after: HomeZone?) { engine()?.coordinator?.privacyZoneChanged() }
     override suspend fun autoRecordChanged(mode: AutoRecordMode, timeout: Int, stereos: List<SavedBluetoothDevice>) {
         recordingSettings.apply(mode, timeout, stereos)
     }
