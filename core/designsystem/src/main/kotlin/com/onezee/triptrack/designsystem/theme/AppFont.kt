@@ -43,6 +43,18 @@ val InterFamily = FontFamily(
 val PressStart2PFamily = FontFamily(Font(R.font.press_start_2p_regular, FontWeight.W400))
 
 /**
+ * Handjet Black, the level tag «LVL 12» of the trip and feed cards (OFL,
+ * `assets/licenses/Handjet-OFL.txt`). A tag, not text: nothing else is set in it.
+ */
+val HandjetFamily = FontFamily(Font(R.font.handjet_black, FontWeight.W900))
+
+/** iOS `.custom("Handjet-Black", fixedSize:)`. */
+@Composable
+@ReadOnlyComposable
+fun handjet(size: Float): TextStyle =
+    TextStyle(fontFamily = HandjetFamily, fontWeight = FontWeight.W900, fontSize = with(LocalDensity.current) { size.dp.toSp() })
+
+/**
  * Inter's natural line height in ems: (ascender 1984 + descender 494) / 2048, with no line gap.
  * The hhea and typo metrics agree, so iOS and Android lay a line out at the same height, and an
  * iOS `.lineSpacing(x)` is this height plus x.
