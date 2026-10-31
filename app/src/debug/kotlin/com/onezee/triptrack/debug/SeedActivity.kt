@@ -13,8 +13,8 @@ import kotlinx.coroutines.withContext
 /**
  * Debug builds only, the Android side of the iOS `-seed-map-demo` launch arguments:
  * `adb shell am start -n com.onezee.triptrack.dev/com.onezee.triptrack.debug.SeedActivity`
- * seeds the trips, a journey, checkpoints with a segment, photos and drafts ([TripsDemoSeed]), then
- * opens the app. Idempotent, like the iOS seeds: a second launch adds nothing.
+ * seeds the trips, a journey, checkpoints with a segment, photos and drafts ([TripsDemoSeed]), the
+ * places and the opened world ([PlacesDemoSeed]), then opens the app. Idempotent, like the iOS seeds: a second launch adds nothing.
  */
 class SeedActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +24,8 @@ class SeedActivity : Activity() {
             withContext(Dispatchers.IO) {
                 graph.awaitSettings()
                 TripsDemoSeed(graph.database, graph.trips, graph.tripsFeature.journeys).run()
+                // The Atlas and Places on top of it (iOS -seed-places-rich -seed-places-many).
+                PlacesDemoSeed(graph.database, graph.world.places, graph.world.history, graph.revealedLayer).run()
             }
             graph.tripsFeature.drafts.refresh()
             startActivity(Intent(this@SeedActivity, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
