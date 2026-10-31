@@ -81,8 +81,9 @@ class MapHostState {
         internal set
 
     /**
-     * Centre on the person and follow them until the next pan (iOS MapCameraCommand.userLocation).
-     * False when the map has no location to follow: no permission, or the dot is not shown.
+     * iOS MapCameraCommand.userLocation: frame 3 km around the map's last fix, or follow the person
+     * until the next pan when there is none yet. False when the map has no location at all: no
+     * permission, or the dot is not shown.
      */
     fun locateUser(): Boolean = controller?.locateUser() ?: false
 

@@ -1,5 +1,6 @@
 package com.onezee.triptrack.map
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import com.onezee.triptrack.logic.MapRect
@@ -16,7 +17,10 @@ import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteLayers
 import com.onezee.triptrack.map.vein.MapVein
 import com.onezee.triptrack.map.vein.VeinLayers
+import com.onezee.triptrack.model.GeoBounds
 import com.onezee.triptrack.model.GeoPoint
+import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.roundToInt
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -181,7 +185,10 @@ internal class MapController(
     /**
      * The map's own location dot, as on iOS where MapKit draws it from its own geolocation: the screen
      * never starts GPS for it. Needs the style and a location permission; without either it stays off.
+     * Lint cannot see the check through [hasLocationPermission]; a permission revoked between the
+     * check and the call is caught below.
      */
+    @SuppressLint("MissingPermission")
     private fun applyUserLocation() {
         val ready = map ?: return
         val loaded = style ?: return
@@ -201,17 +208,34 @@ internal class MapController(
         }
     }
 
-    /** iOS MapCameraCommand.userLocation: follow the person; the next pan of a finger ends it. */
+    /**
+     * iOS MapCameraCommand.userLocation: a fix the map already has is framed 3 km around under the trip
+     * card's padding; without one the camera follows the person and gets there by itself (the next pan
+     * of a finger ends the following).
+     */
     fun locateUser(): Boolean {
         val ready = map ?: return false
         val component = ready.locationComponent
         if (!component.isLocationComponentActivated || !component.isLocationComponentEnabled) return false
         return try {
-            component.cameraMode = CameraMode.TRACKING
+            val fix = component.lastKnownLocation
+            if (fix != null) {
+                execute(MapCameraCommand.Fit(around(GeoPoint(fix.latitude, fix.longitude), USER_SPAN_METRES), MapCameraCommand.Padding.trip))
+            } else {
+                component.cameraMode = CameraMode.TRACKING
+            }
             true
         } catch (_: SecurityException) {
             false
         }
+    }
+
+    /** iOS GeoBounds(around:metres:): a box [metres] wide and tall around [centre]. */
+    private fun around(centre: GeoPoint, metres: Double): GeoBounds {
+        val half = metres / 2
+        val dLat = half / METRES_PER_DEGREE
+        val dLon = half / (METRES_PER_DEGREE * max(0.01, cos(Math.toRadians(centre.latitude))))
+        return GeoBounds(centre.latitude - dLat, centre.latitude + dLat, centre.longitude - dLon, centre.longitude + dLon)
     }
 
     private fun hasLocationPermission(): Boolean {
@@ -375,5 +399,7 @@ internal class MapController(
 
     private companion object {
         const val CAMERA_MS = 600
+        const val USER_SPAN_METRES = 3_000.0
+        const val METRES_PER_DEGREE = 111_320.0
     }
 }
