@@ -726,6 +726,20 @@
     <string name="draftsSelectedCount">%1$s sélectionnés</string>
     <string name="draftsTabHint" formatted="false">nouveaux brouillons en attente</string>
     <string name="draftsTitle" formatted="false">Brouillons</string>
+    <string name="driver_rank_cartographer" formatted="false">Cartographe</string>
+    <string name="driver_rank_conqueror" formatted="false">Conquérant des routes</string>
+    <string name="driver_rank_driver" formatted="false">Conducteur</string>
+    <string name="driver_rank_eternal" formatted="false">Éternel errant</string>
+    <string name="driver_rank_explorer" formatted="false">Explorateur</string>
+    <string name="driver_rank_legend" formatted="false">Légende de la route</string>
+    <string name="driver_rank_navigator" formatted="false">Navigateur</string>
+    <string name="driver_rank_nomad" formatted="false">Nomade</string>
+    <string name="driver_rank_novice" formatted="false">Débutant</string>
+    <string name="driver_rank_odysseus" formatted="false">Ulysse</string>
+    <string name="driver_rank_pioneer" formatted="false">Pionnier</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Esprit du voyage</string>
+    <string name="driver_rank_traveler" formatted="false">Voyageur</string>
+    <string name="driver_rank_trucker" formatted="false">Routier</string>
     <string name="duration" formatted="false">Durée</string>
     <string name="earlier" formatted="false">Plus tôt</string>
     <string name="edit" formatted="false">Modifier</string>

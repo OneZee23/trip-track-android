@@ -726,6 +726,20 @@
     <string name="draftsSelectedCount">%1$s selecionados</string>
     <string name="draftsTabHint" formatted="false">há rascunhos novos</string>
     <string name="draftsTitle" formatted="false">Rascunhos</string>
+    <string name="driver_rank_cartographer" formatted="false">Cartógrafo</string>
+    <string name="driver_rank_conqueror" formatted="false">Conquistador das estradas</string>
+    <string name="driver_rank_driver" formatted="false">Motorista</string>
+    <string name="driver_rank_eternal" formatted="false">Andarilho eterno</string>
+    <string name="driver_rank_explorer" formatted="false">Explorador</string>
+    <string name="driver_rank_legend" formatted="false">Lenda da estrada</string>
+    <string name="driver_rank_navigator" formatted="false">Navegador</string>
+    <string name="driver_rank_nomad" formatted="false">Nômade</string>
+    <string name="driver_rank_novice" formatted="false">Iniciante</string>
+    <string name="driver_rank_odysseus" formatted="false">Odisseu</string>
+    <string name="driver_rank_pioneer" formatted="false">Desbravador</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Espírito das viagens</string>
+    <string name="driver_rank_traveler" formatted="false">Viajante</string>
+    <string name="driver_rank_trucker" formatted="false">Caminhoneiro</string>
     <string name="duration" formatted="false">Tempo</string>
     <string name="earlier" formatted="false">Antes</string>
     <string name="edit" formatted="false">Editar</string>

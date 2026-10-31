@@ -666,6 +666,20 @@
     <string name="draftsSelectedCount">%1$s dipilih</string>
     <string name="draftsTabHint" formatted="false">ada draf baru</string>
     <string name="draftsTitle" formatted="false">Draf</string>
+    <string name="driver_rank_cartographer" formatted="false">Kartografer</string>
+    <string name="driver_rank_conqueror" formatted="false">Penakluk jalanan</string>
+    <string name="driver_rank_driver" formatted="false">Pengemudi</string>
+    <string name="driver_rank_eternal" formatted="false">Pengelana abadi</string>
+    <string name="driver_rank_explorer" formatted="false">Penjelajah</string>
+    <string name="driver_rank_legend" formatted="false">Legenda jalanan</string>
+    <string name="driver_rank_navigator" formatted="false">Navigator</string>
+    <string name="driver_rank_nomad" formatted="false">Pengembara</string>
+    <string name="driver_rank_novice" formatted="false">Pemula</string>
+    <string name="driver_rank_odysseus" formatted="false">Odysseus</string>
+    <string name="driver_rank_pioneer" formatted="false">Perintis</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Jiwa pengembara</string>
+    <string name="driver_rank_traveler" formatted="false">Pelancong</string>
+    <string name="driver_rank_trucker" formatted="false">Sopir truk</string>
     <string name="duration" formatted="false">Waktu</string>
     <string name="earlier" formatted="false">Sebelumnya</string>
     <string name="edit" formatted="false">Ubah</string>

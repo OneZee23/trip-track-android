@@ -756,6 +756,20 @@
     <string name="draftsSelectedCount">Вибрано %1$s</string>
     <string name="draftsTabHint" formatted="false">є нові чернетки</string>
     <string name="draftsTitle" formatted="false">Чернетки</string>
+    <string name="driver_rank_cartographer" formatted="false">Хранитель карт</string>
+    <string name="driver_rank_conqueror" formatted="false">Підкорювач доріг</string>
+    <string name="driver_rank_driver" formatted="false">Водій</string>
+    <string name="driver_rank_eternal" formatted="false">Вічний мандрівник</string>
+    <string name="driver_rank_explorer" formatted="false">Дослідник</string>
+    <string name="driver_rank_legend" formatted="false">Легенда доріг</string>
+    <string name="driver_rank_navigator" formatted="false">Штурман</string>
+    <string name="driver_rank_nomad" formatted="false">Кочівник</string>
+    <string name="driver_rank_novice" formatted="false">Новачок</string>
+    <string name="driver_rank_odysseus" formatted="false">Одіссей</string>
+    <string name="driver_rank_pioneer" formatted="false">Першопрохідець</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Дух мандрів</string>
+    <string name="driver_rank_traveler" formatted="false">Мандрівник</string>
+    <string name="driver_rank_trucker" formatted="false">Далекобійник</string>
     <string name="duration" formatted="false">Час</string>
     <string name="earlier" formatted="false">Раніше</string>
     <string name="edit" formatted="false">Редагувати</string>

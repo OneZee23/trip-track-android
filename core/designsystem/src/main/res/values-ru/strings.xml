@@ -756,6 +756,20 @@
     <string name="draftsSelectedCount">Выбрано %1$s</string>
     <string name="draftsTabHint" formatted="false">есть новые черновики</string>
     <string name="draftsTitle" formatted="false">Черновики</string>
+    <string name="driver_rank_cartographer" formatted="false">Хранитель карт</string>
+    <string name="driver_rank_conqueror" formatted="false">Покоритель дорог</string>
+    <string name="driver_rank_driver" formatted="false">Водитель</string>
+    <string name="driver_rank_eternal" formatted="false">Вечный странник</string>
+    <string name="driver_rank_explorer" formatted="false">Исследователь</string>
+    <string name="driver_rank_legend" formatted="false">Легенда дорог</string>
+    <string name="driver_rank_navigator" formatted="false">Штурман</string>
+    <string name="driver_rank_nomad" formatted="false">Кочевник</string>
+    <string name="driver_rank_novice" formatted="false">Новичок</string>
+    <string name="driver_rank_odysseus" formatted="false">Одиссей</string>
+    <string name="driver_rank_pioneer" formatted="false">Первопроходец</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Дух странствий</string>
+    <string name="driver_rank_traveler" formatted="false">Путешественник</string>
+    <string name="driver_rank_trucker" formatted="false">Дальнобойщик</string>
     <string name="duration" formatted="false">Время</string>
     <string name="earlier" formatted="false">Ранее</string>
     <string name="edit" formatted="false">Редактировать</string>

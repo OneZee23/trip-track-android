@@ -696,6 +696,20 @@
     <string name="draftsSelectedCount">%1$s таңдалды</string>
     <string name="draftsTabHint" formatted="false">жаңа нобайлар бар</string>
     <string name="draftsTitle" formatted="false">Жобалар</string>
+    <string name="driver_rank_cartographer" formatted="false">Карта сақшысы</string>
+    <string name="driver_rank_conqueror" formatted="false">Жолдарды бағындырушы</string>
+    <string name="driver_rank_driver" formatted="false">Жүргізуші</string>
+    <string name="driver_rank_eternal" formatted="false">Мәңгілік кезбе</string>
+    <string name="driver_rank_explorer" formatted="false">Зерттеуші</string>
+    <string name="driver_rank_legend" formatted="false">Жолдар аңызы</string>
+    <string name="driver_rank_navigator" formatted="false">Штурман</string>
+    <string name="driver_rank_nomad" formatted="false">Көшпенді</string>
+    <string name="driver_rank_novice" formatted="false">Жаңадан бастаған</string>
+    <string name="driver_rank_odysseus" formatted="false">Одиссей</string>
+    <string name="driver_rank_pioneer" formatted="false">Жол салушы</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Саяхат рухы</string>
+    <string name="driver_rank_traveler" formatted="false">Саяхатшы</string>
+    <string name="driver_rank_trucker" formatted="false">Жүк көлігінің жүргізушісі</string>
     <string name="duration" formatted="false">Уақыт</string>
     <string name="earlier" formatted="false">Бұрын</string>
     <string name="edit" formatted="false">Өңдеу</string>

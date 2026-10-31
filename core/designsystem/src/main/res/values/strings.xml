@@ -696,6 +696,20 @@
     <string name="draftsSelectedCount">%1$s selected</string>
     <string name="draftsTabHint" formatted="false">new drafts waiting</string>
     <string name="draftsTitle" formatted="false">Drafts</string>
+    <string name="driver_rank_cartographer" formatted="false">Cartographer</string>
+    <string name="driver_rank_conqueror" formatted="false">Road Conqueror</string>
+    <string name="driver_rank_driver" formatted="false">Driver</string>
+    <string name="driver_rank_eternal" formatted="false">Eternal Wanderer</string>
+    <string name="driver_rank_explorer" formatted="false">Explorer</string>
+    <string name="driver_rank_legend" formatted="false">Road Legend</string>
+    <string name="driver_rank_navigator" formatted="false">Navigator</string>
+    <string name="driver_rank_nomad" formatted="false">Nomad</string>
+    <string name="driver_rank_novice" formatted="false">Beginner</string>
+    <string name="driver_rank_odysseus" formatted="false">Odysseus</string>
+    <string name="driver_rank_pioneer" formatted="false">Trailblazer</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Spirit of Journeys</string>
+    <string name="driver_rank_traveler" formatted="false">Traveler</string>
+    <string name="driver_rank_trucker" formatted="false">Trucker</string>
     <string name="duration" formatted="false">Time</string>
     <string name="earlier" formatted="false">Earlier</string>
     <string name="edit" formatted="false">Edit</string>

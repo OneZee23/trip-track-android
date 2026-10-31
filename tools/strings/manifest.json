@@ -26,6 +26,7 @@
     "TripTrack/Models/DistanceUnit+Current.swift": "95f11e2cef5daac22692e0889f62f3479499df1adf5c396f2eb74fcbfa59b037",
     "TripTrack/Models/Badge.swift": "18652681dbbd8fc7082aa1c571fe3ff4f90d2d5a37bfa925e2cca835399cc1b5",
     "TripTrack/Models/BadgeDefinitions.swift": "fc8707ce311ae80d0f96585a1614f51a451ca3c1f3de3577005f653c253cdf13",
+    "TripTrack/Models/GamificationModels.swift": "e312eab3cefb3c5c8ec27fe4421cc06d978b60affcd38806fd3bfb342d9dab1c",
     "TripTrack/Resources/en.lproj/InfoPlist.strings": "b9b4efe2a19f492d2993dc717b13d1b716f7bf7b298974f05a524ccf976a8719",
     "TripTrack/Resources/ru.lproj/InfoPlist.strings": "1309453322f3f66294ab9c8448426fcfc9c0a2df04dffc27d31f10041937b426",
     "TripTrack/Resources/de.lproj/InfoPlist.strings": "764900098070f802e7644ca628eb9c0f1a06e6c2f3eed46295622695786dcfd5",
@@ -136,67 +137,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1849,
+      "strings": 1863,
       "plurals": 30,
       "english_fallbacks": 24
     }
@@ -22490,6 +22491,160 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 3122,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_cartographer",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_conqueror",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_driver",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_eternal",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_explorer",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_legend",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_navigator",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_nomad",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_novice",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_odysseus",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_pioneer",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_roadSpirit",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_traveler",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "driver_rank_trucker",
+      "kind": "string",
+      "file": "TripTrack/Models/GamificationModels.swift",
+      "line": 91,
       "placeholders": {},
       "formatted": false,
       "signatures": {

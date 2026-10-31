@@ -449,6 +449,24 @@ class Generator:
             for lang in LANGUAGES[2:]:
                 descriptions[lang] = {"text": self.tables[lang].get(f"badge.{badge_id}.desc", (descriptions["en"]["text"], 0))[0]}
             self.add(Resource(f"badge_{badge_id}_description", "string", descriptions, source, tokens[start].line, foundation_format=True))
+        # iOS: DriverRank.title; the rank name is a dynamic translation-table key.
+        rank_path = self.ios / "TripTrack/Models/GamificationModels.swift"
+        rank_source, rank_tokens = self.source(rank_path)
+        rank_start = next(i for i, token in enumerate(rank_tokens) if token.value == "DriverRank")
+        rank_brace = next(i for i in range(rank_start, len(rank_tokens)) if rank_tokens[i].value == "{")
+        rank_body = rank_tokens[rank_brace + 1:matching(rank_tokens, rank_brace)]
+        rank_titles = {}
+        for function in functions(rank_body):
+            if function.name in ("titleRu", "titleEn"):
+                rank_titles[function.name] = {
+                    key: literal(value) for key, value in language_cases(function.body, [function.body[i + 2].value for i, token in enumerate(function.body) if token.value == "case"]).items()
+                }
+        for rank, english in rank_titles["titleEn"].items():
+            values = {lang: {"text": self.tables.get(lang, {}).get(
+                f"driverRank.{rank}",
+                (rank_titles["titleRu"][rank] if lang == "ru" else english, 0)
+            )[0]} for lang in LANGUAGES}
+            self.add(Resource(f"driver_rank_{rank}", "string", values, rank_source, 91))
         permissions = {}
         for lang in LANGUAGES:
             path = self.ios / f"TripTrack/Resources/{lang}.lproj/InfoPlist.strings"

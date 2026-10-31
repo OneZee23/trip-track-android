@@ -696,6 +696,20 @@
     <string name="draftsSelectedCount">%1$s ang napili</string>
     <string name="draftsTabHint" formatted="false">may bagong draft</string>
     <string name="draftsTitle" formatted="false">Mga draft</string>
+    <string name="driver_rank_cartographer" formatted="false">Kartograpo</string>
+    <string name="driver_rank_conqueror" formatted="false">Mananakop ng kalsada</string>
+    <string name="driver_rank_driver" formatted="false">Drayber</string>
+    <string name="driver_rank_eternal" formatted="false">Walang hanggang gala</string>
+    <string name="driver_rank_explorer" formatted="false">Tagagalugad</string>
+    <string name="driver_rank_legend" formatted="false">Alamat ng kalsada</string>
+    <string name="driver_rank_navigator" formatted="false">Nabigador</string>
+    <string name="driver_rank_nomad" formatted="false">Nomad</string>
+    <string name="driver_rank_novice" formatted="false">Baguhan</string>
+    <string name="driver_rank_odysseus" formatted="false">Odysseus</string>
+    <string name="driver_rank_pioneer" formatted="false">Tagapanguna</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Diwa ng paglalakbay</string>
+    <string name="driver_rank_traveler" formatted="false">Manlalakbay</string>
+    <string name="driver_rank_trucker" formatted="false">Trucker</string>
     <string name="duration" formatted="false">Oras</string>
     <string name="earlier" formatted="false">Mas maaga</string>
     <string name="edit" formatted="false">I-edit</string>

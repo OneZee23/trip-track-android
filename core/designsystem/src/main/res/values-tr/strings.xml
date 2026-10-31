@@ -696,6 +696,20 @@
     <string name="draftsSelectedCount">%1$s seçildi</string>
     <string name="draftsTabHint" formatted="false">yeni taslaklar var</string>
     <string name="draftsTitle" formatted="false">Taslaklar</string>
+    <string name="driver_rank_cartographer" formatted="false">Haritacı</string>
+    <string name="driver_rank_conqueror" formatted="false">Yolların fatihi</string>
+    <string name="driver_rank_driver" formatted="false">Sürücü</string>
+    <string name="driver_rank_eternal" formatted="false">Ebedî yolcu</string>
+    <string name="driver_rank_explorer" formatted="false">Kâşif</string>
+    <string name="driver_rank_legend" formatted="false">Yolların efsanesi</string>
+    <string name="driver_rank_navigator" formatted="false">Rotacı</string>
+    <string name="driver_rank_nomad" formatted="false">Göçebe</string>
+    <string name="driver_rank_novice" formatted="false">Acemi</string>
+    <string name="driver_rank_odysseus" formatted="false">Odysseus</string>
+    <string name="driver_rank_pioneer" formatted="false">Öncü</string>
+    <string name="driver_rank_roadSpirit" formatted="false">Yolculuk ruhu</string>
+    <string name="driver_rank_traveler" formatted="false">Gezgin</string>
+    <string name="driver_rank_trucker" formatted="false">Tır şoförü</string>
     <string name="duration" formatted="false">Süre</string>
     <string name="earlier" formatted="false">Daha önce</string>
     <string name="edit" formatted="false">Düzenle</string>
