@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
 import com.onezee.triptrack.data.DataEnvironment
+import com.onezee.triptrack.data.GeohashOf
 import com.onezee.triptrack.data.LocalDataWipe
 import com.onezee.triptrack.data.PreferencesDataFlags
 import com.onezee.triptrack.data.RoomPlaceStore
@@ -53,6 +54,7 @@ import com.onezee.triptrack.feature.RecordingDraftQueue
 import com.onezee.triptrack.feature.TripsFeature
 import com.onezee.triptrack.feature.tripChanges
 import com.onezee.triptrack.location.LocationGraph
+import com.onezee.triptrack.logic.GeohashEncoder
 import com.onezee.triptrack.model.EmptyRequest
 import com.onezee.triptrack.model.SocialBlockedListResponse
 import com.onezee.triptrack.network.ApiClient
@@ -236,7 +238,9 @@ class AppGraph(private val context: Context) {
             userId = id
             userIdLoaded.complete(id)
             location.start()
-            // iOS: the one-off build of the opened world after an update (MapViewModel's migrations).
+            // iOS MapViewModel's launch migrations: the territory of the whole library once (the
+            // Atlas counts cities by it), then the one-off build of the opened world.
+            RoomTerritoryStore(database).backfillIfNeeded(PreferencesDataFlags(context), GeohashOf { lat, lon -> GeohashEncoder.encode(lat, lon, 6) })
             revealedLayer.rebuildIfNeeded()
         }
         // A pull brings trips past the finish and the build: the fog reads what it brought.

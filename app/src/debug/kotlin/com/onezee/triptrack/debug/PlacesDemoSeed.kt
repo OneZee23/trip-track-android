@@ -1,10 +1,13 @@
 package com.onezee.triptrack.debug
 
+import com.onezee.triptrack.data.GeohashOf
 import com.onezee.triptrack.data.PlaceStore
+import com.onezee.triptrack.data.RoomTerritoryStore
 import com.onezee.triptrack.data.db.TripTrackDatabase
 import com.onezee.triptrack.data.db.entity.TrackPointEntity
 import com.onezee.triptrack.feature.atlas.RevealedLayerStore
 import com.onezee.triptrack.feature.places.PlaceHistory
+import com.onezee.triptrack.logic.GeohashEncoder
 import com.onezee.triptrack.logic.cell
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Place
@@ -20,7 +23,7 @@ import java.util.UUID
  *   usual time become visible without three days of real driving.
  * - «many»: the ten places of the iOS seed, through the same door a saved suggestion takes
  *   ([PlaceHistory.createPlace], with its history): search, order and groups appear only from eight.
- * - the opened world built from the library, as the one-off build after an update does.
+ * - the territory and the opened world built from the library, as the launch migrations do.
  *
  * Debug builds only, idempotent: a second run adds nothing.
  */
@@ -34,6 +37,8 @@ class PlacesDemoSeed(
     suspend fun run(many: Boolean = true) {
         seedRich()
         if (many) seedMany()
+        // The launch migrations over the seeded library: the territory (cities) and the opened world.
+        RoomTerritoryStore(database).rebuildFromTrips(GeohashOf { lat, lon -> GeohashEncoder.encode(lat, lon, 6) })
         revealed.rebuildIfNeeded()
     }
 
