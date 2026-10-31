@@ -248,7 +248,11 @@ class MyMapViewModel(
             catch (_: Exception) { mutableState.update { it.copy(failed = true) } }
         }
     }
-    fun selectRegion(point: GeoPoint) { select(atlasProvider().region(containing = point)?.id?.takeIf { state.value.exploration.region(it) != null }?.let { AtlasSelection.Region(it) }) }
+    // iOS: auto-zoom to the region only from the country view, where that IS the gesture; at street
+    // level a tap that misses the road is a miss, and flinging the camera out loses the place.
+    fun selectRegion(point: GeoPoint, zoom: Boolean = true) {
+        select(atlasProvider().region(containing = point)?.id?.takeIf { state.value.exploration.region(it) != null }?.let { AtlasSelection.Region(it) }, zoom)
+    }
     fun selectRoad(ids: List<UUID>) {
         val sorted = ids.mapNotNull { state.value.exploration.trip(it) }.sortedByDescending { it.startDate }.map { it.id }
         if (sorted.isEmpty()) return
@@ -291,7 +295,10 @@ class MyMapViewModel(
             closeSelection()
         } else setDetent(AtlasSlot.settle(top, velocity, slot, variant))
     }
-    fun tapMap(point: GeoPoint) { if (state.value.detent == AtlasSheetDetent.expanded) setDetent(AtlasSheetDetent.collapsed) else selectRegion(point) }
+    fun tapMap(point: GeoPoint, zoom: Boolean = true) { if (state.value.detent == AtlasSheetDetent.expanded) setDetent(AtlasSheetDetent.collapsed) else selectRegion(point, zoom) }
+
+    /** iOS: a city chip in a region asks to look closer; the region stays selected. */
+    fun focusCity(point: GeoPoint) { camera(MapCameraCommand.Fit(around(point, focusSpanMetres), MapCameraCommand.Padding.overview)) }
     fun focusDiscovery(id: UUID) {
         val seal = finds.seals.firstOrNull { it.id == id }
         if (seal == null) { pendingDiscovery = id; return }
