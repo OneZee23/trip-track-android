@@ -21,6 +21,6 @@ Kept by the orchestrator. States: todo, in progress, done, diverged (see `diverg
 | Trip list and detail | `Views/Feed`, `Views/TripDetail` | feed, trip detail (live map hero, fullscreen, moments, photos, checkpoints, segments, charts, export), journeys, drafts; 34 screenshots; debug SeedActivity | done (replay, trip edit, comments, share later) |
 | Atlas | `Views/MyMap/` | `app/feature/atlas` view models and state with tests, `core/map` | view models done, screens next |
 | Places, journeys, segments | `PlaceManager`, `JourneyManager` | `app/feature/places`, `journey` view models; logic in `core/logic` | view models done, screens next |
-| Profile, social, garage, settings | `Views/Profile`, `Views/Garage`, `Social/` | `app/feature/me`, `garage`, `settings` view models; CarCatalog in `core/logic` | view models done, screens next |
+| Profile, social, garage, settings | `Views/Profile`, `Views/Garage`, `Social/` | Me (hero with the road scene, journal, badges), garage with passport and catalog, settings; 20 screenshots | done (Me → trip/journey linking, auxiliary profile screens, photo zoom next) |
 | Sign-in, account, Cloud Sync, onboarding | `AuthService`, `CloudSyncView`, `Views/Onboarding` | `app/feature/account`, `onboarding`: Google sign-in (Credential Manager), session rules, account and sync screens, sync wiring, five-page onboarding; 115 tests | done (needs Google OAuth clients and the backend branch deployed) |
 | Release | | Play listing, closed test | todo |
