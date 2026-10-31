@@ -275,7 +275,9 @@ fun TripStatsSkeleton(trip: TripSummary, modifier: Modifier = Modifier) {
     Column(modifier.testTag("detail_stats"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             DetailStatCard(listOf(StatSegment(distance.value, distance.unit)), strings.distance(), AppTheme.green, Modifier.weight(1f))
-            DetailStatCard(durationSegments(trip.duration, strings), strings.duration(), AppTheme.accent, Modifier.weight(1f))
+            // Ink, as the loaded grid prints it (Figma 147:1190): iOS draws it in accent here and the
+            // colour flips when the trip lands.
+            DetailStatCard(durationSegments(trip.duration, strings), strings.duration(), AppTheme.colors.text, Modifier.weight(1f))
         }
         repeat(2) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
