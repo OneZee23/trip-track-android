@@ -5,6 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -130,24 +133,35 @@ private fun TrackingBackButton(onClose: () -> Unit) {
 internal fun MePlaceholder(
     themeManager: ThemeManager,
     languageManager: LanguageManager,
-    above: @Composable ColumnScope.() -> Unit = {},
+    below: LazyListScope.() -> Unit = {},
     // The sign-in card or the «Account & Sync» row (feature/account), under the app settings.
     account: @Composable () -> Unit = {},
 ) {
     val strings = appStrings
     val language = languageManager.current(LocalConfiguration.current)
     var picking by rememberSaveable { mutableStateOf<Picker?>(null) }
-    PlaceholderScreen(strings.tabMe(), rememberScrollState(), "screen_me") {
-        above()
-        // iOS: ProfileSettingsSheet.swift, appGroup: words, then look.
-        Column(Modifier.fillMaxWidth().surfaceCard()) {
-            SettingsRow(AppGlyph.characterBubble, strings.lang(), language.endonym, "settings_language") { picking = Picker.language }
-            Box(Modifier.fillMaxWidth().height(1.dp).background(AppTheme.colors.borderBright))
-            // The icon carries the current mode, the glyph the picker badges it with: a fixed sun
-            // next to «Тёмная» reads as a stale row.
-            SettingsRow(themeGlyph(themeManager.mode), strings.theme(), themeLabel(themeManager.mode, strings), "settings_theme") { picking = Picker.theme }
+    // A list, not a scrolling column: the trips' history below the settings can be long.
+    LazyColumn(
+        Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars).testTag("screen_me"),
+        contentPadding = PaddingValues(start = AppSpacing.screenSide, end = AppSpacing.screenSide, top = 12.dp, bottom = tabBarContentClearance()),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.listStep),
+    ) {
+        item {
+            Text(strings.tabMe(), style = AppType.title, letterSpacing = AppType.titleTracking, color = AppTheme.colors.text,
+                modifier = Modifier.semantics { heading() })
         }
-        account()
+        item {
+            // iOS: ProfileSettingsSheet.swift, appGroup: words, then look.
+            Column(Modifier.fillMaxWidth().surfaceCard()) {
+                SettingsRow(AppGlyph.characterBubble, strings.lang(), language.endonym, "settings_language") { picking = Picker.language }
+                Box(Modifier.fillMaxWidth().height(1.dp).background(AppTheme.colors.borderBright))
+                // The icon carries the current mode, the glyph the picker badges it with: a fixed sun
+                // next to «Тёмная» reads as a stale row.
+                SettingsRow(themeGlyph(themeManager.mode), strings.theme(), themeLabel(themeManager.mode, strings), "settings_theme") { picking = Picker.theme }
+            }
+        }
+        item { account() }
+        below()
     }
     when (picking) {
         Picker.theme -> SettingsOptionPicker(

@@ -129,6 +129,16 @@ class TripsFeature(
 
     suspend fun journey(id: UUID): Journey? = repository.fetchJourney(id)
 
+    /** iOS DistanceUnit.current: read fresh, the settings screen writes the same key. */
+    fun distanceUnit(): com.onezee.triptrack.model.DistanceUnit =
+        preferences.getString(com.onezee.triptrack.model.DistanceUnit.storageKey, null)?.let(com.onezee.triptrack.model.DistanceUnit::fromRawValue)
+            ?: com.onezee.triptrack.model.DistanceUnit.km
+
+    fun offline(): Boolean = isOffline()
+
+    /** The cached localities of journey ends (geohash 5): the geocoder's answers, never a request. */
+    suspend fun localities(keys: Set<String>): Map<String, String> = repository.cachedLocalities(keys)
+
     /** «Make private» from a feed card's menu: the same door as the trip screen's. */
     suspend fun makePrivate(id: UUID) = repository.updatePrivacy(id, true)
 

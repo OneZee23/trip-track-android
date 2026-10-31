@@ -225,3 +225,20 @@ fun <D : NavDestination> TabNavHost(
 }
 
 private const val ROOT = "root"
+
+/**
+ * A view model owned by the composition it is created in, for screens outside a stack entry (a
+ * sheet opened from a tab's root): created once per [key], cleared when it leaves the composition.
+ */
+@Composable
+inline fun <reified VM : ViewModel> rememberLocalViewModel(key: Any, noinline create: () -> VM): VM {
+    val store = remember(key) { ViewModelStore() }
+    androidx.compose.runtime.DisposableEffect(store) { onDispose { store.clear() } }
+    return remember(store) {
+        val factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T = create() as T
+        }
+        ViewModelProvider.create(store, factory)[VM::class]
+    }
+}

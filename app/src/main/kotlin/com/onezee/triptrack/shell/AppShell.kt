@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,10 @@ import com.onezee.triptrack.designsystem.navigation.LocalTabBarVisibility
 import com.onezee.triptrack.designsystem.navigation.TabBarVisibility
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.feature.account.AccountEntry
+import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
+import com.onezee.triptrack.feature.FeedTab
+import com.onezee.triptrack.feature.MeTab
+import com.onezee.triptrack.ui.LocalTripPhotoImages
 
 /**
  * iOS: ContentView.swift. The five tabs and the floating bar over them, on the theme ground that
@@ -55,7 +60,17 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
 
     BackHandler(enabled = selected != AppTab.home) { tabs.select(AppTab.home) }
 
-    CompositionLocalProvider(LocalTabBarVisibility provides visibility) {
+    val trips = graph.tripsFeature
+    val drafts by trips.drafts.state.collectAsState()
+    // The unit and the network are read again whenever the app comes back to the screen.
+    val unit = remember(resumeTick) { trips.distanceUnit() }
+    val offline = remember(resumeTick) { trips.offline() }
+
+    CompositionLocalProvider(
+        LocalTabBarVisibility provides visibility,
+        LocalTripPhotoImages provides trips.photos,
+        LocalDistanceUnit provides unit,
+    ) {
         Box(
             Modifier
                 .fillMaxSize()
@@ -68,7 +83,7 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
                 label = "tab",
             ) { tab ->
                 saveable.SaveableStateProvider(tab.rawValue) {
-                    TabScreen(tab, graph, feedScrollToTop, resumeTick, onClose = { tabs.select(AppTab.home) })
+                    TabScreen(tab, graph, feedScrollToTop, resumeTick, offline, onSelect = tabs::select)
                 }
             }
             AnimatedVisibility(
@@ -80,6 +95,7 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
                 CustomTabBar(
                     selectedTab = selected,
                     onSelect = tabs::select,
+                    hasUnseenDrafts = drafts.hasUnseen,
                     // A second tap on the open Лента takes it back to the top.
                     onReselect = { if (it == AppTab.home) feedScrollToTop++ },
                 )
@@ -92,12 +108,12 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
 private val TabSwitch = spring<Float>(dampingRatio = 0.85f, stiffness = 815.7f)
 
 @Composable
-private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resumeTick: Int, onClose: () -> Unit) {
+private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resumeTick: Int, offline: Boolean, onSelect: (AppTab) -> Unit) {
     when (tab) {
-        AppTab.home -> FeedPlaceholder(feedScrollToTop)
+        AppTab.home -> FeedTab(graph.tripsFeature, feedScrollToTop, offline, onOpenRecord = { onSelect(AppTab.record) }, onOpenProfileTab = { onSelect(AppTab.profile) })
         AppTab.maps -> AtlasPlaceholder()
-        AppTab.record -> RecordTab(graph, resumeTick, onClose)
+        AppTab.record -> RecordTab(graph, resumeTick, onClose = { onSelect(AppTab.home) })
         AppTab.places -> PlacesPlaceholder()
-        AppTab.profile -> MePlaceholder(graph.themeManager, graph.languageManager) { AccountEntry(graph) }
+        AppTab.profile -> MeTab(graph.tripsFeature) { below -> MePlaceholder(graph.themeManager, graph.languageManager, below, account = { AccountEntry(graph) }) }
     }
 }
