@@ -5,6 +5,8 @@ behave exactly like the iPhone app.
 
 | Area | Android | iPhone | Why |
 |---|---|---|---|
+| Test application | Robolectric uses a lazy test graph, skips recording/auth/backfill startup and cancels owned work on termination | XCTest uses the AppBootstrap service-start seam | Robolectric recreates Application within one JVM; process-lifetime jobs must not escape into the next test. Production still starts all services |
+| Screenshot verification | Roborazzi compares Mac baselines locally by default; Linux CI runs the rendering tests with `-Proborazzi.test.verify=false` | XCTest screenshots on the canonical iPhone simulator | macOS and Ubuntu render fonts/shadows differently; baselines are recorded and verified on the Mac |
 | Purchases | No in-app purchases at launch; PRO is hidden like in the iOS Russian storefront | StoreKit PRO and tips | Google Play pays nothing to a payout bank in Russia (Dec 2024) |
 | Sign-in | Google only | Sign in with Apple only | Owner decision 30 Oct 2026: separate accounts per platform for now |
 | Domain representations | GeoPoint, UUID, Instant; associated enums use sealed types | CLLocationCoordinate2D, UUID, Date, associated Swift enums | Pure JVM domain types; JSON shapes and units stay the same |

@@ -70,9 +70,40 @@ Swift-тесты из `TripTrackTests/` и `TripTrackUITests/` участвую�
    ```
 
    Подставь свои модули. `--offline` убирается только для загрузки новой зависимости.
-   CI проверяет весь проект: `./gradlew --no-daemon test :app:assembleDebug`, оба Python-набора,
-   JDK 17, SDK 37.2 и Build Tools 36.0.0. NDK пока не нужен: `core:map` его не задаёт.
-   При добавлении `ndkVersion`/CMake обнови и SDK-шаг в `.github/workflows/android.yml`.
+   CI проверяет весь проект: `./gradlew --no-daemon -Proborazzi.test.verify=false test lintDebug
+   :app:assembleDebug :app:assembleRelease`, оба Python-набора, JDK 17, SDK 37.2,
+   Build Tools 36.0.0, NDK и CMake из `core/map/build.gradle.kts`. `lintDebug` из корня
+   включает app и все Android-модули core. `core:model` и `core:logic` чистые JVM-модули,
+   Android Lint у них нет. При смене NDK/CMake обнови SDK-шаг в `.github/workflows/android.yml`.
+
+### Скриншоты
+
+Записывай и проверяй Roborazzi-снимки на Mac. Эталоны в `src/test/screenshots`
+созданы на macOS; Ubuntu иначе рисует шрифты и тени. Обычный запуск тестов
+проверяет снимки по умолчанию в app и core:designsystem:
+
+```sh
+./gradlew --no-daemon --offline :core:designsystem:test :app:test
+```
+
+После намеренного изменения внешнего вида запиши новые эталоны на Mac, проверь дифф
+изображений и повтори обычную проверку:
+
+```sh
+./gradlew --no-daemon --offline -Proborazzi.test.record=true :core:designsystem:test :app:test
+./gradlew --no-daemon --offline :core:designsystem:test :app:test
+```
+
+В CI задано `-Proborazzi.test.verify=false`: те же тесты создают Compose-экраны,
+выполняют layout и рисование, ловят падения, но не сравнивают пиксели с Mac.
+Roborazzi сохраняет эти кадры только в `<module>/build/screenshots/<test-task>/`;
+эталоны в `src/test/screenshots` не меняются. Два выключенных Roborazzi-флага
+полностью пропускают захват и рисование, поэтому для CI включена запись в этот
+временный каталог с относительными путями от него. Оба свойства входят во входы Gradle-тестов:
+Gradle различает результаты разных режимов в кэше. При `record=true` запись имеет
+приоритет над проверкой. В новых тестах передавай относительные пути в
+`captureRoboImage` и `captureScreenRoboImage`: абсолютный путь обходит перенаправление
+в `build/`.
 
 ## Если исправление началось на Android
 
