@@ -36,6 +36,7 @@ import kotlin.math.cos
 /**
  * iOS: PlacePin. A suggestion is drawn hollow and muted, «a pin CAN go here», and the comparison
  * includes it: a cell changes its look when its suggestion becomes a place at the same point.
+ * [name] labels the pin only while it is chosen; only a place's own screen passes one.
  */
 data class PlacePin(val id: UUID, val coordinate: GeoPoint, val isSuggested: Boolean = false, val name: String? = null)
 
@@ -62,9 +63,10 @@ fun PlacesMapLayer(
     }
     val context = LocalContext.current
     val density = LocalDensity.current.density
-    val selectedName = pins.firstOrNull { it.id == selectedId && !it.isSuggested }?.name
-    val callout = remember(selectedId, selectedName, strings) {
-        selectedId?.let { id -> pins.firstOrNull { it.id == id && !it.isSuggested } }?.let { pin ->
+    // iOS PlacePinView.setSelectedAppearance: the chosen pin is labelled when it has a name.
+    val selectedPin = pins.firstOrNull { it.id == selectedId }
+    val callout = remember(selectedPin, strings) {
+        selectedPin?.let { pin ->
             pin.name?.takeIf { it.isNotEmpty() }?.let { placeCallout(context, density, AtlasPlacePin(pin.id, pin.coordinate, it, null, 0, null, true), strings) }
         }
     }
@@ -77,7 +79,7 @@ fun PlacesMapLayer(
                 kind = if (pin.isSuggested) MapMarker.Kind.PLACE_SUGGESTION else MapMarker.Kind.PLACE,
                 selected = selected,
                 // The name stands only over the CHOSEN pin: ten names over a city cover each other.
-                callout = if (selected && !pin.isSuggested) callout else null,
+                callout = if (selected) callout else null,
             )
         }
     }

@@ -202,7 +202,8 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
         }
 
         val pins = remember(state.items, state.suggestions) {
-            state.items.map { PlacePin(it.place.id, GeoPoint(it.place.latitude, it.place.longitude), name = it.place.name) } +
+            // No names here, as on iOS (PlacesView.pins): the chosen place's name is in the card below.
+            state.items.map { PlacePin(it.place.id, GeoPoint(it.place.latitude, it.place.longitude)) } +
                 state.knownSuggestions.map { PlacePin(it.id, it.coordinate, isSuggested = true) }
         }
         val chromeBottom = slot.mapBottomInset(current) - safeBottom.value
