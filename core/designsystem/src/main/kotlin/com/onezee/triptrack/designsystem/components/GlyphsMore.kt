@@ -36,6 +36,7 @@ internal fun DrawScope.drawMoreGlyph(glyph: AppGlyph, tint: Color) {
             drawLine(tint, Offset(12f, 5f), Offset(12f, 19f), 2.3f, StrokeCap.Round)
             drawLine(tint, Offset(5f, 12f), Offset(19f, 12f), 2.3f, StrokeCap.Round)
         }
+        AppGlyph.minus -> drawLine(tint, Offset(5f, 12f), Offset(19f, 12f), 2.3f, StrokeCap.Round)
         AppGlyph.lock, AppGlyph.lockFill -> {
             val shackle = Path().apply {
                 moveTo(8.2f, 10.6f)

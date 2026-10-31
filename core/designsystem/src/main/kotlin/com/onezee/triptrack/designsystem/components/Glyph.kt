@@ -93,6 +93,7 @@ enum class AppGlyph {
     pause,
     play,
     airplane,
+    minus,
 }
 
 /** iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack. */
