@@ -44,7 +44,9 @@ import com.onezee.triptrack.feature.settings.RecordingSettings
 import com.onezee.triptrack.feature.settings.RoomWorldChanges
 import com.onezee.triptrack.feature.settings.SettingsManager
 import com.onezee.triptrack.feature.settings.SyncSettingsEffects
+import com.onezee.triptrack.feature.RecordingDraftQueue
 import com.onezee.triptrack.feature.TripsFeature
+import com.onezee.triptrack.feature.tripChanges
 import com.onezee.triptrack.location.LocationGraph
 import com.onezee.triptrack.model.EmptyRequest
 import com.onezee.triptrack.model.SocialBlockedListResponse
@@ -181,7 +183,8 @@ class AppGraph(private val context: Context) {
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */
     val tripsFeature by lazy {
-        TripsFeature(trips, RoomPlaceStore(database), vehicles, tripPhotoFiles, location, database, preferences, syncHost, ::isOffline)
+        TripsFeature(trips, RoomPlaceStore(database), vehicles, tripPhotoFiles, RecordingDraftQueue(location), location.recorder.state,
+            tripChanges(database), preferences, syncHost, ::isOffline)
     }
 
     /** Writes stamp the settings row's id: anything writing at launch waits for it. */

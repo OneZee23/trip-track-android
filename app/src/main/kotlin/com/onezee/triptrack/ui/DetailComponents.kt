@@ -266,10 +266,10 @@ fun DetailChip(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
  * journey it belongs to, in accent on the accent wash.
  */
 @Composable
-fun JourneyLinkRow(title: String?, start: java.time.Instant, end: java.time.Instant?, onTap: () -> Unit, modifier: Modifier = Modifier) {
+fun JourneyLinkRow(title: String?, start: java.time.Instant, end: java.time.Instant?, onTap: () -> Unit, modifier: Modifier = Modifier, now: java.time.Instant = java.time.Instant.now()) {
     val strings = appStrings
     val haptics = rememberHaptics()
-    val days = JourneyWindow.days(start, end, java.time.Instant.now(), strings.zone)
+    val days = JourneyWindow.days(start, end, now, strings.zone)
     val name = title?.trim()?.takeIf { it.isNotEmpty() } ?: strings.journeyWord()
     PressableCard(onClick = { haptics.tap(); onTap() }, modifier = modifier.fillMaxWidth()) {
         Row(

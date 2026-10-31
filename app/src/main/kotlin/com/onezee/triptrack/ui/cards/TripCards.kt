@@ -311,7 +311,7 @@ fun SocialFeedCard(
         }
         card.journey?.let { journey ->
             com.onezee.triptrack.ui.JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) },
-                modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp).testTag("feed_card_journey"))
+                modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp).testTag("feed_card_journey"), now = now)
         }
         Box(Modifier.fillMaxWidth().height(1.dp).background(colors.border))
         Row(Modifier.fillMaxWidth().padding(horizontal = 13.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically,

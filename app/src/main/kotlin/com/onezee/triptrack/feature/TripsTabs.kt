@@ -60,6 +60,7 @@ fun TripsDestinationScreen(dest: TripsDestination, feature: TripsFeature, naviga
             vm = feature.drafts,
             onOpenTrip = { navigator.push(TripsDestination.TripDetail(it.id, preview = it.asPreviewTrip())) },
             onBack = { navigator.pop() },
+            now = feature.clock,
         )
     }
 }
@@ -69,7 +70,7 @@ fun TripsDestinationScreen(dest: TripsDestination, feature: TripsFeature, naviga
 fun FeedTab(feature: TripsFeature, scrollToTop: Int, offline: Boolean, onOpenRecord: () -> Unit, onOpenProfileTab: () -> Unit) {
     val navigator = feature.feedNavigator
     TabNavHost(navigator, Modifier.fillMaxSize(), root = {
-        FeedScreen(feature, scrollToTop, offline, onOpenRecord, onOpenProfileTab)
+        FeedScreen(feature, scrollToTop, offline, onOpenRecord, onOpenProfileTab, now = feature.clock)
     }) { dest -> TripsDestinationScreen(dest, feature, navigator) }
 }
 
@@ -90,7 +91,7 @@ fun MeTab(feature: TripsFeature, settings: @Composable (LazyListScope.() -> Unit
         var composeFor by remember { mutableStateOf<TripSummary?>(null) }
         var composerOpenings by remember { mutableIntStateOf(0) }
         var toast by remember { mutableStateOf<ToastItem?>(null) }
-        val now = Instant.now()
+        val now = feature.clock()
         androidx.compose.runtime.LaunchedEffect(Unit) { feature.feed.loadTrips() }
         settings {
             if (drafts.drafts.isNotEmpty()) {

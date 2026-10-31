@@ -65,13 +65,6 @@ import com.onezee.triptrack.designsystem.theme.rememberHaptics
 // holds the two settings that belong to the shell, theme and language.
 
 @Composable
-internal fun FeedPlaceholder(scrollToTop: Int) {
-    val scroll = rememberScrollState()
-    LaunchedEffect(scrollToTop) { if (scrollToTop > 0) scroll.animateScrollTo(0) }
-    PlaceholderScreen(appStrings.feed(), scroll, "screen_feed")
-}
-
-@Composable
 internal fun AtlasPlaceholder() = PlaceholderScreen(appStrings.tabMap(), rememberScrollState(), "screen_atlas")
 
 @Composable

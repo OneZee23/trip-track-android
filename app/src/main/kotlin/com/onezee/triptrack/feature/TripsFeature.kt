@@ -39,6 +39,8 @@ import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import com.onezee.triptrack.location.recording.RecorderState
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
@@ -60,12 +62,15 @@ class TripsFeature(
     private val places: PlaceStore,
     private val vehicles: VehicleStore,
     private val photoFiles: TripPhotoFiles,
-    private val location: LocationGraph,
-    database: TripTrackDatabase,
+    private val draftQueue: DraftDecisionQueue,
+    recorderState: StateFlow<RecorderState>,
+    changes: Flow<Unit>,
     private val preferences: SharedPreferences,
     private val syncSink: SyncRequestSink,
     private val isOffline: () -> Boolean,
     val worker: CoroutineDispatcher = Dispatchers.IO,
+    /** The screens' «now»: relative dates, day groups, journeys' open ends. Tests fix it. */
+    @Volatile var clock: () -> Instant = Instant::now,
 ) {
     @Volatile var accountId: () -> UUID? = { null }
     @Volatile var socialApi: TripSocialApi = NoAccountSocialApi
@@ -74,11 +79,8 @@ class TripsFeature(
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    /** Room invalidations of trips and journeys: what iOS posts as `.tripSaved`, `.syncPullCompleted`. */
-    private val tripChanges: Flow<Unit> = RoomWorldChanges(database).events
-        .filter { it == WorldChange.trips }
-        .map { }
-        .shareIn(scope, SharingStarted.WhileSubscribed())
+    /** Invalidations of trips and journeys: what iOS posts as `.tripSaved`, `.syncPullCompleted`. */
+    private val tripChanges: Flow<Unit> = changes.shareIn(scope, SharingStarted.WhileSubscribed())
 
     /** The live API at call time: the account wave can replace it after the screens are built. */
     val social: TripSocialApi = DelegatingSocial { socialApi }
@@ -89,11 +91,9 @@ class TripsFeature(
 
     val journeys = JourneyManager(repository, syncSink, signedIn, { cloudSyncEnabled() })
 
-    private val draftQueue: DraftDecisionQueue = RecordingDraftQueue(location)
-
     /** iOS: TripManager.currentTrip, read by the feed's recording banner. */
     private val recording = object : CurrentRecordingSource {
-        override val currentRecording: Flow<TripSummary?> = location.recorder.state.map { state ->
+        override val currentRecording: Flow<TripSummary?> = recorderState.map { state ->
             val id = state.tripId
             val start = state.startDate
             if (!state.isRecording || id == null || start == null) null
@@ -104,16 +104,16 @@ class TripsFeature(
 
     /** Kept for the app's life, like the iOS tab's StateObject: the list survives tab switches. */
     val feed: FeedViewModel by lazy {
-        FeedViewModel(repository, social, worker, signedIn, isOffline, changes = tripChanges, recording = recording)
+        FeedViewModel(repository, social, worker, signedIn, isOffline, clock = { clock() }, changes = tripChanges, recording = recording)
     }
 
     /** Also the source of the dot on Я: alive before the list is ever opened. */
     val drafts: DraftsViewModel by lazy {
-        DraftsViewModel(repository, draftQueue, PreferencesDraftsSeen(preferences), worker, changes = tripChanges).also { it.refresh() }
+        DraftsViewModel(repository, draftQueue, PreferencesDraftsSeen(preferences), worker, clock = { clock() }, changes = tripChanges).also { it.refresh() }
     }
 
     /** The recording the feed's banner shows: distance and the paused-aware clock. */
-    val recorder get() = location.recorder.state
+    val recorder: StateFlow<RecorderState> = recorderState
 
     /** iOS `@AppStorage("feedSegmentFollowingV2")`: the feed reopens on the segment it was left on. */
     var feedFollowing: Boolean
@@ -150,7 +150,7 @@ class TripsFeature(
 
     fun tripDetail(id: UUID, preview: Trip?, social: SocialFeedTrip?): TripDetailViewModel = TripDetailViewModel(
         id, repository, this.social, worker, accountId, preview = preview, social = social, places = places,
-        vehicles = vehicles, localPhotoExists = photoFiles::exists, draftDecisions = draftQueue,
+        vehicles = vehicles, clock = { clock() }, localPhotoExists = photoFiles::exists, draftDecisions = draftQueue,
     )
 
     fun journeyDetail(id: UUID, social: SocialJourneyResponse? = null): JourneyDetailViewModel = JourneyDetailViewModel(
@@ -160,7 +160,7 @@ class TripsFeature(
     fun journeyComposer(anchor: Trip, preselected: List<Trip>? = null): JourneyComposerViewModel =
         JourneyComposerViewModel(anchor, journeys, worker, preselected)
 
-    fun journeyEdit(journey: Journey): JourneyEditViewModel = JourneyEditViewModel(journey, repository, journeys, worker, Instant.now())
+    fun journeyEdit(journey: Journey): JourneyEditViewModel = JourneyEditViewModel(journey, repository, journeys, worker, clock())
 
     private companion object {
         const val FEED_FOLLOWING_KEY = "feedSegmentFollowingV2"
@@ -218,7 +218,7 @@ private object NoAccountSocialApi : TripSocialApi {
  * iOS: DraftDecisionQueue. The decision is written to the recording side's durable queue before
  * anything else; the queue is then worked like the notification buttons' decisions are.
  */
-private class RecordingDraftQueue(private val location: LocationGraph) : DraftDecisionQueue {
+class RecordingDraftQueue(private val location: LocationGraph) : DraftDecisionQueue {
     override suspend fun enqueue(id: UUID, decision: DraftDecision) {
         location.queueDraftDecision(id, when (decision) {
             DraftDecision.confirm -> RecordingDraftDecision.confirm
@@ -230,6 +230,11 @@ private class RecordingDraftQueue(private val location: LocationGraph) : DraftDe
         location.drafts.apply()
     }
 }
+
+/** Room invalidations of the trip and journey tables, the trip screens' change signal. */
+fun tripChanges(database: TripTrackDatabase): Flow<Unit> = RoomWorldChanges(database).events
+    .filter { it == WorldChange.trips }
+    .map { }
 
 /** iOS: DraftsBadge, `drafts.seenAt` in UserDefaults; an ISO instant in the app's preferences here. */
 private class PreferencesDraftsSeen(private val preferences: SharedPreferences) : DraftsSeenStore {

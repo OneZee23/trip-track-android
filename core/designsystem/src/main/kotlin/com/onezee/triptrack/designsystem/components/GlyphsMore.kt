@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 
 // The SF Symbols of the trip screens (feed, trip, journey, drafts), redrawn on the same 24-unit grid
 // and at the same semibold weight as Glyph.kt. Outline symbols are strokes; `fill` symbols are
@@ -339,7 +340,8 @@ internal fun DrawScope.drawMoreGlyph(glyph: AppGlyph, tint: Color) {
                 cubicTo(10.6f, 3.6f, 11.1f, 2.6f, 12f, 2.6f)
                 close()
             }
-            drawPath(plane, tint)
+            // Drawn nose up, turned to fly right as the symbol does.
+            rotate(90f, pivot = Offset(12f, 12f)) { drawPath(plane, tint) }
         }
         else -> Unit
     }

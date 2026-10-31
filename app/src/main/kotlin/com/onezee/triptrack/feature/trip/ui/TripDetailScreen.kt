@@ -253,6 +253,7 @@ private fun TripDetailContent(state: TripDetailState, vm: TripDetailViewModel, f
                     onExpand = { haptics.tap(); expansion.expand() },
                 )
                 InfoPanel(
+                    now = feature.clock(),
                     state = state,
                     vehicle = vehicle,
                     vehicleKnown = vehicleKnown,
@@ -446,6 +447,7 @@ private fun Hero(
 
 @Composable
 private fun InfoPanel(
+    now: java.time.Instant,
     state: TripDetailState,
     vehicle: Vehicle?,
     vehicleKnown: Boolean,
@@ -476,7 +478,7 @@ private fun InfoPanel(
             TripTitleBlock(trip)
             TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown)
             if (journey != null) {
-                JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) }, modifier = Modifier.testTag("detail_journey_row"))
+                JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) }, modifier = Modifier.testTag("detail_journey_row"), now = now)
             }
         }
         if (state.isOwn && trip.confirmation == TripConfirmation.draft && loaded) DraftTripBanner(onConfirmDraft, onDiscardDraft)
