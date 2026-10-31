@@ -193,7 +193,8 @@ class TripDetailViewModel(
         } }.toMap() else emptyMap()
         val checkpoints = if (own) t.checkpoints.mapIndexed { index, cp -> CheckpointState(cp.id, cp.timestamp,
             if (cp.hasCoordinate) GeoPoint(cp.latitude, cp.longitude) else null, cp.name, index + 1,
-            cp.distanceFromStart, cp.elapsedFromStart, prepared.links[cp.id].orEmpty().map(PhotoState::from), cp.placeId) } else emptyList()
+            cp.distanceFromStart, cp.elapsedFromStart, prepared.links[cp.id].orEmpty().map(PhotoState::from), cp.placeId,
+            cp.photoId, cp.photoIds.toList()) } else emptyList()
         val segments = if (own) t.segments.map { segment ->
             val resolved = TripSegmentMetrics.resolve(segment, t.checkpoints)
             val from = resolved?.from?.placeId?.takeIf { it in alive }

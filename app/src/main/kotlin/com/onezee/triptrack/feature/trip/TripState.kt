@@ -32,6 +32,8 @@ data class PhotoState(val id: UUID, val filename: String, val caption: String?, 
 data class CheckpointState(
     val id: UUID, val timestamp: Instant, val coordinate: GeoPoint?, val name: String?,
     val number: Int, val metres: Double, val elapsed: Double, val photos: List<PhotoState>, val placeId: UUID?,
+    // The hand-set links the editor shows and edits: the cover and the attached photos, in order.
+    val coverPhotoId: UUID? = null, val attachedPhotoIds: List<UUID> = emptyList(),
 )
 
 // iOS: TripMoment.swift
