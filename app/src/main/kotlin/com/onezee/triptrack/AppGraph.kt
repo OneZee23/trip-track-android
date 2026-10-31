@@ -88,8 +88,11 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
  * The app's singletons, built once in `TripTrackApplication`: the shell, the data stores, the
  * recording side, the session and the sync engine of the signed-in account.
  */
-class AppGraph(private val context: Context) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+// iOS: TripTrackApp.swift, StoreHealth.swift (AppBootstrap).
+class AppGraph(
+    private val context: Context,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+) {
 
     // The iOS UserDefaults.standard: the app's default preferences file.
     private val preferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
@@ -198,7 +201,7 @@ class AppGraph(private val context: Context) {
         serverActions = AccountServerActions(apiClient, database, trips, ::privacyZone),
         wipeLocalData = { localDataWipe.run() },
         appContext = context,
-        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+        scope = CoroutineScope(scope.coroutineContext + Dispatchers.Main.immediate),
     ).also { sessionEvents.listener = it }
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */

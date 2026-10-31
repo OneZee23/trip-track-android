@@ -10,9 +10,10 @@ import com.onezee.triptrack.location.LocationGraphOwner
  * Also WorkManager's configuration: core:sync removes the default initializer, and the sync worker
  * has to find the CURRENT account's coordinator through the app graph (custom initialization).
  */
-class TripTrackApplication : Application(), LocationGraphOwner, Configuration.Provider {
-    lateinit var appGraph: AppGraph
-        private set
+// iOS: TripTrackApp.swift, StoreHealth.swift (AppBootstrap).
+open class TripTrackApplication : Application(), LocationGraphOwner, Configuration.Provider {
+    // Robolectric's test Application can supply screen dependencies without booting the services.
+    open val appGraph: AppGraph by lazy { AppGraph(this) }
 
     override val locationGraph: LocationGraph get() = appGraph.location
 
@@ -23,7 +24,8 @@ class TripTrackApplication : Application(), LocationGraphOwner, Configuration.Pr
 
     override fun onCreate() {
         super.onCreate()
-        appGraph = AppGraph(this)
-        appGraph.start()
+        startServices()
     }
+
+    protected open fun startServices() = appGraph.start()
 }

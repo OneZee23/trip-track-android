@@ -60,6 +60,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -75,6 +76,7 @@ interface LocationGraphOwner {
  * Everything that changes recording state runs on one thread, the counterpart of the main actor;
  * database work suspends onto Room's own executors from there.
  */
+// iOS: TripTrackApp.swift, StoreHealth.swift (recording service ownership).
 class LocationGraph(
     private val context: Context,
     db: TripTrackDatabase,
@@ -94,9 +96,14 @@ class LocationGraph(
     reveal: RevealIngest = RevealIngest.None,
     val autoRecord: AutoRecordSettings = PreferencesAutoRecordSettings(context),
 ) {
-    val scope = CoroutineScope(
-        SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "TripTrackRecorder") }.asCoroutineDispatcher(),
-    )
+    private val dispatcher = Executors.newSingleThreadExecutor { Thread(it, "TripTrackRecorder") }.asCoroutineDispatcher()
+    val scope = CoroutineScope(SupervisorJob() + dispatcher)
+
+    /** A test process outlives its Application; release the recorder's thread with its owner. */
+    fun close() {
+        scope.cancel()
+        dispatcher.close()
+    }
 
     /** Read fresh at every start and launch: a pull or the settings screen may change it. */
     @Volatile

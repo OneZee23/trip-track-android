@@ -23,10 +23,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * iOS: TripPhotoPicker.swift. The capture time and the place are read from the picked file HERE and
+ * The capture time and the place are read from the picked file HERE and
  * nowhere else: once the photo is a JPEG in the trip's folder neither survives (CLAUDE.md 0.6.5).
  * The stored image is re-encoded, at most 2048 on its long edge, without its metadata.
  */
+// iOS: TripPhotoPicker.swift, PhotoMetadata.swift.
 object PhotoImport {
     private const val MAX_EDGE = 2048
 
