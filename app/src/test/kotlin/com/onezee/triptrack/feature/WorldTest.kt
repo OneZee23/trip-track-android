@@ -53,7 +53,7 @@ abstract class WorldTest {
         photos = RoomVehiclePhotoStore(db, DirectoryVehiclePhotoFiles(root.resolve("cars")))
         vehicles = RoomVehicleStore(db, repo, photos, environment)
     }
-    @After fun close() { viewModels.clear(); db.close(); root.deleteRecursively() }
+    @After fun close() { viewModels.clear(); scheduler.runCurrent(); db.close(); root.deleteRecursively() }
     protected inline fun <reified T : ViewModel> own(vm: T): T = ViewModelProvider(viewModels, object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <M : ViewModel> create(modelClass: Class<M>): M = vm as M

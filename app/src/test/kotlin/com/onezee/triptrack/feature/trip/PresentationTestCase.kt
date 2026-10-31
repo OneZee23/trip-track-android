@@ -55,6 +55,7 @@ abstract class PresentationTestCase {
     @After fun closePresentation() {
         owners.clear()
         scope.cancel()
+        scheduler.runCurrent()
         db.close()
         directory.deleteRecursively()
         Dispatchers.resetMain()

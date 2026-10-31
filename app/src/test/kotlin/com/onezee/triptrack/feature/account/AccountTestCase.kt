@@ -19,9 +19,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -58,6 +60,7 @@ abstract class AccountTestCase {
     protected lateinit var sync: FakeSync
     protected lateinit var auth: AuthService
     protected lateinit var scope: CoroutineScope
+    private lateinit var accountDispatcher: ExecutorCoroutineDispatcher
     protected var wiped = 0
     protected var clientId = "1234-test.apps.googleusercontent.com"
     private lateinit var directory: File
@@ -128,7 +131,8 @@ abstract class AccountTestCase {
         trips = RoomTripRepository(db, DataEnvironment({ accountSettings.cloudSyncEnabled }, { localUser }), DirectoryTripPhotoFiles(File(directory, "TripPhotos")))
         credentials = FakeCredentials()
         sync = FakeSync()
-        scope = CoroutineScope(SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+        accountDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+        scope = CoroutineScope(SupervisorJob() + accountDispatcher)
         buildAuth()
     }
 
@@ -149,7 +153,10 @@ abstract class AccountTestCase {
     }
 
     @After fun tearDownAccount() {
-        scope.cancel(); client.close(); server.close(); db.close(); directory.deleteRecursively()
+        // Auth's cancellation can finish a database/network operation; its fixtures still exist then.
+        runBlocking { scope.coroutineContext[Job]!!.cancelAndJoin() }
+        accountDispatcher.close()
+        client.close(); server.close(); db.close(); directory.deleteRecursively()
     }
 
     // MARK: Fixtures
