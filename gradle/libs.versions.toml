@@ -23,6 +23,9 @@ lifecycle = "2.9.4"
 # exact tag (core/map/maplibre-abi.properties): bumping it fails the build until they are re-copied.
 maplibre = "13.7.1"
 playServicesLocation = "21.4.0"
+# Sign in with Google: Credential Manager and the Google ID token option (Android signs in with Google only).
+credentials = "1.6.0"
+googleid = "1.2.1"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
@@ -52,6 +55,9 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref =
 maplibre-opengl = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "maplibre" }
 # Activity Recognition transitions (IN_VEHICLE) exist only in Google Play services; used by core:location.
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

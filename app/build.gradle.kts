@@ -9,6 +9,25 @@ val appVersion = Properties().apply {
     rootProject.layout.projectDirectory.file("version.properties").asFile.inputStream().use(::load)
 }
 
+// Machine-local values that must never be committed (docs/sign-in.md): a Gradle property first,
+// then the environment, then local.properties, which is gitignored.
+val localProperties = Properties().apply {
+    rootProject.layout.projectDirectory.file("local.properties").asFile.takeIf { it.exists() }?.inputStream()?.use(::load)
+}
+fun localValue(name: String): String =
+    (providers.gradleProperty(name).orNull ?: providers.environmentVariable(name).orNull ?: localProperties.getProperty(name))
+        ?.trim().orEmpty()
+
+// The Web client of the Google Auth Platform project, passed to Credential Manager as the
+// serverClientId. Empty means Google sign-in is not configured on this machine.
+val googleWebClientId = localValue("GOOGLE_WEB_CLIENT_ID").also {
+    require(it.isEmpty() || Regex("[A-Za-z0-9._-]+\\.apps\\.googleusercontent\\.com").matches(it)) {
+        "GOOGLE_WEB_CLIENT_ID must be a Web client ID ending in .apps.googleusercontent.com"
+    }
+}
+// Debug builds may talk to a local or staging backend; release builds always use production.
+val debugApiBaseUrl = localValue("TRIPTRACK_API_BASE_URL").ifEmpty { "https://api.trip-track.app" }.trimEnd('/')
+
 android {
     namespace = "com.onezee.triptrack"
     compileSdk {
@@ -22,17 +41,21 @@ android {
         targetSdk = 36
         versionCode = appVersion.getProperty("versionCode").toInt()
         versionName = requireNotNull(appVersion.getProperty("versionName"))
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
+            buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
         }
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "API_BASE_URL", "\"https://api.trip-track.app\"")
         }
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     testOptions.unitTests.isIncludeAndroidResources = true
     compileOptions {
@@ -73,6 +96,9 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.coroutines.test)
@@ -82,6 +108,7 @@ dependencies {
     testImplementation(libs.compose.ui.test.junit4)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.okhttp.mockwebserver)
 }
 
 // Same Roborazzi switches as core:designsystem: verify by default, record with
