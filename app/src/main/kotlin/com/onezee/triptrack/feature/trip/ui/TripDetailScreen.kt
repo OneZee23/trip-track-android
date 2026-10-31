@@ -115,7 +115,7 @@ import com.onezee.triptrack.ui.confirmationMessage
 import com.onezee.triptrack.ui.confirmationTitle
 import com.onezee.triptrack.ui.heroProgress
 import com.onezee.triptrack.ui.navigation.LocalScreenAppeared
-import com.onezee.triptrack.ui.navigation.TabNavigator
+import com.onezee.triptrack.ui.navigation.DestinationNavigator
 import com.onezee.triptrack.ui.navigation.entryViewModel
 import com.onezee.triptrack.ui.toast
 import java.util.UUID
@@ -130,7 +130,7 @@ import kotlinx.coroutines.withContext
  * Back works before the full read lands.
  */
 @Composable
-fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, navigator: TabNavigator<TripsDestination>) {
+fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>) {
     val vm = entryViewModel("trip:${dest.id}") { feature.tripDetail(dest.id, dest.preview, dest.social) }
     LaunchedEffect(vm) { vm.load() }
     val state by vm.state.collectAsState()
@@ -142,7 +142,7 @@ private fun TripDetailContent(
     state: TripDetailState,
     vm: TripDetailViewModel,
     feature: TripsFeature,
-    navigator: TabNavigator<TripsDestination>,
+    navigator: DestinationNavigator<TripsDestination>,
     social: com.onezee.triptrack.model.SocialFeedTrip?,
 ) {
     val strings = appStrings
@@ -405,7 +405,7 @@ private fun ownerActions(
     state: TripDetailState,
     journey: Journey?,
     vm: TripDetailViewModel,
-    navigator: TabNavigator<TripsDestination>,
+    navigator: DestinationNavigator<TripsDestination>,
     onCombine: () -> Unit,
 ): List<ActionPopoverItem> {
     val strings = appStrings

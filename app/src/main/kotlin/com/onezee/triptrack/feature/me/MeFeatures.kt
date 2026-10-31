@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.*
 // iOS: SettingsManager and ProfileView StateObjects. AppGraph only supplies shared stores.
 class MeFeatures(graph: AppGraph, private val preferences: PresentationPreferences, photos: VehiclePhotoStore,
                  badgeLedger: com.onezee.triptrack.location.world.BadgeLedgerStore, files: java.io.File) {
+    // Like the feed's stack, its view models must survive the shell removing the tab's composition.
+    internal val navigator = MeNavigator()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val changes = RoomWorldChanges(graph.database).events
         .onEach { if (it == WorldChange.garage) photos.invalidateMainCache() }

@@ -4,6 +4,7 @@ package com.onezee.triptrack.feature.me
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -44,7 +45,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         onClear: () -> Unit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit,
                         onPin: (java.util.UUID) -> Unit, onReload: () -> Unit,
                         account: @Composable () -> Unit = {}, coverPhotos: List<ProfileCoverPhoto> = emptyList(), api: com.onezee.triptrack.network.ApiClient? = null, onPhotos: () -> Unit = {},
-                        coverPromptHidden: Boolean = false, onHideCoverPrompt: () -> Unit = {}, onUnpinElsewhere: () -> Unit = {}) {
+                        coverPromptHidden: Boolean = false, onHideCoverPrompt: () -> Unit = {}, onUnpinElsewhere: () -> Unit = {}, onComposeJourney: (Trip) -> Unit = {}) {
     val strings = appStrings
     var sections by rememberSaveable { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("screen_me"),
@@ -73,14 +74,14 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
         if (state.failed) item { MeRow(strings.tripLoadFailed(), strings.tryAgain(), tag = "me_retry", onClick = onReload) }
         item(key = "history_heading") {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(strings.historySection(), Modifier.weight(1f), style = AppType.section, color = AppTheme.colors.text)
+                Text(strings.historySection(), Modifier.weight(1f).testTag("profile_history_header"), style = AppType.section, color = AppTheme.colors.text)
                 MeHistoryMode(state.mode, onMode)
             }
             Column(Modifier.fillMaxWidth().surfaceCard(14.dp)) { MeField(strings.historySearch(), state.query, onQuery, tag = "profile_history_search") }
         }
         item(key = "calendar") { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange) }
         if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { MeRow(strings.profileShowcaseElsewhere(state.showcaseElsewhere.size), strings.profileUnpin(), tag = "profile_showcase_unpin_elsewhere", onClick = onUnpinElsewhere) }
-        profileJournal(state, unit, onTrip, onJourney, onPin)
+        profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney)
         if (state.loaded && state.history.visibleTrips.isEmpty()) item(key = "empty") {
             Column(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(if (state.query.isNotBlank()) strings.historyNoMatches() else strings.historyNoTripsInPeriod(), style = AppType.body, color = AppTheme.colors.textSecondary)
@@ -90,13 +91,13 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
     }
 }
 
-internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit) {
-    items(state.history.pinned, key = { "pin_${it.id}" }) { trip -> ProfileTripRow(trip, unit, pinned = true, onClick = { onTrip(trip) }, onPin = { onPin(trip.id) }, historicalLevel = state.history.historicalLevels?.get(trip.id) ?: state.hero.identity.level) }
+internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}) {
+    items(state.history.pinned, key = { "pin_${it.id}" }) { trip -> ProfileTripRow(trip, unit, pinned = true, onClick = { onTrip(trip) }, onLongPress = { onComposeJourney(trip) }, onPin = { onPin(trip.id) }, historicalLevel = state.history.historicalLevels?.get(trip.id) ?: state.hero.identity.level) }
     if (state.mode == HistoryMode.grid) {
         state.history.gridRuns.forEachIndexed { run, rows ->
             rows.chunked(2).forEachIndexed { index, pair -> item(key = "grid_${run}_$index") {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    pair.forEach { row -> Box(Modifier.weight(1f)) { JournalRow(row, unit, onTrip, onJourney, onPin, state.history.historicalLevels) } }
+                    pair.forEach { row -> Box(Modifier.weight(1f)) { JournalRow(row, unit, onTrip, onJourney, onPin, state.history.historicalLevels, onComposeJourney) } }
                     if (pair.size == 1) Spacer(Modifier.weight(1f))
                 }
             } }
@@ -109,17 +110,17 @@ internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, on
             }
         }
         items(chapter.rows, key = { row -> when (row) { is HistoryRow.Trip -> "trip_${row.value.id}"; is HistoryRow.Journey -> "journey_${row.value1.id}"; is HistoryRow.Routine -> "routine_${row.value.trips.first().id}" } }) { row ->
-            JournalRow(row, unit, onTrip, onJourney, onPin, state.history.historicalLevels)
+            JournalRow(row, unit, onTrip, onJourney, onPin, state.history.historicalLevels, onComposeJourney)
         }
     }
 }
 
 @Composable
-private fun JournalRow(row: HistoryRow, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, levels: Map<java.util.UUID, Int>?) {
+private fun JournalRow(row: HistoryRow, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, levels: Map<java.util.UUID, Int>?, onComposeJourney: (Trip) -> Unit) {
     when (row) {
-        is HistoryRow.Trip -> ProfileTripRow(row.value, unit, onClick = { onTrip(row.value) }, onPin = { onPin(row.value.id) }, historicalLevel = levels?.get(row.value.id) ?: 1)
+        is HistoryRow.Trip -> ProfileTripRow(row.value, unit, onClick = { onTrip(row.value) }, onLongPress = { onComposeJourney(row.value) }, onPin = { onPin(row.value.id) }, historicalLevel = levels?.get(row.value.id) ?: 1)
         is HistoryRow.Routine -> ProfileRoutineTripsView(row.value, unit, onTrip)
-        is HistoryRow.Journey -> Column(Modifier.surfaceCard(16.dp)) { MeRow(row.value1.title.orEmpty().ifBlank { appStrings.journeyWord() }, appStrings.tripsCount(row.legs.size), onClick = { onJourney(row.value1) }) }
+        is HistoryRow.Journey -> Column(Modifier.surfaceCard(16.dp)) { MeRow(row.value1.title.orEmpty().ifBlank { appStrings.journeyWord() }, appStrings.tripsCount(row.legs.size), tag = "profile_journey_${row.value1.id}", onClick = { onJourney(row.value1) }) }
     }
 }
 
@@ -142,11 +143,11 @@ internal fun ProfileRoutineTripsView(group: ProfileRoutineTrips, unit: DistanceU
 }
 
 @Composable
-internal fun ProfileTripRow(trip: Trip, unit: DistanceUnit, pinned: Boolean = false, onClick: () -> Unit, onPin: (() -> Unit)? = null, historicalLevel: Int = 1) {
+internal fun ProfileTripRow(trip: Trip, unit: DistanceUnit, pinned: Boolean = false, onClick: () -> Unit, onPin: (() -> Unit)? = null, historicalLevel: Int = 1, onLongPress: (() -> Unit)? = null) {
     val strings = appStrings
     var menu by remember { mutableStateOf(false) }
     val region = ProfileRegionDisplay.localized(trip.region, strings.language.code)
-    Column(Modifier.fillMaxWidth().surfaceCard(16.dp).testTag("profile_trip_${trip.id}")) {
+    Column(Modifier.fillMaxWidth().surfaceCard(16.dp).combinedClickable(role = Role.Button, onClick = onClick, onLongClick = onLongPress).testTag("profile_trip_${trip.id}")) {
         Row(Modifier.fillMaxWidth().padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
             Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, historicalLevel),
                 style = inter(13f).copy(fontFamily = FontFamily(Font(com.onezee.triptrack.R.font.handjet_black))), color = AppTheme.gold)
@@ -158,11 +159,11 @@ internal fun ProfileTripRow(trip: Trip, unit: DistanceUnit, pinned: Boolean = fa
             }
         }
         Text(trip.title?.takeIf(String::isNotBlank) ?: region ?: strings.longDate(trip.startDate),
-            Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(horizontal = 13.dp).padding(bottom = 10.dp), style = interScaled(17f, InterWeight.heavy), color = AppTheme.colors.text, maxLines = 2)
-        Box(Modifier.fillMaxWidth().height(118.dp).clip(RoundedCornerShape(12.dp)).clickable(role = Role.Button, onClick = onClick)) {
+            Modifier.fillMaxWidth().padding(horizontal = 13.dp).padding(bottom = 10.dp), style = interScaled(17f, InterWeight.heavy), color = AppTheme.colors.text, maxLines = 2)
+        Box(Modifier.fillMaxWidth().height(118.dp).clip(RoundedCornerShape(12.dp))) {
             ProfileMapPreview(listOf(trip.previewCoordinates), Modifier.fillMaxSize())
         }
-        Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(horizontal = 13.dp).padding(top = 12.dp, bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 13.dp).padding(top = 12.dp, bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             val distance = Measure.distanceParts(trip.distance, unit, strings.language.code, strings, Measure.Style.tenths)
             val speed = Measure.speedParts(if (LocalMeAverageSpeed.current == AvgSpeedMode.moving) trip.movingAverageSpeedMS else trip.averageSpeed, unit, strings.language.code, strings)
             val total = trip.duration.toLong().coerceAtLeast(0)

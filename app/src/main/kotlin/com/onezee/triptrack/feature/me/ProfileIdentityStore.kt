@@ -87,7 +87,7 @@ class ProfileIdentityStore(
         mutable.update { it.copy(effectiveBackground = background) }; revision++; syncJournal()
     }
     fun setCountry(value: String) {
-        require(value in ProfileIdentityChoices.countries || value in listOf("", "WORLD", "NEUTRAL"))
+        require(value in listOf("", "WORLD", "NEUTRAL") || (value.length == 2 && value.all { it in 'A'..'Z' }))
         preferences.set(COUNTRY, value); mutable.update { it.copy(country = value) }
     }
     fun setUsername(value: String) {

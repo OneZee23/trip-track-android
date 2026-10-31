@@ -219,7 +219,7 @@ private fun ScrubChart(
         val index = series.indices.minByOrNull { abs(series[it].km - km) } ?: return
         if (index != selected) { selected = index; haptics.selection() }
     }
-    BoxWithConstraints(Modifier.fillMaxWidth().height(height.dp)) {
+    Box(Modifier.fillMaxWidth().height(height.dp)) {
         val heightPx = with(density) { height.dp.toPx() }
         Canvas(
             Modifier

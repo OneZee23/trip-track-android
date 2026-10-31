@@ -157,7 +157,6 @@ class TripsFeature(
     suspend fun deleteTrip(id: UUID) = repository.deleteTrip(id)
 
     val feedNavigator = TabNavigator<TripsDestination>()
-    val meNavigator = TabNavigator<TripsDestination>()
 
     fun tripDetail(id: UUID, preview: Trip?, social: SocialFeedTrip?): TripDetailViewModel = TripDetailViewModel(
         id, repository, this.social, worker, accountId, preview = preview, social = social, places = places,

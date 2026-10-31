@@ -50,7 +50,7 @@ internal fun ProfileHeroCard(state: ProfileHeroState, unit: DistanceUnit, onSett
                     Text(state.identity.avatarEmoji, style = inter(32f))
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text(state.identity.name.ifBlank { strings.meGuestName() }, Modifier.clickable(role = Role.Button, onClick = onProfile), style = interScaled(20f, InterWeight.bold), color = colors.text)
+                    Text(state.identity.name.ifBlank { strings.meGuestName() }, Modifier.testTag("profile_identity").clickable(role = Role.Button, onClick = onProfile), style = interScaled(20f, InterWeight.bold), color = colors.text)
                     Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, state.identity.level), Modifier.background(colors.goldBg, CircleShape).clickable(role = Role.Button, onClick = onLevel).padding(horizontal = 9.dp, vertical = 6.dp),
                         style = interScaled(11f, InterWeight.semibold), color = AppTheme.gold)
                 }
@@ -138,7 +138,7 @@ private fun ProfilePhotoHero(state: ProfileHeroState, unit: DistanceUnit, photos
         }
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(state.identity.avatarEmoji, Modifier.clickable(role = Role.Button, onClick = onProfile), style = inter(36f))
-            Text(state.identity.name.ifBlank { strings.meGuestName() }, Modifier.weight(1f).clickable(role = Role.Button, onClick = onProfile), style = interScaled(20f, InterWeight.bold), color = AppTheme.colors.text)
+            Text(state.identity.name.ifBlank { strings.meGuestName() }, Modifier.weight(1f).testTag("profile_identity").clickable(role = Role.Button, onClick = onProfile), style = interScaled(20f, InterWeight.bold), color = AppTheme.colors.text)
             Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, state.identity.level), Modifier.clickable(role = Role.Button, onClick = onLevel), style = AppType.meta, color = AppTheme.gold)
         }
         if (state.identity.bio.isNotEmpty()) Text(state.identity.bio, Modifier.padding(top = 14.dp), style = AppType.body, color = AppTheme.colors.text)

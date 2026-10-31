@@ -11,6 +11,12 @@ import com.onezee.triptrack.data.files.TripPhotoFiles
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.ResolverStyle
+import java.util.Locale
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +47,7 @@ object PhotoImport {
         val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return false
         val exif = runCatching { ExifInterface(ByteArrayInputStream(bytes)) }.getOrNull()
         val location = exif?.latLong
-        val captured = exif?.dateTimeOriginal?.let(Instant::ofEpochMilli)
+        val captured = exif?.let { capturedAt(it) }
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
         var sample = 1
@@ -59,4 +65,18 @@ object PhotoImport {
         }
         return repository.addPhoto(tripId, jpeg, caption = null, capturedAt = captured, latitude = location?.get(0), longitude = location?.get(1)) != null
     }
+
+    // iOS: PhotoMetadata.capturedAt. TIFF DateTime is an edit time; an unzoned shot uses the phone's zone.
+    internal fun capturedAt(exif: ExifInterface, zone: ZoneId = ZoneId.systemDefault()): Instant? {
+        val stamp = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+            ?: exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED) ?: return null
+        if (stamp.startsWith("0000")) return null
+        val local = runCatching { LocalDateTime.parse(stamp, stampFormat) }.getOrNull() ?: return null
+        val offset = exif.getAttribute(ExifInterface.TAG_OFFSET_TIME_ORIGINAL)
+            ?: exif.getAttribute(ExifInterface.TAG_OFFSET_TIME_DIGITIZED)
+        val explicit = offset?.let { runCatching { ZoneOffset.of(it) }.getOrNull() }
+        return if (explicit != null) local.toInstant(explicit) else local.atZone(zone).toInstant()
+    }
+
+    private val stampFormat = DateTimeFormatter.ofPattern("uuuu:MM:dd HH:mm:ss", Locale.ROOT).withResolverStyle(ResolverStyle.STRICT)
 }

@@ -46,6 +46,12 @@ interface NavDestination {
     val key: Any
 }
 
+/** iOS: the push/pop closures a screen receives from its owning NavigationStack. */
+interface DestinationNavigator<D : NavDestination> {
+    fun push(destination: D)
+    fun pop(): Boolean
+}
+
 /** One screen of a stack: its destination and the view models that live exactly as long as it. */
 class NavEntry<D : NavDestination> internal constructor(val destination: D) {
     val id: String = UUID.randomUUID().toString()
@@ -60,7 +66,7 @@ class NavEntry<D : NavDestination> internal constructor(val destination: D) {
  * Main thread only. A popped screen's view models are cleared once its exit has played.
  */
 @Stable
-class TabNavigator<D : NavDestination> {
+class TabNavigator<D : NavDestination> : DestinationNavigator<D> {
     private val entries = mutableStateListOf<NavEntry<D>>()
     private val clearing = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -75,13 +81,13 @@ class TabNavigator<D : NavDestination> {
     internal val entryIds: List<String> get() = entries.map { it.id }
 
     /** Idempotent: the destination already on top stays the only one. */
-    fun push(destination: D) {
+    override fun push(destination: D) {
         if (entries.lastOrNull()?.destination?.key == destination.key) return
         lastWasPop = false
         entries += NavEntry(destination)
     }
 
-    fun pop(): Boolean {
+    override fun pop(): Boolean {
         val removed = entries.removeLastOrNull() ?: return false
         lastWasPop = true
         retire(listOf(removed))

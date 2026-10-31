@@ -37,12 +37,11 @@ internal object ProfileIdentityChoices {
 
 @Composable
 internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentityStore, onBack: () -> Unit,
-                             onEdit: () -> Unit, onCover: () -> Unit, onLevel: () -> Unit) {
+                             onEdit: (ProfileTextField) -> Unit, onCover: () -> Unit, onLevel: () -> Unit, onCountry: () -> Unit) {
     val strings = appStrings
     val scope = rememberCoroutineScope()
     var avatars by rememberSaveable { mutableStateOf(false) }
     var backgrounds by remember { mutableStateOf(false) }
-    var countries by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
@@ -76,20 +75,20 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
             }
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 MeSection(strings.profileDetailsGroup()) {
-                    MeRow(strings.myProfileRowName(), identity.name.ifBlank { strings.meAddYourName() }, onClick = onEdit)
+                    MeRow(strings.myProfileRowName(), identity.name.ifBlank { strings.meAddYourName() }, tag = "profile_edit_name", onClick = { onEdit(ProfileTextField.displayName) })
                     MeDivider()
                     MeRow(strings.myProfileRowUsername(), identity.username.takeIf(String::isNotEmpty)?.let { "@$it" } ?: strings.myProfileUsernameUnset(), onClick = { username = true })
                     MeDivider()
-                    MeRow(strings.myProfileRowAbout(), identity.bio.ifBlank { strings.myProfileAboutUnset() }, onClick = onEdit)
+                    MeRow(strings.myProfileRowAbout(), identity.bio.ifBlank { strings.myProfileAboutUnset() }, tag = "profile_edit_bio", onClick = { onEdit(ProfileTextField.bio) })
                     MeDivider()
-                    MeRow(strings.myProfileRowCountry(), ProfileIdentityChoices.flag(identity.country) ?: strings.countryNone(), onClick = { countries = true })
+                    MeRow(strings.myProfileRowCountry(), ProfileIdentityChoices.flag(identity.country) ?: strings.countryNone(), tag = "profile_country", onClick = onCountry)
                 }
                 MeSection(strings.profileAppearanceGroup()) {
                     MeRow(strings.myProfileRowCover(), if (identity.coverPhotoIds.isEmpty()) strings.myProfileCoverUnset() else strings.photosCount(identity.coverPhotoIds.size), onClick = onCover)
                     MeDivider()
                     MeRow(strings.settingsProfileBackground(), if (identity.effectiveBackground == ProfileBackground.none) strings.cosmeticDefaultOption() else identity.effectiveBackground.rawValue.replaceFirstChar(Char::uppercase), onClick = { backgrounds = true })
                 }
-                MeSection(strings.profileProgressGroup()) { MeRow(strings.myProfileRowLevel(), strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, identity.level), onClick = onLevel) }
+                MeSection(strings.profileProgressGroup()) { MeRow(strings.myProfileRowLevel(), strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, identity.level), tag = "profile_levels", onClick = onLevel) }
                 if (failed) MeRow(strings.publicDataLoadFailed())
             }
         }
@@ -97,15 +96,6 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
     if (backgrounds) SettingsOptionPicker(strings.settingsProfileBackground(), MePlusGate.backgrounds, identity.effectiveBackground, "",
         label = { if (it == ProfileBackground.none) strings.cosmeticDefaultOption() else it.rawValue.replaceFirstChar(Char::uppercase) },
         onSelect = { save { store.setBackground(it) } }, onDismissRequest = { backgrounds = false }, testTagPrefix = "profile_background")
-    if (countries) ContentSizedSheet({ countries = false }, background = AppTheme.colors.bg, detent = SheetDetent.large) {
-        MeSheetHeader(strings.countryTitle()) { dismiss() }
-        listOf("", "WORLD", "NEUTRAL").forEach { code -> MeRow(when (code) { "WORLD" -> strings.countryWorld(); "NEUTRAL" -> strings.countryNeutral(); else -> strings.countryNone() }, ProfileIdentityChoices.flag(code).orEmpty(), onClick = { store.setCountry(code); countries = false }) }
-        LazyVerticalGrid(GridCells.Fixed(5), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            items(ProfileIdentityChoices.countries) { code -> Box(Modifier.size(56.dp).clickable(role = Role.Button, onClickLabel = Locale.Builder().setRegion(code).build().getDisplayCountry(strings.language.locale)) { store.setCountry(code); countries = false }, contentAlignment = Alignment.Center) {
-                Text(ProfileIdentityChoices.flag(code).orEmpty(), style = inter(28f))
-            } }
-        }
-    }
     if (username) UsernameEditor(identity.username, { store.setUsername(it) }, { username = false })
 }
 

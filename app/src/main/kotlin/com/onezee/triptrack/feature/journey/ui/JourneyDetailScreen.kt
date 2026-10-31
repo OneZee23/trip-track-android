@@ -94,7 +94,7 @@ import com.onezee.triptrack.ui.confirmationMessage
 import com.onezee.triptrack.ui.confirmationTitle
 import com.onezee.triptrack.ui.durationSegments
 import com.onezee.triptrack.ui.heroProgress
-import com.onezee.triptrack.ui.navigation.TabNavigator
+import com.onezee.triptrack.ui.navigation.DestinationNavigator
 import com.onezee.triptrack.ui.navigation.entryViewModel
 import com.onezee.triptrack.ui.toast
 import java.util.UUID
@@ -105,7 +105,7 @@ private val HeroHeight = 300.dp
 
 /** iOS: JourneyDetailView(journeyId:). One's own journey, read from the store by id so edits show. */
 @Composable
-fun JourneyDetailScreen(id: UUID, feature: TripsFeature, navigator: TabNavigator<TripsDestination>) {
+fun JourneyDetailScreen(id: UUID, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>) {
     val vm = entryViewModel("journey:$id") { feature.journeyDetail(id) }
     JourneyDetailContent(vm, feature, navigator, social = null)
 }
@@ -115,7 +115,7 @@ fun JourneyDetailScreen(id: UUID, feature: TripsFeature, navigator: TabNavigator
  * may read), then shown without a single local write; hidden, deleted or failed all read the same.
  */
 @Composable
-fun SocialJourneyScreen(id: UUID, feature: TripsFeature, navigator: TabNavigator<TripsDestination>) {
+fun SocialJourneyScreen(id: UUID, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>) {
     val strings = appStrings
     val response by produceState<Result<SocialJourneyResponse>?>(null, id) {
         value = runCatching { withContext(feature.worker) { feature.social.journey(id) } }
@@ -144,7 +144,7 @@ fun SocialJourneyScreen(id: UUID, feature: TripsFeature, navigator: TabNavigator
 }
 
 @Composable
-private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeature, navigator: TabNavigator<TripsDestination>, social: SocialJourneyResponse?) {
+private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>, social: SocialJourneyResponse?) {
     val state by vm.state.collectAsState()
     val strings = appStrings
     val colors = AppTheme.colors

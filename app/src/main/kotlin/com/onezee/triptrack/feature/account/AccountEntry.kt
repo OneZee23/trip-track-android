@@ -26,9 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 
 /**
- * The account's place on «Я» until the designed profile arrives: a guest (or a soft-expired
- * session) sees the sign-in card, a signed-in person the «Account & Sync» row with its live marker,
- * which opens the screen as a sheet.
+ * ProfileView hosts this for guests and soft-expired sessions; ProfileSettingsSheet hosts it
+ * for signed-in accounts, with the live sync marker and the account sheet.
  */
 @Composable
 fun AccountEntry(graph: AppGraph, modifier: Modifier = Modifier) {

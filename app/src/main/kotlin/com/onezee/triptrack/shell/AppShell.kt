@@ -34,7 +34,6 @@ import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
 import com.onezee.triptrack.feature.FeedTab
-import com.onezee.triptrack.feature.MeTab
 import com.onezee.triptrack.feature.atlas.ui.AtlasTab
 import com.onezee.triptrack.feature.places.ui.PlacesTab
 import com.onezee.triptrack.ui.LocalTripPhotoImages
