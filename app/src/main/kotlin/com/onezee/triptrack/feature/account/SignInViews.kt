@@ -113,7 +113,7 @@ fun GoogleSignInButton(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             GoogleMark(17.dp)
-            Spinner(ink, 16.dp)
+            Spinner(ink, size = 16.dp)
             Text(strings.signInLoading(), style = inter(16f, InterWeight.semibold), color = ink, maxLines = 1)
         }
         return

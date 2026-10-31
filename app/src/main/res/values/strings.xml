@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TripTrack</string>
+    <string name="app_name" translatable="false">TripTrack</string>
 
     <!--
       Android-only words: the iPhone app signs in with Apple, so tools/strings has nothing to

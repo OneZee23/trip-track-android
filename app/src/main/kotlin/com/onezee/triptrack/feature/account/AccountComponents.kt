@@ -56,6 +56,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
@@ -73,7 +74,7 @@ enum class AccountGlyph {
 
 /** iOS `Image(systemName:)` for an [AccountGlyph]; decoration, so hidden from TalkBack. */
 @Composable
-fun AccountIcon(glyph: AccountGlyph, tint: Color, size: Dp = 22.dp, modifier: Modifier = Modifier) {
+fun AccountIcon(glyph: AccountGlyph, tint: Color, modifier: Modifier = Modifier, size: Dp = 22.dp) {
     Canvas(modifier.size(size)) {
         scale(this.size.width / 24f, this.size.height / 24f, pivot = Offset.Zero) { drawAccountGlyph(glyph, tint) }
     }
@@ -286,7 +287,7 @@ fun HouseSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: 
     ) {
         Box(
             Modifier
-                .offset(x = 2.dp + 20.dp * travel)
+                .offset { IntOffset((2.dp + 20.dp * travel).roundToPx(), 0) }
                 .size(27.dp)
                 .background(if (enabled) Color.White else colors.cardAlt, CircleShape),
         )
@@ -295,7 +296,7 @@ fun HouseSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: 
 
 /** iOS: ProgressView(), the small spinning arc. */
 @Composable
-fun Spinner(tint: Color, size: Dp = 16.dp, modifier: Modifier = Modifier) {
+fun Spinner(tint: Color, modifier: Modifier = Modifier, size: Dp = 16.dp) {
     val transition = rememberInfiniteTransition(label = "spinner")
     val angle by transition.animateFloat(0f, 360f, infiniteRepeatable(tween(900, easing = LinearEasing), RepeatMode.Restart), label = "spin")
     Canvas(modifier.size(size)) {

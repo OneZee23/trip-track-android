@@ -55,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -178,7 +179,7 @@ fun OnboardingContent(
 @Composable
 private fun backgroundBody(): String {
     val body = appStrings.onboardingBackgroundSub()
-    return if (Build.VERSION.SDK_INT >= 30) body + "\n\n" + LocalContext.current.getString(LocationWords.string.android_permission_background_hint) else body
+    return if (Build.VERSION.SDK_INT >= 30) body + "\n\n" + stringResource(LocationWords.string.android_permission_background_hint) else body
 }
 
 /** Inactive 7 pt grey dots, the active one an 18 × 7 accent capsule. */
@@ -257,7 +258,7 @@ private fun PrimaryButton(title: String, tag: String, isRequesting: Boolean = fa
         contentAlignment = Alignment.Center,
     ) {
         Text(title, style = inter(18f, InterWeight.bold), color = Color.White)
-        if (isRequesting) Spinner(Color.White, 18.dp, Modifier.align(Alignment.CenterEnd).padding(end = 20.dp))
+        if (isRequesting) Spinner(Color.White, Modifier.align(Alignment.CenterEnd).padding(end = 20.dp), size = 18.dp)
     }
 }
 

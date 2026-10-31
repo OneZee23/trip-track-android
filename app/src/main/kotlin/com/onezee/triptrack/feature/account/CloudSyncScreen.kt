@@ -211,7 +211,7 @@ fun SheetScope.CloudSyncContent(
                     enabled = !state.isWipingServer,
                     modifier = Modifier.testTag("account_clear_server_row"),
                 ) {
-                    if (state.isWipingServer) Spinner(AppTheme.red, 14.dp)
+                    if (state.isWipingServer) Spinner(AppTheme.red, size = 14.dp)
                 }
                 // Canon's 8 pt danger break: the last row is the end of the account, not one more setting.
                 Box(Modifier.fillMaxWidth().height(8.dp).background(colors.bg))
@@ -225,7 +225,7 @@ fun SheetScope.CloudSyncContent(
                     enabled = !state.isDeletingAccount,
                     modifier = Modifier.testTag("account_delete_row"),
                 ) {
-                    if (state.isDeletingAccount) Spinner(AppTheme.red, 14.dp)
+                    if (state.isDeletingAccount) Spinner(AppTheme.red, size = 14.dp)
                 }
             }
             // A failure of one object no longer stays silent: the button promised an empty server.
@@ -293,7 +293,7 @@ fun SyncStatusMarker(state: SyncState, modifier: Modifier = Modifier) {
     val colors = AppTheme.colors
     val strings = appStrings
     Row(modifier.testTag("settings_sync_marker"), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        if (state is SyncState.Syncing) Spinner(colors.textSecondary, 9.dp)
+        if (state is SyncState.Syncing) Spinner(colors.textSecondary, size = 9.dp)
         else Box(Modifier.size(7.dp).background(state.tint(colors), CircleShape))
         Text(state.shortLabel(strings), style = inter(13f, InterWeight.medium, monospacedDigits = true), color = colors.textSecondary, maxLines = 1)
     }

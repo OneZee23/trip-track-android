@@ -17,6 +17,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
+          WorkManager is initialized on demand from TripTrackApplication (Configuration.Provider): its
+          sync worker has to find the signed-in account's coordinator through the app graph.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                tools:node="remove" />
+        </provider>
         <!-- Below Android 13 AppCompat keeps the per-app language itself; from 13 the system does. -->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

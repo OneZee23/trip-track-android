@@ -22,7 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -54,7 +55,7 @@ import com.onezee.triptrack.sync.SyncOperation
 @Composable
 fun SyncStatusSheet(state: AccountScreenState, onRetry: () -> Unit, onDismissRequest: () -> Unit) {
     // iOS: .presentationDetents([.medium, .large]): at least half the screen, taller with a long queue.
-    val half = LocalConfiguration.current.screenHeightDp.dp / 2
+    val half = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() } / 2
     ContentSizedSheet(onDismissRequest = onDismissRequest, background = AppTheme.colors.bg, minimumHeight = half) {
         SyncStatusContent(state, onRetry)
     }
@@ -245,7 +246,7 @@ private fun RetryButton(isRetrying: Boolean, onRetry: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (isRetrying) Spinner(Color.White, 15.dp) else AccountIcon(AccountGlyph.arrowClockwise, Color.White, size = 17.dp)
+        if (isRetrying) Spinner(Color.White, size = 15.dp) else AccountIcon(AccountGlyph.arrowClockwise, Color.White, size = 17.dp)
         Text(strings.syncStatusRetry(), style = inter(15f, InterWeight.semibold), color = Color.White)
     }
 }

@@ -255,7 +255,9 @@ class AuthService(
             } finally {
                 extras.update { it.copy(isAuthenticating = false) }
             }
-            onSignedIn(response, token, previous.accountId, previous.displayName)
+            // The server already holds the new session: what follows must finish whole, or the phone
+            // would be left half in the old account and half in the new one.
+            withContext(NonCancellable) { onSignedIn(response, token, previous.accountId, previous.displayName) }
             return SignInOutcome.SignedIn(response.isNewAccount)
         } finally {
             signInLock.unlock()

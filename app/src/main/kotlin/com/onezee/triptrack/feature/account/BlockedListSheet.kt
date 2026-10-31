@@ -129,7 +129,7 @@ fun SheetScope.BlockedListContent(
     ) {
         when {
             loading && users.isEmpty() -> Box(Modifier.fillMaxWidth().padding(vertical = 60.dp), contentAlignment = Alignment.Center) {
-                Spinner(colors.textTertiary, 22.dp)
+                Spinner(colors.textTertiary, size = 22.dp)
             }
             // Failed is not empty: an offline fetch must not claim «you haven't blocked anyone».
             failed && users.isEmpty() -> Column(Modifier.fillMaxWidth().padding(vertical = 60.dp).testTag("blocked_error_state"),
@@ -158,7 +158,7 @@ private fun BlockedRow(user: BlockedUser, isPending: Boolean, strings: AppString
             if (since != null) Text(since, style = inter(11.5f), color = colors.textTertiary)
             else Text("LVL ${user.profileLevel}", style = inter(11f, InterWeight.semibold, monospacedDigits = true), color = colors.textTertiary)
         }
-        if (isPending) Box(Modifier.size(width = 90.dp, height = 30.dp), contentAlignment = Alignment.Center) { Spinner(colors.textSecondary, 15.dp) }
+        if (isPending) Box(Modifier.size(width = 90.dp, height = 30.dp), contentAlignment = Alignment.Center) { Spinner(colors.textSecondary, size = 15.dp) }
         else SmallButton(strings.blockProfileUnblock(), Modifier.testTag("blocked_unblock_button"), onClick = onUnblock)
     }
 }
