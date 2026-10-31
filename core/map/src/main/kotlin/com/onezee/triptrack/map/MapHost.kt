@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
+import com.onezee.triptrack.map.replay.MapPlayback
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.vein.MapVein
 import org.maplibre.android.MapLibre
@@ -57,6 +58,9 @@ fun MapHost(
     onMapTap: ((MapTap) -> Unit)? = null,
     /** The map's own location dot (iOS showsUserLocation); needs a location permission. */
     showsUserLocation: Boolean = false,
+    playback: MapPlayback? = null,
+    /** iOS: fitInsets and layoutMargins are independent; the trip fits once around its chrome. */
+    cameraChromeInsets: MapInsets = chromeInsets,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -101,19 +105,21 @@ fun MapHost(
 
     // Insets are absolute left and right, like UIEdgeInsets, whatever the reading direction.
     val system = WindowInsets.safeDrawing.asPaddingValues()
-    val safeArea = MapInsets(
+    val systemArea = MapInsets(
         top = system.calculateTopPadding().value.toDouble(),
         left = system.calculateLeftPadding(LayoutDirection.Ltr).value.toDouble(),
         bottom = system.calculateBottomPadding().value.toDouble(),
         right = system.calculateRightPadding(LayoutDirection.Ltr).value.toDouble(),
-    ) + chromeInsets
+    )
     SideEffect {
         controller.onMarkerTap = onMarkerTap
         controller.onMapTap = onMapTap
-        controller.setSafeArea(safeArea)
+        controller.setSafeArea(systemArea + chromeInsets)
+        controller.setCameraSafeArea(systemArea + cameraChromeInsets)
         controller.setFog(fog)
         controller.setVein(vein)
         controller.setRoutes(routes)
+        controller.setPlayback(playback)
         controller.setMarkers(markers)
         controller.setShowsUserLocation(showsUserLocation)
     }

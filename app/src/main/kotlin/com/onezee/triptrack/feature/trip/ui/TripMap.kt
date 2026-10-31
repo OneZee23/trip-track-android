@@ -26,6 +26,7 @@ import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.LocalReduceMotion
+import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.feature.trip.CheckpointState
 import com.onezee.triptrack.feature.trip.PhotoPinState
 import com.onezee.triptrack.map.MapHost
@@ -36,6 +37,7 @@ import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
 import com.onezee.triptrack.map.route.RouteShape
+import com.onezee.triptrack.map.replay.MapPlayback
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.ui.LightRoutePreview
 import com.onezee.triptrack.ui.LiveMaps
@@ -47,6 +49,8 @@ data class TripMapInput(
     val checkpoints: List<CheckpointState>,
     val photoPins: List<PhotoPinState>,
     val photoBitmaps: Map<java.util.UUID, Bitmap>,
+    val playback: MapPlayback? = null,
+    val litFraction: Double? = null,
 )
 
 /**
@@ -101,19 +105,22 @@ fun TripLiveMap(
     onMarkerTap: (MapMarker) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val markers = remember(input, fullscreen) {
+    val strings = appStrings
+    val markers = remember(input.checkpoints, input.photoPins, input.photoBitmaps, fullscreen, strings.language) {
         input.checkpoints.mapNotNull { checkpoint ->
-            checkpoint.coordinate?.let { MapMarker("cp:${checkpoint.id}", it, MapMarker.Kind.CHECKPOINT, label = if (fullscreen) checkpoint.name else null) }
+            checkpoint.coordinate?.let { MapMarker("cp:${checkpoint.id}", it, MapMarker.Kind.CHECKPOINT, label = if (fullscreen) checkpoint.displayName(strings) else null) }
         } + input.photoPins.map { pin -> MapMarker("photo:${pin.id}", pin.coordinate, MapMarker.Kind.PHOTO, image = input.photoBitmaps[pin.id]) }
     }
     val style = remember { LiveMaps.style(dark) }
     MapHost(
         state = state,
         modifier = modifier.testTag("detail_live_map"),
-        routes = input.route?.let { MapRoutes(listOf(it), RouteAppearance.plain) },
+        routes = input.route?.let { MapRoutes(listOf(it), RouteAppearance.plain, input.litFraction) },
+        playback = input.playback,
         markers = markers,
         onMarkerTap = onMarkerTap,
         chromeInsets = chromeInsets,
+        cameraChromeInsets = MapInsets.Zero,
         styleUri = style,
         // The one map moves between the hero and the fullscreen layer and fades in both.
         textureMode = true,
@@ -129,8 +136,8 @@ fun heroFit(route: RouteShape?): MapCameraCommand? =
  * top controls, 28 at the sides, 56 above the bottom plus the card that may stand there. The map's
  * own safe area is added by the controller.
  */
-fun fullscreenFit(route: RouteShape?, cardHeight: Double): MapCameraCommand? =
-    route?.bounds?.let { MapCameraCommand.FitRoute(it, MapInsets(top = 56.0, left = 28.0, bottom = 56.0 + cardHeight, right = 28.0), animated = false) }
+fun fullscreenFit(route: RouteShape?, cardHeight: Double, replay: Boolean = false): MapCameraCommand? =
+    route?.bounds?.let { MapCameraCommand.FitRoute(it, MapInsets(top = 56.0, left = 28.0, bottom = (if (replay) 190.0 else 56.0) + cardHeight, right = 28.0), animated = false) }
 
 /**
  * iOS: TripDetailRoutePlaceholder.swift. The first frame of the hero, and its stand-in while the map

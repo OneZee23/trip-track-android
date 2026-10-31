@@ -14,7 +14,7 @@ import com.onezee.triptrack.model.GeoPoint
  * (a gap filled in after the recording, drawn as a grey dash); `null` is a route without speeds at
  * all (someone else's trip, a synced preview), drawn in the accent colour.
  */
-data class RouteLine(val coordinates: List<GeoPoint>, val speed: Double?) {
+data class RouteLine(val coordinates: List<GeoPoint>, val speed: Double?, val endFraction: Double = 1.0) {
     val isUnknownSpeed: Boolean get() = speed != null && speed < 0
 }
 
@@ -81,7 +81,19 @@ object RouteGeometry {
                 lines += RouteLine(GeometryUtils.simplifyRDP(segment, drawEpsilon), null)
             }
         }
-        return RouteShape(lines, bounds)
+        return RouteShape(replayFractions(lines), bounds)
+    }
+
+    // iOS: RouteMapView.swift, speedRun/runMetres. Point indices do not measure route progress.
+    fun replayFractions(lines: List<RouteLine>): List<RouteLine> {
+        var total = 0.0
+        val ends = lines.map { line ->
+            if (line.speed != null) {
+                for (i in 1 until line.coordinates.size) total += GeometryUtils.haversineDistance(line.coordinates[i - 1], line.coordinates[i])
+            }
+            total
+        }
+        return lines.mapIndexed { i, line -> line.copy(endFraction = if (total > 0) ends[i] / total else 1.0) }
     }
 
     /** Split points and speeds into continuous segments at gaps longer than [gapThreshold] metres. */

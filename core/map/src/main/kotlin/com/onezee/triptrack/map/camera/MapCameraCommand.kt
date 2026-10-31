@@ -40,7 +40,13 @@ sealed interface MapCameraCommand {
     ) : MapCameraCommand
 
     /** Centre on [centre] at a MapLibre [zoom], keeping the heading. */
-    data class Move(val centre: GeoPoint, val zoom: Double, override val animated: Boolean = true) : MapCameraCommand
+    data class Move(
+        val centre: GeoPoint,
+        val zoom: Double,
+        override val animated: Boolean = true,
+        /** iOS: RouteMapView.applyCamera, 0.45 s before following by non-animated centres. */
+        val durationMillis: Int = 600,
+    ) : MapCameraCommand
 
     /** iOS: MapCameraCommand.Padding. How much chrome covers the map, counted from the screen's EDGES. */
     enum class Padding(val chrome: MapInsets) {

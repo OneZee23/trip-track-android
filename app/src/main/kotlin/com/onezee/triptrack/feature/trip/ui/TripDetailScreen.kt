@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -28,6 +29,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.SideEffect
+import com.onezee.triptrack.designsystem.theme.LocalReduceMotion
+import com.onezee.triptrack.map.replay.MapPlayback
+import com.onezee.triptrack.map.replay.CarHeadingPolicy
+import com.onezee.triptrack.map.MapPoints
+import com.onezee.triptrack.feature.garage.VehicleAvatar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -158,6 +165,7 @@ private fun TripDetailContent(
     HideAppTabBar()
 
     val windowHeight = with(density) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val windowWidth = with(density) { LocalWindowInfo.current.containerSize.width.toDp() }
     val posterHeight = windowHeight * 0.45f
     val safeTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val safeBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -204,10 +212,30 @@ private fun TripDetailContent(
     val pinBitmaps by produceState(emptyMap<UUID, Bitmap>(), state.photoPins, images) {
         value = state.photoPins.mapNotNull { pin -> images?.load(PhotoSource.Local(pin.filename), 120)?.let { pin.id to it.asAndroidBitmap() } }.toMap()
     }
+    val replay = remember(state.replay) { TripReplayPlayer(state.replay, state.trip?.distance ?: 0.0) }
+    val reduceMotion = LocalReduceMotion.current
+    SideEffect { replay.reduceMotion = reduceMotion }
     val mapState = remember { MapHostState() }
     val expansion = remember { TripMapExpansion() }
     var selectedMarker by remember { mutableStateOf<String?>(null) }
-    val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps)
+    TripReplayClock(replay, expansion.state == MapExpansion.expanded)
+    val holdMarkers = remember(state.checkpoints, state.replay) {
+        val times = state.replay.timestamps
+        state.checkpoints.filter { it.coordinate != null && times.size >= 2 && it.timestamp > times.first() && it.timestamp < times.last() }.sortedBy { it.timestamp }
+    }
+    LaunchedEffect(replay, holdMarkers) { replay.change { setHolds(holdMarkers.map { it.timestamp }) } }
+    LaunchedEffect(replay.frame.holdingIndex) { if (replay.frame.holdingIndex != null) haptics.selection() }
+    var followsCar by remember { mutableStateOf(false) }
+    var collapsedCar by remember { mutableStateOf(false) }
+    LaunchedEffect(mapState.camera?.metresPerPoint) {
+        collapsedCar = CarHeadingPolicy.collapsed(mapState.camera?.metresPerPoint ?: 0.0, collapsedCar)
+    }
+    val shownMarker = selectedMarker ?: replay.frame.holdingIndex?.let { holdMarkers.getOrNull(it) }?.let { "cp:${it.id}" }
+    val playback = replay.frame.head?.takeIf { expansion.state.presented }?.let {
+        MapPlayback(it, replay.frame.course, replayCarColor(vehicle?.avatarEmoji), collapsedCar)
+    }
+    val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps,
+        playback, if (playback != null) replay.litFraction else null)
     val currentInput by rememberUpdatedState(mapInput)
     val dark = AppTheme.isDark
     val mapContent = remember {
@@ -225,15 +253,32 @@ private fun TripDetailContent(
         }
     }
     val cardHeight = when {
-        selectedMarker?.startsWith("photo:") == true -> 132.0
-        selectedMarker?.startsWith("cp:") == true -> 92.0
+        shownMarker?.startsWith("photo:") == true -> 132.0
+        shownMarker?.startsWith("cp:") == true -> 92.0
         else -> 0.0
     }
     TripMapExpansionEffects(
         expansion,
-        onExpanded = { fullscreenFit(mapInput.route, cardHeight)?.let(mapState::execute) },
-        onCollapsed = { selectedMarker = null; heroFit(mapInput.route)?.let(mapState::execute) },
+        onExpanded = { fullscreenFit(mapInput.route, cardHeight, replay.canPlay)?.let(mapState::execute) },
+        onCollapsed = { selectedMarker = null; followsCar = false; replay.stop(); heroFit(mapInput.route)?.let(mapState::execute) },
     )
+    var followingSince by remember { mutableStateOf<Double?>(null) }
+    LaunchedEffect(followsCar, replay.frame.head, expansion.state) {
+        val head = replay.frame.head
+        if (followsCar && head != null && expansion.state == MapExpansion.expanded) {
+            val now = TripReplayPlayer.now()
+            if (followingSince == null) {
+                followingSince = now
+                val scale = MapPoints.metresPerMapPoint(head.latitude) * minOf(windowHeight.value, windowWidth.value) / 1400.0
+                mapState.execute(MapCameraCommand.Move(head, MapPoints.mapLibreZoom(scale), animated = !reduceMotion, durationMillis = 450))
+            } else if (now - followingSince!! >= .45 || reduceMotion) {
+                mapState.camera?.let { mapState.execute(MapCameraCommand.Move(head, it.zoom, animated = false)) }
+            }
+        } else if (!followsCar && followingSince != null) {
+            followingSince = null
+            fullscreenFit(mapInput.route, cardHeight, replay.canPlay)?.let(mapState::execute)
+        }
+    }
     BackHandler(enabled = expansion.state == MapExpansion.expanded) { expansion.collapse() }
 
     val pickPhotos = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
@@ -296,20 +341,25 @@ private fun TripDetailContent(
         }
         if (expansion.state.presented) {
             FullscreenLayer(expansion.opacity.value) {
-                mapContent(Modifier.fillMaxSize(), true, MapInsets(top = 64.0, bottom = 36.0 + cardHeight)) { id ->
+                if (live) mapContent(Modifier.fillMaxSize(), true, MapInsets(top = 64.0, bottom = (if (replay.canPlay) 190.0 else 36.0) + cardHeight)) { id ->
                     haptics.selection()
+                    replay.pause()
                     val photoId = id.removePrefix("photo:").takeIf { id.startsWith("photo:") }
                     if (photoId != null && selectedMarker == id) {
                         state.photos.indexOfFirst { it.id.toString() == photoId }.takeIf { it >= 0 }?.let { viewerIndex = it }
                     } else selectedMarker = id
-                }
+                } else RoutePlaceholder(state.coordinates, Modifier.fillMaxSize())
                 FullscreenChrome(
                     state = state,
-                    selectedMarker = selectedMarker,
+                    selectedMarker = shownMarker,
+                    replay = replay,
+                    followsCar = followsCar,
+                    onFollow = { followsCar = !followsCar },
+                    onStopReplay = { followsCar = false; selectedMarker = null; replay.stop(); fullscreenFit(mapInput.route, 0.0, replay.canPlay)?.let(mapState::execute) },
                     visible = expansion.state.showsChrome,
-                    onClose = { haptics.tap(); expansion.collapse() },
+                    onClose = { haptics.tap(); replay.stop(); expansion.collapse() },
                     onZoom = { delta -> mapState.camera?.let { mapState.execute(MapCameraCommand.Move(it.centre, it.zoom + delta)) } },
-                    onCloseCard = { selectedMarker = null },
+                    onCloseCard = { selectedMarker = null; replay.pause() },
                     onOpenPhoto = { id -> state.photos.indexOfFirst { it.id == id }.takeIf { it >= 0 }?.let { viewerIndex = it } },
                 )
             }
@@ -581,9 +631,13 @@ private fun LoadFailedState(onRetry: () -> Unit, onBack: () -> Unit) {
  * photo that opens on a second tap).
  */
 @Composable
-private fun FullscreenChrome(
+internal fun FullscreenChrome(
     state: TripDetailState,
     selectedMarker: String?,
+    replay: TripReplayPlayer,
+    followsCar: Boolean,
+    onFollow: () -> Unit,
+    onStopReplay: () -> Unit,
     visible: Boolean,
     onClose: () -> Unit,
     onZoom: (Double) -> Unit,
@@ -593,14 +647,19 @@ private fun FullscreenChrome(
     val strings = appStrings
     val colors = AppTheme.colors
     val unit = LocalDistanceUnit.current
+    val haptics = rememberHaptics()
     Box(Modifier.fillMaxSize().alpha(if (visible) 1f else 0f).edgeScrims(top = true)) {
         Column(
             Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars).windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 36.dp),
         ) {
-            Row {
+            Box(Modifier.fillMaxWidth()) {
+                Row(Modifier.fillMaxWidth()) {
                 MapCircle(AppGlyph.xmark, strings.closeSheet(), "fullscreen_map_close", enabled = visible, onClick = onClose)
                 Spacer(Modifier.weight(1f))
+                if (replay.canPlay) ReplayCameraToggle(followsCar, visible) { haptics.tap(); onFollow() }
+                }
+                if (replay.canReplay) ReplayTimecode(replay.frame, replay.input, state.trip?.distance ?: 0.0, Modifier.align(Alignment.Center))
             }
             Spacer(Modifier.weight(1f))
             Row(verticalAlignment = Alignment.Bottom) {
@@ -644,7 +703,12 @@ private fun FullscreenChrome(
                     }
                 }
             }
+            if (replay.canPlay) TripReplayControls(replay.frame, state.isOwn,
+                onPlayPause = { haptics.tap(); replay.playPause() }, onStop = { haptics.tap(); onStopReplay() },
+                onRate = { haptics.selection(); replay.change { cycleRate() } }, onScrubStart = replay::scrubStart,
+                onScrub = replay::scrub, onScrubEnd = replay::scrubEnd, modifier = Modifier.padding(top = 12.dp), crawl = replay.canCrawl, enabled = visible)
         }
+        if (followsCar) ReplaySpeedBubble(replay.frame, Modifier.align(Alignment.Center).offset(y = (-46).dp))
     }
 }
 
@@ -725,3 +789,16 @@ private fun PublishTripSheet(cloudSyncEnabled: Boolean, onPublish: () -> Unit, o
         }
     }
 }
+
+// iOS: TripTrackShared/VehicleAvatar.swift, swatch; MapCarMarker.paint clamps brightness later.
+private fun replayCarColor(avatar: String?): Int = (when (avatar?.let(VehicleAvatar::drawnColor)) {
+    "white" -> 0xD4D9E3
+    "black" -> 0x2A2C33
+    "silver" -> 0xA2A8B4
+    "gray" -> 0x707580
+    "red" -> 0xE03B2C
+    "blue" -> 0x3B7DD8
+    "yellow" -> 0xF2C41B
+    "green" -> 0x4CAF50
+    else -> 0xEB571E
+}) or 0xFF000000.toInt()

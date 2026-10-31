@@ -13,6 +13,8 @@ import com.onezee.triptrack.map.fog.FogRules
 import com.onezee.triptrack.map.fog.FogStats
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.marker.MarkerLayers
+import com.onezee.triptrack.map.replay.MapPlayback
+import com.onezee.triptrack.map.replay.PlaybackLayers
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteLayers
 import com.onezee.triptrack.map.vein.MapVein
@@ -51,6 +53,8 @@ internal class MapController(
     private val routeLayers = RouteLayers()
     private val veinLayers = VeinLayers()
     private val markerLayers = MarkerLayers(density)
+    private val playbackLayers = PlaybackLayers(mapView.resources, density)
+    private var playback: MapPlayback? = null
     private var fogLayer: FogLayer? = null
     private var fogTried = false
 
@@ -66,6 +70,7 @@ internal class MapController(
 
     /** System bars plus the screen's chrome, in dp: what MapKit would call the safe area. */
     private var safeArea = MapInsets.Zero
+    private var cameraSafeArea = MapInsets.Zero
     private val pendingCamera = ArrayList<MapCameraCommand>()
     private var defaults: Margins? = null
     private var viewState = Lifecycle.State.CREATED
@@ -107,6 +112,7 @@ internal class MapController(
         veinLayers.addTo(loaded, vein)
         routeLayers.addTo(loaded, routes)
         markerLayers.addTo(loaded, markers)
+        playbackLayers.addTo(loaded, playback)
         applyUserLocation()
     }
 
@@ -140,6 +146,12 @@ internal class MapController(
         style?.let { routeLayers.update(it, value) }
     }
 
+    fun setPlayback(value: MapPlayback?) {
+        if (value == playback) return
+        playback = value
+        style?.let { playbackLayers.update(it, value) }
+    }
+
     fun setVein(value: MapVein?) {
         if (value === vein) return
         vein = value
@@ -157,6 +169,8 @@ internal class MapController(
         safeArea = value
         applyMargins()
     }
+
+    fun setCameraSafeArea(value: MapInsets) { cameraSafeArea = value }
 
     /** The fog layer, created on first need: until a screen asks for fog, nothing native exists. */
     private fun ensureFog(): FogLayer? {
@@ -331,12 +345,12 @@ internal class MapController(
         val size = MapSize(mapView.width / density.toDouble(), mapView.height / density.toDouble())
         when (command) {
             is MapCameraCommand.Fit ->
-                frame(ready, CameraFraming.atlasRect(command.bounds), safeArea + command.padding.insets(safeArea, size), command.animated)
+                frame(ready, CameraFraming.atlasRect(command.bounds), cameraSafeArea + command.padding.insets(cameraSafeArea, size), command.animated)
             is MapCameraCommand.FitRoute ->
-                frame(ready, CameraFraming.routeRect(command.bounds), safeArea + command.insets, command.animated)
+                frame(ready, CameraFraming.routeRect(command.bounds), cameraSafeArea + command.insets, command.animated)
             is MapCameraCommand.Move -> {
                 val update = CameraUpdateFactory.newLatLngZoom(LatLng(command.centre.latitude, command.centre.longitude), command.zoom)
-                if (command.animated) ready.animateCamera(update, CAMERA_MS) else ready.moveCamera(update)
+                if (command.animated) ready.animateCamera(update, command.durationMillis) else ready.moveCamera(update)
             }
         }
     }

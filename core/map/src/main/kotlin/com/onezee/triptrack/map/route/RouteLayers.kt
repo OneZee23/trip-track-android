@@ -15,7 +15,7 @@ import org.maplibre.geojson.LineString
 import org.maplibre.geojson.Point
 
 /** Routes to draw: prepared shapes (see [RouteGeometry]) and one appearance for all of them. */
-data class MapRoutes(val shapes: List<RouteShape>, val appearance: RouteAppearance)
+data class MapRoutes(val shapes: List<RouteShape>, val appearance: RouteAppearance, val litFraction: Double? = null)
 
 /**
  * The MapLibre side of route drawing: one GeoJSON source per kind and four layers, in drawing order
@@ -24,10 +24,15 @@ data class MapRoutes(val shapes: List<RouteShape>, val appearance: RouteAppearan
  */
 internal class RouteLayers {
     private var appearance: RouteAppearance? = null
+    private var shapes: List<RouteShape>? = null
+    private var opacities: List<Double>? = null
+    private var litFraction: Double? = null
 
     val layerIds: List<String> = listOf(CASING, LINE, DASH, ENDS)
 
     fun addTo(style: Style, routes: MapRoutes?) {
+        shapes = null
+        opacities = null
         style.addSource(GeoJsonSource(LINES_SOURCE))
         style.addSource(GeoJsonSource(ENDS_SOURCE))
         val looks = routes?.appearance ?: RouteAppearance.plain
@@ -38,11 +43,27 @@ internal class RouteLayers {
 
     fun update(style: Style, routes: MapRoutes?) {
         val looks = routes?.appearance ?: RouteAppearance.plain
+        val geometryChanged = routes?.shapes != shapes
+        val colorsChanged = looks.lineColorOverride != appearance?.lineColorOverride
         if (looks != appearance) {
             // Width, casing and dash length are layer properties: a new appearance restyles them.
             restyle(style, looks)
             appearance = looks
         }
+        val fraction = routes?.litFraction
+        if (!geometryChanged && !colorsChanged && fraction != null && litFraction != null && !ReplayRoute.shouldRelight(fraction, litFraction!!)) return
+        litFraction = fraction
+        val nextOpacities = routes?.shapes.orEmpty().flatMap { shape -> shape.lines.map { ReplayRoute.opacity(it, fraction) } }
+        if (nextOpacities != opacities || geometryChanged) {
+            val opacity = Expression.switchCase(Expression.all(
+                Expression.eq(Expression.get(HAS_SPEED), true),
+                Expression.gt(Expression.get(END_FRACTION), Expression.literal(routes?.litFraction ?: 1.0)),
+            ), Expression.literal(ReplayRoute.dimmedAhead), Expression.literal(1.0))
+            for (id in listOf(CASING, LINE, DASH)) style.getLayerAs<LineLayer>(id)?.setProperties(PropertyFactory.lineOpacity(opacity))
+        }
+        opacities = nextOpacities
+        if (!geometryChanged && !colorsChanged) return
+        shapes = routes?.shapes
         val lines = ArrayList<Feature>()
         val ends = ArrayList<Feature>()
         for (shape in routes?.shapes.orEmpty()) {
@@ -51,6 +72,8 @@ internal class RouteLayers {
                 val feature = Feature.fromGeometry(LineString.fromLngLats(line.coordinates.map(::point)))
                 feature.addStringProperty(COLOR, rgba(looks.argb(line)))
                 feature.addBooleanProperty(DASHED, line.isUnknownSpeed)
+                feature.addBooleanProperty(HAS_SPEED, line.speed != null)
+                feature.addNumberProperty(END_FRACTION, line.endFraction)
                 lines += feature
             }
             if (looks.showsEndpoints) {
@@ -121,6 +144,8 @@ internal class RouteLayers {
         private const val ENDS_SOURCE = "triptrack-route-ends-source"
         private const val COLOR = "color"
         private const val DASHED = "dashed"
+        private const val HAS_SPEED = "has-speed"
+        private const val END_FRACTION = "end-fraction"
 
         fun point(at: GeoPoint): Point = Point.fromLngLat(at.longitude, at.latitude)
 
