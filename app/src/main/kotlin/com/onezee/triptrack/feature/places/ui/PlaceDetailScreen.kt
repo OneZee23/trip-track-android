@@ -51,7 +51,9 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -452,7 +454,10 @@ private fun RowSeparator() {
 fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit, onDismissRequest: () -> Unit) {
     val strings = appStrings
     val atlas = AtlasTheme.colors
-    var text by rememberSaveable { mutableStateOf(name.orEmpty()) }
+    // The cursor stands at the END of the current name, as the system field puts it on iOS.
+    var field by remember { mutableStateOf(TextFieldValue(name.orEmpty(), TextRange(name.orEmpty().length))) }
+    val text = field.text
+    fun setText(value: String) { field = TextFieldValue(value, TextRange(value.length)) }
     val focus = remember { FocusRequester() }
     ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background) {
         val sheet = this
@@ -469,13 +474,13 @@ fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit,
                 verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                     if (text.isEmpty()) Text(strings.placeNamePlaceholder(), style = AppType.unit, color = atlas.secondary, maxLines = 1)
-                    BasicTextField(text, { text = it }, Modifier.fillMaxWidth().focusRequester(focus).testTag("place_rename_field"),
+                    BasicTextField(field, { field = it }, Modifier.fillMaxWidth().focusRequester(focus).testTag("place_rename_field"),
                         textStyle = AppType.unit.copy(color = atlas.ink), singleLine = true, cursorBrush = SolidColor(atlas.accent),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done), keyboardActions = KeyboardActions(onDone = { save() }))
                 }
                 if (text.isNotEmpty()) {
                     val interaction = remember { MutableInteractionSource() }
-                    Box(Modifier.size(44.dp).clickable(interactionSource = interaction, indication = null, role = Role.Button) { text = ""; runCatching { focus.requestFocus() } }
+                    Box(Modifier.size(44.dp).clickable(interactionSource = interaction, indication = null, role = Role.Button) { setText(""); runCatching { focus.requestFocus() } }
                         .semantics { contentDescription = strings.calendarClearFilter() }, contentAlignment = Alignment.Center) {
                         Glyph(AppGlyph.xmarkCircleFill, contentDescription = null, tint = atlas.handle, size = 19.dp)
                     }
@@ -484,7 +489,7 @@ fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit,
             Text(if (address == null) strings.placeRenameHint() else strings.placeRenameHintAddress(address), style = AppType.meta, color = atlas.secondary)
             if (address != null && text.trim() != address) {
                 val haptics = rememberHaptics()
-                PressableCard(onClick = { haptics.tap(); text = address }, modifier = Modifier.testTag("place_rename_use_address")) {
+                PressableCard(onClick = { haptics.tap(); setText(address) }, modifier = Modifier.testTag("place_rename_use_address")) {
                     Row(Modifier.heightIn(min = 44.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         WorldGlyphIcon(WorldGlyph.arrowUturnBackward, contentDescription = null, tint = atlas.ink, size = 17.dp)
                         Text(strings.placeRenameUseAddress(), style = AppType.itemTitle, color = atlas.ink)
