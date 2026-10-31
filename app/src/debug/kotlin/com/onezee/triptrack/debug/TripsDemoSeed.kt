@@ -72,9 +72,9 @@ class TripsDemoSeed(
                 previewPolyline = Trip.encodePolyline(coordinates), isTrackProcessed = true, lastModifiedAt = start,
             ))
             database.tripDao().insertTrackPoints(coordinates.mapIndexed { index, point ->
-                // Enough spread that the speed gradient has something to show.
-                TrackPointEntity(UUID.randomUUID(), altitude = 40.0 + (index % 12) * 6.0, course = 0.0, horizontalAccuracy = 5.0,
-                    latitude = point.latitude, longitude = point.longitude, speed = 14.0 + (index * 7) % 18,
+                // Smooth swells: the speed gradient has something to show, the charts stay readable.
+                TrackPointEntity(UUID.randomUUID(), altitude = 50.0 + 15.0 * sin(index / 9.0 + pass), course = 0.0, horizontalAccuracy = 5.0,
+                    latitude = point.latitude, longitude = point.longitude, speed = 20.0 + 9.0 * sin(index / 4.0 + pass),
                     timestamp = start.plusSeconds(index * 24L), tripId = id)
             })
         }
@@ -147,7 +147,7 @@ class TripsDemoSeed(
             ))
             database.tripDao().insertTrackPoints(coordinates.mapIndexed { index, point ->
                 TrackPointEntity(UUID.randomUUID(), altitude = 40.0, course = 0.0, horizontalAccuracy = 5.0, latitude = point.latitude,
-                    longitude = point.longitude, speed = 16.0 + (index * 5) % 14, timestamp = start.plusSeconds(index * 30L), tripId = id)
+                    longitude = point.longitude, speed = 18.0 + 7.0 * sin(index / 3.0), timestamp = start.plusSeconds(index * 30L), tripId = id)
             })
         }
     }

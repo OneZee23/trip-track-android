@@ -2,6 +2,10 @@ package com.onezee.triptrack.feature
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.onezee.triptrack.data.PlaceStore
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.data.VehicleStore
@@ -47,6 +51,8 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlin.reflect.KClass
 import com.onezee.triptrack.location.drafts.DraftDecision as RecordingDraftDecision
 
 /**
@@ -77,7 +83,10 @@ class TripsFeature(
     @Volatile var cloudSyncEnabled: () -> Boolean = { false }
     @Volatile var remotePhotoBytes: (suspend (String) -> ByteArray)? = null
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = CoroutineScope(SupervisorJob() + worker)
+
+    /** The view models that live as long as the app (iOS: the tabs' StateObjects). */
+    private val appViewModels = ViewModelStore()
 
     /** Invalidations of trips and journeys: what iOS posts as `.tripSaved`, `.syncPullCompleted`. */
     private val tripChanges: Flow<Unit> = changes.shareIn(scope, SharingStarted.WhileSubscribed())
@@ -85,7 +94,7 @@ class TripsFeature(
     /** The live API at call time: the account wave can replace it after the screens are built. */
     val social: TripSocialApi = DelegatingSocial { socialApi }
 
-    val photos = TripPhotoImages(photoFiles, remote = { url -> remotePhotoBytes?.invoke(url) ?: throw ApiError.Transport("No account client") })
+    val photos = TripPhotoImages(photoFiles, remote = { url -> remotePhotoBytes?.invoke(url) ?: throw ApiError.Transport("No account client") }, io = worker)
 
     val signedIn: () -> Boolean = { accountId() != null }
 
@@ -104,12 +113,14 @@ class TripsFeature(
 
     /** Kept for the app's life, like the iOS tab's StateObject: the list survives tab switches. */
     val feed: FeedViewModel by lazy {
-        FeedViewModel(repository, social, worker, signedIn, isOffline, clock = { clock() }, changes = tripChanges, recording = recording)
+        appViewModel("feed") { FeedViewModel(repository, social, worker, signedIn, isOffline, clock = { clock() }, changes = tripChanges, recording = recording) }
     }
 
     /** Also the source of the dot on Я: alive before the list is ever opened. */
     val drafts: DraftsViewModel by lazy {
-        DraftsViewModel(repository, draftQueue, PreferencesDraftsSeen(preferences), worker, clock = { clock() }, changes = tripChanges).also { it.refresh() }
+        appViewModel("drafts") {
+            DraftsViewModel(repository, draftQueue, PreferencesDraftsSeen(preferences), worker, clock = { clock() }, changes = tripChanges).also { it.refresh() }
+        }
     }
 
     /** The recording the feed's banner shows: distance and the paused-aware clock. */
@@ -161,6 +172,20 @@ class TripsFeature(
         JourneyComposerViewModel(anchor, journeys, worker, preselected)
 
     fun journeyEdit(journey: Journey): JourneyEditViewModel = JourneyEditViewModel(journey, repository, journeys, worker, clock())
+
+    /** Ends what the app itself never ends: the app-life view models and the change subscription. */
+    fun close() {
+        appViewModels.clear()
+        scope.cancel()
+    }
+
+    private inline fun <reified VM : ViewModel> appViewModel(key: String, crossinline create: () -> VM): VM {
+        val factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T = create() as T
+        }
+        return ViewModelProvider.create(appViewModels, factory)[key, VM::class]
+    }
 
     private companion object {
         const val FEED_FOLLOWING_KEY = "feedSegmentFollowingV2"
