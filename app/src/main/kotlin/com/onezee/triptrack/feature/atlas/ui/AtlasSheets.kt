@@ -5,7 +5,9 @@ package com.onezee.triptrack.feature.atlas.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +54,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.ContentSizedSheet
@@ -230,10 +233,7 @@ private fun DrawScope.drawOpenedCells(size: Size, colour: Color) {
     }
 }
 
-/**
- * iOS Toggle with the accent tint, drawn for the house: a 51 × 31 capsule and a 27 point thumb. The
- * whole row is the target; TalkBack hears a switch with its state.
- */
+/** iOS Toggle in a row: the whole row is the target; TalkBack hears a switch with its state. */
 @Composable
 fun ToggleRow(title: String, checked: Boolean, testTag: String, onChange: (Boolean) -> Unit) {
     val atlas = AtlasTheme.colors
@@ -250,17 +250,24 @@ fun ToggleRow(title: String, checked: Boolean, testTag: String, onChange: (Boole
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(title, Modifier.weight(1f), style = inter(16f, InterWeight.semibold), color = atlas.ink)
-        HouseSwitch(checked)
+        AtlasSwitch(checked)
     }
 }
 
+/**
+ * The house switch (feature/account HouseSwitch: 51 × 31, a white knob on a spring) in the Atlas
+ * tint, as iOS tints these toggles with AtlasTheme.accent, lighter than the app's accent in dark.
+ * Drawn only: the row around it is the target.
+ */
 @Composable
-fun HouseSwitch(checked: Boolean) {
-    val track by animateColorAsState(if (checked) AtlasTheme.colors.accent else AppTheme.colors.cardAlt, label = "switchTrack")
-    val thumb by animateDpAsState(if (checked) 22.dp else 2.dp, label = "switchThumb")
-    Box(Modifier.size(width = 51.dp, height = 31.dp).background(track, CapsuleShape)) {
-        Box(Modifier.offset(x = thumb, y = 2.dp).size(27.dp).background(Color.White, CircleShape)
-            .border(0.5.dp, Color.Black.copy(alpha = 0.06f), CircleShape))
+private fun AtlasSwitch(checked: Boolean) {
+    val track by animateColorAsState(
+        if (checked) AtlasTheme.colors.accent else if (AppTheme.isDark) Color.White.copy(alpha = 0.16f) else Color(0xFFE9E9EB),
+        tween(200), label = "switchTrack",
+    )
+    val travel by animateFloatAsState(if (checked) 1f else 0f, spring(dampingRatio = 0.8f, stiffness = 700f), label = "switchKnob")
+    Box(Modifier.size(width = 51.dp, height = 31.dp).background(track, CircleShape), contentAlignment = Alignment.CenterStart) {
+        Box(Modifier.offset { IntOffset((2.dp + 20.dp * travel).roundToPx(), 0) }.size(27.dp).background(Color.White, CircleShape))
     }
 }
 
