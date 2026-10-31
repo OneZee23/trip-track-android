@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.drawable.toDrawable
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
+import com.onezee.triptrack.feature.onboarding.OnboardingRoute
 import com.onezee.triptrack.shell.AppShell
 
 /**
@@ -34,9 +35,21 @@ class MainActivity : AppCompatActivity() {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
             SystemBarsFollowTheme(dark)
             TripTrackTheme(isDark = dark, language = graph.languageManager.current(LocalConfiguration.current)) {
-                AppShell(graph, resumeTick.intValue)
+                // iOS: TripTrackApp gates the whole window on hasCompletedOnboarding.
+                if (graph.onboarding.completed) AppShell(graph, resumeTick.intValue)
+                else OnboardingRoute(graph, resumeTick.intValue)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (application as TripTrackApplication).appGraph.onForeground()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (application as TripTrackApplication).appGraph.onBackground()
     }
 
     override fun onResume() {

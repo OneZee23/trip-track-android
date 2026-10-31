@@ -30,6 +30,7 @@ import com.onezee.triptrack.designsystem.navigation.CustomTabBar
 import com.onezee.triptrack.designsystem.navigation.LocalTabBarVisibility
 import com.onezee.triptrack.designsystem.navigation.TabBarVisibility
 import com.onezee.triptrack.designsystem.theme.AppTheme
+import com.onezee.triptrack.feature.account.AccountEntry
 
 /**
  * iOS: ContentView.swift. The five tabs and the floating bar over them, on the theme ground that
@@ -97,6 +98,6 @@ private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resume
         AppTab.maps -> AtlasPlaceholder()
         AppTab.record -> RecordTab(graph, resumeTick, onClose)
         AppTab.places -> PlacesPlaceholder()
-        AppTab.profile -> MePlaceholder(graph.themeManager, graph.languageManager)
+        AppTab.profile -> MePlaceholder(graph.themeManager, graph.languageManager) { AccountEntry(graph) }
     }
 }
