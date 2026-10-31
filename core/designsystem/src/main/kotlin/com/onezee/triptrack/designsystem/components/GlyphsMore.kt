@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 
-// The SF Symbols of the trip screens (feed, trip, journey, drafts), redrawn on the same 24-unit grid
+// iOS: the system SF Symbols of the trip screens (feed, trip, journey, drafts), redrawn on the same 24-unit grid
 // and at the same semibold weight as Glyph.kt. Outline symbols are strokes; `fill` symbols are
 // solid, and the ones that carry a mark (the triangle, the plus disc) cut it out of the solid.
 
