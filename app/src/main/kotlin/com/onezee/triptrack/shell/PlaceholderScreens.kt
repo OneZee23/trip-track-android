@@ -127,8 +127,9 @@ internal fun MePlaceholder(
     themeManager: ThemeManager,
     languageManager: LanguageManager,
     below: LazyListScope.() -> Unit = {},
-    // The sign-in card or the «Account & Sync» row (feature/account), under the app settings.
-    account: @Composable () -> Unit = {},
+    // The sign-in card or the «Account & Sync» row (feature/account), under the app settings. Null
+    // adds no list item at all: an empty item would still take the list's spacing.
+    account: (@Composable () -> Unit)? = null,
 ) {
     val strings = appStrings
     val language = languageManager.current(LocalConfiguration.current)
@@ -153,7 +154,7 @@ internal fun MePlaceholder(
                 SettingsRow(themeGlyph(themeManager.mode), strings.theme(), themeLabel(themeManager.mode, strings), "settings_theme") { picking = Picker.theme }
             }
         }
-        item { account() }
+        if (account != null) item { account() }
         below()
     }
     when (picking) {
