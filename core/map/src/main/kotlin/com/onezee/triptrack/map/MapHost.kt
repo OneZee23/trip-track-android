@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
+import com.onezee.triptrack.map.vein.MapVein
 import org.maplibre.android.MapLibre
 import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
@@ -50,6 +51,12 @@ fun MapHost(
      * Fixed for the life of the map.
      */
     textureMode: Boolean = false,
+    /** Every opened road as a thread over the fog (the Atlas). */
+    vein: MapVein? = null,
+    /** A tap that hit no marker. Null leaves taps to MapLibre. */
+    onMapTap: ((MapTap) -> Unit)? = null,
+    /** The map's own location dot (iOS showsUserLocation); needs a location permission. */
+    showsUserLocation: Boolean = false,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -102,10 +109,13 @@ fun MapHost(
     ) + chromeInsets
     SideEffect {
         controller.onMarkerTap = onMarkerTap
+        controller.onMapTap = onMapTap
         controller.setSafeArea(safeArea)
         controller.setFog(fog)
+        controller.setVein(vein)
         controller.setRoutes(routes)
         controller.setMarkers(markers)
+        controller.setShowsUserLocation(showsUserLocation)
     }
 
     AndroidView(factory = { mapView }, modifier = modifier)

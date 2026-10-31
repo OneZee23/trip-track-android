@@ -14,11 +14,16 @@ import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.marker.MarkerLayers
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteLayers
+import com.onezee.triptrack.map.vein.MapVein
+import com.onezee.triptrack.map.vein.VeinLayers
 import com.onezee.triptrack.model.GeoPoint
 import kotlin.math.roundToInt
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
@@ -27,9 +32,9 @@ import org.maplibre.android.maps.Style
  * Everything behind one [MapHost]: the MapView's lifecycle, the style and the order of our layers on
  * it, the camera, and the fog's background and memory rules. Main thread only.
  *
- * Layer order, bottom to top: the map style (labels included) → fog → route casing, line, dash, ends
- * → markers. The fog is opaque enough that whatever lies under it does not exist for the eye, so the
- * route and the markers go above it.
+ * Layer order, bottom to top: the map style (labels included) → fog → vein → route casing, line, dash,
+ * ends → markers. The fog is opaque enough that whatever lies under it does not exist for the eye, so
+ * the vein, the route and the markers go above it.
  */
 internal class MapController(
     private val mapView: MapView,
@@ -40,14 +45,20 @@ internal class MapController(
     private var map: MapLibreMap? = null
     private var style: Style? = null
     private val routeLayers = RouteLayers()
+    private val veinLayers = VeinLayers()
     private val markerLayers = MarkerLayers(density)
     private var fogLayer: FogLayer? = null
     private var fogTried = false
 
     private var fog: MapFog? = null
     private var routes: MapRoutes? = null
+    private var vein: MapVein? = null
     private var markers: List<MapMarker> = emptyList()
     var onMarkerTap: ((MapMarker) -> Unit)? = null
+
+    /** A tap that hit no marker; null leaves the tap to MapLibre. */
+    var onMapTap: ((MapTap) -> Unit)? = null
+    private var showsUserLocation = false
 
     /** System bars plus the screen's chrome, in dp: what MapKit would call the safe area. */
     private var safeArea = MapInsets.Zero
@@ -72,8 +83,13 @@ internal class MapController(
             applyMargins()
             ready.addOnCameraIdleListener { publishCamera() }
             ready.addOnMapClickListener { at ->
-                val hit = markerLayers.hit(ready, ready.projection.toScreenLocation(at)) ?: return@addOnMapClickListener false
-                onMarkerTap?.invoke(hit)
+                val hit = markerLayers.hit(ready, ready.projection.toScreenLocation(at))
+                if (hit != null) {
+                    onMarkerTap?.invoke(hit)
+                    return@addOnMapClickListener true
+                }
+                val tap = onMapTap ?: return@addOnMapClickListener false
+                tap(MapTap(GeoPoint(at.latitude, at.longitude), ready.cameraPosition.zoom))
                 true
             }
             ready.setStyle(Style.Builder().fromUri(styleUri)) { loaded -> onStyleLoaded(loaded) }
@@ -84,8 +100,10 @@ internal class MapController(
     private fun onStyleLoaded(loaded: Style) {
         style = loaded
         if (fog != null) ensureFog()?.addTo(loaded)
+        veinLayers.addTo(loaded, vein)
         routeLayers.addTo(loaded, routes)
         markerLayers.addTo(loaded, markers)
+        applyUserLocation()
     }
 
     // Inputs
@@ -118,6 +136,12 @@ internal class MapController(
         style?.let { routeLayers.update(it, value) }
     }
 
+    fun setVein(value: MapVein?) {
+        if (value === vein) return
+        vein = value
+        style?.let { veinLayers.update(it, value) }
+    }
+
     fun setMarkers(value: List<MapMarker>) {
         if (value == markers) return
         markers = value
@@ -142,8 +166,59 @@ internal class MapController(
         layer.onMeshInstalled = { state.fogMesh = it }
         fogLayer = layer
         // A fog asked for after the style loaded goes under our own layers, still above the map's.
-        style?.let { layer.addTo(it, below = RouteLayers.CASING) }
+        style?.let { layer.addTo(it, below = veinLayers.firstLayerId) }
         return layer
+    }
+
+    // User location (iOS: MKMapView.showsUserLocation, the map's own dot and its own location source)
+
+    fun setShowsUserLocation(value: Boolean) {
+        if (value == showsUserLocation) return
+        showsUserLocation = value
+        applyUserLocation()
+    }
+
+    /**
+     * The map's own location dot, as on iOS where MapKit draws it from its own geolocation: the screen
+     * never starts GPS for it. Needs the style and a location permission; without either it stays off.
+     */
+    private fun applyUserLocation() {
+        val ready = map ?: return
+        val loaded = style ?: return
+        val component = ready.locationComponent
+        try {
+            if (showsUserLocation && hasLocationPermission()) {
+                if (!component.isLocationComponentActivated) {
+                    component.activateLocationComponent(LocationComponentActivationOptions.builder(mapView.context, loaded).build())
+                }
+                component.isLocationComponentEnabled = true
+                component.renderMode = RenderMode.NORMAL
+            } else if (component.isLocationComponentActivated) {
+                component.isLocationComponentEnabled = false
+            }
+        } catch (_: SecurityException) {
+            // The permission went away between the check and the call: no dot, no crash.
+        }
+    }
+
+    /** iOS MapCameraCommand.userLocation: follow the person; the next pan of a finger ends it. */
+    fun locateUser(): Boolean {
+        val ready = map ?: return false
+        val component = ready.locationComponent
+        if (!component.isLocationComponentActivated || !component.isLocationComponentEnabled) return false
+        return try {
+            component.cameraMode = CameraMode.TRACKING
+            true
+        } catch (_: SecurityException) {
+            false
+        }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val context = mapView.context
+        return listOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION).any {
+            context.checkSelfPermission(it) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        }
     }
 
     fun fogStats(): FogStats? = fogLayer?.stats()
@@ -264,6 +339,7 @@ internal class MapController(
             zoom = position.zoom,
             bearing = position.bearing,
             metresPerPoint = MapPoints.metresPerPoint(target.latitude, position.zoom),
+            latitudeSpan = ready.projection.visibleRegion.latLngBounds.latitudeSpan,
         )
     }
 

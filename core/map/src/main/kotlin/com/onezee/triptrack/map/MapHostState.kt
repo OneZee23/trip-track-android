@@ -22,8 +22,24 @@ data class MapFog(
 /** iOS: FogMetalVeil.setLiveReveal. [progress] grows 0 → 1 over the reveal animation. */
 data class LiveReveal(val point: GeoPoint, val progress: Double, val metres: Double = FogRules.REVEAL_METRES)
 
-/** Where the camera stands after a move: MapLibre zoom, heading and the scale at the centre. */
-data class MapCamera(val centre: GeoPoint, val zoom: Double, val bearing: Double, val metresPerPoint: Double)
+/**
+ * Where the camera stands after a move: MapLibre zoom, heading, the scale at the centre and how many
+ * degrees of latitude the view shows (iOS `region.span.latitudeDelta`, which the Atlas' zoom levels
+ * are counted in).
+ */
+data class MapCamera(
+    val centre: GeoPoint,
+    val zoom: Double,
+    val bearing: Double,
+    val metresPerPoint: Double,
+    val latitudeSpan: Double = 0.0,
+)
+
+/**
+ * A tap on the map that hit no marker: where it landed and at what zoom, so a screen can run its own
+ * hit tests (a road under the finger, the region behind it) in map points.
+ */
+data class MapTap(val coordinate: GeoPoint, val zoom: Double)
 
 /** OpenFreeMap: free vector tiles with the OpenMapTiles schema, no key and no account. */
 object MapStyles {
@@ -63,6 +79,12 @@ class MapHostState {
     /** Null until known; false when this device cannot draw the fog and the map shows without it. */
     var fogAvailable: Boolean? by mutableStateOf(null)
         internal set
+
+    /**
+     * Centre on the person and follow them until the next pan (iOS MapCameraCommand.userLocation).
+     * False when the map has no location to follow: no permission, or the dot is not shown.
+     */
+    fun locateUser(): Boolean = controller?.locateUser() ?: false
 
     /** Native counters of the fog layer; for the debug screen. */
     fun fogStats(): FogStats? = controller?.fogStats()
