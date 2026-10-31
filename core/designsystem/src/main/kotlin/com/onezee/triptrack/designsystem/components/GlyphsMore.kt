@@ -303,6 +303,31 @@ internal fun DrawScope.drawMoreGlyph(glyph: AppGlyph, tint: Color) {
             drawPath(triangle, tint)
             drawPath(triangle, tint, style = line(1.6f))
         }
+        AppGlyph.airplane -> {
+            val plane = Path().apply {
+                moveTo(12f, 2.6f)
+                cubicTo(12.9f, 2.6f, 13.4f, 3.6f, 13.4f, 4.8f)
+                lineTo(13.4f, 9.6f)
+                lineTo(21f, 14f)
+                lineTo(21f, 16f)
+                lineTo(13.4f, 13.6f)
+                lineTo(13.4f, 18.2f)
+                lineTo(15.8f, 19.9f)
+                lineTo(15.8f, 21.4f)
+                lineTo(12f, 20.4f)
+                lineTo(8.2f, 21.4f)
+                lineTo(8.2f, 19.9f)
+                lineTo(10.6f, 18.2f)
+                lineTo(10.6f, 13.6f)
+                lineTo(3f, 16f)
+                lineTo(3f, 14f)
+                lineTo(10.6f, 9.6f)
+                lineTo(10.6f, 4.8f)
+                cubicTo(10.6f, 3.6f, 11.1f, 2.6f, 12f, 2.6f)
+                close()
+            }
+            drawPath(plane, tint)
+        }
         else -> Unit
     }
 }

@@ -112,6 +112,20 @@ class TripsFeature(
         DraftsViewModel(repository, draftQueue, PreferencesDraftsSeen(preferences), worker, changes = tripChanges).also { it.refresh() }
     }
 
+    /** The recording the feed's banner shows: distance and the paused-aware clock. */
+    val recorder get() = location.recorder.state
+
+    /** iOS `@AppStorage("feedSegmentFollowingV2")`: the feed reopens on the segment it was left on. */
+    var feedFollowing: Boolean
+        get() = preferences.getBoolean(FEED_FOLLOWING_KEY, false)
+        set(value) = preferences.edit { putBoolean(FEED_FOLLOWING_KEY, value) }
+
+    /** «Make private» from a feed card's menu: the same door as the trip screen's. */
+    suspend fun makePrivate(id: UUID) = repository.updatePrivacy(id, true)
+
+    /** «Delete» from a feed card's menu. */
+    suspend fun deleteTrip(id: UUID) = repository.deleteTrip(id)
+
     val feedNavigator = TabNavigator<TripsDestination>()
     val meNavigator = TabNavigator<TripsDestination>()
 
@@ -128,6 +142,10 @@ class TripsFeature(
         JourneyComposerViewModel(anchor, journeys, worker, preselected)
 
     fun journeyEdit(journey: Journey): JourneyEditViewModel = JourneyEditViewModel(journey, repository, journeys, worker, Instant.now())
+
+    private companion object {
+        const val FEED_FOLLOWING_KEY = "feedSegmentFollowingV2"
+    }
 }
 
 /** What a tab of the trip screens can push (iOS: FeedView's destinations and `MeDest.drafts`). */

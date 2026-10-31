@@ -92,6 +92,7 @@ enum class AppGlyph {
     arrowTriangleSwap,
     pause,
     play,
+    airplane,
 }
 
 /** iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack. */
