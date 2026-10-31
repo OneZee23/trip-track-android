@@ -39,7 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.onezee.triptrack.R
+import com.onezee.triptrack.designsystem.R
 import com.onezee.triptrack.logic.RevealBuilder
 import com.onezee.triptrack.logic.RevealedLayer
 import com.onezee.triptrack.map.LiveReveal
@@ -160,11 +160,13 @@ private fun MapDemoScreen(options: DemoOptions) {
         val (coordinates, speeds) = MapDemoSeeds.routeWithSpeeds()
         RouteGeometry.build(coordinates, speeds)
     }
-    val markers = remember {
+    val homeLabel = stringResource(R.string.debug_map_home)
+    val workLabel = stringResource(R.string.debug_map_work)
+    val markers = remember(homeLabel, workLabel) {
         val route = MapDemoSeeds.routeWithSpeeds().first
         listOf(
-            MapMarker("home", MapDemoSeeds.krasnodar, MapMarker.Kind.PLACE, label = "Дом"),
-            MapMarker("work", GeoPoint(45.052, 38.997), MapMarker.Kind.PLACE_SUGGESTION, label = "Работа"),
+            MapMarker("home", MapDemoSeeds.krasnodar, MapMarker.Kind.PLACE, label = homeLabel),
+            MapMarker("work", GeoPoint(45.052, 38.997), MapMarker.Kind.PLACE_SUGGESTION, label = workLabel),
             MapMarker("checkpoint-1", route[route.size / 4], MapMarker.Kind.CHECKPOINT),
             MapMarker("checkpoint-2", route[route.size * 3 / 4], MapMarker.Kind.CHECKPOINT),
             MapMarker("photo", route[route.size / 3], MapMarker.Kind.PHOTO, image = samplePhoto()),

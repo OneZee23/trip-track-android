@@ -1,6 +1,0 @@
-<resources>
-    <string name="android_sign_in_with_google">Войти через Google</string>
-    <string name="android_sign_in_google_failed">Не получилось войти через Google. Проверьте интернет и аккаунт Google на телефоне и попробуйте ещё раз.</string>
-    <string name="android_google_account_only">Аккаунт Google</string>
-    <string name="android_google_account_line">Google · %1$s</string>
-</resources>

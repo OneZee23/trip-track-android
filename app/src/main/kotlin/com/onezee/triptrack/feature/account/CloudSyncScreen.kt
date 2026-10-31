@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import com.onezee.triptrack.R
+import com.onezee.triptrack.designsystem.R as AndroidWords
 import com.onezee.triptrack.designsystem.components.AppConfirmDialog
 import com.onezee.triptrack.designsystem.components.AppDialogAction
 import com.onezee.triptrack.designsystem.components.AppGlyph
@@ -263,8 +264,8 @@ private fun AccountCard(state: AccountScreenState) {
     val colors = AppTheme.colors
     val strings = appStrings
     val email = state.auth.userEmail?.takeIf { it.isNotBlank() }
-    val subtitle = if (email != null) stringResource(R.string.android_google_account_line, AccountFormat.maskedEmail(email))
-        else stringResource(R.string.android_google_account_only)
+    val subtitle = if (email != null) stringResource(AndroidWords.string.android_google_account_line, AccountFormat.maskedEmail(email))
+        else stringResource(AndroidWords.string.android_google_account_only)
     Row(
         Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp).testTag("account_identity_card"),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

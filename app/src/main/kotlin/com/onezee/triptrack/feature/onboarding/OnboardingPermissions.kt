@@ -2,7 +2,6 @@
 // (@AppStorage("hasCompletedOnboarding"))
 package com.onezee.triptrack.feature.onboarding
 
-import android.Manifest
 import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,7 +128,6 @@ class OnboardingPermissionCoordinator(
          * ignored unless approximate location is asked with it, and the dialog then offers both.
          */
         fun manifestNames(permission: RecordingPermission): Array<String> =
-            if (permission == RecordingPermission.fineLocation) arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            else arrayOf(permission.manifestName)
+            PermissionPlan.manifestNames(permission)
     }
 }

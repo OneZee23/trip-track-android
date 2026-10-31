@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.BuildConfig
 import com.onezee.triptrack.R
+import com.onezee.triptrack.designsystem.R as AndroidWords
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.ContentSizedSheet
 import com.onezee.triptrack.designsystem.components.Glyph
@@ -75,8 +76,8 @@ object LegalLinks {
 fun signInMessage(outcome: SignInOutcome, context: Context): String? = when (outcome) {
     is SignInOutcome.SignedIn, SignInOutcome.Cancelled, SignInOutcome.Busy -> null
     // A developer note in debug builds; a person in a release build gets the ordinary failure.
-    SignInOutcome.NotConfigured -> context.getString(if (BuildConfig.DEBUG) R.string.android_sign_in_not_configured else R.string.android_sign_in_google_failed)
-    is SignInOutcome.Failed -> context.getString(R.string.android_sign_in_google_failed)
+    SignInOutcome.NotConfigured -> context.getString(if (BuildConfig.DEBUG) AndroidWords.string.android_sign_in_not_configured else AndroidWords.string.android_sign_in_google_failed)
+    is SignInOutcome.Failed -> context.getString(AndroidWords.string.android_sign_in_google_failed)
 }
 
 /**
@@ -121,7 +122,7 @@ fun GoogleSignInButton(
     val haptics = rememberHaptics()
     val interaction = remember { MutableInteractionSource() }
     val stroke = if (dark) Color.White.copy(alpha = 0.14f) else Color(0xFFDBDBE0)
-    val title = stringResource(R.string.android_sign_in_with_google)
+    val title = stringResource(AndroidWords.string.android_sign_in_with_google)
     Row(
         modifier
             .fillMaxWidth()

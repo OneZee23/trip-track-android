@@ -83,12 +83,16 @@ import com.onezee.triptrack.feature.account.linkedText
 import com.onezee.triptrack.location.permissions.PermissionLedger
 import com.onezee.triptrack.location.permissions.PermissionPlan
 import com.onezee.triptrack.location.permissions.RecordingPermission
+import com.onezee.triptrack.location.permissions.HealthIssue
+import com.onezee.triptrack.location.permissions.HealthSettings
+import com.onezee.triptrack.location.permissions.Oem
+import com.onezee.triptrack.location.permissions.RequestMethod
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.logic.metresPerSecond
 import com.onezee.triptrack.logic.speedParts
 import com.onezee.triptrack.model.DistanceUnit
 import com.onezee.triptrack.model.Measure
-import com.onezee.triptrack.location.R as LocationWords
+import com.onezee.triptrack.designsystem.R as LocationWords
 
 /**
  * iOS: OnboardingView. Five pages: the product, an example trip, location, background recording and
@@ -110,15 +114,24 @@ fun OnboardingScreen(
     // Re-read on every page and every return from the system's question or its settings page.
     var answers by remember { mutableIntStateOf(0) }
     val granted = remember(page, resumeTick, answers) { grantedPermissions(context) }
+    val approximate = remember(page, resumeTick, answers) {
+        PermissionPlan.hasApproximateLocation { context.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
+    }
     val notificationsOn = remember(page, resumeTick, answers) { NotificationManagerCompat.from(context).areNotificationsEnabled() }
     var pendingToken by remember { mutableIntStateOf(0) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         answers++
         coordinator.answered(pendingToken)
     }
+    val settingsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        answers++
+        coordinator.answered(pendingToken)
+    }
     coordinator.ask = { permission, token ->
         pendingToken = token
-        launcher.launch(OnboardingPermissionCoordinator.manifestNames(permission))
+        if (PermissionPlan.method(permission, Build.VERSION.SDK_INT) == RequestMethod.settingsPage) {
+            settingsLauncher.launch(HealthSettings.targets(context, HealthIssue.noBackgroundLocation, Oem.other).first())
+        } else launcher.launch(OnboardingPermissionCoordinator.manifestNames(permission))
     }
 
     OnboardingContent(
@@ -128,6 +141,10 @@ fun OnboardingScreen(
         locationGranted = RecordingPermission.fineLocation in granted,
         backgroundGranted = RecordingPermission.backgroundLocation in granted,
         notificationsGranted = notificationsOn,
+        approximateLocation = approximate,
+        onOpenLocationSettings = {
+            HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.noPreciseLocation, Oem.other))
+        },
         onContinue = { current ->
             when (current) {
                 0 -> page = 1
@@ -153,6 +170,8 @@ fun OnboardingContent(
     backgroundGranted: Boolean,
     notificationsGranted: Boolean,
     onContinue: (Int) -> Unit,
+    approximateLocation: Boolean = false,
+    onOpenLocationSettings: () -> Unit = {},
 ) {
     val colors = AppTheme.colors
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("onboarding")) {
@@ -161,9 +180,11 @@ fun OnboardingContent(
                 0 -> WelcomePage { onContinue(0) }
                 1 -> ValuePage(distanceUnit) { onContinue(1) }
                 2 -> PermissionPage(2, R.drawable.onboard_fog, appStrings.onboardingLocation(), appStrings.onboardingLocationSub(), locationGranted, isRequesting,
-                    spacing = 12.dp, consentTop = 4.dp, "onboarding_continue_location") { onContinue(2) }
+                    spacing = 12.dp, consentTop = 4.dp, "onboarding_continue_location",
+                    approximateLocation, onOpenLocationSettings) { onContinue(2) }
                 3 -> PermissionPage(3, R.drawable.onboard_track, appStrings.onboardingBackgroundTitle(), backgroundBody(), backgroundGranted, isRequesting,
-                    spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_background") { onContinue(3) }
+                    spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_background",
+                    approximateLocation, onOpenLocationSettings) { onContinue(3) }
                 else -> PermissionPage(4, R.drawable.onboard_notify, appStrings.onboardingNotificationsTitle(), appStrings.onboardingNotificationsSub(),
                     notificationsGranted, isRequesting, spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_notifications") { onContinue(4) }
             }
@@ -173,8 +194,7 @@ fun OnboardingContent(
 }
 
 /**
- * From Android 11 «all the time» lives on the app's location settings page, which the system opens
- * instead of a dialog: the page says so before the person lands there.
+ * From Android 11 «all the time» lives in app settings: explain the choice before opening them.
  */
 @Composable
 private fun backgroundBody(): String {
@@ -319,6 +339,8 @@ private fun ColumnScope.PermissionPage(
     spacing: Dp,
     consentTop: Dp,
     tag: String,
+    approximateLocation: Boolean = false,
+    onOpenLocationSettings: () -> Unit = {},
     onContinue: () -> Unit,
 ) {
     val strings = appStrings
@@ -326,6 +348,16 @@ private fun ColumnScope.PermissionPage(
         OnboardingHero(hero)
         PageTitle(title, "onboarding_page_$index")
         BodyText(body, top = 12.dp)
+        if (approximateLocation) {
+            BodyText(strings.tr(LocationWords.string.android_precise_location_body), top = 16.dp)
+            Text(
+                strings.tr(LocationWords.string.android_health_open_settings),
+                style = inter(14f, InterWeight.semibold),
+                color = AppTheme.accent,
+                modifier = Modifier.align(Alignment.CenterHorizontally).testTag("onboarding_precise_settings")
+                    .clickable(role = Role.Button, onClick = onOpenLocationSettings).padding(12.dp),
+            )
+        }
     }
     Column(
         Modifier.padding(horizontal = 32.dp).padding(top = 12.dp, bottom = 56.dp),
@@ -438,7 +470,7 @@ private fun MockMap(strings: AppStrings) {
         )
         // The brand mark, not copy: the same letters in every language, as on iOS.
         Text(
-            "TRIP TRACK",
+            strings.tr(LocationWords.string.android_wordmark),
             style = pressStart2P(7f),
             letterSpacing = points(0.56f),
             color = Color(0x8C9B9BA5),

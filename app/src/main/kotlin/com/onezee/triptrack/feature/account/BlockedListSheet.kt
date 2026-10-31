@@ -156,7 +156,7 @@ private fun BlockedRow(user: BlockedUser, isPending: Boolean, strings: AppString
             // «Blocked <date>» when the server sends `blockedAt`; an older server gets the level line.
             val since = blockedSince(user, strings)
             if (since != null) Text(since, style = inter(11.5f), color = colors.textTertiary)
-            else Text("LVL ${user.profileLevel}", style = inter(11f, InterWeight.semibold, monospacedDigits = true), color = colors.textTertiary)
+            else Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, user.profileLevel), style = inter(11f, InterWeight.semibold, monospacedDigits = true), color = colors.textTertiary)
         }
         if (isPending) Box(Modifier.size(width = 90.dp, height = 30.dp), contentAlignment = Alignment.Center) { Spinner(colors.textSecondary, size = 15.dp) }
         else SmallButton(strings.blockProfileUnblock(), Modifier.testTag("blocked_unblock_button"), onClick = onUnblock)

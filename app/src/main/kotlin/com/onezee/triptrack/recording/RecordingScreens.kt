@@ -40,13 +40,15 @@ import androidx.compose.ui.unit.sp
 import com.onezee.triptrack.designsystem.R as Words
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.location.LocationGraph
-import com.onezee.triptrack.location.R
 import com.onezee.triptrack.location.permissions.HealthSettings
+import com.onezee.triptrack.location.permissions.HealthIssue
+import com.onezee.triptrack.location.permissions.Oem
 import com.onezee.triptrack.location.permissions.PermissionFlow
 import com.onezee.triptrack.location.permissions.PermissionPlan
 import com.onezee.triptrack.location.permissions.PermissionStep
 import com.onezee.triptrack.location.permissions.RecordingHealth
 import com.onezee.triptrack.location.permissions.RecordingPermission
+import com.onezee.triptrack.location.permissions.RequestMethod
 import com.onezee.triptrack.location.recording.RecorderState
 import com.onezee.triptrack.location.service.formattedDuration
 import com.onezee.triptrack.logic.distance
@@ -71,7 +73,7 @@ fun RecordingRoute(graph: LocationGraph, strings: AppStrings, resumeTick: Int) {
     var page by remember { mutableStateOf(Page.record) }
     val back = { page = Page.record }
     when (page) {
-        Page.record -> RecordScreen(graph, strings) { page = it }
+        Page.record -> RecordScreen(graph, strings, resumeTick) { page = it }
         Page.permissions -> PermissionScreen(graph, strings, resumeTick, back)
         Page.health -> HealthScreen(graph, strings, resumeTick, back)
         Page.stereo -> StereoScreen(graph, strings, back)
@@ -79,7 +81,9 @@ fun RecordingRoute(graph: LocationGraph, strings: AppStrings, resumeTick: Int) {
 }
 
 @Composable
-private fun RecordScreen(graph: LocationGraph, strings: AppStrings, open: (Page) -> Unit) {
+private fun RecordScreen(graph: LocationGraph, strings: AppStrings, resumeTick: Int, open: (Page) -> Unit) {
+    val context = LocalContext.current
+    val precise = remember(resumeTick) { graph.hasLocationPermission() }
     val state by graph.recorder.state.collectAsState()
     val scope = rememberCoroutineScope()
     var now by remember { mutableStateOf(Instant.now()) }
@@ -104,11 +108,20 @@ private fun RecordScreen(graph: LocationGraph, strings: AppStrings, open: (Page)
             Button(if (state.isPaused) strings.resumeAction() else strings.pauseAction()) { scope.launch { graph.togglePause() } }
             Button(strings.live_finish()) { scope.launch { graph.stopRecording() } }
         } else if (state.recovery == null && !state.isFinishing) {
-            Button(strings.recordTripCta()) { scope.launch { graph.startRecording() } }
+            if (precise) Button(strings.recordTripCta()) { scope.launch { graph.startRecording() } }
+            else {
+                Line(strings.tr(Words.string.android_precise_location_body))
+                val asked = RecordingPermission.fineLocation in graph.permissionLedger.asked()
+                Button(if (asked) strings.tr(Words.string.android_health_open_settings) else strings.onboardingContinue()) {
+                    if (RecordingPermission.fineLocation in graph.permissionLedger.asked()) {
+                        HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.noPreciseLocation, Oem.other))
+                    } else open(Page.permissions)
+                }
+            }
         }
         Spacer()
         Link(strings.onboardingLocation()) { open(Page.permissions) }
-        Link(LocalContext.current.getString(R.string.android_health_title)) { open(Page.health) }
+        Link(strings.tr(Words.string.android_health_title)) { open(Page.health) }
         Link(strings.linkStereo()) { open(Page.stereo) }
     }
 }
@@ -143,7 +156,11 @@ private fun PermissionScreen(graph: LocationGraph, strings: AppStrings, resumeTi
     val flow = remember { PermissionFlow(graph.permissionLedger) }
     var refresh by remember { mutableIntStateOf(0) }
     var token by remember { mutableIntStateOf(0) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        flow.complete(token)
+        refresh++
+    }
+    val settingsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         flow.complete(token)
         refresh++
     }
@@ -153,16 +170,27 @@ private fun PermissionScreen(graph: LocationGraph, strings: AppStrings, resumeTi
         }
         PermissionPlan.next(Build.VERSION.SDK_INT, granted, graph.permissionLedger.asked())
     }
+    val approximate = remember(refresh, resumeTick) {
+        PermissionPlan.hasApproximateLocation { context.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
+    }
     Screen {
+        if (approximate) {
+            Line(strings.tr(Words.string.android_precise_location_body))
+            Button(strings.tr(Words.string.android_health_open_settings)) {
+                HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.noPreciseLocation, Oem.other))
+            }
+        }
         when (step) {
             is PermissionStep.Explain -> {
-                val (title, body) = explanation(step.permission, strings, context)
+                val (title, body) = explanation(step.permission, strings)
                 Title(title)
                 Line(body)
                 Button(strings.onboardingContinue()) {
                     flow.begin(step.permission)?.let {
                         token = it
-                        launcher.launch(step.permission.manifestName)
+                        if (step.method == RequestMethod.settingsPage) {
+                            settingsLauncher.launch(HealthSettings.targets(context, HealthIssue.noBackgroundLocation, Oem.other).first())
+                        } else launcher.launch(PermissionPlan.manifestNames(step.permission))
                     }
                 }
             }
@@ -176,11 +204,11 @@ private fun PermissionScreen(graph: LocationGraph, strings: AppStrings, resumeTi
     }
 }
 
-private fun explanation(permission: RecordingPermission, strings: AppStrings, context: Context): Pair<String, String> = when (permission) {
+private fun explanation(permission: RecordingPermission, strings: AppStrings): Pair<String, String> = when (permission) {
     RecordingPermission.fineLocation -> strings.onboardingLocation() to strings.onboardingLocationSub()
     RecordingPermission.backgroundLocation -> strings.onboardingBackgroundTitle() to
-        strings.tr(Words.string.permission_NSLocationAlwaysAndWhenInUseUsageDescription) + "\n\n" +
-        context.getString(R.string.android_permission_background_hint)
+        (strings.tr(Words.string.permission_NSLocationAlwaysAndWhenInUseUsageDescription) +
+            if (Build.VERSION.SDK_INT >= 30) "\n\n" + strings.tr(Words.string.android_permission_background_hint) else "")
     RecordingPermission.activityRecognition -> strings.onboardingBackgroundTitle() to strings.tr(Words.string.permission_NSMotionUsageDescription)
     RecordingPermission.notifications -> strings.onboardingNotificationsTitle() to strings.onboardingNotificationsSub()
     RecordingPermission.bluetoothConnect -> strings.autoRecord() to strings.tr(Words.string.permission_NSBluetoothAlwaysUsageDescription)
@@ -191,17 +219,17 @@ private fun HealthScreen(graph: LocationGraph, strings: AppStrings, resumeTick: 
     val context = LocalContext.current
     val health = remember(resumeTick) { RecordingHealth.read(context, graph.autoRecord.mode != AutoRecordMode.off) }
     Screen {
-        Title(context.getString(R.string.android_health_title))
-        if (health.issues.isEmpty()) Line(context.getString(R.string.android_health_ok))
+        Title(strings.tr(Words.string.android_health_title))
+        if (health.issues.isEmpty()) Line(strings.tr(Words.string.android_health_ok))
         for (issue in health.issues) {
-            Line(context.getString(issue.message))
-            Button(context.getString(R.string.android_health_open_settings)) {
+            Line(strings.tr(issue.message))
+            Button(strings.tr(Words.string.android_health_open_settings)) {
                 HealthSettings.open(context, HealthSettings.targets(context, issue, health.oem))
             }
         }
         health.oemSteps?.let { steps ->
-            Line(context.getString(steps))
-            Button(context.getString(R.string.android_health_open_settings)) {
+            Line(strings.tr(steps))
+            Button(strings.tr(Words.string.android_health_open_settings)) {
                 HealthSettings.open(context, HealthSettings.targets(context, null, health.oem))
             }
         }
@@ -215,12 +243,18 @@ private fun StereoScreen(graph: LocationGraph, strings: AppStrings, back: () -> 
     val context = LocalContext.current
     var mode by remember { mutableStateOf(graph.autoRecord.mode) }
     var saved by remember { mutableStateOf(graph.autoRecord.savedDevices) }
+    LaunchedEffect(graph.autoRecord) {
+        graph.autoRecord.changes.collect {
+            mode = graph.autoRecord.mode
+            saved = graph.autoRecord.savedDevices
+        }
+    }
     val paired = remember { pairedAudioDevices(context) }
     Screen {
         Title(strings.autoRecord())
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             for ((value, label) in listOf(AutoRecordMode.off to strings.autoRecordOff(), AutoRecordMode.remind to strings.autoRecordRemind(), AutoRecordMode.auto to strings.autoRecordAuto())) {
-                Button(if (value == mode) "• $label" else label) {
+                Button(if (value == mode) strings.tr(Words.string.android_selected_item, label) else label) {
                     graph.autoRecord.mode = value
                     mode = value
                     graph.rearmAutoRecord()
@@ -232,7 +266,7 @@ private fun StereoScreen(graph: LocationGraph, strings: AppStrings, back: () -> 
         if (paired == null) Line(strings.bluetoothRequired())
         for (device in paired.orEmpty()) {
             val isSaved = saved.any { it.uuid.equals(device.uuid, ignoreCase = true) }
-            Button(if (isSaved) "• ${device.name}" else device.name) {
+            Button(if (isSaved) strings.tr(Words.string.android_selected_item, device.name) else device.name) {
                 if (isSaved) graph.autoRecord.removeDevice(device.uuid) else graph.autoRecord.addDevice(device)
                 saved = graph.autoRecord.savedDevices
             }

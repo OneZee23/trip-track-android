@@ -152,6 +152,7 @@ class AppGraph(private val context: Context) {
         settings, presentationPreferences, syncHost,
         SyncSettingsEffects({ syncHost.engine.value }, settings, recordingSettings(), ApiProfilePrivacyService(apiClient)),
         Dispatchers.Main.immediate,
+        autoRecord = location.autoRecord,
         events = RoomWorldChanges(database).events,
     ).also { settingsManagerReady = true }
 
@@ -234,7 +235,6 @@ class AppGraph(private val context: Context) {
         syncAccountProfile = { auth.backfillNameIfNeeded() },
         purgeVehiclePreferences = { vehicleId ->
             location.autoRecord.removeDevices(vehicleId)
-            settingsManager.removeStereos(vehicleId)
         },
         reloadSettings = { settingsManager.reload() },
     )
@@ -244,12 +244,9 @@ class AppGraph(private val context: Context) {
         settingsManager.state.value.home.activeZone?.let { PrivacyZoneSpec(it.centre, it.radius) }
 
     /**
-     * The recording owner applies the auto-record settings to its own store and detectors.
+     * The settings are already persisted in the shared owner; only re-arm the detectors.
      */
-    private fun recordingSettings() = RecordingSettings { mode, timeout, stereos ->
-        location.autoRecord.mode = mode
-        location.autoRecord.autoStopTimeout = timeout
-        location.autoRecord.savedDevices = stereos
+    private fun recordingSettings() = RecordingSettings { _, _, _ ->
         location.rearmAutoRecord()
     }
 
