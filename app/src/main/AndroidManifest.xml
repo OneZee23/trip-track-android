@@ -17,9 +17,12 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/support_paths" />
         </provider>
+        <!-- uiMode: the theme picker switches in place, as on iOS. Without it AppCompat recreates
+             the activity on every pick, and the screen flashes and loses its state. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="uiMode"
             android:theme="@style/Theme.TripTrack.Starting"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
