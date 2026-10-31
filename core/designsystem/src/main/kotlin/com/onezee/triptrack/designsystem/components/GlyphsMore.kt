@@ -36,6 +36,18 @@ internal fun DrawScope.drawMoreGlyph(glyph: AppGlyph, tint: Color) {
             drawLine(tint, Offset(12f, 5f), Offset(12f, 19f), 2.3f, StrokeCap.Round)
             drawLine(tint, Offset(5f, 12f), Offset(19f, 12f), 2.3f, StrokeCap.Round)
         }
+        AppGlyph.chevronUp -> drawPath(path(4.2f, 15.4f, 12f, 7.6f, 19.8f, 15.4f), tint, style = line(2.6f))
+        AppGlyph.chevronDown -> drawPath(path(4.2f, 8.6f, 12f, 16.4f, 19.8f, 8.6f), tint, style = line(2.6f))
+        AppGlyph.houseFill -> {
+            drawPath(path(3.4f, 11.6f, 12f, 4f, 20.6f, 11.6f), tint, style = line(2f))
+            drawPath(path(5.6f, 10.8f, 5.6f, 19.8f, 10f, 19.8f, 10f, 14.6f, 14f, 14.6f, 14f, 19.8f, 18.4f, 19.8f, 18.4f, 10.8f, 12f, 5.2f, close = true), tint, style = Fill)
+        }
+        AppGlyph.trayFull -> {
+            drawPath(path(3.6f, 13f, 6.6f, 5.4f, 17.4f, 5.4f, 20.4f, 13f, 20.4f, 18.6f, 3.6f, 18.6f, close = true), tint, style = line(w))
+            drawPath(path(3.8f, 13f, 8.6f, 13f, 9.8f, 15.2f, 14.2f, 15.2f, 15.4f, 13f, 20.2f, 13f), tint, style = line(1.7f))
+            drawLine(tint, Offset(8.4f, 8.4f), Offset(15.6f, 8.4f), 1.6f, StrokeCap.Round)
+            drawLine(tint, Offset(7.6f, 10.6f), Offset(16.4f, 10.6f), 1.6f, StrokeCap.Round)
+        }
         AppGlyph.minus -> drawLine(tint, Offset(5f, 12f), Offset(19f, 12f), 2.3f, StrokeCap.Round)
         AppGlyph.lock, AppGlyph.lockFill -> {
             val shackle = Path().apply {

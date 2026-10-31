@@ -197,7 +197,7 @@ data class JourneyDetailState(val journey: JourneyState? = null, val isSocial: B
 
 // iOS: JourneyDetailView.swift (ownJourneyId / social). Foreign mode never writes a local row.
 class JourneyDetailViewModel(
-    private val journeyId: UUID,
+    val journeyId: UUID,
     private val repository: TripRepository,
     private val manager: JourneyManager,
     private val worker: CoroutineDispatcher,

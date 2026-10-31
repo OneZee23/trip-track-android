@@ -94,6 +94,10 @@ enum class AppGlyph {
     play,
     airplane,
     minus,
+    chevronUp,
+    chevronDown,
+    houseFill,
+    trayFull,
 }
 
 /** iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack. */
