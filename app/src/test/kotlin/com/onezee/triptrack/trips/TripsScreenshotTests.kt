@@ -6,6 +6,8 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -61,7 +63,7 @@ class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
 
     @Test fun me() {
         showMe(dark)
-        compose.onNodeWithTag("profile_drafts_row").assertExists()
+        compose.onNodeWithTag("profile_drafts").assertExists()
         shot("me")
     }
 
@@ -151,7 +153,8 @@ class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
 
     @Test fun journeyComposer() {
         showMe(dark)
-        compose.onAllNodesWithTag("profile_trip_card")[0].performTouchInput { longClick() }
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_trip_${latest().id}"))
+        compose.onNodeWithTag("profile_trip_${latest().id}").performTouchInput { longClick() }
         compose.waitForIdle()
         compose.onNodeWithTag("journey_composer").assertExists()
         screen("journey_composer")

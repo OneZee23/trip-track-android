@@ -6,6 +6,12 @@ import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.test.espresso.Espresso
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
@@ -28,19 +34,125 @@ class TripsBehaviourTests : TripsScreenTest() {
 
     @Test fun aHistoryCardOpensItsTripAndBackComesHome() {
         showMe()
-        compose.onAllNodesWithTag("profile_trip_card")[0].performClick()
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_trip_${latest().id}"))
+        compose.onNodeWithTag("profile_trip_${latest().id}").performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("trip_detail").assertExists()
-        assertEquals(latest().id, (feature.meNavigator.top as TripsDestination.TripDetail).id)
+        assertEquals(latest().id, (meNavigator.current as com.onezee.triptrack.feature.me.MeRoute.Trip).id)
         // The screen leaves the tab bar to the screens under it.
         assertTrue(visibility.isHiddenByScreen)
 
         compose.onNodeWithTag("detail_back").performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("trip_detail").assertDoesNotExist()
-        compose.onNodeWithTag("profile_history_header").assertExists()
-        assertTrue(feature.meNavigator.stack.isEmpty())
+        compose.onNodeWithTag("profile_trip_${latest().id}").assertIsDisplayed()
+        assertTrue(meNavigator.path.isEmpty())
         assertFalse(visibility.isHiddenByScreen)
+    }
+
+    @Test fun historyBackRestoresTheSameScrollOffset() {
+        showMe()
+        val card = "profile_trip_${latest().id}"
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag(card))
+        fun offset() = compose.onNodeWithTag("screen_me").fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
+        val before = offset()
+        assertTrue(before > 0f)
+        compose.onNodeWithTag(card).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        Espresso.pressBack()
+        compose.waitForIdle()
+        compose.onNodeWithTag(card).assertIsDisplayed()
+        assertEquals(before, offset())
+        assertTrue(feature.feedNavigator.stack.isEmpty())
+    }
+
+    @Test fun draftsRowOpensTheSharedListThenItsTripAndBackReturnsToDrafts() {
+        showMe()
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_drafts"))
+        compose.onNodeWithTag("profile_drafts").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("drafts_list").assertExists()
+        assertEquals(com.onezee.triptrack.feature.me.MeRoute.Drafts, meNavigator.current)
+        compose.onAllNodesWithTag("draft_row")[0].performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        compose.onNodeWithTag("detail_back").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("drafts_list").assertExists()
+        Espresso.pressBack()
+        compose.waitForIdle()
+        compose.onNodeWithTag("profile_drafts").assertIsDisplayed()
+        assertTrue(meNavigator.path.isEmpty())
+    }
+
+    @Test fun aJournalJourneyOpensItsSharedDetailInTheMeStack() {
+        showMe()
+        val journey = seededJourney()
+        val tag = "profile_journey_${journey.id}"
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag(tag))
+        compose.onNodeWithTag(tag).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("journey_detail").assertExists()
+        assertEquals(com.onezee.triptrack.feature.me.MeRoute.Journey(journey.id), meNavigator.current)
+        assertTrue(feature.feedNavigator.stack.isEmpty())
+        Espresso.pressBack()
+        compose.waitForIdle()
+        compose.onNodeWithTag(tag).assertIsDisplayed()
+    }
+
+    @Test fun aPinnedTripOpensTheSameDetail() {
+        val trip = latest()
+        showMe { state -> state.copy(history = state.history.copy(pinned = listOf(trip), chapters = emptyList())) }
+        val card = "profile_trip_${trip.id}"
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag(card))
+        compose.onNodeWithTag(card).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        assertEquals(trip.id, (meNavigator.current as com.onezee.triptrack.feature.me.MeRoute.Trip).id)
+    }
+
+    @Test fun anExpandedRoutineOpensItsTripAndReturnsWithTheRoutineExpanded() {
+        val trips = trips().sortedByDescending { it.startDate }.take(3)
+        val group = com.onezee.triptrack.model.ProfileRoutineTrips(trips, trips.sumOf { it.distance }, trips)
+        showMe { state -> state.copy(history = state.history.copy(pinned = emptyList(), chapters = listOf(
+            state.history.chapters.first().copy(rows = listOf(com.onezee.triptrack.model.HistoryRow.Routine(group)))
+        ))) }
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_routine_toggle"))
+        compose.onNodeWithTag("profile_routine_toggle").performClick()
+        val row = "profile_routine_trip_${trips.first().id}"
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag(row))
+        // Like ProfileCardShotTests.align: the floating bar overlaps the lazy list's viewport.
+        compose.onNodeWithTag("screen_me").performTouchInput { swipeUp() }
+        compose.onNodeWithTag(row).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        Espresso.pressBack()
+        compose.waitForIdle()
+        compose.onNodeWithTag(row).assertIsDisplayed()
+    }
+
+    // iOS: TripJourneyNavigationTests.testOwnTripCanOpenItsJourneyAndReturnToItsMap.
+    @Test fun aJourneyLegCanOpenItsJourneyAndBackKeepsTheSameTripEntry() {
+        showMe()
+        val journey = seededJourney()
+        push(TripsDestination.JourneyDetail(journey.id))
+        compose.onAllNodesWithTag("journey_leg_row")[0].performScrollTo().performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        val trip = meNavigator.current
+        val entry = meNavigator.stack.entryIds.last()
+        compose.onNodeWithTag("detail_actions").performClick()
+        compose.onNodeWithTag("detail_action_journey").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("journey_detail").assertExists()
+        assertEquals(3, meNavigator.path.size)
+        compose.onNodeWithTag("detail_back").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        assertEquals(trip, meNavigator.current)
+        assertEquals(entry, meNavigator.stack.entryIds.last())
+        assertTrue(feature.feedNavigator.stack.isEmpty())
     }
 
     /** A double tap on one card must not stack the same trip twice (iOS `push` is idempotent). */
@@ -49,7 +161,7 @@ class TripsBehaviourTests : TripsScreenTest() {
         val destination = TripsDestination.TripDetail(latest().id)
         push(destination)
         push(destination)
-        assertEquals(1, feature.meNavigator.stack.size)
+        assertEquals(1, meNavigator.path.size)
     }
 
     @Test fun deletingFromTheActionsAsksFirstAndCancelKeepsTheTrip() {
@@ -81,7 +193,7 @@ class TripsBehaviourTests : TripsScreenTest() {
         compose.waitForIdle()
 
         assertTrue(trips().none { it.id == trip.id })
-        assertTrue(feature.meNavigator.stack.isEmpty())
+        assertTrue(meNavigator.path.isEmpty())
         compose.onNodeWithTag("trip_detail").assertDoesNotExist()
     }
 
@@ -99,7 +211,7 @@ class TripsBehaviourTests : TripsScreenTest() {
 
         assertTrue(onMain { repository.fetchJourneys() }.isEmpty())
         assertEquals(before, trips().size)
-        assertTrue(feature.meNavigator.stack.isEmpty())
+        assertTrue(meNavigator.path.isEmpty())
     }
 
     @Test fun publishingAPrivateTripGoesThroughItsSheet() {
@@ -137,7 +249,8 @@ class TripsBehaviourTests : TripsScreenTest() {
 
     @Test fun aHeldHistoryCardOpensTheJourneyComposer() {
         showMe()
-        compose.onAllNodesWithTag("profile_trip_card")[0].performTouchInput { longClick() }
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_trip_${latest().id}"))
+        compose.onNodeWithTag("profile_trip_${latest().id}").performTouchInput { longClick() }
         compose.waitForIdle()
         compose.onNodeWithTag("journey_composer").assertExists()
     }
@@ -145,7 +258,8 @@ class TripsBehaviourTests : TripsScreenTest() {
     @Test fun openingTheDraftsClearsTheDot() {
         showMe()
         assertTrue(feature.drafts.state.value.hasUnseen)
-        compose.onNodeWithTag("profile_drafts_row").performClick()
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_drafts"))
+        compose.onNodeWithTag("profile_drafts").performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("drafts_list").assertExists()
         assertFalse(feature.drafts.state.value.hasUnseen)

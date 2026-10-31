@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
-import com.onezee.triptrack.shell.MePlaceholder
+import com.onezee.triptrack.feature.settings.SettingsRoute
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
-class MePlaceholderTests {
+class MeSettingsPickerTests {
     private val compose = createAndroidComposeRule<ComponentActivity>()
 
     @get:Rule
@@ -41,16 +41,16 @@ class MePlaceholderTests {
         val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
         compose.setContent {
             TripTrackTheme(isDark = false, language = AppLanguage.ru, reduceMotion = false) {
-                MePlaceholder(graph.themeManager, graph.languageManager)
+                SettingsRoute(graph) {}
             }
         }
         compose.onNodeWithTag("settings_language").performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("sheet").assertExists()
+        compose.onNodeWithTag("settings_language_row_1").assertExists()
         compose.mainClock.autoAdvance = false
         compose.onNodeWithTag("settings_language_row_1").performClick()
         compose.mainClock.advanceTimeByFrame()
-        compose.onNodeWithTag("sheet").assertDoesNotExist()
+        compose.onNodeWithTag("settings_language_row_1").assertDoesNotExist()
         compose.mainClock.autoAdvance = true
     }
 
@@ -59,7 +59,7 @@ class MePlaceholderTests {
         val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
         compose.setContent {
             TripTrackTheme(isDark = false, language = AppLanguage.ru, reduceMotion = false) {
-                MePlaceholder(graph.themeManager, graph.languageManager)
+                SettingsRoute(graph) {}
             }
         }
         compose.onNodeWithTag("settings_theme").performClick()
@@ -67,9 +67,9 @@ class MePlaceholderTests {
         compose.mainClock.autoAdvance = false
         compose.onNodeWithTag("settings_theme_row_2").performClick()
         compose.mainClock.advanceTimeByFrame()
-        compose.onNodeWithTag("sheet").assertExists()
+        compose.onNodeWithTag("settings_theme_row_2").assertExists()
         compose.mainClock.autoAdvance = true
         compose.waitForIdle()
-        compose.onNodeWithTag("sheet").assertDoesNotExist()
+        compose.onNodeWithTag("settings_theme_row_2").assertDoesNotExist()
     }
 }

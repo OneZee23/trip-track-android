@@ -7,9 +7,14 @@ import com.onezee.triptrack.model.*
 import java.time.LocalDate
 import java.util.UUID
 import org.junit.Test
+import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.resetMain
 import kotlin.test.*
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class MePresentationTests {
+    @org.junit.Before fun mainDispatcher() { kotlinx.coroutines.Dispatchers.setMain(kotlinx.coroutines.test.StandardTestDispatcher()) }
+    @org.junit.After fun resetDispatcher() { kotlinx.coroutines.Dispatchers.resetMain() }
     private val first = LocalDate.of(2026, 10, 10)
     @Test fun sameDayTwiceClearsAndEarlierDaySwapsTheRange() {
         assertEquals(CalendarRange(first), CalendarRange().tap(first))
@@ -38,6 +43,44 @@ class MePresentationTests {
         assertEquals(listOf(MeRoute.Garage, passport), navigation.path)
         navigation.pop(); assertEquals(MeRoute.Garage, navigation.current)
         navigation.pop(); assertNull(navigation.current)
+    }
+    // iOS: ProfilePreviewNavTests.testDoubleTapDoesNotStackTheSameScreenTwice.
+    @Test fun tripPushFromASharedScreenUsesTheSameMeEntryDespiteADifferentPreview() {
+        val id = UUID.fromString("10000000-0000-4000-8000-000000000001")
+        val navigation = MeNavigator()
+        navigation.push(MeRoute.Trip(id))
+        navigation.push(com.onezee.triptrack.feature.TripsDestination.TripDetail(id, Trip(id = id)))
+        assertEquals(1, navigation.path.size)
+        assertEquals(MeRoute.Trip(id), navigation.current)
+    }
+    // iOS: ProfilePreviewNavTests.testSameScreenDeeperInThePathStillPushes.
+    @Test fun aTripDeeperInThePathStillPushesAndReturnsToItsJourney() {
+        val trip = MeRoute.Trip(UUID.fromString("10000000-0000-4000-8000-000000000001"))
+        val journey = MeRoute.Journey(UUID.fromString("10000000-0000-4000-8000-000000000002"))
+        val navigation = MeNavigator(listOf(trip, journey))
+        navigation.push(com.onezee.triptrack.feature.TripsDestination.TripDetail(trip.id))
+        assertEquals(listOf(trip, journey, trip), navigation.path)
+        navigation.pop()
+        assertEquals(journey, navigation.current)
+    }
+    // iOS: ProfilePreviewNavTests.testDifferentDestinationStillPushes.
+    @Test fun differentJourneysAreDifferentMeScreens() {
+        val first = UUID.fromString("10000000-0000-4000-8000-000000000001")
+        val second = UUID.fromString("10000000-0000-4000-8000-000000000002")
+        val navigation = MeNavigator()
+        navigation.push(com.onezee.triptrack.feature.TripsDestination.JourneyDetail(first))
+        navigation.push(com.onezee.triptrack.feature.TripsDestination.JourneyDetail(second))
+        assertEquals(listOf(MeRoute.Journey(first), MeRoute.Journey(second)), navigation.path)
+    }
+    @Test fun restoringTheTabKeepsItsLiveTripEntryAndAFreshProcessRestoresSubjects() {
+        val id = UUID.fromString("10000000-0000-4000-8000-000000000001")
+        val owner = MeNavigator(listOf(MeRoute.Trip(id)))
+        val entry = owner.stack.entryIds.single()
+        assertSame(owner, MeNavigator.saver(owner).restore(listOf("trip:$id")))
+        assertEquals(entry, owner.stack.entryIds.single())
+        val fresh = MeNavigator()
+        assertSame(fresh, MeNavigator.saver(fresh).restore(listOf("drafts", "trip:$id")))
+        assertEquals(listOf(MeRoute.Drafts, MeRoute.Trip(id)), fresh.path)
     }
     @Test fun legacyEmojiKeepsItsColourAndTakesTheStyle() {
         assertEquals("pixel_car_red", VehicleAvatar.asset("car", "🚗"))

@@ -90,6 +90,12 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun achievements() = shot("achievements") {
         AchievementsScreen(MeFixtures.achievements, {}, {})
     }
+    @Test fun levels() = shot("levels") {
+        LevelsScreen(MeFixtures.hero.identity.copy(level = 21, xp = 26400), {})
+    }
+    @Test fun country() = shot("country") { CountryScreen("RU", {}, {}) }
+    @Test fun nameEditor() = shot("name_editor") { ProfileTextEditor(ProfileTextField.displayName, "Путешественник", {}, {}) }
+    @Test fun bioEditor() = shot("bio_editor") { ProfileTextEditor(ProfileTextField.bio, MeFixtures.hero.identity.bio, {}, {}) }
     companion object {
         @JvmStatic @ParameterizedRobolectricTestRunner.Parameters(name = "dark={0}")
         fun themes(): List<Array<Any>> = listOf(arrayOf(false), arrayOf(true))

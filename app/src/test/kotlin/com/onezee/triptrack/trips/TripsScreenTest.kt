@@ -13,6 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalInspectionMode
+import com.onezee.triptrack.feature.me.*
+import com.onezee.triptrack.logic.*
+import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
+import com.onezee.triptrack.ui.navigation.rememberLocalViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -37,7 +43,6 @@ import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
 import com.onezee.triptrack.designsystem.theme.ThemeManager
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
 import com.onezee.triptrack.feature.FeedTab
-import com.onezee.triptrack.feature.MeTab
 import com.onezee.triptrack.feature.TripsDestination
 import com.onezee.triptrack.feature.TripsFeature
 import com.onezee.triptrack.feature.asPreviewTrip
@@ -48,6 +53,8 @@ import com.onezee.triptrack.feature.trip.TestSyncSink
 import com.onezee.triptrack.feature.trip.TripSummary
 import com.onezee.triptrack.feature.tripChanges
 import com.onezee.triptrack.location.recording.RecorderState
+import com.onezee.triptrack.model.*
+import com.onezee.triptrack.model.RoadSceneTime
 import com.onezee.triptrack.model.DistanceUnit
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.ReactionTally
@@ -58,7 +65,6 @@ import com.onezee.triptrack.model.SocialFeedVehicle
 import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.shell.LanguageManager
-import com.onezee.triptrack.shell.MePlaceholder
 import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.ui.LocalTripPhotoImages
 import java.io.File
@@ -104,6 +110,7 @@ abstract class TripsScreenTest {
 
     protected lateinit var db: TripTrackDatabase
     protected lateinit var repository: RoomTripRepository
+    internal val meNavigator = MeNavigator()
     protected lateinit var feature: TripsFeature
     protected val owner: UUID = UUID.fromString("6f1c2d3e-4a5b-4c6d-8e7f-001122334455")
     protected val sink = TestSyncSink()
@@ -147,7 +154,7 @@ abstract class TripsScreenTest {
         compose.activityRule.scenario.moveToState(Lifecycle.State.DESTROYED)
         compose.runOnUiThread {
             feature.feedNavigator.popToRoot()
-            feature.meNavigator.popToRoot()
+            meNavigator.stack.popToRoot()
         }
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
         feature.close()
@@ -202,15 +209,32 @@ abstract class TripsScreenTest {
         FeedTab(feature, scrollToTop = 0, offline = false, onOpenRecord = {}, onOpenProfileTab = {})
     }
 
-    /** Я as the shell has it until its own screen lands: the settings card, then drafts and history. */
-    protected fun showMe(dark: Boolean = false) {
-        val app = RuntimeEnvironment.getApplication()
-        val themes = ThemeManager(app.getSharedPreferences("trips-screens-theme", Context.MODE_PRIVATE))
-        val languages = LanguageManager()
-        show(dark, AppTab.profile) { MeTab(feature) { below -> MePlaceholder(themes, languages, below) } }
+    /** The same journal and destination host as the real Me tab, on the deterministic Room library. */
+    protected fun showMe(dark: Boolean = false, transform: (MeState) -> MeState = { it }) {
+        val library = trips().sortedByDescending { it.startDate }
+        val journeys = onMain { repository.fetchJourneys() }
+        val drafts = onMain { repository.fetchDraftTrips() }
+        val state = transform(MeState(loaded = true, drafts = drafts,
+            hero = ProfileHeroState(ProfileIdentity(name = "Дорожный дневник"), RoadSceneTime.day, tripCount = library.size, distanceMetres = library.sumOf { it.distance }),
+            history = PreparedProfileHistory.build(ProfileHistoryLibrary(library), journeys, "", null, null, AppLanguage.ru.locale, ZoneId.of(ZONE), now = NOW)))
+        show(dark, AppTab.profile) {
+            CompositionLocalProvider(LocalInspectionMode provides true) {
+                var composer by remember { mutableStateOf<Trip?>(null) }
+                MeNavHost(feature, meNavigator, root = {
+                    MeContent(state, DistanceUnit.km, {}, {}, {}, {}, {}, {},
+                        onDrafts = { meNavigator.push(MeRoute.Drafts) }, onProfile = {}, onLevel = {}, onQuery = {}, onRange = { _, _ -> }, onMode = {}, onClear = {},
+                        onTrip = { meNavigator.push(MeRoute.Trip(it.id, it)) }, onJourney = { meNavigator.push(MeRoute.Journey(it.id)) },
+                        onPin = {}, onReload = {}, onComposeJourney = { composer = it })
+                })
+                composer?.let { anchor ->
+                    val model = rememberLocalViewModel(anchor.id) { feature.journeyComposer(anchor) }
+                    JourneyComposerSheet(model, onCreated = {}, onDismissRequest = { composer = null })
+                }
+            }
+        }
     }
 
-    protected fun push(destination: TripsDestination, navigator: com.onezee.triptrack.ui.navigation.TabNavigator<TripsDestination> = feature.meNavigator) {
+    protected fun push(destination: TripsDestination, navigator: com.onezee.triptrack.ui.navigation.DestinationNavigator<TripsDestination> = meNavigator) {
         compose.runOnUiThread { navigator.push(destination) }
         compose.waitForIdle()
     }

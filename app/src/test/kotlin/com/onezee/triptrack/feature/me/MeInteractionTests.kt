@@ -92,4 +92,71 @@ class MeInteractionTests {
         assertFalse(dismissed)
         compose.onNodeWithTag("settings_app_prefs").assertIsDisplayed()
     }
+    @Test fun theProfileHubPushesLevelsAndCountryAndBackReturnsToTheHub() {
+        val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { MeTab(graph) } }
+        compose.waitUntil(5000) { graph.me.profile.state.value.loaded }
+        compose.onNodeWithTag("profile_identity").performClick()
+        compose.onNodeWithTag("profile_levels").performScrollTo().performClick()
+        compose.onNodeWithTag("levels_screen").assertExists()
+        Espresso.pressBack()
+        compose.onNodeWithTag("profile_country").performScrollTo().performClick()
+        compose.onNodeWithTag("country_picker").assertExists()
+        compose.onNodeWithTag("country_WORLD").performClick()
+        compose.onNodeWithTag("country_picker").assertDoesNotExist()
+        compose.onNodeWithTag("profile_country").assertExists()
+        assertEquals("WORLD", graph.me.identity.identity.value.country)
+        Espresso.pressBack()
+        compose.onNodeWithTag("screen_me").assertExists()
+    }
+
+    @Test fun theBioCanBeClearedAndTheNameEditorDoesNotEditTheBio() {
+        var saved: String? = null
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) {
+            ProfileTextEditor(ProfileTextField.bio, "За новыми дорогами", { saved = it }, {})
+        } }
+        compose.onNodeWithTag("profile_bio_done").assertIsNotEnabled()
+        compose.onNodeWithTag("profile_bio_field").performTextReplacement("")
+        compose.onNodeWithTag("profile_bio_done").assertIsEnabled().performClick()
+        compose.waitForIdle()
+        assertEquals("", saved)
+    }
+
+    @Test fun doubleTapZoomsAtTheFingerAndTheSecondDoubleTapRestoresPaging() {
+        var zoomed = false
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) {
+            ZoomableMePhoto(true, { zoomed = it }) { androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier) }
+        } }
+        compose.onNodeWithTag("me_photo_zoom").performTouchInput { doubleClick(center) }
+        compose.waitForIdle()
+        kotlin.test.assertTrue(zoomed)
+        compose.onNodeWithTag("me_photo_zoom").performTouchInput { advanceEventTime(400); doubleClick(center) }
+        compose.waitForIdle()
+        assertFalse(zoomed)
+    }
+
+    @Test fun pinchZoomsOnTheFirstGesture() {
+        var zoomed = false
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) {
+            ZoomableMePhoto(true, { zoomed = it }) { androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier) }
+        } }
+        compose.onNodeWithTag("me_photo_zoom").performTouchInput {
+            pinch(center - androidx.compose.ui.geometry.Offset(30f, 0f), center + androidx.compose.ui.geometry.Offset(30f, 0f),
+                center - androidx.compose.ui.geometry.Offset(120f, 0f), center + androidx.compose.ui.geometry.Offset(120f, 0f))
+        }
+        compose.waitForIdle()
+        kotlin.test.assertTrue(zoomed)
+    }
+
+    @Test fun theGuestCardIsOnMeWhileSettingsKeepLanguageAndTheme() {
+        val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { MeTab(graph) } }
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_guest_signin"))
+        compose.onNodeWithTag("profile_guest_signin").assertIsDisplayed()
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_gear"))
+        compose.onNodeWithTag("profile_gear").performClick()
+        compose.onNodeWithTag("settings_language").assertExists()
+        compose.onNodeWithTag("settings_theme").assertExists()
+    }
+
 }
