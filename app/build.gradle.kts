@@ -90,6 +90,8 @@ dependencies {
     implementation(project(":core:sync"))
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(project(":core:map"))
+    // iOS: MKMapSnapshotter. The existing MapLibre version renders static journal/garage maps.
+    implementation(libs.maplibre.opengl)
     implementation(libs.serialization.json)
     implementation(libs.exifinterface)
     implementation(platform(libs.compose.bom))
