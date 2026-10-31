@@ -49,6 +49,49 @@ enum class AppGlyph {
     squareAndArrowUp,
     flag,
     characterBubble,
+
+    // The trip screens (GlyphsMore.kt).
+    plus,
+    lock,
+    lockFill,
+    globe,
+    map,
+    mapSlash,
+    suitcase,
+    suitcaseFill,
+    squareAndPencil,
+    pencilLine,
+    camera,
+    cameraFill,
+    photo,
+    flagFill,
+    flagCheckered,
+    mappinAndEllipse,
+    arrowUpLeftAndArrowDownRight,
+    arrowDownRightAndArrowUpLeft,
+    arrowClockwise,
+    exclamationmarkTriangleFill,
+    car,
+    tray,
+    tablecells,
+    squareAndArrowDown,
+    magnifyingglass,
+    minusCircle,
+    plusCircleFill,
+    checkmarkCircle,
+    circle,
+    bubbleRight,
+    heart,
+    calendar,
+    clock,
+    speedometer,
+    mountain,
+    bolt,
+    fuelpump,
+    roadLanes,
+    arrowTriangleSwap,
+    pause,
+    play,
 }
 
 /** iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack. */
@@ -78,7 +121,8 @@ private const val GRID = 24f
 private val AppGlyph.cutsOut: Boolean
     get() = when (this) {
         AppGlyph.checkmarkCircleFill, AppGlyph.xmarkCircleFill, AppGlyph.infoCircleFill,
-        AppGlyph.arrowUturnBackwardCircleFill, AppGlyph.gearshapeFill -> true
+        AppGlyph.arrowUturnBackwardCircleFill, AppGlyph.gearshapeFill,
+        AppGlyph.exclamationmarkTriangleFill, AppGlyph.plusCircleFill -> true
         else -> false
     }
 
@@ -205,5 +249,6 @@ internal fun DrawScope.drawGlyph(glyph: AppGlyph, tint: Color) {
             drawLine(tint, Offset(6.2f, 20.8f), Offset(6.2f, 3.8f), 1.9f, StrokeCap.Round)
             drawPath(polyline(6.2f, 4.4f, 17.6f, 4.4f, 14.8f, 8.6f, 17.6f, 12.8f, 6.2f, 12.8f), tint, style = stroke(1.9f))
         }
+        else -> drawMoreGlyph(glyph, tint)
     }
 }
