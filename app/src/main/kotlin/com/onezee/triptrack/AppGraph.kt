@@ -13,6 +13,7 @@ import com.onezee.triptrack.data.DataEnvironment
 import com.onezee.triptrack.data.LocalDataWipe
 import com.onezee.triptrack.data.PreferencesDataFlags
 import com.onezee.triptrack.data.RoomPlaceStore
+import com.onezee.triptrack.data.RoomRevealedTileStore
 import com.onezee.triptrack.data.RoomSettingsStore
 import com.onezee.triptrack.data.RoomTerritoryStore
 import com.onezee.triptrack.data.RoomTripRepository
@@ -37,6 +38,10 @@ import com.onezee.triptrack.feature.account.ProfileSyncLatch
 import com.onezee.triptrack.feature.account.SessionEvents
 import com.onezee.triptrack.feature.account.SyncCounts
 import com.onezee.triptrack.feature.account.SyncHost
+import com.onezee.triptrack.feature.atlas.AndroidAtlasLocation
+import com.onezee.triptrack.feature.atlas.RevealedLayerStore
+import com.onezee.triptrack.feature.atlas.WorldFeature
+import com.onezee.triptrack.feature.atlas.networkOnline
 import com.onezee.triptrack.feature.onboarding.OnboardingStore
 import com.onezee.triptrack.feature.settings.AndroidPresentationPreferences
 import com.onezee.triptrack.feature.settings.ApiProfilePrivacyService
@@ -67,7 +72,13 @@ import java.util.UUID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -132,11 +143,15 @@ class AppGraph(private val context: Context) {
 
     val strings: AppStrings get() = AppStrings(context)
 
+    /** The opened world in storage: a finished trip is burnt into it, the Atlas reads it. */
+    val revealedLayer = RevealedLayerStore(RoomRevealedTileStore(database), PreferencesDataFlags(context), preferences, Dispatchers.Default)
+
     val location = LocationGraph(
         context, database, trips, settings, vehicles, RoomPlaceStore(database), RoomTerritoryStore(database), syncHost, environment,
         strings = { strings },
         autoTitle = ::autoTitle,
         isOffline = ::isOffline,
+        reveal = revealedLayer,
     )
 
     // MARK: - Session
@@ -165,7 +180,7 @@ class AppGraph(private val context: Context) {
     private val profileLatch = ProfileSyncLatch(presentationPreferences)
     val accountState = AccountScopedState(database, trips, accountSettings, profileLatch)
     private val localDataWipe = LocalDataWipe(database, tripPhotoFiles, vehiclePhotoFiles, PreferencesDataFlags(context),
-        afterWipe = listOf({ location.rawFixLog.wipe() }))
+        afterWipe = listOf({ location.rawFixLog.wipe() }, { revealedLayer.forgetRegions() }))
 
     val auth: AuthService = AuthService(
         client = apiClient,
@@ -190,6 +205,18 @@ class AppGraph(private val context: Context) {
             tripChanges(database), preferences, syncHost, ::isOffline)
     }
 
+    /** The Atlas and Places tabs, with their view models and stacks. */
+    val world by lazy {
+        WorldFeature(
+            repository = trips, places = RoomPlaceStore(database), territory = RoomTerritoryStore(database),
+            tiles = RoomRevealedTileStore(database), revealed = revealedLayer, presentation = presentationPreferences,
+            location = AndroidAtlasLocation(context),
+            home = settingsManager.state.map { it.home }.stateIn(scope, SharingStarted.Eagerly, settingsManager.state.value.home),
+            events = RoomWorldChanges(database).events, online = networkOnline(context, scope), trips = tripsFeature,
+            saveHome = { home -> settingsManager.setHome(home) },
+        ).also { it.selectTab = tabStore::select }
+    }
+
     /** Writes stamp the settings row's id: anything writing at launch waits for it. */
     suspend fun awaitSettings() { userIdLoaded.await() }
 
@@ -201,6 +228,7 @@ class AppGraph(private val context: Context) {
      * The settings row first (it is the identity), then the recording side's launch recovery. The
      * session is read at once; its engine waits for the identity, which its pending recovery needs.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun start() {
         auth.start { userIdLoaded.await() }
         scope.launch {
@@ -208,6 +236,14 @@ class AppGraph(private val context: Context) {
             userId = id
             userIdLoaded.complete(id)
             location.start()
+            // iOS: the one-off build of the opened world after an update (MapViewModel's migrations).
+            revealedLayer.rebuildIfNeeded()
+        }
+        // A pull brings trips past the finish and the build: the fog reads what it brought.
+        scope.launch {
+            syncHost.engine.flatMapLatest { it?.coordinator?.completed ?: emptyFlow() }.collect { pulled ->
+                revealedLayer.reconcile(RevealedLayerStore.ReconcileRequest.Ids(pulled.appliedTripIds.toSet()))
+            }
         }
         // A launch before the first unlock reads the session as «unknown»; read it again then.
         ContextCompat.registerReceiver(context, object : BroadcastReceiver() {

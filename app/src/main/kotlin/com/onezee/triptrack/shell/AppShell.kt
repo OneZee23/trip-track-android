@@ -35,6 +35,8 @@ import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
 import com.onezee.triptrack.feature.FeedTab
 import com.onezee.triptrack.feature.MeTab
+import com.onezee.triptrack.feature.atlas.ui.AtlasTab
+import com.onezee.triptrack.feature.places.ui.PlacesTab
 import com.onezee.triptrack.ui.LocalTripPhotoImages
 
 /**
@@ -111,9 +113,9 @@ private val TabSwitch = spring<Float>(dampingRatio = 0.85f, stiffness = 815.7f)
 private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resumeTick: Int, offline: Boolean, onSelect: (AppTab) -> Unit) {
     when (tab) {
         AppTab.home -> FeedTab(graph.tripsFeature, feedScrollToTop, offline, onOpenRecord = { onSelect(AppTab.record) }, onOpenProfileTab = { onSelect(AppTab.profile) })
-        AppTab.maps -> AtlasPlaceholder()
+        AppTab.maps -> AtlasTab(graph.world, resumeTick)
         AppTab.record -> RecordTab(graph, resumeTick, onClose = { onSelect(AppTab.home) })
-        AppTab.places -> PlacesPlaceholder()
+        AppTab.places -> PlacesTab(graph.world, onOpenRecord = { onSelect(AppTab.record) })
         AppTab.profile -> com.onezee.triptrack.feature.me.MeTab(graph, resumeTick)
     }
 }

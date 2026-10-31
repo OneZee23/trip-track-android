@@ -64,12 +64,6 @@ import com.onezee.triptrack.designsystem.theme.rememberHaptics
 // tab's title in the screen-title role and leaves the tab bar's clearance at the bottom; Я already
 // holds the two settings that belong to the shell, theme and language.
 
-@Composable
-internal fun AtlasPlaceholder() = PlaceholderScreen(appStrings.tabMap(), rememberScrollState(), "screen_atlas")
-
-@Composable
-internal fun PlacesPlaceholder() = PlaceholderScreen(appStrings.tabPlaces(), rememberScrollState(), "screen_places")
-
 /**
  * The record tab hides the tab bar, so it brings its own way back: iOS `TrackingView.backButton`,
  * a dark disc over the map that returns to Лента.
