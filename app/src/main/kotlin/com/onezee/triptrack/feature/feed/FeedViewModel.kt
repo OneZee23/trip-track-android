@@ -39,6 +39,8 @@ class FeedViewModel(
     private val generations = mutableMapOf<FeedMode, Int>()
     private val retries = mutableMapOf<FeedMode, Int>()
     private val knownReactions = mutableMapOf<Pair<FeedMode, UUID>, String?>()
+    // The wire items behind the cards: a card opens its trip with the item, as iOS pushes SocialFeedTrip.
+    private val socialItems = mutableMapOf<UUID, SocialFeedTrip>()
     private var sessionGeneration = 0
 
     init {
@@ -161,7 +163,7 @@ class FeedViewModel(
             }
             currentCoroutineContext().ensureActive()
             if (generations[mode] != generation) return
-            for (trip in response.trips) knownReactions[mode to trip.id] = trip.myReaction
+            for (trip in response.trips) { knownReactions[mode to trip.id] = trip.myReaction; socialItems[trip.id] = trip }
             updateSocial(mode) { old -> old.copy(cards = if (replace) served else (old.cards + served).distinctBy { it.trip.id },
                 nextCursor = response.nextCursor, hasMore = response.nextCursor != null, error = null, lastLoadedAt = clock()) }
             retries[mode] = 0
@@ -179,6 +181,9 @@ class FeedViewModel(
         retries[mode] = (retries[mode] ?: 0) + 1
         viewModelScope.launch { delay(1500); if (generations[mode] == generation && jobs[mode]?.isActive != true && social(mode).cards.isEmpty()) refresh(mode) }
     }
+
+    /** The server item a card was built from; what its trip screen opens with. */
+    fun socialTrip(id: UUID): SocialFeedTrip? = socialItems[id]
 
     fun networkRestored() { for (mode in listOf(FeedMode.all, FeedMode.following)) if (social(mode).cards.isEmpty() && social(mode).error != null) { retries[mode] = 0; loadIfNeeded(mode) } }
     fun removeOptimistically(id: UUID) { for (mode in listOf(FeedMode.all, FeedMode.following)) updateSocial(mode) { it.copy(cards = it.cards.filterNot { card -> card.trip.id == id }, lastLoadedAt = null) } }
@@ -223,6 +228,7 @@ class FeedViewModel(
         jobs.values.forEach(Job::cancel)
         for (mode in listOf(FeedMode.all, FeedMode.following)) generations[mode] = (generations[mode] ?: 0) + 1
         knownReactions.clear()
+        socialItems.clear()
         mutable.update { it.copy(all = SocialFeedState(), following = SocialFeedState()) }
     }
 }
