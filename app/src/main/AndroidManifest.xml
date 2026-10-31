@@ -30,6 +30,16 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 tools:node="remove" />
         </provider>
+        <!-- GPX and CSV exports reach the share sheet through this provider, read-only and per grant. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.exports"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/export_paths" />
+        </provider>
         <!-- Below Android 13 AppCompat keeps the per-app language itself; from 13 the system does. -->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

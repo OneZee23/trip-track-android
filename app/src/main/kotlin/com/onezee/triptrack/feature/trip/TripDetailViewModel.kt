@@ -384,6 +384,8 @@ class TripDetailViewModel(
             withContext(Dispatchers.Main.immediate) { mutable.update { it.copy(exported = TripExport("$name.${format.extension}", format, content)) } }
         }
     }
+    /** The screen showed the message as a toast; the next failure of the same kind shows again. */
+    fun consumeMessage() { mutable.update { it.copy(message = null) } }
     fun consumeExport() { mutable.update { it.copy(exported = null) } }
     fun addSegment(from: UUID, to: UUID): Job? {
         if (!state.value.canAddSegment) return null

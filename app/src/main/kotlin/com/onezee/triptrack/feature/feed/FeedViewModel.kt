@@ -185,6 +185,8 @@ class FeedViewModel(
     /** The server item a card was built from; what its trip screen opens with. */
     fun socialTrip(id: UUID): SocialFeedTrip? = socialItems[id]
 
+    fun consumeMessage() { mutable.update { it.copy(message = null) } }
+
     fun networkRestored() { for (mode in listOf(FeedMode.all, FeedMode.following)) if (social(mode).cards.isEmpty() && social(mode).error != null) { retries[mode] = 0; loadIfNeeded(mode) } }
     fun removeOptimistically(id: UUID) { for (mode in listOf(FeedMode.all, FeedMode.following)) updateSocial(mode) { it.copy(cards = it.cards.filterNot { card -> card.trip.id == id }, lastLoadedAt = null) } }
     fun privacyChanged(id: UUID, isPrivate: Boolean) {

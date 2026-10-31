@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Trip exports (GPX, CSV) handed to the share sheet: one cache folder per format, emptied before each export. -->
+<paths>
+    <cache-path name="exports" path="exports/" />
+</paths>

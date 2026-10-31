@@ -106,6 +106,7 @@ class DraftsViewModel(
         } catch (cancelled: CancellationException) { throw cancelled }
         catch (_: Exception) { mutable.update { it.copy(message = TripMessage.actionFailed) } }
     }
+    fun consumeMessage() { mutable.update { it.copy(message = null) } }
     fun setSelecting(selecting: Boolean) { mutable.update { it.copy(selecting = selecting, selected = emptySet()) } }
     fun toggle(id: UUID) { if (state.value.drafts.any { it.id == id }) mutable.update { it.copy(selected = if (id in it.selected) it.selected - id else it.selected + id) } }
     fun selectAll() { mutable.update { it.copy(selecting = true, selected = it.drafts.map { trip -> trip.id }.toSet()) } }

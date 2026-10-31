@@ -254,6 +254,7 @@ class JourneyDetailViewModel(
         } catch (cancelled: CancellationException) { throw cancelled }
         catch (_: Exception) { /* Cached names are optional; the route and legs are already visible. */ }
     }
+    fun consumeMessage() { mutable.update { it.copy(message = null) } }
     fun requestPublish(): Job? {
         if (social != null) return null
         if (!signedIn()) { mutable.update { it.copy(message = TripMessage.signInToPublish) }; return null }
