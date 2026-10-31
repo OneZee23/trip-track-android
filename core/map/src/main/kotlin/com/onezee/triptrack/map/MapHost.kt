@@ -20,6 +20,7 @@ import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import org.maplibre.android.MapLibre
+import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 
 /**
@@ -42,13 +43,20 @@ fun MapHost(
     onMarkerTap: (MapMarker) -> Unit = {},
     chromeInsets: MapInsets = MapInsets.Zero,
     styleUri: String = MapStyles.OPEN_FREE_MAP_LIBERTY,
+    /**
+     * Render into a TextureView instead of a SurfaceView. For a map that lives inside moving UI (a
+     * hero in a scrolling page, a layer that fades in, one map handed between two slots): a
+     * SurfaceView ignores the alpha of its parents and kept its old buffer size after such a move.
+     * Fixed for the life of the map.
+     */
+    textureMode: Boolean = false,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val mapView = remember {
         MapLibre.getInstance(context.applicationContext)
-        MapView(context).also { it.onCreate(null) }
+        MapView(context, MapLibreMapOptions.createFromAttributes(context).textureMode(textureMode)).also { it.onCreate(null) }
     }
     val controller = remember(mapView) { MapController(mapView, state, density, styleUri) }
 

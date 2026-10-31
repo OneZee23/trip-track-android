@@ -115,6 +115,8 @@ fun TripLiveMap(
         onMarkerTap = onMarkerTap,
         chromeInsets = chromeInsets,
         styleUri = style,
+        // The one map moves between the hero and the fullscreen layer and fades in both.
+        textureMode = true,
     )
 }
 
