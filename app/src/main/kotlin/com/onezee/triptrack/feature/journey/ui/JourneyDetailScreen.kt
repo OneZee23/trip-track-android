@@ -269,7 +269,11 @@ private fun JourneyHero(state: JourneyDetailState, title: String, dateRange: Str
         val cover = state.cover
         when {
             cover != null -> PhotoImage(PhotoSource.Local(cover.filename), maxPixels = 1200, modifier = Modifier.fillMaxSize().testTag("journey_hero_cover"))
-            state.coordinates.size > 1 -> LightRoutePreview(state.trips.map { it.coordinates }.filter { it.size > 1 }, Modifier.fillMaxSize(), accent = AppTheme.accent)
+            // iOS fits the legs' map clear of the buttons above and the title below; so does the stand-in.
+            state.coordinates.size > 1 -> Box(Modifier.fillMaxSize().background(AppTheme.colors.cardAlt)) {
+                LightRoutePreview(state.trips.map { it.coordinates }.filter { it.size > 1 },
+                    Modifier.fillMaxSize().padding(start = 24.dp, top = 64.dp, end = 24.dp, bottom = 96.dp), accent = AppTheme.accent)
+            }
             else -> Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.88f)), contentAlignment = Alignment.Center) {
                 Glyph(AppGlyph.map, contentDescription = null, tint = Color.White.copy(alpha = 0.35f), size = 34.dp)
             }

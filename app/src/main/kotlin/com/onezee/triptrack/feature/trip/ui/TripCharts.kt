@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -287,11 +288,12 @@ fun MovingStopsCard(moving: Double, stopped: Double, modifier: Modifier = Modifi
         modifier.fillMaxWidth().surfaceCard(14.dp).padding(horizontal = 16.dp, vertical = 14.dp).testTag("moving_stops"),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(verticalAlignment = Alignment.Bottom) {
+        // iOS: HStack with Spacer(minLength: 8), each label shrinking to 0.8 before it truncates.
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween) {
             Text(strings.movingDot(humanTime(moving, strings)), style = inter(12.5f, InterWeight.semibold), color = AppTheme.accent, maxLines = 1,
-                modifier = Modifier.weight(1f, fill = false))
-            Spacer(Modifier.weight(1f).width(8.dp))
-            Text(strings.stopsDot(humanTime(stopped, strings)), style = inter(12.5f, InterWeight.semibold), color = colors.textSecondary, maxLines = 1)
+                autoSize = shrinking(12.5f), modifier = Modifier.weight(1f, fill = false))
+            Text(strings.stopsDot(humanTime(stopped, strings)), style = inter(12.5f, InterWeight.semibold), color = colors.textSecondary, maxLines = 1,
+                autoSize = shrinking(12.5f), modifier = Modifier.padding(start = 8.dp))
         }
         BoxWithConstraints(Modifier.fillMaxWidth().height(10.dp)) {
             val available = maxOf(maxWidth.value - 2f, 0f)
@@ -304,6 +306,10 @@ fun MovingStopsCard(moving: Double, stopped: Double, modifier: Modifier = Modifi
         }
     }
 }
+
+/** iOS `.minimumScaleFactor(0.8)`. */
+@Composable
+private fun shrinking(size: Float) = TextAutoSize.StepBased(minFontSize = points(size * 0.8f), maxFontSize = points(size), stepSize = points(0.25f))
 
 /** iOS: Trip.formattedTimeHuman. «2 ч 10 мин», «18 мин 5 сек», «40 сек». */
 private fun humanTime(seconds: Double, strings: com.onezee.triptrack.designsystem.strings.AppStrings): String {

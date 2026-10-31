@@ -119,6 +119,7 @@ private fun MetricsStrip(blocks: List<Pair<List<Pair<String, String>>, String>>)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 val value = buildAnnotatedString {
                     runs.forEachIndexed { index, (number, unit) ->
+                        if (index > 0) append(" ")
                         withStyle(SpanStyle(letterSpacing = if (index == 0) points(-0.19f) else points(0f), fontFeatureSettings = "tnum")) { append(number) }
                         if (unit.isNotEmpty()) {
                             withStyle(SpanStyle(fontSize = AppType.statUnit.fontSize, fontWeight = FontWeight.W600, color = colors.textSecondary)) { append(" $unit") }
