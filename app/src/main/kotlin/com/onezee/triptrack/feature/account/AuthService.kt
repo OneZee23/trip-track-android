@@ -446,7 +446,7 @@ class AuthService(
      * upload everything straight back. Returns the number of objects the server kept.
      */
     suspend fun wipeServerData(): Int {
-        accountSettings.resetCloudSync()
+        accountSettings.switchCloudSyncOff()
         sync.clearAccountWork()
         return serverActions.wipeServerData()
     }

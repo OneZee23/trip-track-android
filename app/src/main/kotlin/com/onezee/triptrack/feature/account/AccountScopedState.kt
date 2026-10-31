@@ -17,6 +17,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 class AccountSettings(private val preferences: PresentationPreferences, private val onChange: () -> Unit = {}) {
     val cloudSyncEnabled: Boolean get() = preferences.string(CLOUD_KEY)?.toBooleanStrictOrNull() ?: false
 
+    /** Cloud Sync OFF; the consent once given stays (iOS: «clear server data»). */
+    fun switchCloudSyncOff() {
+        preferences.set(CLOUD_KEY, "false")
+        onChange()
+    }
+
     /** Cloud Sync OFF and the GDPR marker cleared, so the next account makes its own choice. */
     fun resetCloudSync() {
         preferences.set(CLOUD_KEY, "false")

@@ -133,12 +133,13 @@ class AccountViewModelTests : AccountTestCase() {
         }
         routes["/trips/delete"] = { envelopeError("VALIDATION_FAILED") }
         routes["/secrets/forget-all"] = { ok() }
-        prefs.set(AccountSettings.CLOUD_KEY, "true")
+        prefs.set(AccountSettings.CLOUD_KEY, "true"); prefs.set(AccountSettings.FIRST_TOGGLE_KEY, "true")
         viewModel.wipeServer()
         await { viewModel.state.value.wipeServerFailures != null }
         assertEquals(1, viewModel.state.value.wipeServerFailures)
         assertFalse(viewModel.state.value.isWipingServer)
         assertFalse(accountSettings.cloudSyncEnabled, "the wipe switches Cloud Sync off first")
+        assertEquals("true", prefs.string(AccountSettings.FIRST_TOGGLE_KEY), "the consent once given stays")
     }
 
     @Test fun theScreenShowsTheBlockedCountAndAvatarOfASignedInPerson() {
