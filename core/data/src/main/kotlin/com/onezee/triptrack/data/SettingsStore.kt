@@ -14,6 +14,8 @@ interface SettingsStore {
     suspend fun loadOrCreate(): UserSettingsEntity
     /** Writes and stamps `lastModifiedAt`; `syncStatus` is left alone. Null when there is no row. */
     suspend fun save(transform: (UserSettingsEntity) -> UserSettingsEntity): UserSettingsEntity?
+    /** iOS: seedUnitsAtLaunch/seedDistanceUnitFromRegion. A guess is not a person's edit. */
+    suspend fun seedUnits(distance: String?, volume: String?): UserSettingsEntity
     suspend fun migrateUserIdIfNeeded(userId: UUID, flags: DataFlags)
 
     companion object {
@@ -41,6 +43,12 @@ class RoomSettingsStore(
     /** iOS: loadSettings. The first launch creates the row with a fresh identity. */
     override suspend fun loadOrCreate(): UserSettingsEntity = db.withTransaction {
         dao.settings() ?: UserSettingsEntity(id = UUID.randomUUID()).also { dao.upsert(it) }
+    }
+
+    override suspend fun seedUnits(distance: String?, volume: String?): UserSettingsEntity = db.withTransaction {
+        val current = loadOrCreate()
+        current.copy(distanceUnit = distance ?: current.distanceUnit, volumeUnit = volume ?: current.volumeUnit)
+            .also { dao.upsert(it) }
     }
 
     /** iOS: saveSettings. Every path to saving carries the stamp, including ones nobody routed here. */

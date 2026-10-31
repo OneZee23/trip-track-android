@@ -1,6 +1,7 @@
 // iOS: VehicleModTags.swift, Drive2Link.swift
 package com.onezee.triptrack.logic
 
+import com.onezee.triptrack.model.VehicleCardStyle
 import com.onezee.triptrack.model.VehicleFinish
 import com.onezee.triptrack.model.VehicleType
 import com.onezee.triptrack.model.serialization.ModelJson
@@ -78,3 +79,12 @@ object Drive2Link {
 // iOS: VehicleFinish.swift (parse), VehicleType.swift (hasPlate).
 fun VehicleFinish.Companion.parse(raw: String?): VehicleFinish? = raw?.let(VehicleFinish::fromRawValue)
 val VehicleType.hasPlate: Boolean get() = this == VehicleType.car || this == VehicleType.moto
+
+// iOS: VehicleCardStyle.swift, VehicleFinish.swift, VehicleModTags.swift. Display fallbacks never erase a saved choice.
+fun VehicleCardStyle.Companion.effective(raw: String?, isPlus: Boolean): VehicleCardStyle =
+    if (isPlus) raw?.let { fromRawValue(it) } ?: VehicleCardStyle.none else VehicleCardStyle.none
+
+fun VehicleFinish.Companion.effective(raw: String?, isPlus: Boolean): VehicleFinish =
+    (parse(raw) ?: VehicleFinish.gloss).let { if (it != VehicleFinish.gloss && !isPlus) VehicleFinish.gloss else it }
+
+fun VehicleModTags.effective(tags: List<String>, isPlus: Boolean): List<String> = if (isPlus) sanitized(tags) else emptyList()
