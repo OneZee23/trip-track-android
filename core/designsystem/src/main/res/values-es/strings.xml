@@ -358,6 +358,122 @@
     <string name="badgeRarity.legendary" formatted="false">Legendaria</string>
     <string name="badgeRarity.rare" formatted="false">Rara</string>
     <string name="badgeRarity.uncommon" formatted="false">Poco común</string>
+    <string name="badge_above_clouds_description">%1$s de altitud alcanzados</string>
+    <string name="badge_above_clouds_title" formatted="false">Sobre las nubes</string>
+    <string name="badge_ambassador_description">Viajes en 2+ países</string>
+    <string name="badge_ambassador_title" formatted="false">Embajador</string>
+    <string name="badge_carpool_karaoke_description">30+ viajes con el mismo vehículo</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Coche favorito</string>
+    <string name="badge_centurion_description">100 viajes grabados</string>
+    <string name="badge_centurion_title" formatted="false">Centurión</string>
+    <string name="badge_century_description">%1$s en total</string>
+    <string name="badge_century_title" formatted="false">Centena</string>
+    <string name="badge_early_bird_description">Viaje en la franja 0:00–6:00</string>
+    <string name="badge_early_bird_title" formatted="false">Madrugador</string>
+    <string name="badge_early_tester_description">Estuvo aquí antes de la 1.0.0. ¡Gracias!</string>
+    <string name="badge_early_tester_title" formatted="false">Probador temprano</string>
+    <string name="badge_endurance_description">10 horas al volante</string>
+    <string name="badge_endurance_title" formatted="false">Resistente</string>
+    <string name="badge_equator_description">%1$s: la longitud del ecuador</string>
+    <string name="badge_equator_title" formatted="false">Vuelta al mundo</string>
+    <string name="badge_expedition_description">%1$s acumulados</string>
+    <string name="badge_expedition_title" formatted="false">Expedición</string>
+    <string name="badge_explorer_100_description">100 regiones distintas visitadas</string>
+    <string name="badge_explorer_100_title" formatted="false">Cien regiones</string>
+    <string name="badge_explorer_10_description">10 regiones distintas visitadas</string>
+    <string name="badge_explorer_10_title" formatted="false">Viajero</string>
+    <string name="badge_explorer_25_description">25 regiones distintas visitadas</string>
+    <string name="badge_explorer_25_title" formatted="false">Conquistador</string>
+    <string name="badge_explorer_50_description">50 regiones distintas visitadas</string>
+    <string name="badge_explorer_50_title" formatted="false">Cincuenta regiones</string>
+    <string name="badge_explorer_5_description">5 regiones distintas visitadas</string>
+    <string name="badge_explorer_5_title" formatted="false">Explorador</string>
+    <string name="badge_first_km_description">%1$s en total</string>
+    <string name="badge_first_km_title" formatted="false">Primer kilómetro</string>
+    <string name="badge_first_trip_description">Grabe su primer viaje</string>
+    <string name="badge_first_trip_title" formatted="false">Primer viaje</string>
+    <string name="badge_globetrotter_description">Viajes en 5+ países</string>
+    <string name="badge_globetrotter_title" formatted="false">Trotamundos</string>
+    <string name="badge_half_million_description">%1$s acumulados</string>
+    <string name="badge_half_million_title" formatted="false">Medio millón</string>
+    <string name="badge_highway_wolf_description">Un solo viaje de %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Lobo de autopista</string>
+    <string name="badge_hours_50_description">50 horas al volante</string>
+    <string name="badge_hours_50_title" formatted="false">Cincuenta horas</string>
+    <string name="badge_iron_butt_description">%1$s en un solo viaje</string>
+    <string name="badge_iron_butt_title" formatted="false">Culo de hierro</string>
+    <string name="badge_km_100k_description">%1$s acumulados</string>
+    <string name="badge_km_100k_title" formatted="false">Cien mil</string>
+    <string name="badge_km_250k_description">%1$s acumulados</string>
+    <string name="badge_km_250k_title" formatted="false">Cuarto de millón</string>
+    <string name="badge_legion_description">1000 viajes grabados</string>
+    <string name="badge_legion_title" formatted="false">Legión</string>
+    <string name="badge_long_shift_description">4+ horas sin parar</string>
+    <string name="badge_long_shift_title" formatted="false">Turno largo</string>
+    <string name="badge_marathon_100_description">Un viaje de más de %1$s</string>
+    <string name="badge_marathon_100_title" formatted="false">Estoico</string>
+    <string name="badge_marathon_42_description">%1$s en un solo viaje</string>
+    <string name="badge_marathon_42_title" formatted="false">Maratoniano</string>
+    <string name="badge_midnight_rider_description">Viaje entre medianoche y las 4:00</string>
+    <string name="badge_midnight_rider_title" formatted="false">Trasnochador</string>
+    <string name="badge_milestone_2000_description">Hito del mapa: altitud %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Punto más alto</string>
+    <string name="badge_milestone_border_description">Una frontera de país en su ruta</string>
+    <string name="badge_milestone_border_title" formatted="false">Frontera</string>
+    <string name="badge_million_description">%1$s en toda una vida</string>
+    <string name="badge_million_title" formatted="false">Millonario</string>
+    <string name="badge_mountain_goat_description">%1$s de desnivel en un viaje</string>
+    <string name="badge_mountain_goat_title" formatted="false">Cabra montesa</string>
+    <string name="badge_night_rider_description">Viaje de noche (22:00–5:00)</string>
+    <string name="badge_night_rider_title" formatted="false">Jinete nocturno</string>
+    <string name="badge_night_wolf_description">Viaje en la franja 23:00–4:00</string>
+    <string name="badge_night_wolf_title" formatted="false">Lobo nocturno</string>
+    <string name="badge_polar_description">Latitud por encima de 66°</string>
+    <string name="badge_polar_title" formatted="false">Polar</string>
+    <string name="badge_riddle_10_description">10 enigmas resueltos</string>
+    <string name="badge_riddle_10_title" formatted="false">Diez enigmas</string>
+    <string name="badge_riddle_first_description">Primer enigma resuelto</string>
+    <string name="badge_riddle_first_title" formatted="false">Primer enigma</string>
+    <string name="badge_road_regular_description">10 viajes grabados</string>
+    <string name="badge_road_regular_title" formatted="false">Habitual</string>
+    <string name="badge_road_warrior_description">50 viajes grabados</string>
+    <string name="badge_road_warrior_title" formatted="false">Guerrero de la carretera</string>
+    <string name="badge_sea_level_description">Junto a la costa (altitud &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">A nivel del mar</string>
+    <string name="badge_secret_komsomolsky_description">Conduzca por Komsomolski en Krasnodar</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">La marca de Komsomolski</string>
+    <string name="badge_snow_leopard_description">Viaje de montaña en invierno (dic–feb)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Leopardo de las nieves</string>
+    <string name="badge_speed_demon_description">Velocidad máxima superior a %1$s</string>
+    <string name="badge_speed_demon_title" formatted="false">Demonio de la velocidad</string>
+    <string name="badge_streak_14_description">Racha de 14 días</string>
+    <string name="badge_streak_14_title" formatted="false">Dos semanas</string>
+    <string name="badge_streak_30_description">Racha de 30 días</string>
+    <string name="badge_streak_30_title" formatted="false">Mes sin parar</string>
+    <string name="badge_streak_3_description">Racha de 3 días con viaje</string>
+    <string name="badge_streak_3_title" formatted="false">Triplete</string>
+    <string name="badge_streak_7_description">Racha de 7 días</string>
+    <string name="badge_streak_7_title" formatted="false">Semana sobre ruedas</string>
+    <string name="badge_sunday_driver_description">Viaje en domingo</string>
+    <string name="badge_sunday_driver_title" formatted="false">Conductor dominguero</string>
+    <string name="badge_ten_thousand_description">%1$s en total</string>
+    <string name="badge_ten_thousand_title" formatted="false">Diez mil</string>
+    <string name="badge_thousand_description">%1$s en total</string>
+    <string name="badge_thousand_title" formatted="false">Mil</string>
+    <string name="badge_trips_200_description">200 viajes grabados</string>
+    <string name="badge_trips_200_title" formatted="false">Curtido</string>
+    <string name="badge_trips_500_description">500 viajes grabados</string>
+    <string name="badge_trips_500_title" formatted="false">Veterano de honor</string>
+    <string name="badge_vault_keeper_description">50 viajes privados</string>
+    <string name="badge_vault_keeper_title" formatted="false">Guardián de secretos</string>
+    <string name="badge_veteran_2026_description">Gracias por acompañarnos todo 2026</string>
+    <string name="badge_veteran_2026_title" formatted="false">Veterano 2026</string>
+    <string name="badge_veteran_description">100 horas al volante</string>
+    <string name="badge_veteran_title" formatted="false">Veterano</string>
+    <string name="badge_weekend_warrior_description">Viajes 4 fines de semana seguidos</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Guerrero de fin de semana</string>
+    <string name="badge_wrapped_year_description">Condujo en los 12 meses del año</string>
+    <string name="badge_wrapped_year_title" formatted="false">Año completo</string>
     <string name="badges" formatted="false">Logros</string>
     <string name="blockProfileBlock" formatted="false">Bloquear</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Este usuario no verá su contenido y los viajes de este usuario no aparecerán en su feed. Los seguimientos entre ustedes se eliminarán.</string>

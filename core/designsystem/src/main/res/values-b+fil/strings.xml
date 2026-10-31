@@ -328,6 +328,122 @@
     <string name="badgeRarity.legendary" formatted="false">Alamat</string>
     <string name="badgeRarity.rare" formatted="false">Napakabihira</string>
     <string name="badgeRarity.uncommon" formatted="false">Bihira</string>
+    <string name="badge_above_clouds_description">Naabot ang %1$s na altitud</string>
+    <string name="badge_above_clouds_title" formatted="false">Sa itaas ng ulap</string>
+    <string name="badge_ambassador_description">Mga biyahe sa 2+ bansa</string>
+    <string name="badge_ambassador_title" formatted="false">Embahador</string>
+    <string name="badge_carpool_karaoke_description">30+ biyahe sa iisang sasakyan</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Paboritong kotse</string>
+    <string name="badge_centurion_description">100 biyaheng na-record</string>
+    <string name="badge_centurion_title" formatted="false">Senturyon</string>
+    <string name="badge_century_description">%1$s sa kabuuan</string>
+    <string name="badge_century_title" formatted="false">Sandaan</string>
+    <string name="badge_early_bird_description">Pagmamaneho sa pagitan ng hatinggabi at 6 AM</string>
+    <string name="badge_early_bird_title" formatted="false">Maagang gumising</string>
+    <string name="badge_early_tester_description">Nandito na kayo bago pa ang 1.0.0. Salamat!</string>
+    <string name="badge_early_tester_title" formatted="false">Maagang tester</string>
+    <string name="badge_endurance_description">10 oras sa manibela</string>
+    <string name="badge_endurance_title" formatted="false">Matibay</string>
+    <string name="badge_equator_description">%1$s — ang haba ng ekwador</string>
+    <string name="badge_equator_title" formatted="false">Paikot sa mundo</string>
+    <string name="badge_expedition_description">%1$s sa kabuuan</string>
+    <string name="badge_expedition_title" formatted="false">Ekspedisyon</string>
+    <string name="badge_explorer_100_description">100 magkakaibang rehiyon ang napuntahan</string>
+    <string name="badge_explorer_100_title" formatted="false">Isandaang rehiyon</string>
+    <string name="badge_explorer_10_description">10 magkakaibang rehiyon ang napuntahan</string>
+    <string name="badge_explorer_10_title" formatted="false">Manlalakbay</string>
+    <string name="badge_explorer_25_description">25 magkakaibang rehiyon ang napuntahan</string>
+    <string name="badge_explorer_25_title" formatted="false">Konkistador</string>
+    <string name="badge_explorer_50_description">50 magkakaibang rehiyon ang napuntahan</string>
+    <string name="badge_explorer_50_title" formatted="false">Limampung rehiyon</string>
+    <string name="badge_explorer_5_description">5 magkakaibang rehiyon ang napuntahan</string>
+    <string name="badge_explorer_5_title" formatted="false">Tagagalugad</string>
+    <string name="badge_first_km_description">%1$s sa kabuuan</string>
+    <string name="badge_first_km_title" formatted="false">Unang kilometro</string>
+    <string name="badge_first_trip_description">I-record ang inyong unang biyahe</string>
+    <string name="badge_first_trip_title" formatted="false">Unang biyahe</string>
+    <string name="badge_globetrotter_description">Mga biyahe sa 5+ bansa</string>
+    <string name="badge_globetrotter_title" formatted="false">Globetrotter</string>
+    <string name="badge_half_million_description">%1$s sa kabuuan</string>
+    <string name="badge_half_million_title" formatted="false">Kalahating milyon</string>
+    <string name="badge_highway_wolf_description">Isang biyaheng %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Lobo ng highway</string>
+    <string name="badge_hours_50_description">50 oras sa manibela</string>
+    <string name="badge_hours_50_title" formatted="false">Limampung oras</string>
+    <string name="badge_iron_butt_description">%1$s sa isang biyahe</string>
+    <string name="badge_iron_butt_title" formatted="false">Bakal na tiyaga</string>
+    <string name="badge_km_100k_description">%1$s sa kabuuan</string>
+    <string name="badge_km_100k_title" formatted="false">Isandaang libo</string>
+    <string name="badge_km_250k_description">%1$s sa kabuuan</string>
+    <string name="badge_km_250k_title" formatted="false">Sangkapat ng milyon</string>
+    <string name="badge_legion_description">1000 biyaheng na-record</string>
+    <string name="badge_legion_title" formatted="false">Lehiyon</string>
+    <string name="badge_long_shift_description">4+ oras nang walang hinto</string>
+    <string name="badge_long_shift_title" formatted="false">Mahabang shift</string>
+    <string name="badge_marathon_100_description">Isang biyaheng higit %1$s</string>
+    <string name="badge_marathon_100_title" formatted="false">Matatag</string>
+    <string name="badge_marathon_42_description">%1$s sa isang biyahe</string>
+    <string name="badge_marathon_42_title" formatted="false">Maratonista</string>
+    <string name="badge_midnight_rider_description">Biyahe sa pagitan ng hatinggabi at 4 AM</string>
+    <string name="badge_midnight_rider_title" formatted="false">Hatinggabing drayber</string>
+    <string name="badge_milestone_2000_description">Milestone ng mapa: taas %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Pinakamataas na punto</string>
+    <string name="badge_milestone_border_description">May hangganan ng bansa sa inyong ruta</string>
+    <string name="badge_milestone_border_title" formatted="false">Hangganan</string>
+    <string name="badge_million_description">%1$s sa buong buhay</string>
+    <string name="badge_million_title" formatted="false">Milyonaryo</string>
+    <string name="badge_mountain_goat_description">%1$s na taas na naakyat sa isang biyahe</string>
+    <string name="badge_mountain_goat_title" formatted="false">Kambing sa bundok</string>
+    <string name="badge_night_rider_description">Biyahe sa gabi (10 PM–5 AM)</string>
+    <string name="badge_night_rider_title" formatted="false">Mangangabayo ng gabi</string>
+    <string name="badge_night_wolf_description">Pagmamaneho sa pagitan ng 11 PM at 4 AM</string>
+    <string name="badge_night_wolf_title" formatted="false">Lobo ng gabi</string>
+    <string name="badge_polar_description">Latitud na higit 66°</string>
+    <string name="badge_polar_title" formatted="false">Polar</string>
+    <string name="badge_riddle_10_description">10 palaisipang nasagot</string>
+    <string name="badge_riddle_10_title" formatted="false">Sampung palaisipan</string>
+    <string name="badge_riddle_first_description">Unang palaisipang nasagot</string>
+    <string name="badge_riddle_first_title" formatted="false">Unang palaisipan</string>
+    <string name="badge_road_regular_description">10 biyaheng na-record</string>
+    <string name="badge_road_regular_title" formatted="false">Suki ng kalsada</string>
+    <string name="badge_road_warrior_description">50 biyaheng na-record</string>
+    <string name="badge_road_warrior_title" formatted="false">Mandirigma ng kalsada</string>
+    <string name="badge_sea_level_description">Sa tabi ng baybayin (altitud &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">Sa lebel ng dagat</string>
+    <string name="badge_secret_komsomolsky_description">Magmaneho sa Komsomolsky sa Krasnodar</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Ang Marka ng Komsomolsky</string>
+    <string name="badge_snow_leopard_description">Biyahe sa bundok tuwing taglamig (Dis–Peb)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Leopardo ng niyebe</string>
+    <string name="badge_speed_demon_description">Pinakamataas na bilis na higit %1$s</string>
+    <string name="badge_speed_demon_title" formatted="false">Hari ng bilis</string>
+    <string name="badge_streak_14_description">14 araw na sunod-sunod</string>
+    <string name="badge_streak_14_title" formatted="false">Dalawang linggo</string>
+    <string name="badge_streak_30_description">30 araw na sunod-sunod</string>
+    <string name="badge_streak_30_title" formatted="false">Isang buwang walang hinto</string>
+    <string name="badge_streak_3_description">3 araw na sunod-sunod na may biyahe</string>
+    <string name="badge_streak_3_title" formatted="false">Tatlo sunod-sunod</string>
+    <string name="badge_streak_7_description">7 araw na sunod-sunod</string>
+    <string name="badge_streak_7_title" formatted="false">Isang linggo sa gulong</string>
+    <string name="badge_sunday_driver_description">Biyahe tuwing Linggo</string>
+    <string name="badge_sunday_driver_title" formatted="false">Drayber ng Linggo</string>
+    <string name="badge_ten_thousand_description">%1$s sa kabuuan</string>
+    <string name="badge_ten_thousand_title" formatted="false">Sampung libo</string>
+    <string name="badge_thousand_description">%1$s sa kabuuan</string>
+    <string name="badge_thousand_title" formatted="false">Isang libo</string>
+    <string name="badge_trips_200_description">200 biyaheng na-record</string>
+    <string name="badge_trips_200_title" formatted="false">Bihasa</string>
+    <string name="badge_trips_500_description">500 biyaheng na-record</string>
+    <string name="badge_trips_500_title" formatted="false">Kilalang beterano</string>
+    <string name="badge_vault_keeper_description">50 pribadong biyahe</string>
+    <string name="badge_vault_keeper_title" formatted="false">Tagapag-ingat ng lihim</string>
+    <string name="badge_veteran_2026_description">Salamat sa pagsama sa amin sa buong 2026</string>
+    <string name="badge_veteran_2026_title" formatted="false">Beterano ng 2026</string>
+    <string name="badge_veteran_description">100 oras sa manibela</string>
+    <string name="badge_veteran_title" formatted="false">Beterano</string>
+    <string name="badge_weekend_warrior_description">Mga biyahe sa 4 magkakasunod na weekend</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Mandirigma ng weekend</string>
+    <string name="badge_wrapped_year_description">Nagmaneho kayo sa lahat ng 12 buwan ng taon</string>
+    <string name="badge_wrapped_year_title" formatted="false">Buong taon</string>
     <string name="badges" formatted="false">Mga tagumpay</string>
     <string name="blockProfileBlock" formatted="false">I-block</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Hindi makikita ng taong ito ang inyong mga nilalaman, at hindi lalabas sa inyong feed ang mga biyahe niya. Aalisin ang anumang pagsunod sa pagitan ninyo.</string>

@@ -434,6 +434,21 @@ class Generator:
             source_functions["live_" + function.name] = (source, function)
         from logic_resources import extract_logic
         extract_logic(self, source_functions)
+        # iOS: BadgeDefinitions.swift / Badge.title. These dynamic metadata keys
+        # have no standalone AppStrings function, but the achievement shelf reads them.
+        source, tokens = self.source(self.ios / "TripTrack/Models/BadgeDefinitions.swift")
+        for start, _, (_, named) in calls(tokens, "Badge"):
+            badge_id = literal(named["id"])
+            values = {"ru": {"text": literal(named["titleRu"])},
+                      "en": {"text": literal(named["titleEn"])}}
+            for lang in LANGUAGES[2:]:
+                values[lang] = {"text": self.tables[lang].get(f"badge.{badge_id}.title", (values["en"]["text"], 0))[0]}
+            self.add(Resource(f"badge_{badge_id}_title", "string", values, source, tokens[start].line))
+            descriptions = {"ru": {"text": literal(named["descriptionRu"])},
+                            "en": {"text": literal(named["descriptionEn"])}}
+            for lang in LANGUAGES[2:]:
+                descriptions[lang] = {"text": self.tables[lang].get(f"badge.{badge_id}.desc", (descriptions["en"]["text"], 0))[0]}
+            self.add(Resource(f"badge_{badge_id}_description", "string", descriptions, source, tokens[start].line, foundation_format=True))
         permissions = {}
         for lang in LANGUAGES:
             path = self.ios / f"TripTrack/Resources/{lang}.lproj/InfoPlist.strings"

@@ -328,6 +328,122 @@
     <string name="badgeRarity.legendary" formatted="false">Аңызға айналған</string>
     <string name="badgeRarity.rare" formatted="false">Сирек</string>
     <string name="badgeRarity.uncommon" formatted="false">Сирегірек</string>
+    <string name="badge_above_clouds_description">%1$s биіктікке жетті</string>
+    <string name="badge_above_clouds_title" formatted="false">Бұлттан жоғары</string>
+    <string name="badge_ambassador_description">2+ елде сапарлар</string>
+    <string name="badge_ambassador_title" formatted="false">Елші</string>
+    <string name="badge_carpool_karaoke_description">Бір көлікпен 30+ сапар</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Сүйікті көлік</string>
+    <string name="badge_centurion_description">100 сапар жазылды</string>
+    <string name="badge_centurion_title" formatted="false">Центурион</string>
+    <string name="badge_century_description">Барлығы %1$s</string>
+    <string name="badge_century_title" formatted="false">Жүздік</string>
+    <string name="badge_early_bird_description">00:00–06:00 аралығындағы сапар</string>
+    <string name="badge_early_bird_title" formatted="false">Ерте тұрған</string>
+    <string name="badge_early_tester_description">Сіз 1.0.0 шыққанға дейін бізбен бірге болдыңыз. Рақмет!</string>
+    <string name="badge_early_tester_title" formatted="false">Ерте тестілеуші</string>
+    <string name="badge_endurance_description">Рөл артында 10 сағат</string>
+    <string name="badge_endurance_title" formatted="false">Төзімді</string>
+    <string name="badge_equator_description">%1$s — экватордың ұзындығы</string>
+    <string name="badge_equator_title" formatted="false">Әлемді айналу</string>
+    <string name="badge_expedition_description">Барлығы %1$s</string>
+    <string name="badge_expedition_title" formatted="false">Экспедиция</string>
+    <string name="badge_explorer_100_description">100 түрлі аймақ аралады</string>
+    <string name="badge_explorer_100_title" formatted="false">Жүз аймақ</string>
+    <string name="badge_explorer_10_description">10 түрлі аймақ аралады</string>
+    <string name="badge_explorer_10_title" formatted="false">Саяхатшы</string>
+    <string name="badge_explorer_25_description">25 түрлі аймақ аралады</string>
+    <string name="badge_explorer_25_title" formatted="false">Конкистадор</string>
+    <string name="badge_explorer_50_description">50 түрлі аймақ аралады</string>
+    <string name="badge_explorer_50_title" formatted="false">Елу аймақ</string>
+    <string name="badge_explorer_5_description">5 түрлі аймақ аралады</string>
+    <string name="badge_explorer_5_title" formatted="false">Зерттеуші</string>
+    <string name="badge_first_km_description">Барлығы %1$s</string>
+    <string name="badge_first_km_title" formatted="false">Алғашқы километр</string>
+    <string name="badge_first_trip_description">Алғашқы сапарыңызды жазыңыз</string>
+    <string name="badge_first_trip_title" formatted="false">Алғашқы жол</string>
+    <string name="badge_globetrotter_description">5+ елде сапарлар</string>
+    <string name="badge_globetrotter_title" formatted="false">Әлем кезген</string>
+    <string name="badge_half_million_description">Барлығы %1$s</string>
+    <string name="badge_half_million_title" formatted="false">Жарты миллион</string>
+    <string name="badge_highway_wolf_description">Бір сапарда %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Тас жол қасқыры</string>
+    <string name="badge_hours_50_description">Рөл артында 50 сағат</string>
+    <string name="badge_hours_50_title" formatted="false">Елу сағат</string>
+    <string name="badge_iron_butt_description">Бір сапарда %1$s</string>
+    <string name="badge_iron_butt_title" formatted="false">Темір төзім</string>
+    <string name="badge_km_100k_description">Барлығы %1$s</string>
+    <string name="badge_km_100k_title" formatted="false">Жүз мың</string>
+    <string name="badge_km_250k_description">Барлығы %1$s</string>
+    <string name="badge_km_250k_title" formatted="false">Ширек миллион</string>
+    <string name="badge_legion_description">1000 сапар жазылды</string>
+    <string name="badge_legion_title" formatted="false">Легион</string>
+    <string name="badge_long_shift_description">4+ сағат тоқтаусыз</string>
+    <string name="badge_long_shift_title" formatted="false">Ұзақ ауысым</string>
+    <string name="badge_marathon_100_description">%1$s-ден асатын сапар</string>
+    <string name="badge_marathon_100_title" formatted="false">Стоик</string>
+    <string name="badge_marathon_42_description">Бір сапарда %1$s</string>
+    <string name="badge_marathon_42_title" formatted="false">Марафоншы</string>
+    <string name="badge_midnight_rider_description">00:00 мен 04:00 аралығындағы сапар</string>
+    <string name="badge_midnight_rider_title" formatted="false">Түн ортасының жүргізушісі</string>
+    <string name="badge_milestone_2000_description">Карта белесі: биіктік %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Жоғарғы нүкте</string>
+    <string name="badge_milestone_border_description">Тректе ел шекарасы</string>
+    <string name="badge_milestone_border_title" formatted="false">Шекара</string>
+    <string name="badge_million_description">Бүкіл өмірде %1$s</string>
+    <string name="badge_million_title" formatted="false">Миллионер</string>
+    <string name="badge_mountain_goat_description">Бір сапарда %1$s биіктік жинау</string>
+    <string name="badge_mountain_goat_title" formatted="false">Тау текесі</string>
+    <string name="badge_night_rider_description">Түнгі сапар (22:00–05:00)</string>
+    <string name="badge_night_rider_title" formatted="false">Түнгі жүргізуші</string>
+    <string name="badge_night_wolf_description">23:00–04:00 аралығындағы сапар</string>
+    <string name="badge_night_wolf_title" formatted="false">Түнгі қасқыр</string>
+    <string name="badge_polar_description">Ені 66°-тан жоғары</string>
+    <string name="badge_polar_title" formatted="false">Полярник</string>
+    <string name="badge_riddle_10_description">10 жұмбақ шешілді</string>
+    <string name="badge_riddle_10_title" formatted="false">Он жұмбақ</string>
+    <string name="badge_riddle_first_description">Алғашқы шешілген жұмбақ</string>
+    <string name="badge_riddle_first_title" formatted="false">Алғашқы жұмбақ</string>
+    <string name="badge_road_regular_description">10 сапар жазылды</string>
+    <string name="badge_road_regular_title" formatted="false">Тұрақты жүргізуші</string>
+    <string name="badge_road_warrior_description">50 сапар жазылды</string>
+    <string name="badge_road_warrior_title" formatted="false">Жол жауынгері</string>
+    <string name="badge_sea_level_description">Жағалау бойымен (биіктік &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">Теңіз деңгейінде</string>
+    <string name="badge_secret_komsomolsky_description">Краснодардағы Комсомольский арқылы өту</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Комсомольский белгісі</string>
+    <string name="badge_snow_leopard_description">Қыстағы таулы сапар (жел–ақп)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Қар барысы</string>
+    <string name="badge_speed_demon_description">Макс. жылдамдық %1$s-тан жоғары</string>
+    <string name="badge_speed_demon_title" formatted="false">Жылдамдық жыны</string>
+    <string name="badge_streak_14_description">Қатарынан 14 күн</string>
+    <string name="badge_streak_14_title" formatted="false">Екі апта</string>
+    <string name="badge_streak_30_description">Қатарынан 30 күн</string>
+    <string name="badge_streak_30_title" formatted="false">Тоқтаусыз бір ай</string>
+    <string name="badge_streak_3_description">Қатарынан 3 күн сапар</string>
+    <string name="badge_streak_3_title" formatted="false">Үштік</string>
+    <string name="badge_streak_7_description">Қатарынан 7 күн</string>
+    <string name="badge_streak_7_title" formatted="false">Дөңгелек үстіндегі апта</string>
+    <string name="badge_sunday_driver_description">Жексенбідегі сапар</string>
+    <string name="badge_sunday_driver_title" formatted="false">Жексенбілік жүргізуші</string>
+    <string name="badge_ten_thousand_description">Барлығы %1$s</string>
+    <string name="badge_ten_thousand_title" formatted="false">Он мың</string>
+    <string name="badge_thousand_description">Барлығы %1$s</string>
+    <string name="badge_thousand_title" formatted="false">Мыңдық</string>
+    <string name="badge_trips_200_description">200 сапар жазылды</string>
+    <string name="badge_trips_200_title" formatted="false">Тәжірибелі</string>
+    <string name="badge_trips_500_description">500 сапар жазылды</string>
+    <string name="badge_trips_500_title" formatted="false">Еңбегі сіңген</string>
+    <string name="badge_vault_keeper_description">50 жабық сапар</string>
+    <string name="badge_vault_keeper_title" formatted="false">Құпия сақшысы</string>
+    <string name="badge_veteran_2026_description">2026 жыл бойы бізбен бірге болғаныңызға рақмет</string>
+    <string name="badge_veteran_2026_title" formatted="false">2026 ардагері</string>
+    <string name="badge_veteran_description">Рөл артында 100 сағат</string>
+    <string name="badge_veteran_title" formatted="false">Ардагер</string>
+    <string name="badge_weekend_warrior_description">Қатарынан 4 демалыс күні сапарлар</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Демалыс жауынгері</string>
+    <string name="badge_wrapped_year_description">Жылдың 12 айында да жолға шықтыңыз</string>
+    <string name="badge_wrapped_year_title" formatted="false">Толық жыл</string>
     <string name="badges" formatted="false">Жетістіктер</string>
     <string name="blockProfileBlock" formatted="false">Бұғаттау</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Бұл адам мазмұныңызды көрмейді, оның сапарлары таспаңызда шықпайды. Араларыңыздағы жазылымдар жойылады.</string>

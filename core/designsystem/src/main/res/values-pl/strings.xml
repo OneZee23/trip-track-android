@@ -388,6 +388,122 @@
     <string name="badgeRarity.legendary" formatted="false">Legendarna</string>
     <string name="badgeRarity.rare" formatted="false">Rzadka</string>
     <string name="badgeRarity.uncommon" formatted="false">Niezwykła</string>
+    <string name="badge_above_clouds_description">Osiągnięte %1$s wysokości</string>
+    <string name="badge_above_clouds_title" formatted="false">Ponad chmurami</string>
+    <string name="badge_ambassador_description">Trasy w 2+ krajach</string>
+    <string name="badge_ambassador_title" formatted="false">Ambasador</string>
+    <string name="badge_carpool_karaoke_description">30+ tras tym samym pojazdem</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Ulubione auto</string>
+    <string name="badge_centurion_description">100 nagranych tras</string>
+    <string name="badge_centurion_title" formatted="false">Centurion</string>
+    <string name="badge_century_description">%1$s łącznie</string>
+    <string name="badge_century_title" formatted="false">Setka</string>
+    <string name="badge_early_bird_description">Trasa w przedziale 0:00–6:00</string>
+    <string name="badge_early_bird_title" formatted="false">Ranny ptaszek</string>
+    <string name="badge_early_tester_description">Z nami jeszcze przed 1.0.0. Dziękujemy!</string>
+    <string name="badge_early_tester_title" formatted="false">Wczesny tester</string>
+    <string name="badge_endurance_description">10 godzin za kierownicą</string>
+    <string name="badge_endurance_title" formatted="false">Wytrzymały</string>
+    <string name="badge_equator_description">%1$s — długość równika</string>
+    <string name="badge_equator_title" formatted="false">Dookoła świata</string>
+    <string name="badge_expedition_description">%1$s łącznie</string>
+    <string name="badge_expedition_title" formatted="false">Wyprawa</string>
+    <string name="badge_explorer_100_description">100 różnych regionów odwiedzonych</string>
+    <string name="badge_explorer_100_title" formatted="false">Sto regionów</string>
+    <string name="badge_explorer_10_description">10 różnych regionów odwiedzonych</string>
+    <string name="badge_explorer_10_title" formatted="false">Podróżnik</string>
+    <string name="badge_explorer_25_description">25 różnych regionów odwiedzonych</string>
+    <string name="badge_explorer_25_title" formatted="false">Konkwistador</string>
+    <string name="badge_explorer_50_description">50 różnych regionów odwiedzonych</string>
+    <string name="badge_explorer_50_title" formatted="false">Pięćdziesiąt regionów</string>
+    <string name="badge_explorer_5_description">5 różnych regionów odwiedzonych</string>
+    <string name="badge_explorer_5_title" formatted="false">Odkrywca</string>
+    <string name="badge_first_km_description">%1$s łącznie</string>
+    <string name="badge_first_km_title" formatted="false">Pierwszy kilometr</string>
+    <string name="badge_first_trip_description">Pierwsza nagrana trasa</string>
+    <string name="badge_first_trip_title" formatted="false">Pierwsza trasa</string>
+    <string name="badge_globetrotter_description">Trasy w 5+ krajach</string>
+    <string name="badge_globetrotter_title" formatted="false">Globtroter</string>
+    <string name="badge_half_million_description">%1$s łącznie</string>
+    <string name="badge_half_million_title" formatted="false">Pół miliona</string>
+    <string name="badge_highway_wolf_description">Jedna trasa %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Wilk autostrady</string>
+    <string name="badge_hours_50_description">50 godzin za kierownicą</string>
+    <string name="badge_hours_50_title" formatted="false">Pięćdziesiąt godzin</string>
+    <string name="badge_iron_butt_description">%1$s w jednej trasie</string>
+    <string name="badge_iron_butt_title" formatted="false">Żelazny tyłek</string>
+    <string name="badge_km_100k_description">%1$s łącznie</string>
+    <string name="badge_km_100k_title" formatted="false">Sto tysięcy</string>
+    <string name="badge_km_250k_description">%1$s łącznie</string>
+    <string name="badge_km_250k_title" formatted="false">Ćwierć miliona</string>
+    <string name="badge_legion_description">1000 nagranych tras</string>
+    <string name="badge_legion_title" formatted="false">Legion</string>
+    <string name="badge_long_shift_description">4+ godziny bez postoju</string>
+    <string name="badge_long_shift_title" formatted="false">Długa zmiana</string>
+    <string name="badge_marathon_100_description">Trasa dłuższa niż %1$s</string>
+    <string name="badge_marathon_100_title" formatted="false">Stoik</string>
+    <string name="badge_marathon_42_description">%1$s w jednej trasie</string>
+    <string name="badge_marathon_42_title" formatted="false">Maratończyk</string>
+    <string name="badge_midnight_rider_description">Trasa między północą a 4:00</string>
+    <string name="badge_midnight_rider_title" formatted="false">Północny jeździec</string>
+    <string name="badge_milestone_2000_description">Kamień milowy mapy: wysokość %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Najwyższy punkt</string>
+    <string name="badge_milestone_border_description">Granica państwa na trasie</string>
+    <string name="badge_milestone_border_title" formatted="false">Granica</string>
+    <string name="badge_million_description">%1$s w całym życiu</string>
+    <string name="badge_million_title" formatted="false">Milioner</string>
+    <string name="badge_mountain_goat_description">%1$s przewyższenia w jednej trasie</string>
+    <string name="badge_mountain_goat_title" formatted="false">Kozica</string>
+    <string name="badge_night_rider_description">Trasa nocą (22:00–5:00)</string>
+    <string name="badge_night_rider_title" formatted="false">Nocny jeździec</string>
+    <string name="badge_night_wolf_description">Trasa w przedziale 23:00–4:00</string>
+    <string name="badge_night_wolf_title" formatted="false">Nocny wilk</string>
+    <string name="badge_polar_description">Szerokość powyżej 66°</string>
+    <string name="badge_polar_title" formatted="false">Polarnik</string>
+    <string name="badge_riddle_10_description">10 rozwiązanych zagadek</string>
+    <string name="badge_riddle_10_title" formatted="false">Dziesięć zagadek</string>
+    <string name="badge_riddle_first_description">Pierwsza rozwiązana zagadka</string>
+    <string name="badge_riddle_first_title" formatted="false">Pierwsza zagadka</string>
+    <string name="badge_road_regular_description">10 nagranych tras</string>
+    <string name="badge_road_regular_title" formatted="false">Bywalec</string>
+    <string name="badge_road_warrior_description">50 nagranych tras</string>
+    <string name="badge_road_warrior_title" formatted="false">Wojownik dróg</string>
+    <string name="badge_sea_level_description">Wzdłuż wybrzeża (wysokość &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">Na poziomie morza</string>
+    <string name="badge_secret_komsomolsky_description">Przejazd przez Komsomolski w Krasnodarze</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Znak Komsomolskiego</string>
+    <string name="badge_snow_leopard_description">Zimowa trasa w górach (gru–lut)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Irbis</string>
+    <string name="badge_speed_demon_description">Prędkość maksymalna powyżej %1$s</string>
+    <string name="badge_speed_demon_title" formatted="false">Demon prędkości</string>
+    <string name="badge_streak_14_description">14 dni z rzędu</string>
+    <string name="badge_streak_14_title" formatted="false">Dwa tygodnie</string>
+    <string name="badge_streak_30_description">30 dni z rzędu</string>
+    <string name="badge_streak_30_title" formatted="false">Miesiąc bez przerwy</string>
+    <string name="badge_streak_3_description">3 dni z rzędu z trasą</string>
+    <string name="badge_streak_3_title" formatted="false">Trójka</string>
+    <string name="badge_streak_7_description">7 dni z rzędu</string>
+    <string name="badge_streak_7_title" formatted="false">Tydzień na kołach</string>
+    <string name="badge_sunday_driver_description">Trasa w niedzielę</string>
+    <string name="badge_sunday_driver_title" formatted="false">Niedzielny kierowca</string>
+    <string name="badge_ten_thousand_description">%1$s łącznie</string>
+    <string name="badge_ten_thousand_title" formatted="false">Dziesięć tysięcy</string>
+    <string name="badge_thousand_description">%1$s łącznie</string>
+    <string name="badge_thousand_title" formatted="false">Tysiąc</string>
+    <string name="badge_trips_200_description">200 nagranych tras</string>
+    <string name="badge_trips_200_title" formatted="false">Doświadczony</string>
+    <string name="badge_trips_500_description">500 nagranych tras</string>
+    <string name="badge_trips_500_title" formatted="false">Zasłużony</string>
+    <string name="badge_vault_keeper_description">50 prywatnych tras</string>
+    <string name="badge_vault_keeper_title" formatted="false">Strażnik tajemnic</string>
+    <string name="badge_veteran_2026_description">Dziękujemy za wspólną jazdę przez cały 2026 rok</string>
+    <string name="badge_veteran_2026_title" formatted="false">Weteran 2026</string>
+    <string name="badge_veteran_description">100 godzin za kierownicą</string>
+    <string name="badge_veteran_title" formatted="false">Weteran</string>
+    <string name="badge_weekend_warrior_description">Trasy przez 4 weekendy z rzędu</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Wojownik weekendu</string>
+    <string name="badge_wrapped_year_description">Jazdy we wszystkich 12 miesiącach roku</string>
+    <string name="badge_wrapped_year_title" formatted="false">Pełny rok</string>
     <string name="badges" formatted="false">Osiągnięcia</string>
     <string name="blockProfileBlock" formatted="false">Zablokuj</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Ta osoba nie zobaczy treści z tego konta, a jej trasy nie pojawią się na tablicy. Wzajemne obserwacje zostaną usunięte.</string>

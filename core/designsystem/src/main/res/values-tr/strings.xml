@@ -328,6 +328,122 @@
     <string name="badgeRarity.legendary" formatted="false">Efsanevi</string>
     <string name="badgeRarity.rare" formatted="false">Nadir</string>
     <string name="badgeRarity.uncommon" formatted="false">Az bulunur</string>
+    <string name="badge_above_clouds_description">%1$s yüksekliğe ulaşıldı</string>
+    <string name="badge_above_clouds_title" formatted="false">Bulutların üstünde</string>
+    <string name="badge_ambassador_description">2+ ülkede gezi</string>
+    <string name="badge_ambassador_title" formatted="false">Elçi</string>
+    <string name="badge_carpool_karaoke_description">Aynı araçla 30+ gezi</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Gözde araba</string>
+    <string name="badge_centurion_description">100 gezi kaydedildi</string>
+    <string name="badge_centurion_title" formatted="false">Yüzbaşı</string>
+    <string name="badge_century_description">Toplam %1$s</string>
+    <string name="badge_century_title" formatted="false">Yüzlük</string>
+    <string name="badge_early_bird_description">00.00–06.00 arasında sürüş</string>
+    <string name="badge_early_bird_title" formatted="false">Erkenci</string>
+    <string name="badge_early_tester_description">1.0.0\'dan önce bizimleydiniz. Teşekkürler!</string>
+    <string name="badge_early_tester_title" formatted="false">Erken test eden</string>
+    <string name="badge_endurance_description">Direksiyonda toplam 10 saat</string>
+    <string name="badge_endurance_title" formatted="false">Dayanıklı</string>
+    <string name="badge_equator_description">%1$s — ekvatorun uzunluğu</string>
+    <string name="badge_equator_title" formatted="false">Dünya turu</string>
+    <string name="badge_expedition_description">Toplam %1$s</string>
+    <string name="badge_expedition_title" formatted="false">Sefer</string>
+    <string name="badge_explorer_100_description">100 farklı bölge gezildi</string>
+    <string name="badge_explorer_100_title" formatted="false">Yüz bölge</string>
+    <string name="badge_explorer_10_description">10 farklı bölge gezildi</string>
+    <string name="badge_explorer_10_title" formatted="false">Gezgin</string>
+    <string name="badge_explorer_25_description">25 farklı bölge gezildi</string>
+    <string name="badge_explorer_25_title" formatted="false">Konkistador</string>
+    <string name="badge_explorer_50_description">50 farklı bölge gezildi</string>
+    <string name="badge_explorer_50_title" formatted="false">Elli bölge</string>
+    <string name="badge_explorer_5_description">5 farklı bölge gezildi</string>
+    <string name="badge_explorer_5_title" formatted="false">Kâşif</string>
+    <string name="badge_first_km_description">Toplam %1$s</string>
+    <string name="badge_first_km_title" formatted="false">İlk kilometre</string>
+    <string name="badge_first_trip_description">İlk gezinizi kaydedin</string>
+    <string name="badge_first_trip_title" formatted="false">İlk gezi</string>
+    <string name="badge_globetrotter_description">5+ ülkede gezi</string>
+    <string name="badge_globetrotter_title" formatted="false">Dünya gezgini</string>
+    <string name="badge_half_million_description">Toplam %1$s</string>
+    <string name="badge_half_million_title" formatted="false">Yarım milyon</string>
+    <string name="badge_highway_wolf_description">Tek gezide %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Otoyol kurdu</string>
+    <string name="badge_hours_50_description">Direksiyonda toplam 50 saat</string>
+    <string name="badge_hours_50_title" formatted="false">Elli saat</string>
+    <string name="badge_iron_butt_description">Tek gezide %1$s</string>
+    <string name="badge_iron_butt_title" formatted="false">Demir kıç</string>
+    <string name="badge_km_100k_description">Toplam %1$s</string>
+    <string name="badge_km_100k_title" formatted="false">Yüz bin</string>
+    <string name="badge_km_250k_description">Toplam %1$s</string>
+    <string name="badge_km_250k_title" formatted="false">Çeyrek milyon</string>
+    <string name="badge_legion_description">1000 gezi kaydedildi</string>
+    <string name="badge_legion_title" formatted="false">Lejyon</string>
+    <string name="badge_long_shift_description">4+ saat molasız</string>
+    <string name="badge_long_shift_title" formatted="false">Uzun vardiya</string>
+    <string name="badge_marathon_100_description">%1$s\'yi aşan tek gezi</string>
+    <string name="badge_marathon_100_title" formatted="false">Stoacı</string>
+    <string name="badge_marathon_42_description">Tek gezide %1$s</string>
+    <string name="badge_marathon_42_title" formatted="false">Maratoncu</string>
+    <string name="badge_midnight_rider_description">Gece yarısı ile 04.00 arasında gezi</string>
+    <string name="badge_midnight_rider_title" formatted="false">Gece yarısı sürücüsü</string>
+    <string name="badge_milestone_2000_description">Harita kilometre taşı: yükseklik %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">En yüksek nokta</string>
+    <string name="badge_milestone_border_description">Rotanızda bir ülke sınırı</string>
+    <string name="badge_milestone_border_title" formatted="false">Sınır</string>
+    <string name="badge_million_description">Bir ömürde %1$s</string>
+    <string name="badge_million_title" formatted="false">Milyoner</string>
+    <string name="badge_mountain_goat_description">Tek gezide %1$s tırmanış</string>
+    <string name="badge_mountain_goat_title" formatted="false">Dağ keçisi</string>
+    <string name="badge_night_rider_description">Gece gezisi (22.00–05.00)</string>
+    <string name="badge_night_rider_title" formatted="false">Gece sürücüsü</string>
+    <string name="badge_night_wolf_description">23.00–04.00 arasında sürüş</string>
+    <string name="badge_night_wolf_title" formatted="false">Gece kurdu</string>
+    <string name="badge_polar_description">66° enlemin ötesi</string>
+    <string name="badge_polar_title" formatted="false">Kutup gezgini</string>
+    <string name="badge_riddle_10_description">10 bilmece çözüldü</string>
+    <string name="badge_riddle_10_title" formatted="false">On bilmece</string>
+    <string name="badge_riddle_first_description">İlk bilmece çözüldü</string>
+    <string name="badge_riddle_first_title" formatted="false">İlk bilmece</string>
+    <string name="badge_road_regular_description">10 gezi kaydedildi</string>
+    <string name="badge_road_regular_title" formatted="false">Yolun müdavimi</string>
+    <string name="badge_road_warrior_description">50 gezi kaydedildi</string>
+    <string name="badge_road_warrior_title" formatted="false">Yol savaşçısı</string>
+    <string name="badge_sea_level_description">Kıyı boyunca (%1$s altı, %2$s üstü)</string>
+    <string name="badge_sea_level_title" formatted="false">Deniz seviyesinde</string>
+    <string name="badge_secret_komsomolsky_description">Krasnodar\'da Komsomolski\'den geçin</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Komsomolski Nişanı</string>
+    <string name="badge_snow_leopard_description">Kışın dağ gezisi (ara–şub)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Kar leoparı</string>
+    <string name="badge_speed_demon_description">%1$s üzeri maksimum hız</string>
+    <string name="badge_speed_demon_title" formatted="false">Hız şeytanı</string>
+    <string name="badge_streak_14_description">14 gün üst üste gezi</string>
+    <string name="badge_streak_14_title" formatted="false">İki hafta</string>
+    <string name="badge_streak_30_description">30 gün üst üste gezi</string>
+    <string name="badge_streak_30_title" formatted="false">Molasız bir ay</string>
+    <string name="badge_streak_3_description">3 gün üst üste gezi</string>
+    <string name="badge_streak_3_title" formatted="false">Üçleme</string>
+    <string name="badge_streak_7_description">7 gün üst üste gezi</string>
+    <string name="badge_streak_7_title" formatted="false">Tekerlek üstünde bir hafta</string>
+    <string name="badge_sunday_driver_description">Pazar günü gezisi</string>
+    <string name="badge_sunday_driver_title" formatted="false">Pazar sürücüsü</string>
+    <string name="badge_ten_thousand_description">Toplam %1$s</string>
+    <string name="badge_ten_thousand_title" formatted="false">On bin</string>
+    <string name="badge_thousand_description">Toplam %1$s</string>
+    <string name="badge_thousand_title" formatted="false">Binlik</string>
+    <string name="badge_trips_200_description">200 gezi kaydedildi</string>
+    <string name="badge_trips_200_title" formatted="false">Tecrübeli</string>
+    <string name="badge_trips_500_description">500 gezi kaydedildi</string>
+    <string name="badge_trips_500_title" formatted="false">Kıdemli</string>
+    <string name="badge_vault_keeper_description">50 özel gezi</string>
+    <string name="badge_vault_keeper_title" formatted="false">Sırların bekçisi</string>
+    <string name="badge_veteran_2026_description">2026 boyunca bizimle yol aldığınız için teşekkürler</string>
+    <string name="badge_veteran_2026_title" formatted="false">2026 gazisi</string>
+    <string name="badge_veteran_description">Direksiyonda toplam 100 saat</string>
+    <string name="badge_veteran_title" formatted="false">Gazi</string>
+    <string name="badge_weekend_warrior_description">Üst üste 4 hafta sonu gezi</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Hafta sonu savaşçısı</string>
+    <string name="badge_wrapped_year_description">Yılın 12 ayında da yola çıktınız</string>
+    <string name="badge_wrapped_year_title" formatted="false">Tam bir yıl</string>
     <string name="badges" formatted="false">Başarımlar</string>
     <string name="blockProfileBlock" formatted="false">Engelle</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Bu kişi içeriklerinizi görmeyecek, gezileri de akışınızda çıkmayacak. Aranızdaki takipler kaldırılır.</string>

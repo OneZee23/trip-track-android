@@ -25,6 +25,7 @@
     "TripTrackShared/LiveActivityStrings.swift": "253208fcb1c1320689c6f3db0c0bc3060bb1fceca1889c60ee84214990102484",
     "TripTrack/Models/DistanceUnit+Current.swift": "95f11e2cef5daac22692e0889f62f3479499df1adf5c396f2eb74fcbfa59b037",
     "TripTrack/Models/Badge.swift": "18652681dbbd8fc7082aa1c571fe3ff4f90d2d5a37bfa925e2cca835399cc1b5",
+    "TripTrack/Models/BadgeDefinitions.swift": "fc8707ce311ae80d0f96585a1614f51a451ca3c1f3de3577005f653c253cdf13",
     "TripTrack/Resources/en.lproj/InfoPlist.strings": "b9b4efe2a19f492d2993dc717b13d1b716f7bf7b298974f05a524ccf976a8719",
     "TripTrack/Resources/ru.lproj/InfoPlist.strings": "1309453322f3f66294ab9c8448426fcfc9c0a2df04dffc27d31f10041937b426",
     "TripTrack/Resources/de.lproj/InfoPlist.strings": "764900098070f802e7644ca628eb9c0f1a06e6c2f3eed46295622695786dcfd5",
@@ -135,67 +136,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1733,
+      "strings": 1849,
       "plurals": 30,
       "english_fallbacks": 24
     }
@@ -18285,6 +18286,1321 @@
       "kind": "string",
       "file": "TripTrack/Models/Badge.swift",
       "line": 74,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_above_clouds_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 294,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_above_clouds_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 294,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_ambassador_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 194,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_ambassador_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 194,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_carpool_karaoke_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 374,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_carpool_karaoke_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 374,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_centurion_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 367,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_centurion_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 367,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_century_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 52,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_century_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 52,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_early_bird_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 281,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_early_bird_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 281,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_early_tester_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 431,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_early_tester_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 431,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_endurance_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 142,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_endurance_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 142,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_equator_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 73,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_equator_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 73,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_expedition_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 388,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_expedition_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 388,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_100_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 188,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_100_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 188,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_10_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 170,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_10_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 170,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_25_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 176,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_25_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 176,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_50_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 182,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_50_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 182,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_5_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 164,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_explorer_5_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 164,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_first_km_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 45,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_first_km_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 45,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_first_trip_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 9,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_first_trip_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 9,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_globetrotter_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 200,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_globetrotter_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 200,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_half_million_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 96,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_half_million_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 96,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_highway_wolf_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 352,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_highway_wolf_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 352,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_hours_50_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 148,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_hours_50_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 148,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_iron_butt_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 128,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_iron_butt_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 128,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_km_100k_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 82,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_km_100k_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 82,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_km_250k_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 89,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_km_250k_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 89,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_legion_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 39,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_legion_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 39,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_long_shift_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 318,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_long_shift_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 318,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_marathon_100_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 121,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_marathon_100_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 121,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_marathon_42_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 110,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_marathon_42_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 110,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_midnight_rider_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 345,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_midnight_rider_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 345,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_milestone_2000_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 232,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_milestone_2000_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 232,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_milestone_border_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 226,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_milestone_border_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 226,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_million_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 103,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_million_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 103,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_mountain_goat_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 287,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_mountain_goat_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 287,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_night_rider_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 269,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_night_rider_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 269,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_night_wolf_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 275,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_night_wolf_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 275,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_polar_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 301,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_polar_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 301,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_riddle_10_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 220,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_riddle_10_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 220,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_riddle_first_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 214,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_riddle_first_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 214,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_road_regular_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 15,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_road_regular_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 15,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_road_warrior_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 21,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_road_warrior_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 21,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_sea_level_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 307,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_sea_level_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 307,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_secret_komsomolsky_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 246,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_secret_komsomolsky_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 246,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_snow_leopard_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 336,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_snow_leopard_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 336,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_speed_demon_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 135,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_speed_demon_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 135,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_14_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 412,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_14_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 412,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_30_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 418,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_30_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 418,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_3_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 400,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_3_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 400,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_7_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 406,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_streak_7_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 406,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_sunday_driver_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 324,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_sunday_driver_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 324,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_ten_thousand_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 66,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_ten_thousand_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 66,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_thousand_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 59,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "badge_thousand_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 59,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_trips_200_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 27,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_trips_200_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 27,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_trips_500_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 33,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_trips_500_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 33,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_vault_keeper_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 381,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_vault_keeper_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 381,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_veteran_2026_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 442,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_veteran_2026_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 442,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_veteran_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 154,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_veteran_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 154,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_weekend_warrior_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 330,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_weekend_warrior_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 330,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_wrapped_year_description",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 360,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "badge_wrapped_year_title",
+      "kind": "string",
+      "file": "TripTrack/Models/BadgeDefinitions.swift",
+      "line": 360,
       "placeholders": {},
       "formatted": false,
       "signatures": {

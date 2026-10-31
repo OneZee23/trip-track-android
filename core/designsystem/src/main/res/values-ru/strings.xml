@@ -388,6 +388,122 @@
     <string name="badgeRarity.legendary" formatted="false">Легендарная</string>
     <string name="badgeRarity.rare" formatted="false">Редкая</string>
     <string name="badgeRarity.uncommon" formatted="false">Необычная</string>
+    <string name="badge_above_clouds_description">Высота %1$s</string>
+    <string name="badge_above_clouds_title" formatted="false">Выше облаков</string>
+    <string name="badge_ambassador_description">Поездки в 2+ странах</string>
+    <string name="badge_ambassador_title" formatted="false">Посол</string>
+    <string name="badge_carpool_karaoke_description">30+ поездок на одной машине</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Любимая машина</string>
+    <string name="badge_centurion_description">100 поездок записано</string>
+    <string name="badge_centurion_title" formatted="false">Центурион</string>
+    <string name="badge_century_description">%1$s суммарно</string>
+    <string name="badge_century_title" formatted="false">Сотня</string>
+    <string name="badge_early_bird_description">Поездка в окно 00:00–06:00</string>
+    <string name="badge_early_bird_title" formatted="false">Ранняя птица</string>
+    <string name="badge_early_tester_description">Ты был с нами до релиза 1.0.0. Спасибо!</string>
+    <string name="badge_early_tester_title" formatted="false">Ранний тестер</string>
+    <string name="badge_endurance_description">10 часов за рулём</string>
+    <string name="badge_endurance_title" formatted="false">Выносливый</string>
+    <string name="badge_equator_description">%1$s — длина экватора</string>
+    <string name="badge_equator_title" formatted="false">Кругосветка</string>
+    <string name="badge_expedition_description">%1$s в сумме</string>
+    <string name="badge_expedition_title" formatted="false">Экспедиция</string>
+    <string name="badge_explorer_100_description">100 уникальных регионов</string>
+    <string name="badge_explorer_100_title" formatted="false">Сотня регионов</string>
+    <string name="badge_explorer_10_description">10 уникальных регионов</string>
+    <string name="badge_explorer_10_title" formatted="false">Путешественник</string>
+    <string name="badge_explorer_25_description">25 уникальных регионов</string>
+    <string name="badge_explorer_25_title" formatted="false">Конкистадор</string>
+    <string name="badge_explorer_50_description">50 уникальных регионов</string>
+    <string name="badge_explorer_50_title" formatted="false">Полсотни регионов</string>
+    <string name="badge_explorer_5_description">5 уникальных регионов</string>
+    <string name="badge_explorer_5_title" formatted="false">Исследователь</string>
+    <string name="badge_first_km_description">%1$s суммарно</string>
+    <string name="badge_first_km_title" formatted="false">Первый километр</string>
+    <string name="badge_first_trip_description">Запишите первую поездку</string>
+    <string name="badge_first_trip_title" formatted="false">Первый путь</string>
+    <string name="badge_globetrotter_description">Поездки в 5+ странах</string>
+    <string name="badge_globetrotter_title" formatted="false">Глобтроттер</string>
+    <string name="badge_half_million_description">%1$s в сумме</string>
+    <string name="badge_half_million_title" formatted="false">Полмиллиона</string>
+    <string name="badge_highway_wolf_description">Одна поездка длиной %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Хайвейный волк</string>
+    <string name="badge_hours_50_description">50 часов за рулём</string>
+    <string name="badge_hours_50_title" formatted="false">Полста часов</string>
+    <string name="badge_iron_butt_description">%1$s за одну поездку</string>
+    <string name="badge_iron_butt_title" formatted="false">Железная задница</string>
+    <string name="badge_km_100k_description">%1$s суммарно</string>
+    <string name="badge_km_100k_title" formatted="false">Сто тысяч</string>
+    <string name="badge_km_250k_description">%1$s суммарно</string>
+    <string name="badge_km_250k_title" formatted="false">Четверть миллиона</string>
+    <string name="badge_legion_description">1 000 поездок записано</string>
+    <string name="badge_legion_title" formatted="false">Легион</string>
+    <string name="badge_long_shift_description">4+ часа без остановки</string>
+    <string name="badge_long_shift_title" formatted="false">Длинная смена</string>
+    <string name="badge_marathon_100_description">Поездка длиннее %1$s</string>
+    <string name="badge_marathon_100_title" formatted="false">Стоик</string>
+    <string name="badge_marathon_42_description">%1$s за одну поездку</string>
+    <string name="badge_marathon_42_title" formatted="false">Марафонец</string>
+    <string name="badge_midnight_rider_description">Поездка между 00:00 и 04:00</string>
+    <string name="badge_midnight_rider_title" formatted="false">Полуночник</string>
+    <string name="badge_milestone_2000_description">Веха карты: высота %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Верхняя точка</string>
+    <string name="badge_milestone_border_description">Граница страны на треке</string>
+    <string name="badge_milestone_border_title" formatted="false">Граница</string>
+    <string name="badge_million_description">%1$s за всю жизнь</string>
+    <string name="badge_million_title" formatted="false">Миллионник</string>
+    <string name="badge_mountain_goat_description">Набор высоты %1$s за поездку</string>
+    <string name="badge_mountain_goat_title" formatted="false">Горный козёл</string>
+    <string name="badge_night_rider_description">Поездка ночью (22:00–05:00)</string>
+    <string name="badge_night_rider_title" formatted="false">Ночной гонщик</string>
+    <string name="badge_night_wolf_description">Поездка в окно 23:00–04:00</string>
+    <string name="badge_night_wolf_title" formatted="false">Ночной волк</string>
+    <string name="badge_polar_description">Широта &gt; 66°</string>
+    <string name="badge_polar_title" formatted="false">Полярник</string>
+    <string name="badge_riddle_10_description">10 разгаданных загадок</string>
+    <string name="badge_riddle_10_title" formatted="false">Десять загадок</string>
+    <string name="badge_riddle_first_description">Первая разгаданная загадка</string>
+    <string name="badge_riddle_first_title" formatted="false">Первая загадка</string>
+    <string name="badge_road_regular_description">10 поездок</string>
+    <string name="badge_road_regular_title" formatted="false">Завсегдатай</string>
+    <string name="badge_road_warrior_description">50 поездок</string>
+    <string name="badge_road_warrior_title" formatted="false">Дорожный воин</string>
+    <string name="badge_sea_level_description">Вдоль побережья (высота &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">На уровне моря</string>
+    <string name="badge_secret_komsomolsky_description">Проехать через Комсомольский в Краснодаре</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Знак Комсомольского</string>
+    <string name="badge_snow_leopard_description">Зимняя горная поездка (дек-фев)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Снежный барс</string>
+    <string name="badge_speed_demon_description">Макс. скорость &gt; %1$s</string>
+    <string name="badge_speed_demon_title" formatted="false">Спид-демон</string>
+    <string name="badge_streak_14_description">14 дней подряд</string>
+    <string name="badge_streak_14_title" formatted="false">Две недели</string>
+    <string name="badge_streak_30_description">30 дней подряд</string>
+    <string name="badge_streak_30_title" formatted="false">Месяц без остановки</string>
+    <string name="badge_streak_3_description">3 дня подряд с поездкой</string>
+    <string name="badge_streak_3_title" formatted="false">Тройка</string>
+    <string name="badge_streak_7_description">7 дней подряд</string>
+    <string name="badge_streak_7_title" formatted="false">Неделя на колёсах</string>
+    <string name="badge_sunday_driver_description">Поездка в воскресенье</string>
+    <string name="badge_sunday_driver_title" formatted="false">Воскресный водитель</string>
+    <string name="badge_ten_thousand_description">%1$s суммарно</string>
+    <string name="badge_ten_thousand_title" formatted="false">Десять тысяч</string>
+    <string name="badge_thousand_description">%1$s суммарно</string>
+    <string name="badge_thousand_title" formatted="false">Тысячник</string>
+    <string name="badge_trips_200_description">200 поездок</string>
+    <string name="badge_trips_200_title" formatted="false">Бывалый</string>
+    <string name="badge_trips_500_description">500 поездок</string>
+    <string name="badge_trips_500_title" formatted="false">Заслуженный</string>
+    <string name="badge_vault_keeper_description">50 приватных поездок</string>
+    <string name="badge_vault_keeper_title" formatted="false">Хранитель тайн</string>
+    <string name="badge_veteran_2026_description">Спасибо, что были с нами весь 2026 год</string>
+    <string name="badge_veteran_2026_title" formatted="false">Ветеран 2026</string>
+    <string name="badge_veteran_description">100 часов за рулём</string>
+    <string name="badge_veteran_title" formatted="false">Ветеран</string>
+    <string name="badge_weekend_warrior_description">Поездки 4 выходных подряд</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Weekend warrior</string>
+    <string name="badge_wrapped_year_description">Поездки во все 12 месяцев года</string>
+    <string name="badge_wrapped_year_title" formatted="false">Завёрнутый год</string>
     <string name="badges" formatted="false">Достижения</string>
     <string name="blockProfileBlock" formatted="false">Заблокировать</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Пользователь не увидит ваш контент, а его поездки не появятся в вашей ленте. Вы оба автоматически отписываетесь друг от друга.</string>

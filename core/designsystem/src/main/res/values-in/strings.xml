@@ -298,6 +298,122 @@
     <string name="badgeRarity.legendary" formatted="false">Legendaris</string>
     <string name="badgeRarity.rare" formatted="false">Langka</string>
     <string name="badgeRarity.uncommon" formatted="false">Tidak biasa</string>
+    <string name="badge_above_clouds_description">Mencapai ketinggian %1$s</string>
+    <string name="badge_above_clouds_title" formatted="false">Di atas awan</string>
+    <string name="badge_ambassador_description">Perjalanan di 2+ negara</string>
+    <string name="badge_ambassador_title" formatted="false">Duta</string>
+    <string name="badge_carpool_karaoke_description">30+ perjalanan dengan kendaraan yang sama</string>
+    <string name="badge_carpool_karaoke_title" formatted="false">Mobil kesayangan</string>
+    <string name="badge_centurion_description">100 perjalanan terekam</string>
+    <string name="badge_centurion_title" formatted="false">Centurion</string>
+    <string name="badge_century_description">Total %1$s</string>
+    <string name="badge_century_title" formatted="false">Seratus</string>
+    <string name="badge_early_bird_description">Berkendara antara 00.00–06.00</string>
+    <string name="badge_early_bird_title" formatted="false">Bangun pagi</string>
+    <string name="badge_early_tester_description">Anda sudah bersama kami sebelum 1.0.0. Terima kasih!</string>
+    <string name="badge_early_tester_title" formatted="false">Penguji awal</string>
+    <string name="badge_endurance_description">Total 10 jam di belakang kemudi</string>
+    <string name="badge_endurance_title" formatted="false">Tahan banting</string>
+    <string name="badge_equator_description">%1$s — panjang khatulistiwa</string>
+    <string name="badge_equator_title" formatted="false">Keliling dunia</string>
+    <string name="badge_expedition_description">Total %1$s</string>
+    <string name="badge_expedition_title" formatted="false">Ekspedisi</string>
+    <string name="badge_explorer_100_description">100 wilayah berbeda dikunjungi</string>
+    <string name="badge_explorer_100_title" formatted="false">Seratus wilayah</string>
+    <string name="badge_explorer_10_description">10 wilayah berbeda dikunjungi</string>
+    <string name="badge_explorer_10_title" formatted="false">Pelancong</string>
+    <string name="badge_explorer_25_description">25 wilayah berbeda dikunjungi</string>
+    <string name="badge_explorer_25_title" formatted="false">Konkistador</string>
+    <string name="badge_explorer_50_description">50 wilayah berbeda dikunjungi</string>
+    <string name="badge_explorer_50_title" formatted="false">Lima puluh wilayah</string>
+    <string name="badge_explorer_5_description">5 wilayah berbeda dikunjungi</string>
+    <string name="badge_explorer_5_title" formatted="false">Penjelajah</string>
+    <string name="badge_first_km_description">Total %1$s</string>
+    <string name="badge_first_km_title" formatted="false">Kilometer pertama</string>
+    <string name="badge_first_trip_description">Rekam perjalanan pertama Anda</string>
+    <string name="badge_first_trip_title" formatted="false">Perjalanan pertama</string>
+    <string name="badge_globetrotter_description">Perjalanan di 5+ negara</string>
+    <string name="badge_globetrotter_title" formatted="false">Penjelajah dunia</string>
+    <string name="badge_half_million_description">Total %1$s</string>
+    <string name="badge_half_million_title" formatted="false">Setengah juta</string>
+    <string name="badge_highway_wolf_description">Satu perjalanan %1$s</string>
+    <string name="badge_highway_wolf_title" formatted="false">Serigala jalan tol</string>
+    <string name="badge_hours_50_description">Total 50 jam di belakang kemudi</string>
+    <string name="badge_hours_50_title" formatted="false">Lima puluh jam</string>
+    <string name="badge_iron_butt_description">%1$s dalam satu perjalanan</string>
+    <string name="badge_iron_butt_title" formatted="false">Pantat baja</string>
+    <string name="badge_km_100k_description">Total %1$s</string>
+    <string name="badge_km_100k_title" formatted="false">Seratus ribu</string>
+    <string name="badge_km_250k_description">Total %1$s</string>
+    <string name="badge_km_250k_title" formatted="false">Seperempat juta</string>
+    <string name="badge_legion_description">1000 perjalanan terekam</string>
+    <string name="badge_legion_title" formatted="false">Legiun</string>
+    <string name="badge_long_shift_description">4+ jam tanpa berhenti</string>
+    <string name="badge_long_shift_title" formatted="false">Shift panjang</string>
+    <string name="badge_marathon_100_description">Satu perjalanan lebih dari %1$s</string>
+    <string name="badge_marathon_100_title" formatted="false">Stoik</string>
+    <string name="badge_marathon_42_description">%1$s dalam satu perjalanan</string>
+    <string name="badge_marathon_42_title" formatted="false">Pelari maraton</string>
+    <string name="badge_midnight_rider_description">Perjalanan antara tengah malam dan 04.00</string>
+    <string name="badge_midnight_rider_title" formatted="false">Pengendara tengah malam</string>
+    <string name="badge_milestone_2000_description">Tonggak peta: ketinggian %1$s</string>
+    <string name="badge_milestone_2000_title" formatted="false">Titik tertinggi</string>
+    <string name="badge_milestone_border_description">Perbatasan negara di jalur Anda</string>
+    <string name="badge_milestone_border_title" formatted="false">Perbatasan</string>
+    <string name="badge_million_description">%1$s seumur hidup</string>
+    <string name="badge_million_title" formatted="false">Jutawan</string>
+    <string name="badge_mountain_goat_description">Tanjakan %1$s dalam satu perjalanan</string>
+    <string name="badge_mountain_goat_title" formatted="false">Kambing gunung</string>
+    <string name="badge_night_rider_description">Perjalanan malam (22.00–05.00)</string>
+    <string name="badge_night_rider_title" formatted="false">Penunggang malam</string>
+    <string name="badge_night_wolf_description">Berkendara antara 23.00–04.00</string>
+    <string name="badge_night_wolf_title" formatted="false">Serigala malam</string>
+    <string name="badge_polar_description">Lintang di atas 66°</string>
+    <string name="badge_polar_title" formatted="false">Penjelajah kutub</string>
+    <string name="badge_riddle_10_description">10 teka-teki terpecahkan</string>
+    <string name="badge_riddle_10_title" formatted="false">Sepuluh teka-teki</string>
+    <string name="badge_riddle_first_description">Teka-teki pertama terpecahkan</string>
+    <string name="badge_riddle_first_title" formatted="false">Teka-teki pertama</string>
+    <string name="badge_road_regular_description">10 perjalanan terekam</string>
+    <string name="badge_road_regular_title" formatted="false">Langganan jalanan</string>
+    <string name="badge_road_warrior_description">50 perjalanan terekam</string>
+    <string name="badge_road_warrior_title" formatted="false">Pejuang jalanan</string>
+    <string name="badge_sea_level_description">Menyusuri pantai (ketinggian &lt;%1$s, &gt;%2$s)</string>
+    <string name="badge_sea_level_title" formatted="false">Setinggi permukaan laut</string>
+    <string name="badge_secret_komsomolsky_description">Berkendara melewati Komsomolsky di Krasnodar</string>
+    <string name="badge_secret_komsomolsky_title" formatted="false">Tanda Komsomolsky</string>
+    <string name="badge_snow_leopard_description">Perjalanan gunung di musim dingin (Des–Feb)</string>
+    <string name="badge_snow_leopard_title" formatted="false">Macan tutul salju</string>
+    <string name="badge_speed_demon_description">Kecepatan maksimum di atas %1$s</string>
+    <string name="badge_speed_demon_title" formatted="false">Setan kecepatan</string>
+    <string name="badge_streak_14_description">Rentetan 14 hari</string>
+    <string name="badge_streak_14_title" formatted="false">Dua pekan</string>
+    <string name="badge_streak_30_description">Rentetan 30 hari</string>
+    <string name="badge_streak_30_title" formatted="false">Sebulan tanpa jeda</string>
+    <string name="badge_streak_3_description">Rentetan 3 hari berturut-turut</string>
+    <string name="badge_streak_3_title" formatted="false">Tiga beruntun</string>
+    <string name="badge_streak_7_description">Rentetan 7 hari</string>
+    <string name="badge_streak_7_title" formatted="false">Sepekan di atas roda</string>
+    <string name="badge_sunday_driver_description">Perjalanan di hari Minggu</string>
+    <string name="badge_sunday_driver_title" formatted="false">Pengemudi hari Minggu</string>
+    <string name="badge_ten_thousand_description">Total %1$s</string>
+    <string name="badge_ten_thousand_title" formatted="false">Sepuluh ribu</string>
+    <string name="badge_thousand_description">Total %1$s</string>
+    <string name="badge_thousand_title" formatted="false">Seribu</string>
+    <string name="badge_trips_200_description">200 perjalanan terekam</string>
+    <string name="badge_trips_200_title" formatted="false">Berpengalaman</string>
+    <string name="badge_trips_500_description">500 perjalanan terekam</string>
+    <string name="badge_trips_500_title" formatted="false">Senior</string>
+    <string name="badge_vault_keeper_description">50 perjalanan privat</string>
+    <string name="badge_vault_keeper_title" formatted="false">Penjaga rahasia</string>
+    <string name="badge_veteran_2026_description">Terima kasih sudah menemani kami sepanjang 2026</string>
+    <string name="badge_veteran_2026_title" formatted="false">Veteran 2026</string>
+    <string name="badge_veteran_description">Total 100 jam di belakang kemudi</string>
+    <string name="badge_veteran_title" formatted="false">Veteran</string>
+    <string name="badge_weekend_warrior_description">Perjalanan 4 akhir pekan berturut-turut</string>
+    <string name="badge_weekend_warrior_title" formatted="false">Pejuang akhir pekan</string>
+    <string name="badge_wrapped_year_description">Berkendara di semua 12 bulan dalam setahun</string>
+    <string name="badge_wrapped_year_title" formatted="false">Setahun penuh</string>
     <string name="badges" formatted="false">Pencapaian</string>
     <string name="blockProfileBlock" formatted="false">Blokir</string>
     <string name="blockProfileConfirmBodyBlock" formatted="false">Orang ini tidak akan melihat konten Anda, dan perjalanannya tidak muncul di beranda Anda. Saling mengikuti di antara Anda berdua akan dihapus.</string>
