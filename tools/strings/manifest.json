@@ -37,7 +37,8 @@
     "TripTrack/Resources/fil.lproj/InfoPlist.strings": "4e21616f3249d95ed2e37ae72db6d40efef3b02ea2707549e0526ce63f94a5c2",
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
-    "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830"
+    "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
+    "tools/strings/android.json": "291c1f10e9b3524508434b1d10a36999b2bc0da64c40a30ceddfaa45b659bc36"
   },
   "languages": [
     "en",
@@ -134,67 +135,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1677,
+      "strings": 1733,
       "plurals": 30,
       "english_fallbacks": 24
     }
@@ -15958,8 +15959,8 @@
     {
       "name": "accountAppleIdOnly",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 4570,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -16687,10 +16688,317 @@
       }
     },
     {
+      "name": "android_google_account_line",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "email": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "android_google_account_only",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_activity_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_background_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_battery_optimized",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_bluetooth_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_location_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_notifications_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_oem_huawei",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_oem_samsung",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_oem_xiaomi",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_ok",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_open_settings",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_power_save",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_precise_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_restricted",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_health_title",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_level_label",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "level": {
+          "index": 1,
+          "type": "d"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "d"
+        }
+      }
+    },
+    {
+      "name": "android_permission_background_hint",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_precise_location_body",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_selected_item",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "label": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "android_sign_in_google_failed",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_sign_in_not_configured",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_sign_in_with_google",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_wordmark",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "appPrefsFootnote",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 5024,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "app_name",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -18338,8 +18646,8 @@
     {
       "name": "carPlayUnavailableBody",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 8227,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -19876,6 +20184,375 @@
       }
     },
     {
+      "name": "debug_map_building",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_camera",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "f",
+          "2": "f",
+          "3": "f"
+        }
+      }
+    },
+    {
+      "name": "debug_map_city",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_country",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_coverage_full",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_coverage_half",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_dataset",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_demo_title",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_fit_all",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_fit_route",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_fog_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_fog_on",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_frame",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "d",
+          "2": "f",
+          "3": "f",
+          "4": "d",
+          "5": "d",
+          "6": "d",
+          "7": "f",
+          "8": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_gpu",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "f"
+        }
+      }
+    },
+    {
+      "name": "debug_map_home",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_layer",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s",
+          "2": "d",
+          "3": "f",
+          "4": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_life",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "d",
+          "2": "d",
+          "3": "d",
+          "4": "d",
+          "5": "d",
+          "6": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_marker",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_mesh",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "f",
+          "2": "f",
+          "3": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_none",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_region",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_reveal_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_reveal_on",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_route_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_route_on",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_street",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_style",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "debug_map_suspended",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_unavailable",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "debug_map_work",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "defaultVehicleName",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -19922,8 +20599,8 @@
     {
       "name": "deleteAccountConfirmBody",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 3285,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -20726,8 +21403,8 @@
     {
       "name": "enterDeviceNameHint",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 2218,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -24882,8 +25559,8 @@
     {
       "name": "logic_cosmeticRetainedChoice",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings+CosmeticRetention.swift",
-      "line": 7,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {
         "kind": {
           "index": 1,
@@ -24899,86 +25576,6 @@
         "text": {
           "1": "s",
           "2": "s"
-        }
-      },
-      "language_signatures": {
-        "en": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "ru": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "de": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "es": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "fr": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "it": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "pl": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "id": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "tr": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "fil": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "uk": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "kk": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
-        },
-        "pt": {
-          "text": {
-            "1": "s",
-            "2": "s"
-          }
         }
       }
     },
@@ -30451,8 +31048,8 @@
     {
       "name": "meProGraceSub",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 7739,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -31378,8 +31975,8 @@
     {
       "name": "notificationPreferencesPickWhatYou",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 6579,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -31645,8 +32242,8 @@
     {
       "name": "onboardingBackgroundAllow",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 1139,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -31656,8 +32253,8 @@
     {
       "name": "onboardingBackgroundSub",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 1134,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -33913,8 +34510,8 @@
     {
       "name": "proManageAppStore",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 7816,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -34212,8 +34809,8 @@
     {
       "name": "proPricesFailedSub",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 7957,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -34234,8 +34831,8 @@
     {
       "name": "proRestoreNone",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 7982,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -35575,8 +36172,8 @@
     {
       "name": "remoteUpdateBody",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings+RemoteConfig.swift",
-      "line": 24,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -36983,8 +37580,8 @@
     {
       "name": "signInPromptAppleFailed",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 3402,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -37115,8 +37712,8 @@
     {
       "name": "signInWithApple",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 3444,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -38270,8 +38867,8 @@
     {
       "name": "themePickerFootnote",
       "kind": "string",
-      "file": "TripTrack/Localization/AppStrings.swift",
-      "line": 6152,
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {

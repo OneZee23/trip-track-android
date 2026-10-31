@@ -1,6 +1,7 @@
 """Parser regressions and resource parity. iOS: LocalizationTests.swift."""
 
 from pathlib import Path
+import json
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
@@ -92,6 +93,62 @@ class SwiftParserTests(unittest.TestCase):
 
 
 class GeneratorTests(unittest.TestCase):
+    def merge_android(self, generator, entries):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "android.json"
+            path.write_text(json.dumps(entries, ensure_ascii=False), encoding="utf-8")
+            generator.merge_android(path)
+
+    def test_android_override_replaces_ios_copy_and_records_its_source(self):
+        generator = self.generator()
+        generator.add(Resource("themePickerFootnote", "string", {lang: {"text": "iPhone"} for lang in LANGUAGES}, "fixture.swift", 1))
+        self.merge_android(generator, {"themePickerFootnote": {"replace": True, "values": {lang: "Android" for lang in LANGUAGES}}})
+        resource = generator.resources["string", "themePickerFootnote"]
+        self.assertEqual(resource.values["ru"]["text"], "Android")
+        self.assertEqual(resource.source, "tools/strings/android.json")
+
+    def test_android_requires_all_languages_without_english_fallback(self):
+        for missing in LANGUAGES:
+            with self.subTest(missing=missing), self.assertRaisesRegex(ValueError, "13 languages"):
+                self.merge_android(self.generator(), {"android_test": {"values": {lang: "Text" for lang in LANGUAGES if lang != missing}}})
+
+    def test_android_rejects_missing_tokens_and_accidental_replacements(self):
+        values = {lang: "{name}" for lang in LANGUAGES}
+        values["uk"] = "Текст"
+        with self.assertRaisesRegex(ValueError, "placeholder tokens"):
+            self.merge_android(self.generator(), {"android_test": {"values": values}})
+        with self.assertRaisesRegex(ValueError, "replace"):
+            self.merge_android(self.generator(), {"unknown_ios_key": {"replace": True, "values": {lang: "Text" for lang in LANGUAGES}}})
+        generator = self.generator()
+        generator.add(Resource("sample", "string", {lang: {"text": "{name}"} for lang in LANGUAGES}, "fixture.swift", 1))
+        with self.assertRaisesRegex(ValueError, "placeholder contract"):
+            self.merge_android(generator, {"sample": {"replace": True, "values": {lang: "{other}" for lang in LANGUAGES}}})
+
+    def test_android_diagnostics_preserve_positional_numeric_formats(self):
+        values = {lang: "%1$s: %2$d, %3$.2f ms" for lang in LANGUAGES}
+        generator = self.generator()
+        self.merge_android(generator, {"android_stats": {"foundation_format": True, "values": values}})
+        output, _ = generator.render()
+        self.assertIn("%3$.2f ms", output["res/values-ru/strings.xml"])
+        values["ru"] = "%1$s: %2$s, %3$.2f ms"
+        with self.assertRaisesRegex(ValueError, "format arguments"):
+            self.merge_android(self.generator(), {"android_stats": {"foundation_format": True, "values": values}})
+        generator.add(Resource("ios_count", "string", {lang: {"text": "%d"} for lang in LANGUAGES}, "fixture.swift", 1, foundation_format=True))
+        with self.assertRaisesRegex(ValueError, "placeholder contract"):
+            self.merge_android(generator, {"ios_count": {"replace": True, "foundation_format": True, "values": {lang: "%s" for lang in LANGUAGES}}})
+
+    def test_android_plurals_require_russian_and_ukrainian_forms(self):
+        from generate import CATEGORIES
+        values = {lang: {category: "trip" for category in CATEGORIES[lang]} for lang in LANGUAGES}
+        values["ru"] = dict(one="поездка", few="поездки", many="поездок", other="поездки")
+        values["uk"] = dict(one="поїздка", few="поїздки", many="поїздок", other="поїздки")
+        generator = self.generator()
+        self.merge_android(generator, {"android_trips": {"kind": "plurals", "values": values}})
+        self.assertEqual(generator.resources["plurals", "android_trips"].values["uk"]["many"], "поїздок")
+        del values["uk"]["few"]
+        with self.assertRaisesRegex(ValueError, "plural categories"):
+            self.merge_android(self.generator(), {"android_trips": {"kind": "plurals", "values": values}})
+
     def generator(self):
         generator = Generator(Path("unused"))
         generator.tables = {lang: {} for lang in LANGUAGES[2:]}

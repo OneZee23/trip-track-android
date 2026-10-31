@@ -23,6 +23,23 @@ import org.junit.Test
 // iOS: OnboardingPermissionTests.swift (one question at a time, a refusal still advances, a late
 // answer cannot finish the next page), with Android's own permissions and SDK levels.
 class PermissionPlanTests {
+    @Test
+    fun preciseAndApproximateAreRequestedTogetherOnBothRecordingAndOnboarding() {
+        assertEquals(listOf("android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"), PermissionPlan.manifestNames(fineLocation).toList())
+        assertEquals(listOf(notifications.manifestName), PermissionPlan.manifestNames(notifications).toList())
+    }
+
+    @Test
+    fun approximateAccessNeverCountsAsPreciseOrAllowsBackgroundUpgrade() {
+        val coarse = "android.permission.ACCESS_COARSE_LOCATION"
+        assertTrue(PermissionPlan.hasApproximateLocation { it == coarse })
+        assertFalse(PermissionPlan.hasApproximateLocation { true })
+        assertFalse(PermissionPlan.hasApproximateLocation { false })
+        val grants = PermissionPlan.effectiveGrants(31) { it.manifestName == coarse }
+        val next = PermissionPlan.next(31, grants, setOf(fineLocation)) as PermissionStep.Explain
+        assertEquals(activityRecognition, next.permission)
+    }
+
     /** Walks the plan as the screens do: every question answered with [answers], asked once. */
     private fun walk(sdk: Int, answers: (RecordingPermission) -> Boolean): List<Pair<RecordingPermission, RequestMethod>> {
         val granted = mutableSetOf<RecordingPermission>()

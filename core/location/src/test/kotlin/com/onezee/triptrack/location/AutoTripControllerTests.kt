@@ -36,7 +36,8 @@ class AutoTripControllerTests : RecorderTestCase() {
     private var serviceAllowed = true
     private var gate = CompletableDeferred<Unit>()
     private val waits = mutableListOf<Long>()
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // The injected wait already controls the clock; enter it before asserting the armed delay.
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private lateinit var controller: AutoTripController
 
     @Before

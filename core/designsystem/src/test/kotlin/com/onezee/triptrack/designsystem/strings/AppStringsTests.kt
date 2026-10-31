@@ -46,13 +46,34 @@ class AppStringsTests(private val language: AppLanguage) {
                     else -> error("Unsupported fixture parameter $type")
                 }
             }.toTypedArray()
-            val expected = if (row.isNull("expected")) null else row.getString("expected")
+            val expected = if (row.isNull("expected")) null else androidWording(name, row.getString("expected"))
             val actual = method.invoke(facade, *args)
             if (expected != actual) failures += "$name$arguments expected=<$expected> actual=<$actual>"
             checked++
         }
         assertTrue(checked > 400, "Too few Swift fixtures for ${language.code}: $checked")
         assertTrue(failures.isEmpty(), "${language.code}: ${failures.size} failures\n${failures.take(30).joinToString("\n")}")
+    }
+
+    /** The same Swift inputs and sentences; only the device name differs on Android. */
+    private fun androidWording(function: String, text: String): String {
+        if (function != "cosmeticRetainedChoice") return text
+        val (before, after) = when (language) {
+            AppLanguage.en -> "iPhone" to "phone"
+            AppLanguage.ru -> "iPhone" to "телефоне"
+            AppLanguage.de -> "iPhone" to "Telefon"
+            AppLanguage.es -> "iPhone" to "teléfono"
+            AppLanguage.fr -> "cet iPhone" to "ce téléphone"
+            AppLanguage.it -> "iPhone" to "telefono"
+            AppLanguage.pl -> "iPhonie" to "telefonie"
+            AppLanguage.id -> "iPhone" to "ponsel"
+            AppLanguage.tr -> "iPhone’da" to "telefonda"
+            AppLanguage.fil -> "iPhone na ito" to "teleponong ito"
+            AppLanguage.uk -> "iPhone" to "телефоні"
+            AppLanguage.kk -> "iPhone құрылғысында" to "телефонда"
+            AppLanguage.pt -> "iPhone" to "celular"
+        }
+        return text.replace(before, after)
     }
 
     @Test fun chosenLanguageOverridesConfigurationAndCanChange() {

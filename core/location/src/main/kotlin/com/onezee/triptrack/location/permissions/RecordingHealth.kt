@@ -12,7 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import com.onezee.triptrack.location.R
+import com.onezee.triptrack.designsystem.R
 import java.util.Locale
 
 /** The vendors whose power managers stop background apps beyond what Android itself does. */

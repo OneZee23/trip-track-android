@@ -80,7 +80,7 @@ class RecordingTextsTests {
         settings.mode = AutoRecordMode.remind
         settings.addDevice(SavedBluetoothDevice("00:11:22:33:44:55", "Polo Audio"))
         settings.addDevice(SavedBluetoothDevice("00:11:22:33:44:55", "Polo Audio"))
-        val preferences = context.getSharedPreferences(PreferencesAutoRecordSettings.FILE_NAME, Context.MODE_PRIVATE)
+        val preferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
         assertEquals("remind", preferences.getString("autoRecordMode", null))
         assertEquals("[{\"uuid\":\"00:11:22:33:44:55\",\"name\":\"Polo Audio\"}]", preferences.getString("savedBluetoothDevices", null))
         assertEquals("Polo Audio", PreferencesAutoRecordSettings(context).savedDevice("00:11:22:33:44:55", null)?.name)

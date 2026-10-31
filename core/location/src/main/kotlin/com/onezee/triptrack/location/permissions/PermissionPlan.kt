@@ -23,8 +23,8 @@ enum class RequestMethod {
     /** The ordinary permission dialog. */
     dialog,
     /**
-     * Android 11+: background location has no dialog. Requesting it alone opens its settings page,
-     * where the person picks «Allow all the time»; the answer is read when the app returns.
+     * Android 11+: open app settings for «Allow all the time»; the runtime dialog no longer
+     * offers that choice. Read the permission again when the person returns.
      */
     settingsPage,
 }
@@ -45,6 +45,15 @@ sealed interface PermissionStep {
  */
 object PermissionPlan {
     val order = RecordingPermission.entries
+
+    /** Android 12+ ignores fine location requested without coarse in the same dialog. */
+    fun manifestNames(permission: RecordingPermission): Array<String> =
+        if (permission == RecordingPermission.fineLocation) {
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        } else arrayOf(permission.manifestName)
+
+    fun hasApproximateLocation(isGranted: (String) -> Boolean): Boolean =
+        !isGranted(Manifest.permission.ACCESS_FINE_LOCATION) && isGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
 
     fun applies(permission: RecordingPermission, sdkInt: Int): Boolean = sdkInt >= permission.minSdk
 

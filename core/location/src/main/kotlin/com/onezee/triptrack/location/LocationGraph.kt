@@ -19,6 +19,7 @@ import com.onezee.triptrack.data.sync.SyncRequest
 import com.onezee.triptrack.data.sync.SyncRequestSink
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.location.auto.ActivityTransitions
+import com.onezee.triptrack.location.auto.AutoRecordSettings
 import com.onezee.triptrack.location.auto.AutoTripController
 import com.onezee.triptrack.location.auto.CarConnectionWatcher
 import com.onezee.triptrack.location.auto.PreferencesAutoRecordSettings
@@ -91,6 +92,7 @@ class LocationGraph(
     isOffline: () -> Boolean,
     /** The fog module's ingest of a finished track; nothing until core:map provides it. */
     reveal: RevealIngest = RevealIngest.None,
+    val autoRecord: AutoRecordSettings = PreferencesAutoRecordSettings(context),
 ) {
     val scope = CoroutineScope(
         SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "TripTrackRecorder") }.asCoroutineDispatcher(),
@@ -102,7 +104,6 @@ class LocationGraph(
         private set
 
     val rawFixLog = RawFixLog(File(context.noBackupFilesDir, RawFixLog.DIRECTORY))
-    val autoRecord = PreferencesAutoRecordSettings(context)
     val permissionLedger: PermissionLedger = PreferencesPermissionLedger(context)
     val notifications = RecordingNotifications(context, { RecordingTexts(strings(), distanceUnit) })
     val activityTransitions = ActivityTransitions(context)

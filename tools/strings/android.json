@@ -1,0 +1,1256 @@
+{
+  "app_name": {
+    "values": {
+      "en": "TripTrack",
+      "ru": "TripTrack",
+      "de": "TripTrack",
+      "es": "TripTrack",
+      "fr": "TripTrack",
+      "it": "TripTrack",
+      "pl": "TripTrack",
+      "id": "TripTrack",
+      "tr": "TripTrack",
+      "fil": "TripTrack",
+      "uk": "TripTrack",
+      "kk": "TripTrack",
+      "pt": "TripTrack"
+    }
+  },
+  "android_sign_in_with_google": {
+    "values": {
+      "en": "Sign in with Google",
+      "ru": "Войти через Google",
+      "de": "Mit Google anmelden",
+      "es": "Iniciar sesión con Google",
+      "fr": "Se connecter avec Google",
+      "it": "Accedi con Google",
+      "pl": "Zaloguj się przez Google",
+      "id": "Masuk dengan Google",
+      "tr": "Google ile giriş yap",
+      "fil": "Mag-sign in gamit ang Google",
+      "uk": "Увійти через Google",
+      "kk": "Google арқылы кіру",
+      "pt": "Entrar com o Google"
+    }
+  },
+  "android_sign_in_google_failed": {
+    "values": {
+      "en": "Couldn’t sign in with Google. Check your connection and your Google account on this phone, then try again.",
+      "ru": "Не получилось войти через Google. Проверьте интернет и аккаунт Google на телефоне и попробуйте ещё раз.",
+      "de": "Anmeldung mit Google fehlgeschlagen. Prüfe die Verbindung und dein Google-Konto auf diesem Gerät und versuche es erneut.",
+      "es": "No se pudo iniciar sesión con Google. Revisa la conexión y tu cuenta de Google en este teléfono e inténtalo de nuevo.",
+      "fr": "Connexion avec Google impossible. Vérifiez la connexion et votre compte Google sur ce téléphone, puis réessayez.",
+      "it": "Accesso con Google non riuscito. Controlla la connessione e il tuo account Google sul telefono, poi riprova.",
+      "pl": "Nie udało się zalogować przez Google. Sprawdź połączenie i konto Google na telefonie, potem spróbuj ponownie.",
+      "id": "Tidak bisa masuk dengan Google. Periksa koneksi dan akun Google di ponsel ini, lalu coba lagi.",
+      "tr": "Google ile giriş yapılamadı. Bağlantınızı ve bu telefondaki Google hesabınızı kontrol edip tekrar deneyin.",
+      "fil": "Hindi makapag-sign in gamit ang Google. Tingnan ang koneksyon at Google account sa teleponong ito, saka subukan muli.",
+      "uk": "Не вдалося увійти через Google. Перевірте інтернет і обліковий запис Google на телефоні та спробуйте ще раз.",
+      "kk": "Google арқылы кіру мүмкін болмады. Интернетті және телефондағы Google есептік жазбасын тексеріп, қайталап көріңіз.",
+      "pt": "Não foi possível entrar com o Google. Verifique a conexão e sua conta Google neste celular e tente de novo."
+    }
+  },
+  "android_google_account_only": {
+    "values": {
+      "en": "Google account",
+      "ru": "Аккаунт Google",
+      "de": "Google-Konto",
+      "es": "Cuenta de Google",
+      "fr": "Compte Google",
+      "it": "Account Google",
+      "pl": "Konto Google",
+      "id": "Akun Google",
+      "tr": "Google hesabı",
+      "fil": "Google account",
+      "uk": "Обліковий запис Google",
+      "kk": "Google есептік жазбасы",
+      "pt": "Conta Google"
+    }
+  },
+  "android_google_account_line": {
+    "values": {
+      "en": "Google · {email}",
+      "ru": "Google · {email}",
+      "de": "Google · {email}",
+      "es": "Google · {email}",
+      "fr": "Google · {email}",
+      "it": "Google · {email}",
+      "pl": "Google · {email}",
+      "id": "Google · {email}",
+      "tr": "Google · {email}",
+      "fil": "Google · {email}",
+      "uk": "Google · {email}",
+      "kk": "Google · {email}",
+      "pt": "Google · {email}"
+    }
+  },
+  "android_sign_in_not_configured": {
+    "values": {
+      "en": "Google sign-in is not set up in this build. Add GOOGLE_WEB_CLIENT_ID to local.properties (docs/sign-in.md) and rebuild.",
+      "ru": "В этой сборке не настроен вход через Google. Добавьте GOOGLE_WEB_CLIENT_ID в local.properties (docs/sign-in.md) и пересоберите приложение.",
+      "de": "Google-Anmeldung ist in diesem Build nicht eingerichtet. Ergänze GOOGLE_WEB_CLIENT_ID in local.properties (docs/sign-in.md) und baue die App neu.",
+      "es": "El acceso con Google no está configurado en esta compilación. Añade GOOGLE_WEB_CLIENT_ID a local.properties (docs/sign-in.md) y vuelve a compilar.",
+      "fr": "La connexion Google n’est pas configurée dans cette version. Ajoutez GOOGLE_WEB_CLIENT_ID à local.properties (docs/sign-in.md), puis recompilez.",
+      "it": "L’accesso Google non è configurato in questa build. Aggiungi GOOGLE_WEB_CLIENT_ID a local.properties (docs/sign-in.md) e ricompila.",
+      "pl": "Logowanie Google nie jest skonfigurowane w tej kompilacji. Dodaj GOOGLE_WEB_CLIENT_ID do local.properties (docs/sign-in.md) i skompiluj ponownie.",
+      "id": "Login Google belum disiapkan di build ini. Tambahkan GOOGLE_WEB_CLIENT_ID ke local.properties (docs/sign-in.md), lalu build ulang.",
+      "tr": "Bu derlemede Google girişi ayarlanmamış. local.properties dosyasına GOOGLE_WEB_CLIENT_ID ekleyin (docs/sign-in.md) ve yeniden derleyin.",
+      "fil": "Hindi pa naka-set up ang Google sign-in sa build na ito. Idagdag ang GOOGLE_WEB_CLIENT_ID sa local.properties (docs/sign-in.md) at i-build muli.",
+      "uk": "У цій збірці не налаштовано вхід через Google. Додайте GOOGLE_WEB_CLIENT_ID у local.properties (docs/sign-in.md) і зберіть застосунок знову.",
+      "kk": "Бұл жинақта Google арқылы кіру бапталмаған. local.properties файлына GOOGLE_WEB_CLIENT_ID қосып (docs/sign-in.md), қайта жинаңыз.",
+      "pt": "O login Google não está configurado nesta versão. Adicione GOOGLE_WEB_CLIENT_ID a local.properties (docs/sign-in.md) e compile de novo."
+    }
+  },
+  "android_permission_background_hint": {
+    "values": {
+      "en": "On the next screen open Permissions → Location and choose “Allow all the time” so trips can start when you get in the car.",
+      "ru": "На следующем экране откройте Разрешения → Местоположение и выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.",
+      "de": "Öffne auf der nächsten Seite Berechtigungen → Standort und wähle „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.",
+      "es": "En la siguiente pantalla abre Permisos → Ubicación y elige «Permitir siempre» para iniciar viajes al subir al coche.",
+      "fr": "Sur l’écran suivant, ouvrez Autorisations → Position et choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.",
+      "it": "Nella schermata successiva apri Autorizzazioni → Posizione e scegli «Consenti sempre» per avviare i viaggi quando sali in auto.",
+      "pl": "Na następnym ekranie otwórz Uprawnienia → Lokalizacja i wybierz „Zezwalaj cały czas”, aby trasy zaczynały się, gdy wsiadasz do auta.",
+      "id": "Di layar berikutnya buka Izin → Lokasi dan pilih “Izinkan sepanjang waktu” agar perjalanan bisa dimulai saat Anda masuk mobil.",
+      "tr": "Sonraki ekranda İzinler → Konum bölümünü açıp “Her zaman izin ver” seçin; arabaya bindiğinizde yolculuklar başlayabilsin.",
+      "fil": "Sa susunod na screen, buksan ang Mga Pahintulot → Lokasyon at piliin ang “Payagan sa lahat ng oras” para magsimula ang biyahe kapag sumakay ka sa kotse.",
+      "uk": "На наступному екрані відкрийте Дозволи → Місцезнаходження та виберіть «Дозволяти завжди», щоб поїздки починалися, коли ви сідаєте в машину.",
+      "kk": "Келесі экранда Рұқсаттар → Орналасқан жер бөлімін ашып, «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.",
+      "pt": "Na próxima tela, abra Permissões → Localização e escolha “Permitir o tempo todo” para iniciar viagens ao entrar no carro."
+    },
+    "replace": false
+  },
+  "android_health_title": {
+    "values": {
+      "en": "Recording reliability",
+      "ru": "Надёжность записи",
+      "de": "Zuverlässige Aufnahme",
+      "es": "Fiabilidad de la grabación",
+      "fr": "Fiabilité de l’enregistrement",
+      "it": "Affidabilità della registrazione",
+      "pl": "Niezawodność nagrywania",
+      "id": "Keandalan perekaman",
+      "tr": "Kayıt güvenilirliği",
+      "fil": "Maaasahang pagrekord",
+      "uk": "Надійність запису",
+      "kk": "Жазу сенімділігі",
+      "pt": "Confiabilidade da gravação"
+    }
+  },
+  "android_health_ok": {
+    "values": {
+      "en": "No recording restrictions found on this phone.",
+      "ru": "На телефоне не найдено ограничений для записи.",
+      "de": "Keine Einschränkungen für Aufnahmen auf diesem Gerät gefunden.",
+      "es": "No se han detectado restricciones para grabar en este teléfono.",
+      "fr": "Aucune restriction d’enregistrement détectée sur ce téléphone.",
+      "it": "Nessuna limitazione alla registrazione trovata su questo telefono.",
+      "pl": "Nie znaleziono ograniczeń nagrywania na tym telefonie.",
+      "id": "Tidak ditemukan batasan perekaman di ponsel ini.",
+      "tr": "Bu telefonda kayıt kısıtlaması bulunamadı.",
+      "fil": "Walang nakitang paghihigpit sa pagrekord sa teleponong ito.",
+      "uk": "На телефоні не знайдено обмежень для запису.",
+      "kk": "Телефонда жазуға кедергі келтіретін шектеулер табылмады.",
+      "pt": "Nenhuma restrição de gravação encontrada neste celular."
+    }
+  },
+  "android_health_location_off": {
+    "values": {
+      "en": "Location is turned off on this phone.",
+      "ru": "На телефоне выключена геолокация.",
+      "de": "Der Standort ist auf diesem Gerät ausgeschaltet.",
+      "es": "La ubicación está desactivada en este teléfono.",
+      "fr": "La localisation est désactivée sur ce téléphone.",
+      "it": "La posizione è disattivata su questo telefono.",
+      "pl": "Lokalizacja jest wyłączona na tym telefonie.",
+      "id": "Lokasi dinonaktifkan di ponsel ini.",
+      "tr": "Bu telefonda konum kapalı.",
+      "fil": "Naka-off ang lokasyon sa teleponong ito.",
+      "uk": "На телефоні вимкнено геолокацію.",
+      "kk": "Телефонда геолокация өшірулі.",
+      "pt": "A localização está desativada neste celular."
+    }
+  },
+  "android_health_precise_off": {
+    "values": {
+      "en": "Precise location is off: trips cannot be recorded.",
+      "ru": "Точная геолокация выключена: поездки не записать.",
+      "de": "Der genaue Standort ist aus: Fahrten können nicht aufgezeichnet werden.",
+      "es": "La ubicación precisa está desactivada: no se pueden grabar viajes.",
+      "fr": "La position exacte est désactivée : les trajets ne peuvent pas être enregistrés.",
+      "it": "La posizione esatta è disattivata: non è possibile registrare viaggi.",
+      "pl": "Dokładna lokalizacja jest wyłączona: nie można nagrywać tras.",
+      "id": "Lokasi akurat nonaktif: perjalanan tidak bisa direkam.",
+      "tr": "Tam konum kapalı: yolculuklar kaydedilemez.",
+      "fil": "Naka-off ang eksaktong lokasyon: hindi mairekord ang mga biyahe.",
+      "uk": "Точну геолокацію вимкнено: поїздки не записати.",
+      "kk": "Нақты геолокация өшірулі: сапарларды жазу мүмкін емес.",
+      "pt": "A localização exata está desativada: não é possível gravar viagens."
+    }
+  },
+  "android_precise_location_body": {
+    "values": {
+      "en": "Recording needs precise location to draw your route and measure distance. Open Settings → Permissions → Location and turn on “Use precise location”.",
+      "ru": "Для записи маршрута и расстояния нужна точная геолокация. Откройте Настройки → Разрешения → Местоположение и включите «Точное местоположение».",
+      "de": "Für Route und Entfernung wird der genaue Standort benötigt. Öffne Einstellungen → Berechtigungen → Standort und aktiviere „Genauen Standort verwenden“.",
+      "es": "Para grabar la ruta y medir la distancia se necesita la ubicación precisa. Abre Ajustes → Permisos → Ubicación y activa «Usar ubicación precisa».",
+      "fr": "La position exacte est nécessaire pour tracer votre itinéraire et mesurer la distance. Ouvrez Paramètres → Autorisations → Position et activez « Utiliser la position exacte ».",
+      "it": "Serve la posizione esatta per tracciare il percorso e misurare la distanza. Apri Impostazioni → Autorizzazioni → Posizione e attiva «Usa posizione esatta».",
+      "pl": "Nagrywanie trasy i pomiar odległości wymagają dokładnej lokalizacji. Otwórz Ustawienia → Uprawnienia → Lokalizacja i włącz „Używaj dokładnej lokalizacji”.",
+      "id": "Perekaman memerlukan lokasi akurat untuk menggambar rute dan mengukur jarak. Buka Setelan → Izin → Lokasi dan aktifkan “Gunakan lokasi akurat”.",
+      "tr": "Rotayı çizmek ve mesafeyi ölçmek için tam konum gerekir. Ayarlar → İzinler → Konum bölümünden “Tam konumu kullan” seçeneğini açın.",
+      "fil": "Kailangan ng eksaktong lokasyon para iguhit ang ruta at sukatin ang layo. Buksan ang Mga Setting → Mga Pahintulot → Lokasyon at i-on ang “Gumamit ng eksaktong lokasyon”.",
+      "uk": "Для запису маршруту й відстані потрібна точна геолокація. Відкрийте Налаштування → Дозволи → Місцезнаходження та ввімкніть «Точне місцезнаходження».",
+      "kk": "Бағытты сызу және қашықтықты өлшеу үшін нақты геолокация қажет. Баптаулар → Рұқсаттар → Орналасқан жер бөліміне өтіп, «Нақты орналасқан жерді пайдалану» параметрін қосыңыз.",
+      "pt": "A gravação precisa da localização exata para traçar a rota e medir a distância. Abra Configurações → Permissões → Localização e ative “Usar localização exata”."
+    }
+  },
+  "android_health_background_off": {
+    "values": {
+      "en": "Location “All the time” is off: trips will not start by themselves.",
+      "ru": "Геолокация «в любом режиме» выключена: поездки не начнутся сами.",
+      "de": "Standortzugriff „Immer“ ist aus: Fahrten starten nicht von selbst.",
+      "es": "La ubicación «Siempre» está desactivada: los viajes no empezarán solos.",
+      "fr": "La localisation « Toujours » est désactivée : les trajets ne démarreront pas seuls.",
+      "it": "La posizione «Sempre» è disattivata: i viaggi non partiranno da soli.",
+      "pl": "Lokalizacja „Cały czas” jest wyłączona: trasy nie zaczną się same.",
+      "id": "Akses lokasi “Sepanjang waktu” nonaktif: perjalanan tidak akan dimulai sendiri.",
+      "tr": "“Her zaman” konum izni kapalı: yolculuklar kendiliğinden başlamaz.",
+      "fil": "Naka-off ang lokasyon na “Sa lahat ng oras”: hindi kusang magsisimula ang mga biyahe.",
+      "uk": "Геолокацію «Завжди» вимкнено: поїздки не почнуться самі.",
+      "kk": "«Әрдайым» геолокация рұқсаты өшірулі: сапарлар өздігінен басталмайды.",
+      "pt": "A localização “O tempo todo” está desativada: as viagens não começarão sozinhas."
+    }
+  },
+  "android_health_notifications_off": {
+    "values": {
+      "en": "Notifications are off: you will not see the recording or draft questions.",
+      "ru": "Уведомления выключены: не будет видно записи и вопросов о черновиках.",
+      "de": "Benachrichtigungen sind aus: Aufnahme und Fragen zu Entwürfen werden nicht angezeigt.",
+      "es": "Las notificaciones están desactivadas: no verás la grabación ni las preguntas sobre borradores.",
+      "fr": "Les notifications sont désactivées : vous ne verrez ni l’enregistrement ni les questions sur les brouillons.",
+      "it": "Le notifiche sono disattivate: non vedrai la registrazione né le domande sulle bozze.",
+      "pl": "Powiadomienia są wyłączone: nie zobaczysz nagrywania ani pytań o szkice.",
+      "id": "Notifikasi nonaktif: perekaman dan pertanyaan tentang draf tidak akan terlihat.",
+      "tr": "Bildirimler kapalı: kaydı ve taslak sorularını göremezsiniz.",
+      "fil": "Naka-off ang mga notification: hindi mo makikita ang pagrekord o mga tanong tungkol sa draft.",
+      "uk": "Сповіщення вимкнено: не буде видно запису й запитань про чернетки.",
+      "kk": "Хабарландырулар өшірулі: жазуды және нобай туралы сұрақтарды көрмейсіз.",
+      "pt": "As notificações estão desativadas: você não verá a gravação nem as perguntas sobre rascunhos."
+    }
+  },
+  "android_health_battery_optimized": {
+    "values": {
+      "en": "Battery optimization can stop recording while the screen is off.",
+      "ru": "Оптимизация батареи может остановить запись при выключенном экране.",
+      "de": "Die Akkuoptimierung kann die Aufnahme bei ausgeschaltetem Bildschirm stoppen.",
+      "es": "La optimización de batería puede detener la grabación con la pantalla apagada.",
+      "fr": "L’optimisation de la batterie peut arrêter l’enregistrement quand l’écran est éteint.",
+      "it": "L’ottimizzazione della batteria può fermare la registrazione a schermo spento.",
+      "pl": "Optymalizacja baterii może zatrzymać nagrywanie przy wyłączonym ekranie.",
+      "id": "Pengoptimalan baterai dapat menghentikan perekaman saat layar mati.",
+      "tr": "Pil optimizasyonu, ekran kapalıyken kaydı durdurabilir.",
+      "fil": "Maaaring ihinto ng pag-optimize ng baterya ang pagrekord kapag naka-off ang screen.",
+      "uk": "Оптимізація батареї може зупинити запис, коли екран вимкнено.",
+      "kk": "Батареяны оңтайландыру экран өшірулі кезде жазуды тоқтатуы мүмкін.",
+      "pt": "A otimização da bateria pode parar a gravação com a tela apagada."
+    }
+  },
+  "android_health_restricted": {
+    "values": {
+      "en": "TripTrack’s background activity is restricted.",
+      "ru": "Фоновая работа TripTrack ограничена.",
+      "de": "Die Hintergrundaktivität von TripTrack ist eingeschränkt.",
+      "es": "La actividad de TripTrack en segundo plano está restringida.",
+      "fr": "L’activité de TripTrack en arrière-plan est limitée.",
+      "it": "L’attività in background di TripTrack è limitata.",
+      "pl": "Działanie TripTrack w tle jest ograniczone.",
+      "id": "Aktivitas latar belakang TripTrack dibatasi.",
+      "tr": "TripTrack’in arka plan etkinliği kısıtlı.",
+      "fil": "Pinaghihigpitan ang paggana ng TripTrack sa background.",
+      "uk": "Фонову роботу TripTrack обмежено.",
+      "kk": "TripTrack қолданбасының фондық жұмысы шектелген.",
+      "pt": "A atividade do TripTrack em segundo plano está restrita."
+    }
+  },
+  "android_health_power_save": {
+    "values": {
+      "en": "Battery saver is on: GPS may update less often.",
+      "ru": "Включена экономия заряда: GPS может обновляться реже.",
+      "de": "Der Energiesparmodus ist an: GPS wird möglicherweise seltener aktualisiert.",
+      "es": "El ahorro de batería está activado: el GPS puede actualizarse con menos frecuencia.",
+      "fr": "L’économiseur de batterie est activé : le GPS peut se mettre à jour moins souvent.",
+      "it": "Il risparmio energetico è attivo: il GPS potrebbe aggiornarsi meno spesso.",
+      "pl": "Oszczędzanie baterii jest włączone: GPS może aktualizować się rzadziej.",
+      "id": "Penghemat baterai aktif: GPS mungkin lebih jarang diperbarui.",
+      "tr": "Pil tasarrufu açık: GPS daha seyrek güncellenebilir.",
+      "fil": "Naka-on ang pagtitipid ng baterya: maaaring mas madalang mag-update ang GPS.",
+      "uk": "Увімкнено економію заряду: GPS може оновлюватися рідше.",
+      "kk": "Қуат үнемдеу қосулы: GPS сирегірек жаңаруы мүмкін.",
+      "pt": "A economia de bateria está ativada: o GPS pode atualizar com menos frequência."
+    }
+  },
+  "android_health_activity_off": {
+    "values": {
+      "en": "Physical activity access is off: drives are not detected.",
+      "ru": "Нет доступа к физической активности: поездки не распознаются.",
+      "de": "Zugriff auf körperliche Aktivität fehlt: Fahrten werden nicht erkannt.",
+      "es": "Sin acceso a la actividad física: no se detectan los viajes.",
+      "fr": "L’accès à l’activité physique est désactivé : les trajets ne sont pas détectés.",
+      "it": "Accesso all’attività fisica disattivato: i viaggi non vengono rilevati.",
+      "pl": "Brak dostępu do aktywności fizycznej: przejazdy nie są wykrywane.",
+      "id": "Akses aktivitas fisik nonaktif: perjalanan tidak terdeteksi.",
+      "tr": "Fiziksel aktivite izni kapalı: sürüşler algılanmaz.",
+      "fil": "Naka-off ang access sa pisikal na aktibidad: hindi matutukoy ang mga biyahe.",
+      "uk": "Немає доступу до фізичної активності: поїздки не розпізнаються.",
+      "kk": "Физикалық белсенділікке рұқсат жоқ: сапарлар анықталмайды.",
+      "pt": "O acesso à atividade física está desativado: as viagens não são detectadas."
+    }
+  },
+  "android_health_bluetooth_off": {
+    "values": {
+      "en": "Nearby devices access is off: the car stereo is not recognised.",
+      "ru": "Нет доступа к устройствам поблизости: магнитола не распознаётся.",
+      "de": "Zugriff auf Geräte in der Nähe fehlt: das Autoradio wird nicht erkannt.",
+      "es": "Sin acceso a dispositivos cercanos: no se reconoce el equipo de audio del coche.",
+      "fr": "L’accès aux appareils à proximité est désactivé : l’autoradio n’est pas reconnu.",
+      "it": "Accesso ai dispositivi nelle vicinanze disattivato: l’autoradio non viene riconosciuta.",
+      "pl": "Brak dostępu do urządzeń w pobliżu: radio samochodowe nie jest rozpoznawane.",
+      "id": "Akses perangkat di sekitar nonaktif: stereo mobil tidak dikenali.",
+      "tr": "Yakındaki cihazlara erişim kapalı: araç teybi tanınmaz.",
+      "fil": "Naka-off ang access sa mga kalapit na device: hindi makikilala ang stereo ng kotse.",
+      "uk": "Немає доступу до пристроїв поблизу: магнітола не розпізнається.",
+      "kk": "Маңайдағы құрылғыларға рұқсат жоқ: автомагнитола танылмайды.",
+      "pt": "O acesso a dispositivos por perto está desativado: o som do carro não é reconhecido."
+    }
+  },
+  "android_health_open_settings": {
+    "values": {
+      "en": "Open settings",
+      "ru": "Открыть настройки",
+      "de": "Einstellungen öffnen",
+      "es": "Abrir ajustes",
+      "fr": "Ouvrir les paramètres",
+      "it": "Apri impostazioni",
+      "pl": "Otwórz ustawienia",
+      "id": "Buka setelan",
+      "tr": "Ayarları aç",
+      "fil": "Buksan ang mga setting",
+      "uk": "Відкрити налаштування",
+      "kk": "Баптауларды ашу",
+      "pt": "Abrir configurações"
+    }
+  },
+  "android_health_oem_samsung": {
+    "values": {
+      "en": "Samsung: Settings → Battery → Background usage limits → Never sleeping apps → add TripTrack.",
+      "ru": "Samsung: Настройки → Аккумулятор → Ограничения в фоновом режиме → Приложения без спящего режима → добавьте TripTrack.",
+      "de": "Samsung: Einstellungen → Akku → Grenzen der Hintergrundnutzung → Apps, die nie im Standby sind → TripTrack hinzufügen.",
+      "es": "Samsung: Ajustes → Batería → Límites de uso en segundo plano → Apps nunca inactivas → añade TripTrack.",
+      "fr": "Samsung : Paramètres → Batterie → Limites d’utilisation en arrière-plan → Applications jamais en veille → ajoutez TripTrack.",
+      "it": "Samsung: Impostazioni → Batteria → Limiti per l’uso in background → App mai in sospensione → aggiungi TripTrack.",
+      "pl": "Samsung: Ustawienia → Bateria → Limity użycia w tle → Nigdy nieusypiane aplikacje → dodaj TripTrack.",
+      "id": "Samsung: Pengaturan → Baterai → Batas penggunaan latar belakang → Aplikasi yang tidak pernah tidur → tambahkan TripTrack.",
+      "tr": "Samsung: Ayarlar → Pil → Arka plan kullanım sınırları → Asla uyumayan uygulamalar → TripTrack’i ekleyin.",
+      "fil": "Samsung: Mga Setting → Baterya → Mga limitasyon sa paggamit sa background → Mga app na hindi kailanman natutulog → idagdag ang TripTrack.",
+      "uk": "Samsung: Налаштування → Акумулятор → Обмеження фонового використання → Програми, які ніколи не переходять у режим сну → додайте TripTrack.",
+      "kk": "Samsung: Баптаулар → Батарея → Фондық пайдалануды шектеу → Ешқашан ұйқыға өтпейтін қолданбалар → TripTrack қосыңыз.",
+      "pt": "Samsung: Configurações → Bateria → Limites de uso em segundo plano → Aplicativos nunca suspensos → adicione o TripTrack."
+    }
+  },
+  "android_health_oem_xiaomi": {
+    "values": {
+      "en": "Xiaomi: Settings → Apps → TripTrack → turn on Autostart, then set Battery saver to No restrictions.",
+      "ru": "Xiaomi: Настройки → Приложения → TripTrack → включите Автозапуск, в Контроле активности выберите «Нет ограничений».",
+      "de": "Xiaomi: Einstellungen → Apps → TripTrack → Autostart aktivieren, unter Energiesparen „Keine Einschränkungen“ wählen.",
+      "es": "Xiaomi: Ajustes → Aplicaciones → TripTrack → activa Inicio automático y elige «Sin restricciones» en Ahorro de batería.",
+      "fr": "Xiaomi : Paramètres → Applications → TripTrack → activez le démarrage automatique, puis choisissez « Aucune restriction » pour la batterie.",
+      "it": "Xiaomi: Impostazioni → App → TripTrack → attiva Avvio automatico, poi scegli «Nessuna restrizione» per il risparmio batteria.",
+      "pl": "Xiaomi: Ustawienia → Aplikacje → TripTrack → włącz Autostart, a w Oszczędzaniu baterii wybierz „Bez ograniczeń”.",
+      "id": "Xiaomi: Setelan → Aplikasi → TripTrack → aktifkan Mulai otomatis, lalu pilih “Tanpa pembatasan” di Penghemat baterai.",
+      "tr": "Xiaomi: Ayarlar → Uygulamalar → TripTrack → Otomatik başlatmayı açın, Pil tasarrufunda “Kısıtlama yok” seçin.",
+      "fil": "Xiaomi: Mga Setting → Mga App → TripTrack → i-on ang Autostart, saka piliin ang “Walang paghihigpit” sa pagtitipid ng baterya.",
+      "uk": "Xiaomi: Налаштування → Програми → TripTrack → увімкніть Автозапуск, в Економії заряду виберіть «Без обмежень».",
+      "kk": "Xiaomi: Баптаулар → Қолданбалар → TripTrack → Автоматты іске қосуды қосып, Қуат үнемдеу бөлімінде «Шектеусіз» таңдаңыз.",
+      "pt": "Xiaomi: Configurações → Apps → TripTrack → ative o Início automático e escolha “Sem restrições” em Economia de bateria."
+    }
+  },
+  "android_health_oem_huawei": {
+    "values": {
+      "en": "Huawei: Settings → Battery → App launch → TripTrack → Manage manually, with every switch on.",
+      "ru": "Huawei: Настройки → Батарея → Запуск приложений → TripTrack → Управлять вручную, включите все переключатели.",
+      "de": "Huawei: Einstellungen → Akku → App-Start → TripTrack → Manuell verwalten, alle Schalter einschalten.",
+      "es": "Huawei: Ajustes → Batería → Inicio de aplicaciones → TripTrack → Gestionar manualmente y activa todos los interruptores.",
+      "fr": "Huawei : Paramètres → Batterie → Lancement d’application → TripTrack → Gestion manuelle, activez toutes les options.",
+      "it": "Huawei: Impostazioni → Batteria → Avvio app → TripTrack → Gestisci manualmente, attiva tutte le opzioni.",
+      "pl": "Huawei: Ustawienia → Bateria → Uruchamianie aplikacji → TripTrack → Zarządzaj ręcznie, włącz wszystkie opcje.",
+      "id": "Huawei: Pengaturan → Baterai → Peluncuran aplikasi → TripTrack → Kelola secara manual, aktifkan semua opsi.",
+      "tr": "Huawei: Ayarlar → Pil → Uygulama başlatma → TripTrack → Manuel yönet, tüm anahtarları açın.",
+      "fil": "Huawei: Mga Setting → Baterya → Paglunsad ng app → TripTrack → Pamahalaan nang manu-mano, i-on ang lahat ng switch.",
+      "uk": "Huawei: Налаштування → Батарея → Запуск програм → TripTrack → Керувати вручну, увімкніть усі перемикачі.",
+      "kk": "Huawei: Баптаулар → Батарея → Қолданбаларды іске қосу → TripTrack → Қолмен басқару, барлық ауыстырғышты қосыңыз.",
+      "pt": "Huawei: Configurações → Bateria → Inicialização de aplicativos → TripTrack → Gerenciar manualmente, ative todas as opções."
+    }
+  },
+  "themePickerFootnote": {
+    "values": {
+      "en": "System follows your phone’s theme setting.",
+      "ru": "Системная следует настройкам темы телефона.",
+      "de": "System folgt der Designeinstellung deines Geräts.",
+      "es": "Sistema sigue el tema del teléfono.",
+      "fr": "Système suit le thème du téléphone.",
+      "it": "Sistema segue il tema del telefono.",
+      "pl": "Systemowy odpowiada motywowi telefonu.",
+      "id": "Sistem mengikuti setelan tema ponsel.",
+      "tr": "Sistem, telefonunuzun tema ayarını izler.",
+      "fil": "Sinusunod ng System ang tema ng telepono.",
+      "uk": "Системна відповідає налаштуванням теми телефону.",
+      "kk": "Жүйелік тақырып телефон баптауына сәйкес келеді.",
+      "pt": "Sistema segue o tema do celular."
+    },
+    "replace": true
+  },
+  "onboardingBackgroundSub": {
+    "values": {
+      "en": "Location access “All the time” helps detect drives when the app isn’t open. Physical activity detects movement without continuously running GPS. You can allow or deny each request.",
+      "ru": "Геолокация «в любом режиме» помогает замечать начало поездки, когда приложение закрыто. «Физическая активность» определяет движение без постоянной работы GPS. Каждый запрос можно разрешить или отклонить.",
+      "de": "Standortzugriff „Immer“ hilft, Fahrten bei geschlossener App zu erkennen. „Körperliche Aktivität“ erkennt Bewegung ohne ständigen GPS-Betrieb. Du kannst jede Anfrage erlauben oder ablehnen.",
+      "es": "El acceso a la ubicación «Siempre» ayuda a detectar viajes con la app cerrada. «Actividad física» detecta el movimiento sin usar el GPS continuamente. Puedes aceptar o rechazar cada solicitud.",
+      "fr": "L’accès à la position « Toujours » aide à détecter les trajets quand l’application est fermée. L’activité physique détecte le mouvement sans utiliser le GPS en continu. Vous pouvez accepter ou refuser chaque demande.",
+      "it": "L’accesso alla posizione «Sempre» aiuta a rilevare i viaggi con l’app chiusa. «Attività fisica» rileva il movimento senza usare il GPS di continuo. Puoi consentire o negare ogni richiesta.",
+      "pl": "Dostęp do lokalizacji „Cały czas” pomaga wykrywać przejazdy przy zamkniętej aplikacji. „Aktywność fizyczna” wykrywa ruch bez ciągłego używania GPS. Każdą prośbę możesz zaakceptować lub odrzucić.",
+      "id": "Akses lokasi “Sepanjang waktu” membantu mendeteksi perjalanan saat aplikasi ditutup. Aktivitas fisik mendeteksi gerakan tanpa terus menjalankan GPS. Anda bisa mengizinkan atau menolak setiap permintaan.",
+      "tr": "“Her zaman” konum izni, uygulama kapalıyken sürüşleri algılamaya yardımcı olur. Fiziksel aktivite, GPS’i sürekli çalıştırmadan hareketi algılar. Her isteğe izin verebilir veya reddedebilirsiniz.",
+      "fil": "Tumutulong ang lokasyon na “Sa lahat ng oras” na matukoy ang mga biyahe kapag sarado ang app. Natutukoy ng pisikal na aktibidad ang paggalaw nang hindi tuloy-tuloy ang GPS. Maaari mong payagan o tanggihan ang bawat kahilingan.",
+      "uk": "Геолокація «Завжди» допомагає помічати початок поїздки, коли застосунок закрито. «Фізична активність» визначає рух без постійної роботи GPS. Кожен запит можна дозволити або відхилити.",
+      "kk": "«Әрдайым» геолокация рұқсаты қолданба жабық кезде сапарларды анықтауға көмектеседі. Физикалық белсенділік GPS-ті үздіксіз қоспай қозғалысты анықтайды. Әр сұрауға рұқсат беруге не бас тартуға болады.",
+      "pt": "O acesso à localização “O tempo todo” ajuda a detectar viagens com o app fechado. A atividade física detecta movimento sem usar o GPS continuamente. Você pode permitir ou negar cada pedido."
+    },
+    "replace": true
+  },
+  "onboardingBackgroundAllow": {
+    "values": {
+      "en": "Allow all the time",
+      "ru": "Разрешить в любом режиме",
+      "de": "Immer zulassen",
+      "es": "Permitir siempre",
+      "fr": "Toujours autoriser",
+      "it": "Consenti sempre",
+      "pl": "Zezwalaj cały czas",
+      "id": "Izinkan sepanjang waktu",
+      "tr": "Her zaman izin ver",
+      "fil": "Payagan sa lahat ng oras",
+      "uk": "Дозволяти завжди",
+      "kk": "Әрдайым рұқсат ету",
+      "pt": "Permitir o tempo todo"
+    },
+    "replace": true
+  },
+  "enterDeviceNameHint": {
+    "values": {
+      "en": "Open Bluetooth settings on your phone and copy the stereo name",
+      "ru": "Откройте настройки Bluetooth на телефоне и скопируйте имя магнитолы",
+      "de": "Öffne die Bluetooth-Einstellungen auf deinem Gerät und kopiere den Namen des Autoradios",
+      "es": "Abre los ajustes de Bluetooth del teléfono y copia el nombre del equipo de audio",
+      "fr": "Ouvrez les paramètres Bluetooth du téléphone et copiez le nom de l’autoradio",
+      "it": "Apri le impostazioni Bluetooth del telefono e copia il nome dell’autoradio",
+      "pl": "Otwórz ustawienia Bluetooth telefonu i skopiuj nazwę radia",
+      "id": "Buka setelan Bluetooth di ponsel dan salin nama stereo",
+      "tr": "Telefonunuzda Bluetooth ayarlarını açıp teybin adını kopyalayın",
+      "fil": "Buksan ang mga setting ng Bluetooth sa telepono at kopyahin ang pangalan ng stereo",
+      "uk": "Відкрийте налаштування Bluetooth на телефоні та скопіюйте назву магнітоли",
+      "kk": "Телефондағы Bluetooth баптауларын ашып, автомагнитола атауын көшіріңіз",
+      "pt": "Abra as configurações de Bluetooth do celular e copie o nome do som"
+    },
+    "replace": true
+  },
+  "carPlayUnavailableBody": {
+    "values": {
+      "en": "Open TripTrack on your phone",
+      "ru": "Откройте TripTrack на телефоне",
+      "de": "Öffne TripTrack auf deinem Gerät",
+      "es": "Abre TripTrack en el teléfono",
+      "fr": "Ouvrez TripTrack sur le téléphone",
+      "it": "Apri TripTrack sul telefono",
+      "pl": "Otwórz TripTrack na telefonie",
+      "id": "Buka TripTrack di ponsel",
+      "tr": "Telefonunuzda TripTrack’i açın",
+      "fil": "Buksan ang TripTrack sa telepono",
+      "uk": "Відкрийте TripTrack на телефоні",
+      "kk": "Телефонда TripTrack ашыңыз",
+      "pt": "Abra o TripTrack no celular"
+    },
+    "replace": true
+  },
+  "notificationPreferencesPickWhatYou": {
+    "values": {
+      "en": "Choose what appears in push notifications and the in-app inbox. Android’s notification settings are separate.",
+      "ru": "Выберите, о чём получать push-уведомления и сообщения во входящих. Системные настройки уведомлений Android действуют отдельно.",
+      "de": "Wähle, was als Push-Mitteilung und im Posteingang erscheint. Die Android-Benachrichtigungseinstellungen gelten separat.",
+      "es": "Elige qué recibes en notificaciones push y en la bandeja de entrada. Los ajustes de notificaciones de Android son independientes.",
+      "fr": "Choisissez les notifications push et les messages de la boîte de réception. Les paramètres de notification Android restent distincts.",
+      "it": "Scegli cosa ricevere nelle notifiche push e nella posta in arrivo. Le impostazioni delle notifiche Android sono separate.",
+      "pl": "Wybierz powiadomienia push i wiadomości w skrzynce aplikacji. Ustawienia powiadomień Androida działają osobno.",
+      "id": "Pilih notifikasi push dan pesan di kotak masuk aplikasi. Setelan notifikasi Android terpisah.",
+      "tr": "Anlık bildirimlerde ve uygulama gelen kutusunda neleri göreceğinizi seçin. Android bildirim ayarları ayrıdır.",
+      "fil": "Piliin ang mga push notification at mensahe sa inbox ng app. Hiwalay ang mga setting ng notification ng Android.",
+      "uk": "Виберіть, про що отримувати push-сповіщення й повідомлення у вхідних. Системні налаштування сповіщень Android діють окремо.",
+      "kk": "Push хабарландырулар мен кіріс жәшігінде нені алатыныңызды таңдаңыз. Android хабарландыру баптаулары бөлек қолданылады.",
+      "pt": "Escolha o que receber em notificações push e na caixa de entrada do app. As configurações de notificações do Android são separadas."
+    },
+    "replace": true
+  },
+  "remoteUpdateBody": {
+    "values": {
+      "en": "Update TripTrack in Google Play to get the latest fixes and improvements.",
+      "ru": "Обновите TripTrack в Google Play: в новой версии исправления и улучшения.",
+      "de": "Aktualisiere TripTrack bei Google Play für die neuesten Korrekturen und Verbesserungen.",
+      "es": "Actualiza TripTrack en Google Play para recibir las últimas correcciones y mejoras.",
+      "fr": "Mettez TripTrack à jour sur Google Play pour obtenir les dernières corrections et améliorations.",
+      "it": "Aggiorna TripTrack su Google Play per ricevere le ultime correzioni e migliorie.",
+      "pl": "Zaktualizuj TripTrack w Google Play, aby otrzymać poprawki i ulepszenia.",
+      "id": "Perbarui TripTrack di Google Play untuk mendapatkan perbaikan dan peningkatan terbaru.",
+      "tr": "Son düzeltmeler ve iyileştirmeler için TripTrack’i Google Play’den güncelleyin.",
+      "fil": "I-update ang TripTrack sa Google Play para makuha ang mga pinakabagong pag-aayos at pagpapahusay.",
+      "uk": "Оновіть TripTrack у Google Play: у новій версії виправлення й поліпшення.",
+      "kk": "Соңғы түзетулер мен жақсартуларды алу үшін TripTrack қолданбасын Google Play арқылы жаңартыңыз.",
+      "pt": "Atualize o TripTrack no Google Play para receber as últimas correções e melhorias."
+    },
+    "replace": true
+  },
+  "deleteAccountConfirmBody": {
+    "values": {
+      "en": "Your account and everything on the server, including trips, photos, vehicles, reactions and comments, will be deleted for good. Trips and photos on this device will be erased too. There is no way back.",
+      "ru": "Аккаунт и всё на сервере, включая поездки, фото, машины, реакции и комментарии, будут удалены навсегда. Поездки и фото на этом устройстве тоже будут стёрты. Вернуть их нельзя.",
+      "de": "Dein Konto und alle Serverdaten, auch Fahrten, Fotos, Fahrzeuge, Reaktionen und Kommentare, werden endgültig gelöscht. Fahrten und Fotos auf diesem Gerät werden ebenfalls gelöscht. Das lässt sich nicht rückgängig machen.",
+      "es": "Tu cuenta y todos los datos del servidor, incluidos viajes, fotos, vehículos, reacciones y comentarios, se eliminarán para siempre. También se borrarán los viajes y fotos de este dispositivo. No se puede deshacer.",
+      "fr": "Votre compte et toutes les données du serveur, dont les trajets, photos, véhicules, réactions et commentaires, seront supprimés définitivement. Les trajets et photos de cet appareil seront aussi effacés. Cette action est irréversible.",
+      "it": "L’account e tutti i dati sul server, inclusi viaggi, foto, veicoli, reazioni e commenti, verranno eliminati definitivamente. Anche i viaggi e le foto su questo dispositivo saranno cancellati. Non si può annullare.",
+      "pl": "Konto i wszystkie dane na serwerze, w tym trasy, zdjęcia, pojazdy, reakcje i komentarze, zostaną usunięte na zawsze. Trasy i zdjęcia na tym urządzeniu też zostaną usunięte. Nie można tego cofnąć.",
+      "id": "Akun dan semua data di server, termasuk perjalanan, foto, kendaraan, reaksi, dan komentar, akan dihapus permanen. Perjalanan dan foto di perangkat ini juga dihapus. Tindakan ini tidak bisa dibatalkan.",
+      "tr": "Hesabınız ve yolculuklar, fotoğraflar, araçlar, tepkiler, yorumlar dahil sunucudaki her şey kalıcı olarak silinecek. Bu cihazdaki yolculuklar ve fotoğraflar da silinecek. Geri alınamaz.",
+      "fil": "Permanenteng mabubura ang account at lahat sa server, kasama ang mga biyahe, larawan, sasakyan, reaksyon at komento. Mabubura rin ang mga biyahe at larawan sa device na ito. Hindi ito maibabalik.",
+      "uk": "Обліковий запис і всі дані на сервері, зокрема поїздки, фото, машини, реакції та коментарі, буде видалено назавжди. Поїздки й фото на цьому пристрої теж буде стерто. Повернути їх неможливо.",
+      "kk": "Есептік жазбаңыз және сервердегі барлық сапарлар, фотолар, көліктер, реакциялар мен пікірлер біржола жойылады. Осы құрылғыдағы сапарлар мен фотолар да өшіріледі. Қалпына келтіру мүмкін емес.",
+      "pt": "Sua conta e todos os dados no servidor, incluindo viagens, fotos, veículos, reações e comentários, serão apagados para sempre. As viagens e fotos neste dispositivo também serão apagadas. Não há como desfazer."
+    },
+    "replace": true
+  },
+  "logic_cosmeticRetainedChoice": {
+    "values": {
+      "en": "Saved: {kind} — {name}. This choice will return on this phone when you renew PRO.",
+      "ru": "Сохранено: {kind} — {name}. После продления PRO этот выбор вернётся на этом телефоне.",
+      "de": "Gespeichert: {kind} — {name}. Nach der Verlängerung von PRO wird diese Auswahl auf diesem Telefon wiederhergestellt.",
+      "es": "Guardado: {kind} — {name}. Esta opción volverá en este teléfono cuando renueves PRO.",
+      "fr": "Choix conservé : {kind} — {name}. Il sera rétabli sur ce téléphone après le renouvellement de PRO.",
+      "it": "Salvato: {kind} — {name}. Questa scelta tornerà su questo telefono quando rinnovi PRO.",
+      "pl": "Zapisano: {kind} — {name}. Ten wybór powróci na tym telefonie po odnowieniu PRO.",
+      "id": "Tersimpan: {kind} — {name}. Pilihan ini akan kembali di ponsel ini saat kamu memperpanjang PRO.",
+      "tr": "Kaydedildi: {kind} — {name}. PRO’yu yenilediğinde bu seçim bu telefonda geri gelir.",
+      "fil": "Naka-save: {kind} — {name}. Babalik ang pagpiling ito sa teleponong ito kapag ni-renew mo ang PRO.",
+      "uk": "Збережено: {kind} — {name}. Після поновлення PRO цей вибір повернеться на цьому телефоні.",
+      "kk": "Сақталды: {kind} — {name}. PRO жазылымын ұзартқаннан кейін бұл таңдау осы телефонда қайта қолданылады.",
+      "pt": "Salvo: {kind} — {name}. Esta escolha voltará neste celular quando você renovar o PRO."
+    },
+    "replace": true
+  },
+  "android_selected_item": {
+    "values": {
+      "en": "• {label}",
+      "ru": "• {label}",
+      "de": "• {label}",
+      "es": "• {label}",
+      "fr": "• {label}",
+      "it": "• {label}",
+      "pl": "• {label}",
+      "id": "• {label}",
+      "tr": "• {label}",
+      "fil": "• {label}",
+      "uk": "• {label}",
+      "kk": "• {label}",
+      "pt": "• {label}"
+    }
+  },
+  "android_level_label": {
+    "values": {
+      "en": "LVL {level}",
+      "ru": "LVL {level}",
+      "de": "LVL {level}",
+      "es": "LVL {level}",
+      "fr": "LVL {level}",
+      "it": "LVL {level}",
+      "pl": "LVL {level}",
+      "id": "LVL {level}",
+      "tr": "LVL {level}",
+      "fil": "LVL {level}",
+      "uk": "LVL {level}",
+      "kk": "LVL {level}",
+      "pt": "LVL {level}"
+    },
+    "integer_tokens": [
+      "level"
+    ]
+  },
+  "accountAppleIdOnly": {
+    "replace": true,
+    "values": {
+      "en": "Google account",
+      "ru": "Аккаунт Google",
+      "de": "Google-Konto",
+      "es": "Cuenta de Google",
+      "fr": "Compte Google",
+      "it": "Account Google",
+      "pl": "Konto Google",
+      "id": "Akun Google",
+      "tr": "Google hesabı",
+      "fil": "Google account",
+      "uk": "Обліковий запис Google",
+      "kk": "Google есептік жазбасы",
+      "pt": "Conta Google"
+    }
+  },
+  "signInWithApple": {
+    "replace": true,
+    "values": {
+      "en": "Sign in with Google",
+      "ru": "Войти через Google",
+      "de": "Mit Google anmelden",
+      "es": "Iniciar sesión con Google",
+      "fr": "Se connecter avec Google",
+      "it": "Accedi con Google",
+      "pl": "Zaloguj się przez Google",
+      "id": "Masuk dengan Google",
+      "tr": "Google ile giriş yap",
+      "fil": "Mag-sign in gamit ang Google",
+      "uk": "Увійти через Google",
+      "kk": "Google арқылы кіру",
+      "pt": "Entrar com o Google"
+    }
+  },
+  "signInPromptAppleFailed": {
+    "replace": true,
+    "values": {
+      "en": "Couldn’t sign in with Google. Check your connection and your Google account on this phone, then try again.",
+      "ru": "Не получилось войти через Google. Проверьте интернет и аккаунт Google на телефоне и попробуйте ещё раз.",
+      "de": "Anmeldung mit Google fehlgeschlagen. Prüfe die Verbindung und dein Google-Konto auf diesem Gerät und versuche es erneut.",
+      "es": "No se pudo iniciar sesión con Google. Revisa la conexión y tu cuenta de Google en este teléfono e inténtalo de nuevo.",
+      "fr": "Connexion avec Google impossible. Vérifiez la connexion et votre compte Google sur ce téléphone, puis réessayez.",
+      "it": "Accesso con Google non riuscito. Controlla la connessione e il tuo account Google sul telefono, poi riprova.",
+      "pl": "Nie udało się zalogować przez Google. Sprawdź połączenie i konto Google na telefonie, potem spróbuj ponownie.",
+      "id": "Tidak bisa masuk dengan Google. Periksa koneksi dan akun Google di ponsel ini, lalu coba lagi.",
+      "tr": "Google ile giriş yapılamadı. Bağlantınızı ve bu telefondaki Google hesabınızı kontrol edip tekrar deneyin.",
+      "fil": "Hindi makapag-sign in gamit ang Google. Tingnan ang koneksyon at Google account sa teleponong ito, saka subukan muli.",
+      "uk": "Не вдалося увійти через Google. Перевірте інтернет і обліковий запис Google на телефоні та спробуйте ще раз.",
+      "kk": "Google арқылы кіру мүмкін болмады. Интернетті және телефондағы Google есептік жазбасын тексеріп, қайталап көріңіз.",
+      "pt": "Não foi possível entrar com o Google. Verifique a conexão e sua conta Google neste celular e tente de novo."
+    }
+  },
+  "proManageAppStore": {
+    "values": {
+      "en": "Manage subscription",
+      "ru": "Управлять подпиской",
+      "de": "Abo verwalten",
+      "es": "Gestionar suscripción",
+      "fr": "Gérer l’abonnement",
+      "it": "Gestisci abbonamento",
+      "pl": "Zarządzaj subskrypcją",
+      "id": "Kelola langganan",
+      "tr": "Aboneliği yönet",
+      "fil": "Pamahalaan ang subscription",
+      "uk": "Керувати підпискою",
+      "kk": "Жазылымды басқару",
+      "pt": "Gerenciar assinatura"
+    },
+    "replace": true
+  },
+  "proPricesFailedSub": {
+    "values": {
+      "en": "Couldn’t load prices",
+      "ru": "Не удалось загрузить цены",
+      "de": "Preise konnten nicht geladen werden",
+      "es": "No se pudieron cargar los precios",
+      "fr": "Impossible de charger les prix",
+      "it": "Impossibile caricare i prezzi",
+      "pl": "Nie udało się wczytać cen",
+      "id": "Harga tidak dapat dimuat",
+      "tr": "Fiyatlar yüklenemedi",
+      "fil": "Hindi ma-load ang mga presyo",
+      "uk": "Не вдалося завантажити ціни",
+      "kk": "Бағаларды жүктеу мүмкін болмады",
+      "pt": "Não foi possível carregar os preços"
+    },
+    "replace": true
+  },
+  "proRestoreNone": {
+    "values": {
+      "en": "No active PRO subscription on this account",
+      "ru": "На этом аккаунте нет активной подписки PRO",
+      "de": "Kein aktives PRO-Abo für dieses Konto",
+      "es": "No hay una suscripción PRO activa en esta cuenta",
+      "fr": "Aucun abonnement PRO actif sur ce compte",
+      "it": "Nessun abbonamento PRO attivo su questo account",
+      "pl": "Brak aktywnej subskrypcji PRO na tym koncie",
+      "id": "Tidak ada langganan PRO aktif di akun ini",
+      "tr": "Bu hesapta etkin PRO aboneliği yok",
+      "fil": "Walang aktibong PRO subscription sa account na ito",
+      "uk": "На цьому обліковому записі немає активної підписки PRO",
+      "kk": "Бұл есептік жазбада белсенді PRO жазылымы жоқ",
+      "pt": "Nenhuma assinatura PRO ativa nesta conta"
+    },
+    "replace": true
+  },
+  "meProGraceSub": {
+    "values": {
+      "en": "Payment failed. Update your payment method.",
+      "ru": "Не прошла оплата. Обновите способ оплаты.",
+      "de": "Zahlung fehlgeschlagen. Aktualisiere deine Zahlungsmethode.",
+      "es": "El pago falló. Actualiza el método de pago.",
+      "fr": "Le paiement a échoué. Mettez à jour votre moyen de paiement.",
+      "it": "Pagamento non riuscito. Aggiorna il metodo di pagamento.",
+      "pl": "Płatność nie powiodła się. Zaktualizuj metodę płatności.",
+      "id": "Pembayaran gagal. Perbarui metode pembayaran.",
+      "tr": "Ödeme başarısız oldu. Ödeme yönteminizi güncelleyin.",
+      "fil": "Hindi natuloy ang bayad. I-update ang paraan ng pagbabayad.",
+      "uk": "Не пройшла оплата. Оновіть спосіб оплати.",
+      "kk": "Төлем өтпеді. Төлем әдісін жаңартыңыз.",
+      "pt": "O pagamento falhou. Atualize a forma de pagamento."
+    },
+    "replace": true
+  },
+  "android_wordmark": {
+    "values": {
+      "en": "TRIP TRACK",
+      "ru": "TRIP TRACK",
+      "de": "TRIP TRACK",
+      "es": "TRIP TRACK",
+      "fr": "TRIP TRACK",
+      "it": "TRIP TRACK",
+      "pl": "TRIP TRACK",
+      "id": "TRIP TRACK",
+      "tr": "TRIP TRACK",
+      "fil": "TRIP TRACK",
+      "uk": "TRIP TRACK",
+      "kk": "TRIP TRACK",
+      "pt": "TRIP TRACK"
+    }
+  },
+  "debug_map_demo_title": {
+    "values": {
+      "en": "Map demo",
+      "ru": "Демо карты",
+      "de": "Kartendemo",
+      "es": "Demo del mapa",
+      "fr": "Démo de la carte",
+      "it": "Demo della mappa",
+      "pl": "Demo mapy",
+      "id": "Demo peta",
+      "tr": "Harita demosu",
+      "fil": "Demo ng mapa",
+      "uk": "Демо карти",
+      "kk": "Карта демосы",
+      "pt": "Demo do mapa"
+    }
+  },
+  "debug_map_dataset": {
+    "values": {
+      "en": "Data %1$s",
+      "ru": "Данные %1$s",
+      "de": "Daten %1$s",
+      "es": "Datos %1$s",
+      "fr": "Données %1$s",
+      "it": "Dati %1$s",
+      "pl": "Dane %1$s",
+      "id": "Data %1$s",
+      "tr": "Veri %1$s",
+      "fil": "Data %1$s",
+      "uk": "Дані %1$s",
+      "kk": "Деректер %1$s",
+      "pt": "Dados %1$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_style": {
+    "values": {
+      "en": "Style %1$s",
+      "ru": "Стиль %1$s",
+      "de": "Stil %1$s",
+      "es": "Estilo %1$s",
+      "fr": "Style %1$s",
+      "it": "Stile %1$s",
+      "pl": "Styl %1$s",
+      "id": "Gaya %1$s",
+      "tr": "Stil %1$s",
+      "fil": "Estilo %1$s",
+      "uk": "Стиль %1$s",
+      "kk": "Стиль %1$s",
+      "pt": "Estilo %1$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_coverage_full": {
+    "values": {
+      "en": "Coverage full",
+      "ru": "Полное покрытие",
+      "de": "Volle Abdeckung",
+      "es": "Cobertura completa",
+      "fr": "Couverture complète",
+      "it": "Copertura intera",
+      "pl": "Pełne pokrycie",
+      "id": "Cakupan penuh",
+      "tr": "Tam kapsam",
+      "fil": "Buong saklaw",
+      "uk": "Повне покриття",
+      "kk": "Толық қамту",
+      "pt": "Cobertura completa"
+    }
+  },
+  "debug_map_coverage_half": {
+    "values": {
+      "en": "Coverage half",
+      "ru": "Половинное покрытие",
+      "de": "Halbe Abdeckung",
+      "es": "Media cobertura",
+      "fr": "Demi-couverture",
+      "it": "Copertura dimezzata",
+      "pl": "Połowa pokrycia",
+      "id": "Cakupan setengah",
+      "tr": "Yarım kapsam",
+      "fil": "Kalahating saklaw",
+      "uk": "Половинне покриття",
+      "kk": "Жартылай қамту",
+      "pt": "Meia cobertura"
+    }
+  },
+  "debug_map_street": {
+    "values": {
+      "en": "Street",
+      "ru": "Улица",
+      "de": "Straße",
+      "es": "Calle",
+      "fr": "Rue",
+      "it": "Strada",
+      "pl": "Ulica",
+      "id": "Jalan",
+      "tr": "Sokak",
+      "fil": "Kalye",
+      "uk": "Вулиця",
+      "kk": "Көше",
+      "pt": "Rua"
+    }
+  },
+  "debug_map_city": {
+    "values": {
+      "en": "City",
+      "ru": "Город",
+      "de": "Stadt",
+      "es": "Ciudad",
+      "fr": "Ville",
+      "it": "Città",
+      "pl": "Miasto",
+      "id": "Kota",
+      "tr": "Şehir",
+      "fil": "Lungsod",
+      "uk": "Місто",
+      "kk": "Қала",
+      "pt": "Cidade"
+    }
+  },
+  "debug_map_region": {
+    "values": {
+      "en": "Region",
+      "ru": "Регион",
+      "de": "Region",
+      "es": "Región",
+      "fr": "Région",
+      "it": "Regione",
+      "pl": "Region",
+      "id": "Wilayah",
+      "tr": "Bölge",
+      "fil": "Rehiyon",
+      "uk": "Регіон",
+      "kk": "Өңір",
+      "pt": "Região"
+    }
+  },
+  "debug_map_country": {
+    "values": {
+      "en": "Country",
+      "ru": "Страна",
+      "de": "Land",
+      "es": "País",
+      "fr": "Pays",
+      "it": "Paese",
+      "pl": "Kraj",
+      "id": "Negara",
+      "tr": "Ülke",
+      "fil": "Bansa",
+      "uk": "Країна",
+      "kk": "Ел",
+      "pt": "País"
+    }
+  },
+  "debug_map_fit_all": {
+    "values": {
+      "en": "Fit all",
+      "ru": "Показать всё",
+      "de": "Alles zeigen",
+      "es": "Mostrar todo",
+      "fr": "Tout afficher",
+      "it": "Mostra tutto",
+      "pl": "Pokaż wszystko",
+      "id": "Tampilkan semua",
+      "tr": "Tümünü göster",
+      "fil": "Ipakita lahat",
+      "uk": "Показати все",
+      "kk": "Бәрін көрсету",
+      "pt": "Mostrar tudo"
+    }
+  },
+  "debug_map_fit_route": {
+    "values": {
+      "en": "Fit route",
+      "ru": "Показать маршрут",
+      "de": "Route zeigen",
+      "es": "Mostrar ruta",
+      "fr": "Afficher l’itinéraire",
+      "it": "Mostra percorso",
+      "pl": "Pokaż trasę",
+      "id": "Tampilkan rute",
+      "tr": "Rotayı göster",
+      "fil": "Ipakita ang ruta",
+      "uk": "Показати маршрут",
+      "kk": "Бағытты көрсету",
+      "pt": "Mostrar rota"
+    }
+  },
+  "debug_map_route_on": {
+    "values": {
+      "en": "Route on",
+      "ru": "Маршрут вкл.",
+      "de": "Route an",
+      "es": "Ruta activada",
+      "fr": "Itinéraire activé",
+      "it": "Percorso attivo",
+      "pl": "Trasa wł.",
+      "id": "Rute aktif",
+      "tr": "Rota açık",
+      "fil": "Ruta on",
+      "uk": "Маршрут увімк.",
+      "kk": "Бағыт қосулы",
+      "pt": "Rota ativada"
+    }
+  },
+  "debug_map_route_off": {
+    "values": {
+      "en": "Route off",
+      "ru": "Маршрут выкл.",
+      "de": "Route aus",
+      "es": "Ruta desactivada",
+      "fr": "Itinéraire désactivé",
+      "it": "Percorso disattivo",
+      "pl": "Trasa wył.",
+      "id": "Rute nonaktif",
+      "tr": "Rota kapalı",
+      "fil": "Ruta off",
+      "uk": "Маршрут вимк.",
+      "kk": "Бағыт өшірулі",
+      "pt": "Rota desativada"
+    }
+  },
+  "debug_map_reveal_on": {
+    "values": {
+      "en": "Reveal on",
+      "ru": "Раскрытие вкл.",
+      "de": "Aufdecken an",
+      "es": "Revelado activado",
+      "fr": "Révélation activée",
+      "it": "Rivelazione attiva",
+      "pl": "Odkrywanie wł.",
+      "id": "Pengungkapan aktif",
+      "tr": "Açığa çıkarma açık",
+      "fil": "Pagbubunyag on",
+      "uk": "Відкриття увімк.",
+      "kk": "Ашу қосулы",
+      "pt": "Revelação ativada"
+    }
+  },
+  "debug_map_reveal_off": {
+    "values": {
+      "en": "Reveal off",
+      "ru": "Раскрытие выкл.",
+      "de": "Aufdecken aus",
+      "es": "Revelado desactivado",
+      "fr": "Révélation désactivée",
+      "it": "Rivelazione disattiva",
+      "pl": "Odkrywanie wył.",
+      "id": "Pengungkapan nonaktif",
+      "tr": "Açığa çıkarma kapalı",
+      "fil": "Pagbubunyag off",
+      "uk": "Відкриття вимк.",
+      "kk": "Ашу өшірулі",
+      "pt": "Revelação desativada"
+    }
+  },
+  "debug_map_fog_on": {
+    "values": {
+      "en": "Fog on",
+      "ru": "Туман вкл.",
+      "de": "Nebel an",
+      "es": "Niebla activada",
+      "fr": "Brume activée",
+      "it": "Nebbia attiva",
+      "pl": "Mgła wł.",
+      "id": "Kabut aktif",
+      "tr": "Sis açık",
+      "fil": "Hamog on",
+      "uk": "Туман увімк.",
+      "kk": "Тұман қосулы",
+      "pt": "Névoa ativada"
+    }
+  },
+  "debug_map_fog_off": {
+    "values": {
+      "en": "Fog off",
+      "ru": "Туман выкл.",
+      "de": "Nebel aus",
+      "es": "Niebla desactivada",
+      "fr": "Brume désactivée",
+      "it": "Nebbia disattiva",
+      "pl": "Mgła wył.",
+      "id": "Kabut nonaktif",
+      "tr": "Sis kapalı",
+      "fil": "Hamog off",
+      "uk": "Туман вимк.",
+      "kk": "Тұман өшірулі",
+      "pt": "Névoa desativada"
+    }
+  },
+  "debug_map_building": {
+    "values": {
+      "en": "Building %1$s…",
+      "ru": "Сборка %1$s…",
+      "de": "Aufbau %1$s…",
+      "es": "Generando %1$s…",
+      "fr": "Construction %1$s…",
+      "it": "Creazione %1$s…",
+      "pl": "Budowanie %1$s…",
+      "id": "Menyiapkan %1$s…",
+      "tr": "Oluşturuluyor %1$s…",
+      "fil": "Binubuo ang %1$s…",
+      "uk": "Збирання %1$s…",
+      "kk": "%1$s құрастырылуда…",
+      "pt": "Gerando %1$s…"
+    },
+    "foundation_format": true
+  },
+  "debug_map_unavailable": {
+    "values": {
+      "en": "Fog unavailable on this device",
+      "ru": "Туман недоступен на этом устройстве",
+      "de": "Nebel auf diesem Gerät nicht verfügbar",
+      "es": "Niebla no disponible en este dispositivo",
+      "fr": "Brume indisponible sur cet appareil",
+      "it": "Nebbia non disponibile su questo dispositivo",
+      "pl": "Mgła niedostępna na tym urządzeniu",
+      "id": "Kabut tidak tersedia di perangkat ini",
+      "tr": "Bu cihazda sis kullanılamıyor",
+      "fil": "Hindi available ang hamog sa device na ito",
+      "uk": "Туман недоступний на цьому пристрої",
+      "kk": "Бұл құрылғыда тұман қолжетімсіз",
+      "pt": "Névoa indisponível neste dispositivo"
+    }
+  },
+  "debug_map_layer": {
+    "values": {
+      "en": "%1$s: trips: %2$d, reveal: %3$.0f ms; fine/mid/far segments: %4$s",
+      "ru": "%1$s: поездки: %2$d, раскрытие: %3$.0f ms; сегменты fine/mid/far: %4$s",
+      "de": "%1$s: Fahrten: %2$d, Aufdecken: %3$.0f ms; Segmente fine/mid/far: %4$s",
+      "es": "%1$s: viajes: %2$d, revelado: %3$.0f ms; segmentos fine/mid/far: %4$s",
+      "fr": "%1$s : trajets : %2$d, révélation : %3$.0f ms ; segments fine/mid/far : %4$s",
+      "it": "%1$s: viaggi: %2$d, rivelazione: %3$.0f ms; segmenti fine/mid/far: %4$s",
+      "pl": "%1$s: trasy: %2$d, odkrywanie: %3$.0f ms; segmenty fine/mid/far: %4$s",
+      "id": "%1$s: perjalanan: %2$d, pengungkapan: %3$.0f ms; segmen fine/mid/far: %4$s",
+      "tr": "%1$s: yolculuk: %2$d, açığa çıkarma: %3$.0f ms; fine/mid/far parçaları: %4$s",
+      "fil": "%1$s: biyahe: %2$d, pagbubunyag: %3$.0f ms; segment na fine/mid/far: %4$s",
+      "uk": "%1$s: поїздки: %2$d, відкриття: %3$.0f ms; сегменти fine/mid/far: %4$s",
+      "kk": "%1$s: сапарлар: %2$d, ашу: %3$.0f ms; fine/mid/far сегменттері: %4$s",
+      "pt": "%1$s: viagens: %2$d, revelação: %3$.0f ms; segmentos fine/mid/far: %4$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_mesh": {
+    "values": {
+      "en": "mesh: %1$.0f ms, %2$.2f MB, chunks: %3$s",
+      "ru": "сетка: %1$.0f ms, %2$.2f MB, чанки: %3$s",
+      "de": "Netz: %1$.0f ms, %2$.2f MB, Chunks: %3$s",
+      "es": "malla: %1$.0f ms, %2$.2f MB, bloques: %3$s",
+      "fr": "maillage : %1$.0f ms, %2$.2f MB, blocs : %3$s",
+      "it": "mesh: %1$.0f ms, %2$.2f MB, blocchi: %3$s",
+      "pl": "siatka: %1$.0f ms, %2$.2f MB, bloki: %3$s",
+      "id": "mesh: %1$.0f ms, %2$.2f MB, blok: %3$s",
+      "tr": "ağ: %1$.0f ms, %2$.2f MB, bloklar: %3$s",
+      "fil": "mesh: %1$.0f ms, %2$.2f MB, chunk: %3$s",
+      "uk": "сітка: %1$.0f ms, %2$.2f MB, чанки: %3$s",
+      "kk": "тор: %1$.0f ms, %2$.2f MB, блоктар: %3$s",
+      "pt": "malha: %1$.0f ms, %2$.2f MB, blocos: %3$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_frame": {
+    "values": {
+      "en": "frames: %1$d, encode: %2$.2f ms/frame (last %3$.2f), lod: %4$d, chunks: %5$d, segments: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "ru": "кадры: %1$d, кодирование: %2$.2f ms/кадр (последний %3$.2f), lod: %4$d, чанки: %5$d, сегменты: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "de": "Frames: %1$d, Kodierung: %2$.2f ms/Frame (zuletzt %3$.2f), lod: %4$d, Chunks: %5$d, Segmente: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "es": "fotogramas: %1$d, codificación: %2$.2f ms/fotograma (último %3$.2f), lod: %4$d, bloques: %5$d, segmentos: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "fr": "images : %1$d, encodage : %2$.2f ms/image (dernière %3$.2f), lod : %4$d, blocs : %5$d, segments : %6$d, hw : %7$.1f dp, gpu : %8$s",
+      "it": "fotogrammi: %1$d, codifica: %2$.2f ms/fotogramma (ultimo %3$.2f), lod: %4$d, blocchi: %5$d, segmenti: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "pl": "klatki: %1$d, kodowanie: %2$.2f ms/klatkę (ostatnia %3$.2f), lod: %4$d, bloki: %5$d, segmenty: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "id": "bingkai: %1$d, enkode: %2$.2f ms/bingkai (terakhir %3$.2f), lod: %4$d, blok: %5$d, segmen: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "tr": "kareler: %1$d, kodlama: %2$.2f ms/kare (son %3$.2f), lod: %4$d, bloklar: %5$d, parçalar: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "fil": "frame: %1$d, encode: %2$.2f ms/frame (huli %3$.2f), lod: %4$d, chunk: %5$d, segment: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "uk": "кадри: %1$d, кодування: %2$.2f ms/кадр (останній %3$.2f), lod: %4$d, чанки: %5$d, сегменти: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "kk": "кадрлар: %1$d, кодтау: %2$.2f ms/кадр (соңғысы %3$.2f), lod: %4$d, блоктар: %5$d, сегменттер: %6$d, hw: %7$.1f dp, gpu: %8$s",
+      "pt": "quadros: %1$d, codificação: %2$.2f ms/quadro (último %3$.2f), lod: %4$d, blocos: %5$d, segmentos: %6$d, hw: %7$.1f dp, gpu: %8$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_camera": {
+    "values": {
+      "en": "zoom: %1$.2f, %2$.1f m/dp, bearing: %3$.0f°",
+      "ru": "масштаб: %1$.2f, %2$.1f m/dp, курс: %3$.0f°",
+      "de": "Zoom: %1$.2f, %2$.1f m/dp, Richtung: %3$.0f°",
+      "es": "zoom: %1$.2f, %2$.1f m/dp, rumbo: %3$.0f°",
+      "fr": "zoom : %1$.2f, %2$.1f m/dp, cap : %3$.0f°",
+      "it": "zoom: %1$.2f, %2$.1f m/dp, direzione: %3$.0f°",
+      "pl": "zoom: %1$.2f, %2$.1f m/dp, kierunek: %3$.0f°",
+      "id": "zoom: %1$.2f, %2$.1f m/dp, arah: %3$.0f°",
+      "tr": "yakınlaştırma: %1$.2f, %2$.1f m/dp, yön: %3$.0f°",
+      "fil": "zoom: %1$.2f, %2$.1f m/dp, direksyon: %3$.0f°",
+      "uk": "масштаб: %1$.2f, %2$.1f m/dp, курс: %3$.0f°",
+      "kk": "масштаб: %1$.2f, %2$.1f m/dp, бағыт: %3$.0f°",
+      "pt": "zoom: %1$.2f, %2$.1f m/dp, direção: %3$.0f°"
+    },
+    "foundation_format": true
+  },
+  "debug_map_marker": {
+    "values": {
+      "en": "Tapped %1$s",
+      "ru": "Нажато %1$s",
+      "de": "Angetippt: %1$s",
+      "es": "Pulsado %1$s",
+      "fr": "Appui sur %1$s",
+      "it": "Toccato %1$s",
+      "pl": "Wybrano %1$s",
+      "id": "Diketuk %1$s",
+      "tr": "Dokunulan %1$s",
+      "fil": "Na-tap ang %1$s",
+      "uk": "Натиснуто %1$s",
+      "kk": "%1$s басылды",
+      "pt": "Toque em %1$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_life": {
+    "values": {
+      "en": "uploads: %1$d, inits: %2$d, context losses: %3$d, coverage releases: %4$d, background frames: %5$d%6$s",
+      "ru": "загрузки: %1$d, инициализации: %2$d, потери контекста: %3$d, освобождения покрытия: %4$d, фоновые кадры: %5$d%6$s",
+      "de": "Uploads: %1$d, Initialisierungen: %2$d, Kontextverluste: %3$d, Abdeckungsfreigaben: %4$d, Hintergrundframes: %5$d%6$s",
+      "es": "cargas: %1$d, inicializaciones: %2$d, pérdidas de contexto: %3$d, liberaciones de cobertura: %4$d, fotogramas en segundo plano: %5$d%6$s",
+      "fr": "envois : %1$d, initialisations : %2$d, pertes de contexte : %3$d, libérations de couverture : %4$d, images en arrière-plan : %5$d%6$s",
+      "it": "caricamenti: %1$d, inizializzazioni: %2$d, perdite del contesto: %3$d, rilasci copertura: %4$d, fotogrammi in background: %5$d%6$s",
+      "pl": "wysłania: %1$d, inicjalizacje: %2$d, utraty kontekstu: %3$d, zwolnienia pokrycia: %4$d, klatki w tle: %5$d%6$s",
+      "id": "unggahan: %1$d, inisialisasi: %2$d, kehilangan konteks: %3$d, pelepasan cakupan: %4$d, bingkai latar belakang: %5$d%6$s",
+      "tr": "yüklemeler: %1$d, başlatmalar: %2$d, bağlam kayıpları: %3$d, kapsam serbest bırakma: %4$d, arka plan kareleri: %5$d%6$s",
+      "fil": "upload: %1$d, pagsisimula: %2$d, pagkawala ng context: %3$d, pag-release ng saklaw: %4$d, frame sa background: %5$d%6$s",
+      "uk": "завантаження: %1$d, ініціалізації: %2$d, втрати контексту: %3$d, звільнення покриття: %4$d, фонові кадри: %5$d%6$s",
+      "kk": "жүктеулер: %1$d, іске қосулар: %2$d, контекст жоғалуы: %3$d, қамтуды босату: %4$d, фондық кадрлар: %5$d%6$s",
+      "pt": "envios: %1$d, inicializações: %2$d, perdas de contexto: %3$d, liberações de cobertura: %4$d, quadros em segundo plano: %5$d%6$s"
+    },
+    "foundation_format": true
+  },
+  "debug_map_suspended": {
+    "values": {
+      "en": ", suspended",
+      "ru": ", приостановлено",
+      "de": ", angehalten",
+      "es": ", suspendido",
+      "fr": ", suspendu",
+      "it": ", sospeso",
+      "pl": ", wstrzymano",
+      "id": ", ditangguhkan",
+      "tr": ", askıya alındı",
+      "fil": ", nakasuspinde",
+      "uk": ", призупинено",
+      "kk": ", тоқтатылған",
+      "pt": ", suspenso"
+    }
+  },
+  "debug_map_none": {
+    "values": {
+      "en": "n/a",
+      "ru": "н/д",
+      "de": "k. A.",
+      "es": "n/d",
+      "fr": "n/d",
+      "it": "n/d",
+      "pl": "b/d",
+      "id": "t/a",
+      "tr": "yok",
+      "fil": "wala",
+      "uk": "н/д",
+      "kk": "жоқ",
+      "pt": "n/d"
+    }
+  },
+  "debug_map_gpu": {
+    "values": {
+      "en": "%1$.2f ms",
+      "ru": "%1$.2f ms",
+      "de": "%1$.2f ms",
+      "es": "%1$.2f ms",
+      "fr": "%1$.2f ms",
+      "it": "%1$.2f ms",
+      "pl": "%1$.2f ms",
+      "id": "%1$.2f ms",
+      "tr": "%1$.2f ms",
+      "fil": "%1$.2f ms",
+      "uk": "%1$.2f ms",
+      "kk": "%1$.2f ms",
+      "pt": "%1$.2f ms"
+    },
+    "foundation_format": true
+  },
+  "debug_map_home": {
+    "values": {
+      "en": "Home",
+      "ru": "Дом",
+      "de": "Zuhause",
+      "es": "Casa",
+      "fr": "Domicile",
+      "it": "Casa",
+      "pl": "Dom",
+      "id": "Rumah",
+      "tr": "Ev",
+      "fil": "Bahay",
+      "uk": "Дім",
+      "kk": "Үй",
+      "pt": "Casa"
+    }
+  },
+  "debug_map_work": {
+    "values": {
+      "en": "Work",
+      "ru": "Работа",
+      "de": "Arbeit",
+      "es": "Trabajo",
+      "fr": "Travail",
+      "it": "Lavoro",
+      "pl": "Praca",
+      "id": "Kantor",
+      "tr": "İş",
+      "fil": "Trabaho",
+      "uk": "Робота",
+      "kk": "Жұмыс",
+      "pt": "Trabalho"
+    }
+  }
+}
