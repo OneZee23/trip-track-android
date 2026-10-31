@@ -130,6 +130,7 @@ private fun TrackingBackButton(onClose: () -> Unit) {
 internal fun MePlaceholder(
     themeManager: ThemeManager,
     languageManager: LanguageManager,
+    above: @Composable ColumnScope.() -> Unit = {},
     // The sign-in card or the «Account & Sync» row (feature/account), under the app settings.
     account: @Composable () -> Unit = {},
 ) {
@@ -137,6 +138,7 @@ internal fun MePlaceholder(
     val language = languageManager.current(LocalConfiguration.current)
     var picking by rememberSaveable { mutableStateOf<Picker?>(null) }
     PlaceholderScreen(strings.tabMe(), rememberScrollState(), "screen_me") {
+        above()
         // iOS: ProfileSettingsSheet.swift, appGroup: words, then look.
         Column(Modifier.fillMaxWidth().surfaceCard()) {
             SettingsRow(AppGlyph.characterBubble, strings.lang(), language.endonym, "settings_language") { picking = Picker.language }

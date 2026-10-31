@@ -12,5 +12,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Debug builds only: seeds the trip screens' demo library, then opens the app (adb start). -->
+        <activity
+            android:name=".debug.SeedActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 </manifest>

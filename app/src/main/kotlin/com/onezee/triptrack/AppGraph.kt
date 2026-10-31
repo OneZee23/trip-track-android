@@ -44,6 +44,7 @@ import com.onezee.triptrack.feature.settings.RecordingSettings
 import com.onezee.triptrack.feature.settings.RoomWorldChanges
 import com.onezee.triptrack.feature.settings.SettingsManager
 import com.onezee.triptrack.feature.settings.SyncSettingsEffects
+import com.onezee.triptrack.feature.TripsFeature
 import com.onezee.triptrack.location.LocationGraph
 import com.onezee.triptrack.model.EmptyRequest
 import com.onezee.triptrack.model.SocialBlockedListResponse
@@ -121,7 +122,7 @@ class AppGraph(private val context: Context) {
     val settings = RoomSettingsStore(database)
     // noBackupFilesDir, like iOS keeps TripPhotos out of the backup; it is also where the sync
     // engine's transport reads the files it uploads.
-    private val tripPhotoFiles = DirectoryTripPhotoFiles(File(context.noBackupFilesDir, "TripPhotos"))
+    val tripPhotoFiles = DirectoryTripPhotoFiles(File(context.noBackupFilesDir, "TripPhotos"))
     private val vehiclePhotoFiles = DirectoryVehiclePhotoFiles(File(context.noBackupFilesDir, "VehiclePhotos"))
     val trips = RoomTripRepository(database, environment, tripPhotoFiles, syncHost)
     val vehicles = RoomVehicleStore(database, trips, RoomVehiclePhotoStore(database, vehiclePhotoFiles, syncHost), environment, syncHost)
@@ -177,6 +178,14 @@ class AppGraph(private val context: Context) {
         appContext = context,
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
     ).also { sessionEvents.listener = it }
+
+    /** The trip screens: feed, trip, journey and drafts, with their view models. */
+    val tripsFeature by lazy {
+        TripsFeature(trips, RoomPlaceStore(database), vehicles, tripPhotoFiles, location, database, preferences, syncHost, ::isOffline)
+    }
+
+    /** Writes stamp the settings row's id: anything writing at launch waits for it. */
+    suspend fun awaitSettings() { userIdLoaded.await() }
 
     /**
      * The settings row first (it is the identity), then the recording side's launch recovery. The
