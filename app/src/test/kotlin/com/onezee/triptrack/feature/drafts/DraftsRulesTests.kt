@@ -99,4 +99,15 @@ class DraftsDecisionTests : PresentationTestCase() {
         assertEquals(listOf(draft.id to DraftDecision.discard), decisions)
         assertNotNull(db.tripDao().trip(draft.id))
     }
+    /** AppConfirmDialog dismisses itself, then runs the answer: the answer must still find its question. */
+    @Test fun anAnswerAfterTheDialogsOwnDismissalStillDiscardsOnce() = runTest(dispatcher) {
+        val draft = insert(draft = true)
+        val vm = vm(); vm.refresh().join(); vm.askDelete(listOf(draft.id))
+        val confirmation = vm.state.value.confirmation!!
+        vm.cancelDelete()
+        assertNull(vm.state.value.confirmation)
+        vm.acceptDelete(confirmation.id)!!.join()
+        assertEquals(listOf(draft.id to DraftDecision.discard), decisions)
+        assertNull(vm.acceptDelete(confirmation.id))
+    }
 }

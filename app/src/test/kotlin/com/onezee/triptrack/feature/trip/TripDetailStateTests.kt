@@ -89,6 +89,23 @@ class TripDetailStateTests : PresentationTestCase() {
         assertNull(vm.state.value.confirmation); assertTrue(vm.state.value.deleted)
         assertNull(repository.fetchTripDetail(trip.id))
     }
+    /** AppConfirmDialog dismisses itself, then runs the answer; a dismissal alone deletes nothing. */
+    @Test fun deleteStillRunsWhenTheDialogDismissesBeforeAnswering() = runTest(dispatcher) {
+        val kept = insert()
+        val keeper = own(TripDetailViewModel(kept.id, repository, api, dispatcher, { owner }))
+        keeper.load().join(); keeper.requestDelete(); keeper.cancelConfirmation()
+        assertNull(keeper.state.value.confirmation); assertNotNull(repository.fetchTripDetail(kept.id))
+
+        val trip = insert(day = 1)
+        val vm = own(TripDetailViewModel(trip.id, repository, api, dispatcher, { owner }))
+        vm.load().join(); vm.requestDelete()
+        val confirmation = vm.state.value.confirmation!!
+        vm.cancelConfirmation()
+        vm.acceptConfirmation(confirmation.id)!!.join()
+        assertTrue(vm.state.value.deleted)
+        assertNull(repository.fetchTripDetail(trip.id))
+        assertNull(vm.acceptConfirmation(confirmation.id))
+    }
     @Test fun privateForeignTripsCannotBeSharedAndEmptyTrackCannotBeExported() = runTest(dispatcher) {
         val trip = Trip(startDate = t0, isPrivate = true)
         val vm = own(TripDetailViewModel(trip.id, repository, api, dispatcher, { owner }))

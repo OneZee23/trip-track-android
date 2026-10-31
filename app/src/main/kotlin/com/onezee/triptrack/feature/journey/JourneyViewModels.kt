@@ -161,9 +161,13 @@ class JourneyEditViewModel(
         }
     }
     fun askDelete() { mutable.update { it.copy(confirmation = HouseConfirmation(titleKey = "journeyDelete", messageKey = "journeyDeleteHint", destructiveKey = "delete", itemIds = listOf(journey.id))) } }
-    fun cancelDelete() { mutable.update { it.copy(confirmation = null) } }
+    // The house dialog closes itself before it runs the chosen answer (iOS AppConfirmDialog does the
+    // same), so an answer arrives right after this dismissal: the question is kept until another one.
+    private var dismissed: HouseConfirmation? = null
+    fun cancelDelete() { dismissed = state.value.confirmation ?: dismissed; mutable.update { it.copy(confirmation = null) } }
     fun acceptDelete(id: UUID): Job? {
-        if (state.value.confirmation?.id != id || state.value.isSaving) return null
+        if ((state.value.confirmation ?: dismissed)?.id != id || state.value.isSaving) return null
+        dismissed = null
         mutable.update { it.copy(confirmation = null, isSaving = true) }
         return viewModelScope.launch {
             try { withContext(worker) { manager.delete(journey.id) }; mutable.update { it.copy(saved = true) } }
@@ -291,11 +295,16 @@ class JourneyDetailViewModel(
         confirmationAction = action
         mutable.update { it.copy(confirmation = HouseConfirmation(titleKey = title, messageKey = message, destructiveKey = destructive, itemIds = listOf(journeyId))) }
     }
-    fun cancelConfirmation() { confirmationAction = null; mutable.update { it.copy(confirmation = null) } }
+    // The house dialog closes itself before it runs the chosen answer (iOS AppConfirmDialog does the
+    // same), so an answer arrives right after this dismissal: the question is kept until another one.
+    private var dismissed: HouseConfirmation? = null
+    fun cancelConfirmation() { dismissed = state.value.confirmation ?: dismissed; mutable.update { it.copy(confirmation = null) } }
     fun acceptConfirmation(id: UUID): Job? {
-        if (state.value.confirmation?.id != id) return null
+        if ((state.value.confirmation ?: dismissed)?.id != id) return null
         val confirmedAction = confirmationAction ?: return null
-        cancelConfirmation()
+        dismissed = null
+        confirmationAction = null
+        mutable.update { it.copy(confirmation = null) }
         return action(reloadAfter = true, work = confirmedAction)
     }
     private fun action(reloadAfter: Boolean = false, work: suspend () -> Unit): Job? {

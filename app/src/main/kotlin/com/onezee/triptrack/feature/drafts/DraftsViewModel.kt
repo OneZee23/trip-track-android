@@ -115,9 +115,13 @@ class DraftsViewModel(
         val present = ids.distinct().filter { id -> state.value.drafts.any { it.id == id } }
         if (present.isNotEmpty()) mutable.update { it.copy(confirmation = HouseConfirmation(titleKey = "draftsDeleteTitle", messageKey = "draftsDeleteBody", destructiveKey = "delete", itemIds = present)) }
     }
-    fun cancelDelete() { mutable.update { it.copy(confirmation = null) } }
+    // The house dialog closes itself before it runs the chosen answer (iOS AppConfirmDialog does the
+    // same), so an answer arrives right after this dismissal: the question is kept until another one.
+    private var dismissed: HouseConfirmation? = null
+    fun cancelDelete() { dismissed = state.value.confirmation ?: dismissed; mutable.update { it.copy(confirmation = null) } }
     fun acceptDelete(confirmationId: UUID): Job? {
-        val confirmation = state.value.confirmation?.takeIf { it.id == confirmationId } ?: return null
+        val confirmation = (state.value.confirmation ?: dismissed)?.takeIf { it.id == confirmationId } ?: return null
+        dismissed = null
         mutable.update { it.copy(confirmation = null) }
         return decide(confirmation.itemIds, DraftDecision.discard)
     }

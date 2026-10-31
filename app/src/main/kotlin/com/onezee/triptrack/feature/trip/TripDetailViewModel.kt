@@ -336,15 +336,20 @@ class TripDetailViewModel(
         mutable.update { it.copy(confirmation = HouseConfirmation(titleKey = "deleteTrip", messageKey = null,
             destructiveKey = "delete", itemIds = listOf(tripId))) }
     }
-    fun cancelConfirmation() { confirmationAction = null; mutable.update { it.copy(confirmation = null) } }
+    // The house dialog closes itself before it runs the chosen answer (iOS AppConfirmDialog does the
+    // same), so an answer arrives right after this dismissal: the question is kept until another one.
+    private var dismissed: HouseConfirmation? = null
+    fun cancelConfirmation() { dismissed = state.value.confirmation ?: dismissed; mutable.update { it.copy(confirmation = null) } }
     fun acceptConfirmation(id: UUID): Job? {
-        val confirmation = state.value.confirmation?.takeIf { it.id == id } ?: return null
+        val confirmation = (state.value.confirmation ?: dismissed)?.takeIf { it.id == id } ?: return null
         val work = confirmationAction ?: return null
         val deleting = confirmation.destructiveKey == "delete"
         if (!deleting && accountId() == null && trip?.isOnServer == true) {
             mutable.update { it.copy(message = TripMessage.signInToPublish) }; return null
         }
-        cancelConfirmation()
+        dismissed = null
+        confirmationAction = null
+        mutable.update { it.copy(confirmation = null) }
         return action {
             work()
             withContext(Dispatchers.Main.immediate) {

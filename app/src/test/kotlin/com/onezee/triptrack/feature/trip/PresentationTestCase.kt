@@ -26,7 +26,8 @@ import org.robolectric.annotation.Config
 
 // iOS: JourneyPublishTests.swift (Core Data setup), TripDetailFirstPaintTests.swift (screen owner)
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35], manifest = Config.NONE)
+// A plain Application: the real one starts location, sync and recovery, none of which these need.
+@Config(sdk = [35], application = android.app.Application::class)
 abstract class PresentationTestCase {
     protected val scheduler = TestCoroutineScheduler()
     protected val dispatcher = StandardTestDispatcher(scheduler)
