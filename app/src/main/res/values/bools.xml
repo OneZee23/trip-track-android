@@ -1,0 +1,4 @@
+<resources>
+    <bool name="light_system_bars">true</bool>
+    <bool name="disable_launch_preview">true</bool>
+</resources>

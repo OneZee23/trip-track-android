@@ -97,6 +97,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.appcompat)
+    implementation(libs.core.splashscreen)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
     implementation(libs.credentials)

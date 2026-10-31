@@ -1,11 +1,14 @@
 package com.onezee.triptrack
 
 import android.graphics.Color
+import android.app.UiModeManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,8 +16,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
+import com.onezee.triptrack.designsystem.theme.ThemeMode
 import com.onezee.triptrack.feature.onboarding.OnboardingRoute
 import com.onezee.triptrack.shell.AppShell
 
@@ -28,13 +33,15 @@ class MainActivity : AppCompatActivity() {
     private val resumeTick = mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val graph = (application as TripTrackApplication).appGraph
+        delegate.localNightMode = graph.themeManager.mode.nightMode()
+        installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        val graph = (application as TripTrackApplication).appGraph
         com.onezee.triptrack.feature.me.MeLaunch.apply(graph, intent)
         setContent {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
-            SystemBarsFollowTheme(dark)
+            SystemBarsFollowTheme(dark, graph.themeManager.mode)
             TripTrackTheme(isDark = dark, language = graph.languageManager.current(LocalConfiguration.current)) {
                 // iOS: TripTrackApp gates the whole window on hasCompletedOnboarding.
                 if (graph.onboarding.completed) AppShell(graph, resumeTick.intValue)
@@ -66,8 +73,15 @@ class MainActivity : AppCompatActivity() {
      * is what shows for the frame before Compose draws, and through a recreate.
      */
     @Composable
-    private fun SystemBarsFollowTheme(dark: Boolean) {
-        DisposableEffect(dark) {
+    private fun SystemBarsFollowTheme(dark: Boolean, mode: ThemeMode) {
+        DisposableEffect(dark, mode) {
+            delegate.localNightMode = mode.nightMode()
+            // Android 12 retains this for the next cold-start splash, before our process exists.
+            if (Build.VERSION.SDK_INT >= 31) getSystemService(UiModeManager::class.java).setApplicationNightMode(when (mode) {
+                ThemeMode.dark -> UiModeManager.MODE_NIGHT_YES
+                ThemeMode.light -> UiModeManager.MODE_NIGHT_NO
+                ThemeMode.system -> UiModeManager.MODE_NIGHT_AUTO
+            })
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { dark },
                 navigationBarStyle = SystemBarStyle.auto(LightNavigationScrim, DarkNavigationScrim) { dark },
@@ -75,6 +89,12 @@ class MainActivity : AppCompatActivity() {
             window.setBackgroundDrawable(AppTheme.colors(dark).bg.toArgb().toDrawable())
             onDispose {}
         }
+    }
+
+    private fun ThemeMode.nightMode(): Int = when (this) {
+        ThemeMode.dark -> AppCompatDelegate.MODE_NIGHT_YES
+        ThemeMode.light -> AppCompatDelegate.MODE_NIGHT_NO
+        ThemeMode.system -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
     private companion object {

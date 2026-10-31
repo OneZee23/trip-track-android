@@ -26,6 +26,7 @@ playServicesLocation = "21.4.0"
 # Sign in with Google: Credential Manager and the Google ID token option (Android signs in with Google only).
 credentials = "1.6.0"
 googleid = "1.2.1"
+splashscreen = "1.2.0"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
@@ -58,6 +59,7 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

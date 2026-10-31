@@ -5,4 +5,17 @@
     <style name="Theme.TripTrack" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
     </style>
+    <!-- iOS: Info.plist UILaunchScreen is empty: no logo on the launch ground. -->
+    <style name="Theme.TripTrack.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/window_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_empty</item>
+        <!-- API 29/30 cannot persist an app night-mode override for the process-independent preview.
+             Keep the launcher until our themed window is ready, so a saved dark theme cannot flash light. -->
+        <item name="android:windowDisablePreview">@bool/disable_launch_preview</item>
+        <item name="postSplashScreenTheme">@style/Theme.TripTrack</item>
+        <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/light_system_bars</item>
+        <item name="android:navigationBarColor">@color/window_background</item>
+        <item name="android:statusBarColor">@color/window_background</item>
+    </style>
 </resources>

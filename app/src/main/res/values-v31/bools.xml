@@ -1,0 +1,4 @@
+<resources>
+    <!-- Android 12 knows the persisted app night mode before constructing its splash window. -->
+    <bool name="disable_launch_preview">false</bool>
+</resources>
