@@ -109,7 +109,7 @@ class AccountViewModelTests : AccountTestCase() {
         seedSession(accountA); routeQuietAccount(accountA)
         viewModel.signOut(hidePublic = false)
         await { viewModel.state.value.closed }
-        assertFalse(viewModel.state.value.auth.isSignedIn)
+        await { !viewModel.state.value.auth.isSignedIn }
     }
 
     /** A refusal keeps the account and says so in place; the screen stays. */
@@ -143,8 +143,8 @@ class AccountViewModelTests : AccountTestCase() {
 
     @Test fun theScreenShowsTheBlockedCountAndAvatarOfASignedInPerson() {
         seedSession(accountA); routeQuietAccount(accountA)
+        await { viewModel.state.value.auth.isSignedIn }
         viewModel.refresh()
         await { viewModel.state.value.blockedCount == 2 && viewModel.state.value.avatarEmoji == "🚙" }
-        assertTrue(viewModel.state.value.auth.isSignedIn)
     }
 }

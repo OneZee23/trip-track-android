@@ -71,9 +71,8 @@ class AuthServiceTests : AccountTestCase() {
         assertEquals("Pixel Test", body.getValue("deviceName").jsonPrimitive.content)
         assertEquals("1.0-test", body.getValue("appVersion").jsonPrimitive.content)
 
-        val state = awaitState { it.isSignedIn }
+        val state = awaitState { it.isSignedIn && it.userName == "Alex Example" && it.userEmail != null }
         assertEquals(accountA, state.accountId)
-        assertEquals("Alex Example", state.userName)
         assertEquals("alex@gmail.com", state.userEmail)
         assertEquals("access-$accountA", vault.values?.get(TokenStore.accessTokenKey))
         // The engine follows the account, then the first pass; the nameless account gets the name.
@@ -91,7 +90,7 @@ class AuthServiceTests : AccountTestCase() {
 
         assertEquals(SignInOutcome.SignedIn(isNewAccount = false), runBlocking { auth.signIn(context) })
 
-        assertEquals("Road Runner", awaitState { it.isSignedIn }.userName)
+        assertEquals("Road Runner", awaitState { it.isSignedIn && it.userName != null }.userName)
         // One confirmation push of the server's own name (no record yet means «not confirmed»).
         awaitRequests("/auth/profile-update")
         assertTrue(requestsTo("/auth/profile-update").first().body!!.utf8().contains("Road Runner"))
@@ -102,7 +101,7 @@ class AuthServiceTests : AccountTestCase() {
         routeLogin(accountA, name = null, isNew = true); routeQuietAccount(accountA)
         credentials.answers += token(name = null)
         runBlocking { auth.signIn(context) }
-        assertTrue(RandomDisplayName.isPlaceholder(awaitState { it.isSignedIn }.userName))
+        assertTrue(RandomDisplayName.isPlaceholder(awaitState { it.isSignedIn && it.userName != null }.userName))
     }
 
     @Test fun aClosedGoogleSheetChangesNothing() {
@@ -126,8 +125,9 @@ class AuthServiceTests : AccountTestCase() {
 
         assertIs<SignInOutcome.Failed>(runBlocking { auth.signIn(context) })
 
-        val state = awaitState { it.needsReauth }
-        assertFalse(state.isSignedIn); assertFalse(state.isAuthenticating)
+        // The spinner ends with the attempt.
+        val state = awaitState { it.needsReauth && !it.isAuthenticating }
+        assertFalse(state.isSignedIn)
         assertEquals(accountA, state.accountId)
         assertEquals("Тестовый Водитель", state.userName)
         assertEquals("refresh-$accountA", vault.values?.get(TokenStore.refreshTokenKey))
@@ -196,8 +196,7 @@ class AuthServiceTests : AccountTestCase() {
 
         assertIs<SignInOutcome.SignedIn>(runBlocking { auth.signIn(context) })
 
-        val state = awaitState { it.isSignedIn }
-        assertEquals(accountB, state.accountId)
+        val state = awaitState { it.isSignedIn && it.accountId == accountB && it.userName != null }
         assertNotEquals("Тестовый Водитель", state.userName, "the previous name must not land on the new account")
         assertFalse(accountSettings.cloudSyncEnabled, "the previous Cloud Sync consent must not carry over")
         assertEquals("false", prefs.string(AccountSettings.FIRST_TOGGLE_KEY))
@@ -216,8 +215,7 @@ class AuthServiceTests : AccountTestCase() {
 
         assertIs<SignInOutcome.SignedIn>(runBlocking { auth.signIn(context) })
 
-        val state = awaitState { it.isSignedIn }
-        assertEquals("Local Rename", state.userName)
+        val state = awaitState { it.isSignedIn && it.userName == "Local Rename" }
         assertTrue(accountSettings.cloudSyncEnabled)
         assertFalse("clear" in sync.calls)
         assertFalse(state.needsReauth)
@@ -300,8 +298,8 @@ class AuthServiceTests : AccountTestCase() {
         val logout = requestsTo("/auth/logout").single()
         assertEquals("access-$accountA", logout.headers["x-access-token"])
         assertEquals(emptyMap(), vault.values)
-        val state = auth.state.value
-        assertFalse(state.isSignedIn); assertFalse(state.needsReauth); assertNull(state.accountId); assertNull(state.userName)
+        val state = awaitState { !it.isSignedIn && it.accountId == null }
+        assertFalse(state.needsReauth); assertNull(state.userName)
         assertFalse(accountSettings.cloudSyncEnabled)
         assertEquals("false", prefs.string(AccountSettings.FIRST_TOGGLE_KEY))
         assertNull(prefs.string(ProfileSyncLatch.KEY))
@@ -320,7 +318,7 @@ class AuthServiceTests : AccountTestCase() {
         runBlocking { auth.signOut() }
         assertTrue(requestsTo("/auth/logout").isEmpty())
         assertEquals(emptyMap(), vault.values)
-        assertFalse(auth.state.value.needsReauth)
+        assertFalse(awaitState { it.accountId == null }.needsReauth)
     }
 
     /** «Hide public and sign out»: a private upsert of every public trip, then the logout. */
@@ -356,7 +354,7 @@ class AuthServiceTests : AccountTestCase() {
         seedSession(accountA); routes["/auth/delete-account"] = { envelopeError("UNKNOWN_SERVER_ERROR") }
         assertFailsWith<ApiError> { runBlocking { auth.deleteAccount() } }
         assertEquals(0, wiped)
-        assertTrue(auth.state.value.isSignedIn)
+        assertTrue(awaitState { it.isSignedIn }.isSignedIn)
         assertEquals("access-$accountA", vault.values?.get(TokenStore.accessTokenKey))
         assertTrue(sync.calls.isEmpty())
     }
@@ -378,7 +376,7 @@ class AuthServiceTests : AccountTestCase() {
         seedSession(accountA)
         routes["/auth/me"] = { ok("{\"id\":\"$accountA\",\"isPublic\":false,\"email\":\"road@gmail.com\"}") }
         runBlocking { auth.refreshMe() }
-        val state = awaitState { it.isPublicProfile != null }
+        val state = awaitState { it.isPublicProfile != null && it.userEmail != null }
         assertEquals(false, state.isPublicProfile)
         assertEquals("road@gmail.com", state.userEmail)
     }

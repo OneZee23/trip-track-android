@@ -3,13 +3,18 @@ package com.onezee.triptrack.feature.account
 
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.onezee.triptrack.data.DataEnvironment
+import com.onezee.triptrack.data.RoomTripRepository
+import com.onezee.triptrack.data.files.DirectoryTripPhotoFiles
 import com.onezee.triptrack.data.sync.SyncAction
 import com.onezee.triptrack.data.sync.SyncEntityType
 import com.onezee.triptrack.data.sync.SyncRequest
 import com.onezee.triptrack.model.SyncStatus
 import com.onezee.triptrack.data.db.entity.TripEntity
+import com.onezee.triptrack.feature.journey.JourneyManager
 import com.onezee.triptrack.sync.SyncEngine
 import com.onezee.triptrack.sync.SyncScheduler
+import java.io.File
 import java.time.Instant
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -132,6 +137,32 @@ class SyncHostTests : AccountTestCase() {
         host.enqueue(request(id))
         delay(300)
         assertTrue(!host.engine.value!!.queue.containsEntity(id, SyncEntityType.trip))
+    }
+
+    /**
+     * The publish flows of the screens go through the app's sink, that is through the signed-in
+     * account's enqueuer and its gates: with Cloud Sync off a published journey and its legs leave,
+     * and hiding a trip that is on the server queues its unpublish.
+     */
+    @Test fun publishingTripsAndJourneysGoesThroughTheAccountsGates() = runBlocking {
+        seedSession(accountA)
+        host.switchAccount(accountA)
+        val engine = host.engine.value!!
+        val repository = RoomTripRepository(db, DataEnvironment({ accountSettings.cloudSyncEnabled }, { localUser }),
+            DirectoryTripPhotoFiles(File(context.cacheDir, "TripPhotos-${UUID.randomUUID()}")), host)
+        val leg = UUID.randomUUID()
+        db.tripDao().upsertTrip(TripEntity(id = leg, startDate = t0, endDate = t0.plusSeconds(3600), isPrivate = true,
+            syncStatus = SyncStatus.synced.rawValue, userId = localUser, lastModifiedAt = t0))
+        val journeys = JourneyManager(repository, host, signedIn = { true }, cloudSyncEnabled = { false })
+        val journey = journeys.create(listOf(repository.fetchTripDetail(leg)!!), "Кавказ")
+        journeys.publish(journey.id)
+        withTimeout(5_000) {
+            while (!engine.queue.containsEntity(journey.id, SyncEntityType.journey) || !engine.queue.containsEntity(leg, SyncEntityType.trip)) delay(10)
+        }
+        db.tripDao().upsertTrip(db.tripDao().trip(leg)!!.copy(serverCreatedAt = t0))
+        engine.queue.cancelOperations(leg, SyncEntityType.trip)
+        repository.updatePrivacy(leg, true)
+        withTimeout(5_000) { while (!engine.queue.contains(leg, SyncEntityType.trip, SyncAction.unpublish)) delay(10) }
     }
 
     /** iOS: performFirstSync. Cloud Sync on re-marks everything and the recovery queues it. */
