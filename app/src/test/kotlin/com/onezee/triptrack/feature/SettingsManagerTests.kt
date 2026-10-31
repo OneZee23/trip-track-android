@@ -28,7 +28,8 @@ class SettingsManagerTests : WorldTest() {
         override fun enqueue(request: SyncRequest) { requests += request }
         override fun cancel(entityId: UUID, entityType: SyncEntityType) = Unit
     }
-    private fun manager(country: String = "RU") = own(SettingsManager(RoomSettingsStore(db) { t0 }, preferences, sink, effects, dispatcher,
+    private val autoRecord = com.onezee.triptrack.location.auto.AutoRecordSettings.InMemory()
+    private fun manager(country: String = "RU") = own(SettingsManager(RoomSettingsStore(db) { t0 }, preferences, sink, effects, dispatcher, autoRecord,
         deviceLocale = Locale.forLanguageTag("en-" + country)))
     @Test fun choosingMilesAndGallonsLandInEntityAndDefaults() = runTest(dispatcher) {
         val vm = manager(); runCurrent(); vm.setDistanceUnit(DistanceUnit.miles); vm.setVolumeUnit(VolumeUnit.gallons); runCurrent()
@@ -131,6 +132,43 @@ class SettingsManagerTests : WorldTest() {
         assertEquals(id, vm.vehicleForStereo("Car", listOf(Vehicle(id = id))))
         assertNull(vm.vehicleForStereo("Car", listOf(Vehicle(id = id, soldAt = t0))))
         vm.removeStereos(id); runCurrent(); assertTrue(vm.state.value.stereos.isEmpty())
+    }
+    @Test fun settingsAndRecordingReadOneOwnerWithoutOverwritingEachOthersStereos() = runTest(dispatcher) {
+        val vm = manager(); runCurrent()
+        val first = SavedBluetoothDevice("AA", "Ford Stereo", UUID.randomUUID())
+        val second = SavedBluetoothDevice("BB", "Other", UUID.randomUUID())
+        autoRecord.addDevice(first)
+        vm.addStereo(second); runCurrent()
+        assertEquals(listOf(first, second), vm.state.value.stereos)
+        assertEquals(listOf(first, second), autoRecord.savedDevices)
+        vm.setAutoRecord(AutoRecordMode.remind, 5); runCurrent()
+        assertEquals(AutoRecordMode.remind, autoRecord.mode)
+        assertEquals(5, autoRecord.autoStopTimeout)
+        autoRecord.removeDevices(first.vehicleId!!)
+        vm.reload(); runCurrent()
+        assertEquals(listOf(second), vm.state.value.stereos)
+        assertNull(preferences.string("savedBluetoothDevices"))
+        assertTrue(requests.isEmpty(), "auto-record preferences stay local, as on iOS")
+    }
+    @Test fun recordingEditsRefreshTheSettingsSnapshotWithoutCopyingPreferences() = runTest(dispatcher) {
+        val context = org.robolectric.RuntimeEnvironment.getApplication()
+        val owner = com.onezee.triptrack.location.auto.PreferencesAutoRecordSettings(context)
+        val vm = own(SettingsManager(RoomSettingsStore(db) { t0 }, preferences, sink, effects, dispatcher, owner))
+        runCurrent()
+        val stereo = SavedBluetoothDevice("AA", "Ford Stereo", UUID.randomUUID())
+        owner.addDevice(stereo)
+        owner.mode = AutoRecordMode.auto
+        owner.autoStopTimeout = 5
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+        runCurrent()
+        assertEquals(listOf(stereo), vm.state.value.stereos)
+        assertEquals(AutoRecordMode.auto, vm.state.value.autoRecordMode)
+        assertEquals(5, vm.state.value.autoStopTimeout)
+        vm.addStereo(stereo.copy(uuid = "aa")); runCurrent()
+        assertEquals(1, owner.savedDevices.size)
+        vm.removeStereos(stereo.vehicleId!!); runCurrent()
+        assertTrue(owner.savedDevices.isEmpty())
+        assertNull(preferences.string("savedBluetoothDevices"))
     }
     @Test fun pickerOnlyChangesPresentationUntilSetterIsCalled() = runTest(dispatcher) {
         val vm = manager(); runCurrent(); val before = db.settingsDao().settings()

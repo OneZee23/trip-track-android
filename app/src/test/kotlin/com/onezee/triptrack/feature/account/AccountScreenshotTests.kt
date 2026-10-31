@@ -137,7 +137,7 @@ class AccountScreenshotTests(private val dark: Boolean) {
     @Test fun signInPromptError() = shot("sign_in_prompt_error") {
         SheetFrame {
             SignInPromptBody(SignInAction.publish, isAuthenticating = false, onSignIn = { _, _ -> },
-                initialError = RuntimeEnvironment.getApplication().getString(R.string.android_sign_in_google_failed))
+                initialError = RuntimeEnvironment.getApplication().getString(com.onezee.triptrack.designsystem.R.string.android_sign_in_google_failed))
         }
     }
 

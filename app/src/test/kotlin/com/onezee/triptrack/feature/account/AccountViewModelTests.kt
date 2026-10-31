@@ -54,7 +54,7 @@ class AccountViewModelTests : AccountTestCase() {
         settingsManager = SettingsManager(RoomSettingsStore(db) { t0 }, prefs, object : SyncRequestSink {
             override fun enqueue(request: SyncRequest) = Unit
             override fun cancel(entityId: UUID, entityType: SyncEntityType) = Unit
-        }, effects, dispatcher, deviceLocale = Locale.forLanguageTag("en-RU"))
+        }, effects, dispatcher, com.onezee.triptrack.location.auto.AutoRecordSettings.InMemory(), deviceLocale = Locale.forLanguageTag("en-RU"))
         val host = SyncHost({ error("no engine in these tests") }, {}, { accountSettings.cloudSyncEnabled }, scope)
         viewModel = AccountViewModel(auth, settingsManager, host, prefs, sources, dispatcher)
         await { settingsManager.state.value.loaded }
