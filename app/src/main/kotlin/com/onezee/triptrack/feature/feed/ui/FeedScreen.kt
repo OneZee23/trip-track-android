@@ -595,7 +595,7 @@ private fun clock(seconds: Double): String {
  * sits on its disc. Picking the one already mine takes it back.
  */
 @Composable
-private fun ReactionPicker(current: String?, onPick: (String) -> Unit, onDismiss: () -> Unit) {
+internal fun ReactionPicker(current: String?, onPick: (String) -> Unit, onDismiss: () -> Unit) {
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
     val mine = ReactionEmoji.canonical(current)

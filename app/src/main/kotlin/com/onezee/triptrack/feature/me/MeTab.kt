@@ -77,13 +77,30 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0) {
                 account = { if (!auth.isSignedIn) AccountEntry(graph) }, coverPhotos = coverPhotos, api = graph.apiClient, onPhotos = { photosOpen = true },
                 coverPromptHidden = feature.coverPromptHidden, onHideCoverPrompt = feature::hideCoverPrompt,
                 onComposeJourney = { composerOpening++; composerAnchor = it },
-                onUnpinElsewhere = { scope.launch { feature.identity.setPinnedTrips(state.hero.identity.pinnedTripIds - state.showcaseElsewhere.toSet()) } })
+                onUnpinElsewhere = { scope.launch { feature.identity.setPinnedTrips(state.hero.identity.pinnedTripIds - state.showcaseElsewhere.toSet()) } },
+                onStats = { navigator.push(MeRoute.Stats) })
         }) { destination ->
             when (destination) {
                 MeRoute.Garage -> GarageScreen(garage, settings.distanceUnit, { navigator.pop() }, { editing = "" },
                     onVehicle = { navigator.push(MeRoute.Passport(it)) }, onSelect = { graph.settingsManager.selectVehicle(it) }, onDelete = { deleting = it },
                     onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } })
-                MeRoute.Profile -> MyProfileScreen(state.hero.identity, feature.identity, { navigator.pop() }, { profileEditor = it }, { photosOpen = true }, { navigator.push(MeRoute.Levels) }, { navigator.push(MeRoute.Country) })
+                MeRoute.Profile -> MyProfileScreen(state.hero.identity, feature.identity, { navigator.pop() }, { profileEditor = it }, { photosOpen = true }, { navigator.push(MeRoute.Levels) }, { navigator.push(MeRoute.Country) },
+                    social = auth.signedInAccountId?.let { account ->
+                        MyProfileSocial(account, graph.social.api,
+                            onFollowList = { mode -> navigator.push(com.onezee.triptrack.feature.TripsDestination.FollowList(account, mode)) },
+                            onPreview = { navigator.push(com.onezee.triptrack.feature.TripsDestination.PublicProfile(account)) },
+                            onStats = { navigator.push(MeRoute.Stats) })
+                    })
+                MeRoute.Stats -> {
+                    // iOS MeDest.stats: one's own library and collected roads; a trip opens on this stack.
+                    val stats = entryViewModel("stats") {
+                        com.onezee.triptrack.feature.stats.StatsViewModel(com.onezee.triptrack.feature.stats.StatsSource.Own(
+                            trips = { graph.trips.fetchAllTrips() }, roads = { com.onezee.triptrack.data.RoomRoadStore(graph.database).roads() }),
+                            kotlinx.coroutines.Dispatchers.Default, zone = strings.zone)
+                    }
+                    com.onezee.triptrack.feature.stats.StatsScreen(stats, null, onBack = { navigator.pop() },
+                        onOpenTrip = { id, _ -> navigator.push(MeRoute.Trip(id)) }, onRecordTrip = { graph.tabStore.select(com.onezee.triptrack.designsystem.navigation.AppTab.record) })
+                }
                 is MeRoute.Passport -> {
                     val model = entryViewModel("passport:${destination.id}") { feature.passport(destination.id) }
                     val passport by model.state.collectAsState()

@@ -28,12 +28,17 @@ internal sealed interface MeRoute : NavDestination {
     data class Trip(val id: UUID, val preview: com.onezee.triptrack.model.Trip? = null, val social: SocialFeedTrip? = null) : MeRoute
     data class Journey(val id: UUID) : MeRoute
     data class SocialJourney(val id: UUID) : MeRoute
+    /** iOS MeDest.stats: the full statistics of one's own library, from the hero's numbers. */
+    data object Stats : MeRoute
+    /** iOS MeDest's social cases (profile, follow list, someone's stats, map, garage …): the shared screens. */
+    data class Social(val destination: TripsDestination) : MeRoute
 
     override val key: String get() = when (this) {
         Garage -> "garage"; Profile -> "profile"; Achievements -> "achievements"; Clubs -> "clubs"
-        Levels -> "levels"; Country -> "country"; Drafts -> "drafts"
+        Levels -> "levels"; Country -> "country"; Drafts -> "drafts"; Stats -> "stats"
         is Passport -> "passport:$id"; is Badge -> "badge:$id"
         is Trip -> "trip:$id"; is Journey -> "journey:$id"; is SocialJourney -> "social-journey:$id"
+        is Social -> "social|${destination.key}"
     }
 
     val tripsDestination: TripsDestination? get() = when (this) {
@@ -41,6 +46,7 @@ internal sealed interface MeRoute : NavDestination {
         is Trip -> TripsDestination.TripDetail(id, preview, social)
         is Journey -> TripsDestination.JourneyDetail(id)
         is SocialJourney -> TripsDestination.SocialJourney(id)
+        is Social -> destination
         else -> null
     }
 }
@@ -56,6 +62,7 @@ internal class MeNavigator(initial: List<MeRoute> = emptyList()) : DestinationNa
         is TripsDestination.JourneyDetail -> MeRoute.Journey(destination.id)
         is TripsDestination.SocialJourney -> MeRoute.SocialJourney(destination.id)
         TripsDestination.Drafts -> MeRoute.Drafts
+        else -> MeRoute.Social(destination)
     })
     override fun pop() = stack.pop()
 
@@ -63,16 +70,32 @@ internal class MeNavigator(initial: List<MeRoute> = emptyList()) : DestinationNa
         fun saver(owner: MeNavigator) = listSaver<MeNavigator, String>(
             save = { it.path.map { route -> route.key } },
             // Configuration changes reuse the live entries; a fresh process restores only subjects.
-            restore = { raw -> owner.apply { if (path.isEmpty()) raw.map { value -> when (value.substringBefore(':')) {
+            restore = { raw -> owner.apply { if (path.isEmpty()) raw.mapNotNull { value -> when {
+                // A social screen comes back only when its key names it whole; the others close.
+                value.startsWith("social|") -> socialRoute(value.substringAfter('|'))
+                else -> when (value.substringBefore(':')) {
                 "garage" -> MeRoute.Garage; "profile" -> MeRoute.Profile; "achievements" -> MeRoute.Achievements
                 "clubs" -> MeRoute.Clubs; "levels" -> MeRoute.Levels; "country" -> MeRoute.Country; "drafts" -> MeRoute.Drafts
+                "stats" -> MeRoute.Stats
                 "passport" -> MeRoute.Passport(UUID.fromString(value.substringAfter(':')))
                 "trip" -> MeRoute.Trip(UUID.fromString(value.substringAfter(':')))
                 "journey" -> MeRoute.Journey(UUID.fromString(value.substringAfter(':')))
                 "social-journey" -> MeRoute.SocialJourney(UUID.fromString(value.substringAfter(':')))
                 else -> MeRoute.Badge(value.substringAfter(':'))
-            } }.forEach(::push) } },
+            } } }.forEach(::push) } },
         )
+    }
+}
+
+/** The social screens that restore from their key alone: a profile and its follow lists. */
+private fun socialRoute(key: String): MeRoute? {
+    val parts = key.split(':')
+    val id = parts.getOrNull(1)?.let { runCatching { UUID.fromString(it) }.getOrNull() } ?: return null
+    return when (parts[0]) {
+        "profile" -> MeRoute.Social(TripsDestination.PublicProfile(id))
+        "follow" -> parts.getOrNull(2)?.let { mode -> runCatching { com.onezee.triptrack.feature.social.FollowListMode.valueOf(mode) }.getOrNull() }
+            ?.let { MeRoute.Social(TripsDestination.FollowList(id, it)) }
+        else -> null
     }
 }
 

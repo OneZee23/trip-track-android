@@ -39,7 +39,7 @@ internal object ProfileLevels {
 }
 
 @Composable
-internal fun LevelsScreen(identity: ProfileIdentity, onBack: () -> Unit) {
+internal fun LevelsScreen(identity: ProfileIdentity, onBack: () -> Unit, ownerName: String? = null, showsProgress: Boolean = true) {
     val strings = appStrings
     val level = ProfileLevels.level(identity.level)
     val rank = DriverRank.from(level)
@@ -60,6 +60,8 @@ internal fun LevelsScreen(identity: ProfileIdentity, onBack: () -> Unit) {
         R.string.driver_rank_roadSpirit, R.string.driver_rank_eternal)
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("levels_screen")) {
         MeNavBar(strings.levelsTitle(), onBack)
+        // iOS LevelsView(other:): someone's level is subtitled with their name.
+        if (!ownerName.isNullOrEmpty()) Text(ownerName, Modifier.padding(horizontal = 16.dp).testTag("levels_owner"), style = AppType.meta, color = AppTheme.colors.textTertiary)
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp).padding(bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.surfaceCard(20.dp).padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -71,12 +73,15 @@ internal fun LevelsScreen(identity: ProfileIdentity, onBack: () -> Unit) {
                         Text(strings.levelsRankOf(rank.ordinal + 1, DriverRank.entries.size, level), style = inter(13f, InterWeight.medium), color = AppTheme.colors.textSecondary)
                     }
                 }
-                Box(Modifier.fillMaxWidth().height(6.dp).background(AppTheme.colors.cardAlt, CircleShape)) {
-                    Box(Modifier.fillMaxWidth(ProfileLevels.progress(level, identity.xp)).fillMaxHeight().background(ink(rank), CircleShape))
+                // An older server sends no experience: the screen does without the bar then.
+                if (showsProgress) {
+                    Box(Modifier.fillMaxWidth().height(6.dp).background(AppTheme.colors.cardAlt, CircleShape)) {
+                        Box(Modifier.fillMaxWidth(ProfileLevels.progress(level, identity.xp)).fillMaxHeight().background(ink(rank), CircleShape))
+                    }
+                    Text(if (level == LevelSystem.maxLevel) strings.levelsXpTotal(strings.groupedNumber(identity.xp))
+                        else strings.levelsXpProgress(strings.groupedNumber(identity.xp), strings.groupedNumber(LevelSystem.xpForNextLevel(level))),
+                        style = AppType.body, color = AppTheme.colors.text)
                 }
-                Text(if (level == LevelSystem.maxLevel) strings.levelsXpTotal(strings.groupedNumber(identity.xp))
-                    else strings.levelsXpProgress(strings.groupedNumber(identity.xp), strings.groupedNumber(LevelSystem.xpForNextLevel(level))),
-                    style = AppType.body, color = AppTheme.colors.text)
                 Text(if (level == LevelSystem.maxLevel) strings.levelsMaxLevel() else strings.levelsToNextLevel(level + 1), style = AppType.meta, color = AppTheme.colors.textSecondary)
                 val next = DriverRank.entries.getOrNull(rank.ordinal + 1)
                 Text(next?.let { strings.levelsNextRank(strings.tr(titles[it.ordinal]), ProfileLevels.range(it).first) } ?: strings.levelsFinalRank(), style = AppType.meta, color = ink(next ?: rank))

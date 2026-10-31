@@ -32,9 +32,10 @@ import java.util.UUID
 @Composable
 internal fun ProfileHeroCard(state: ProfileHeroState, unit: DistanceUnit, onSettings: () -> Unit,
                              onVehicle: (UUID) -> Unit, onAdd: () -> Unit, onProfile: () -> Unit = {}, onLevel: () -> Unit = {},
-                             coverPhotos: List<ProfileCoverPhoto> = emptyList(), api: com.onezee.triptrack.network.ApiClient? = null, onPhotos: () -> Unit = {}) {
+                             coverPhotos: List<ProfileCoverPhoto> = emptyList(), api: com.onezee.triptrack.network.ApiClient? = null, onPhotos: () -> Unit = {},
+                             onStats: () -> Unit = {}) {
     if (coverPhotos.isNotEmpty()) {
-        ProfilePhotoHero(state, unit, coverPhotos, api, onSettings, onVehicle, onProfile, onLevel, onPhotos)
+        ProfilePhotoHero(state, unit, coverPhotos, api, onSettings, onVehicle, onProfile, onLevel, onPhotos, onStats)
         return
     }
     val strings = appStrings
@@ -101,7 +102,8 @@ internal fun ProfileHeroCard(state: ProfileHeroState, unit: DistanceUnit, onSett
         }
         Column(Modifier.padding(horizontal = 20.dp).padding(top = 4.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Box(Modifier.fillMaxWidth().height(1.dp).background(AppTheme.accent.copy(alpha = .18f)))
-            Row(Modifier.fillMaxWidth()) {
+            // iOS onTapStats: the three numbers open the full statistics.
+            Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onStats).testTag("profile_stats_strip")) {
                 ProfileStat(state.tripCount.toString(), strings.trips(), Modifier.weight(1f), colors.text, colors.textSecondary)
                 ProfileStat(com.onezee.triptrack.model.Measure.distanceValue(state.distanceMetres, unit, strings.language.code, com.onezee.triptrack.model.Measure.Style.grouped), strings.statsKmTotal(unit), Modifier.weight(1f), colors.text, colors.textSecondary)
                 ProfileStat(state.regionCount.toString(), strings.statsRegions(), Modifier.weight(1f), colors.text, colors.textSecondary)
@@ -112,7 +114,7 @@ internal fun ProfileHeroCard(state: ProfileHeroState, unit: DistanceUnit, onSett
 
 @Composable
 private fun ProfilePhotoHero(state: ProfileHeroState, unit: DistanceUnit, photos: List<ProfileCoverPhoto>, api: com.onezee.triptrack.network.ApiClient?,
-                             onSettings: () -> Unit, onVehicle: (UUID) -> Unit, onProfile: () -> Unit, onLevel: () -> Unit, onPhotos: () -> Unit) {
+                             onSettings: () -> Unit, onVehicle: (UUID) -> Unit, onProfile: () -> Unit, onLevel: () -> Unit, onPhotos: () -> Unit, onStats: () -> Unit) {
     val strings = appStrings
     val pager = rememberPagerState { photos.size }
     Column(Modifier.fillMaxWidth().testTag("profile_hero")) {
@@ -142,7 +144,7 @@ private fun ProfilePhotoHero(state: ProfileHeroState, unit: DistanceUnit, photos
             Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, state.identity.level), Modifier.clickable(role = Role.Button, onClick = onLevel), style = AppType.meta, color = AppTheme.gold)
         }
         if (state.identity.bio.isNotEmpty()) Text(state.identity.bio, Modifier.padding(top = 14.dp), style = AppType.body, color = AppTheme.colors.text)
-        Row(Modifier.fillMaxWidth().padding(vertical = 18.dp)) {
+        Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onStats).padding(vertical = 18.dp).testTag("profile_stats_strip")) {
             ProfileStat(state.tripCount.toString(), strings.trips(), Modifier.weight(1f))
             ProfileStat(com.onezee.triptrack.model.Measure.distanceValue(state.distanceMetres, unit, strings.language.code, com.onezee.triptrack.model.Measure.Style.grouped), strings.statsKmTotal(unit), Modifier.weight(1f))
             ProfileStat(state.regionCount.toString(), strings.statsRegions(), Modifier.weight(1f))

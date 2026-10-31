@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.*
@@ -37,7 +38,8 @@ internal object ProfileIdentityChoices {
 
 @Composable
 internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentityStore, onBack: () -> Unit,
-                             onEdit: (ProfileTextField) -> Unit, onCover: () -> Unit, onLevel: () -> Unit, onCountry: () -> Unit) {
+                             onEdit: (ProfileTextField) -> Unit, onCover: () -> Unit, onLevel: () -> Unit, onCountry: () -> Unit,
+                             social: MyProfileSocial? = null) {
     val strings = appStrings
     val scope = rememberCoroutineScope()
     var avatars by rememberSaveable { mutableStateOf(false) }
@@ -74,6 +76,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
                 }
             }
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (social != null) FollowCard(social)
                 MeSection(strings.profileDetailsGroup()) {
                     MeRow(strings.myProfileRowName(), identity.name.ifBlank { strings.meAddYourName() }, tag = "profile_edit_name", onClick = { onEdit(ProfileTextField.displayName) })
                     MeDivider()
@@ -87,8 +90,14 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
                     MeRow(strings.myProfileRowCover(), if (identity.coverPhotoIds.isEmpty()) strings.myProfileCoverUnset() else strings.photosCount(identity.coverPhotoIds.size), onClick = onCover)
                     MeDivider()
                     MeRow(strings.settingsProfileBackground(), if (identity.effectiveBackground == ProfileBackground.none) strings.cosmeticDefaultOption() else identity.effectiveBackground.rawValue.replaceFirstChar(Char::uppercase), onClick = { backgrounds = true })
+                    // «Как видят другие» sits with the rows that decide how that identity looks; only
+                    // with a public profile: signed out the screen behind it has nothing to draw.
+                    if (social != null) { MeDivider(); MeRow(strings.myProfileRowPreview(), tag = "my_profile_row_preview", onClick = social.onPreview) }
                 }
-                MeSection(strings.profileProgressGroup()) { MeRow(strings.myProfileRowLevel(), strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, identity.level), tag = "profile_levels", onClick = onLevel) }
+                MeSection(strings.profileProgressGroup()) {
+                    MeRow(strings.myProfileRowLevel(), strings.tr(com.onezee.triptrack.designsystem.R.string.android_level_label, identity.level), tag = "profile_levels", onClick = onLevel)
+                    social?.onStats?.let { stats -> MeDivider(); MeRow(strings.myProfileRowStats(), tag = "my_profile_row_stats", onClick = stats) }
+                }
                 if (failed) MeRow(strings.publicDataLoadFailed())
             }
         }
@@ -97,6 +106,39 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
         label = { if (it == ProfileBackground.none) strings.cosmeticDefaultOption() else it.rawValue.replaceFirstChar(Char::uppercase) },
         onSelect = { save { store.setBackground(it) } }, onDismissRequest = { backgrounds = false }, testTagPrefix = "profile_background")
     if (username) UsernameEditor(identity.username, { store.setUsername(it) }, { username = false })
+}
+
+/** What «Мой профиль» needs of the social side: the account, its counts and the doors to the lists. */
+internal class MyProfileSocial(
+    val accountId: java.util.UUID,
+    val api: com.onezee.triptrack.feature.social.SocialApi,
+    val onFollowList: (com.onezee.triptrack.feature.social.FollowListMode) -> Unit,
+    val onPreview: () -> Unit,
+    val onStats: (() -> Unit)?,
+)
+
+/**
+ * iOS MyProfileView.followCard: the account's follower and following totals as one card with two
+ * doors. One profile GET; a failure leaves the dashes (a decoration, not a reason for a banner).
+ */
+@Composable
+private fun FollowCard(social: MyProfileSocial) {
+    val strings = appStrings
+    val counts by produceState<Pair<Int, Int>?>(null, social.accountId) {
+        value = try { social.api.profile(social.accountId).let { it.followerCount to it.followingCount } }
+            catch (cancelled: CancellationException) { throw cancelled } catch (_: Exception) { null }
+    }
+    Row(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+        listOf(com.onezee.triptrack.feature.social.FollowListMode.followers, com.onezee.triptrack.feature.social.FollowListMode.following).forEachIndexed { index, mode ->
+            if (index > 0) Box(Modifier.width(1.dp).height(36.dp).background(AppTheme.colors.borderBright))
+            val count = if (mode == com.onezee.triptrack.feature.social.FollowListMode.followers) counts?.first else counts?.second
+            Column(Modifier.weight(1f).heightIn(min = 44.dp).clickable(role = Role.Button) { social.onFollowList(mode) }
+                .testTag(if (index == 0) "my_profile_followers" else "my_profile_following"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(count?.toString() ?: "—", style = interScaled(20f, InterWeight.heavy, monospacedDigits = true), color = AppTheme.colors.text, maxLines = 1)
+                Text(if (index == 0) strings.followersCaption(count ?: 0) else strings.followingCaption(count ?: 0), style = interScaled(11f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+            }
+        }
+    }
 }
 
 @Composable

@@ -222,6 +222,54 @@ sealed interface TripsDestination : com.onezee.triptrack.ui.navigation.NavDestin
     data object Drafts : TripsDestination {
         override val key: Any get() = "drafts"
     }
+
+    // iOS: ProfilePreviewDest. The social screens push into the same stack as the trips, so «back»
+    // from a profile opened on a trip returns to that trip.
+
+    /** Someone's public profile; [preloaded] is what the tap already knew (the closed-profile name). */
+    data class PublicProfile(val id: UUID, val preloaded: com.onezee.triptrack.model.SocialAuthor? = null) : TripsDestination {
+        override val key: Any get() = "profile:$id"
+    }
+
+    data class FollowList(val id: UUID, val mode: com.onezee.triptrack.feature.social.FollowListMode) : TripsDestination {
+        override val key: Any get() = "follow:$id:$mode"
+    }
+
+    /** The statistics screen over someone's public trips; [name] titles it, the screen is the same as one's own. */
+    data class PublicStats(val id: UUID, val name: String?) : TripsDestination {
+        override val key: Any get() = "stats:$id"
+    }
+
+    /** [start] is where the camera opens: the frame of the profile's latest trips (0.9.1). */
+    data class PublicMap(val id: UUID, val name: String?, val start: com.onezee.triptrack.model.GeoBounds? = null, val vehicleId: UUID? = null) : TripsDestination {
+        override val key: Any get() = "map:$id:${vehicleId ?: ""}"
+    }
+
+    data class PublicGarage(val id: UUID, val name: String?) : TripsDestination {
+        override val key: Any get() = "garage:$id"
+    }
+
+    data class PublicCar(val id: UUID, val vehicleId: UUID, val name: String?, val preloaded: com.onezee.triptrack.model.PublicVehicle? = null) : TripsDestination {
+        override val key: Any get() = "car:$id:$vehicleId"
+    }
+
+    data class PublicJourneys(val id: UUID, val name: String?) : TripsDestination {
+        override val key: Any get() = "journeys:$id"
+    }
+
+    /** The badges the profile card counted «N из M» over, carried along rather than asked again. */
+    data class PublicAchievements(val id: UUID, val name: String?, val badgeIds: List<String>) : TripsDestination {
+        override val key: Any get() = "achievements:$id"
+    }
+
+    data class PublicLevels(val id: UUID, val name: String?, val level: Int, val xp: Int?) : TripsDestination {
+        override val key: Any get() = "levels:$id"
+    }
+
+    /** iOS: NotificationsInboxView, a sheet with its own stack there; a screen of the feed's stack here. */
+    data object Inbox : TripsDestination {
+        override val key: Any get() = "inbox"
+    }
 }
 
 private class DelegatingSocial(private val current: () -> TripSocialApi) : TripSocialApi {

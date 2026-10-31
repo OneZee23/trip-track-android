@@ -217,7 +217,40 @@ class AppGraph(
             tripChanges(database), preferences, syncHost, ::isOffline, placeManager = placeManager,
             placeChanges = RoomWorldChanges(database).events.filter { it == WorldChange.places }.map { },
             nameCheckpoint = location.checkpointNamer::name,
-        ).also { feature -> feature.openPlace = { world.openPlace(it) } }
+        ).also { feature ->
+            feature.openPlace = { world.openPlace(it) }
+            // The social half of the trip screens reaches the server through the signed-in session.
+            feature.accountId = { auth.state.value.signedInAccountId }
+            feature.socialApi = com.onezee.triptrack.feature.feed.ApiTripSocial(apiClient) { auth.state.value.isSignedIn }
+            feature.cloudSyncEnabled = { accountSettings.cloudSyncEnabled }
+            feature.remotePhotoBytes = { url -> apiClient.getBytes(url) }
+        }
+    }
+
+    /** The website's pages, read only to resolve a shared link's code (`/s/`, `/j/`) to its trip or journey. */
+    private val websiteClient by lazy { okhttp3.OkHttpClient.Builder().followRedirects(false).build() }
+
+    /** The social screens: profiles, lists, maps, stats, comments, sharing, links and the inbox. */
+    val social by lazy {
+        com.onezee.triptrack.feature.social.SocialFeature(
+            api = com.onezee.triptrack.feature.social.ApiSocial(apiClient) { auth.state.value.isSignedIn },
+            trips = tripsFeature,
+            auth = auth,
+            accountIdSource = { auth.state.value.signedInAccountId },
+            preferences = preferences,
+            sharePage = { path -> websitePage(path) },
+            ownAvatar = { me.identity.identity.value.avatarEmoji },
+            syncOwnProfile = { me.identity.syncJournal() },
+            notificationPreferences = { me.notificationPreferences() },
+        ).also { it.selectTab = tabStore::select }
+    }
+
+    private suspend fun websitePage(path: String): String = kotlinx.coroutines.withContext(Dispatchers.IO) {
+        val request = okhttp3.Request.Builder().url("https://trip-track.app$path").get().build()
+        websiteClient.newCall(request).execute().use { response ->
+            check(response.isSuccessful) { "share page ${response.code}" }
+            response.body.string()
+        }
     }
 
     /** The Atlas and Places tabs, with their view models and stacks. */
@@ -238,7 +271,7 @@ class AppGraph(
 
     val me by lazy { com.onezee.triptrack.feature.me.MeFeatures(this, presentationPreferences, meVehiclePhotos,
         com.onezee.triptrack.location.world.PreferencesBadgeLedgerStore(context), context.noBackupFilesDir) }
-    init { accountState.register { me.identity.purge(); me.profilePhotos.wipe(); meDiagnostics.clear(); com.onezee.triptrack.feature.me.ProfileMapCache.clear(); com.onezee.triptrack.feature.me.MePhotoCache.clear() } }
+    init { accountState.register { me.identity.purge(); me.profilePhotos.wipe(); meDiagnostics.clear(); com.onezee.triptrack.feature.me.ProfileMapCache.clear(); com.onezee.triptrack.feature.me.MePhotoCache.clear(); social.clear() } }
 
     /**
      * The settings row first (it is the identity), then the recording side's launch recovery. The
@@ -280,6 +313,8 @@ class AppGraph(
     fun onForeground() {
         syncHost.onForeground()
         auth.onForeground()
+        // iOS NotificationsInboxStore: the unread count is honest when the app comes back.
+        scope.launch { social.inbox.refreshUnreadOnly() }
     }
 
     fun onBackground() = syncHost.onBackground()

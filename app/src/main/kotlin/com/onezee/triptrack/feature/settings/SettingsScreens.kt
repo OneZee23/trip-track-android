@@ -154,7 +154,7 @@ internal fun SettingsDetail(title: String, onBack: () -> Unit, content: @Composa
 }
 
 @Composable
-private fun NotificationPreferencesContent(state: NotificationPreferencesState, model: NotificationPreferencesViewModel?) {
+internal fun NotificationPreferencesContent(state: NotificationPreferencesState, model: NotificationPreferencesViewModel?) {
     val strings = appStrings
     MeToggle(strings.settingsNotifications(), state.master, { model?.setMaster(it) }, enabled = state.loaded)
     MeToggle(strings.notificationPreferencesWhenSomeoneReacts(), state.reactions, { model?.setPreferences(reactions = it) }, enabled = state.loaded)

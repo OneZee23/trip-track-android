@@ -24,6 +24,10 @@ fun TripsDestinationScreen(dest: TripsDestination, feature: TripsFeature, naviga
             onBack = { navigator.pop() },
             now = feature.clock,
         )
+        // The social screens: profiles, their lists, maps, stats, garages, the inbox.
+        else -> com.onezee.triptrack.feature.social.LocalSocial.current?.let { social ->
+            com.onezee.triptrack.feature.social.ui.SocialDestinationScreen(dest, social, navigator)
+        }
     }
 }
 

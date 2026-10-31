@@ -1,5 +1,6 @@
 package com.onezee.triptrack
 
+import android.content.Intent
 import android.graphics.Color
 import android.app.UiModeManager
 import android.os.Build
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         com.onezee.triptrack.feature.me.MeLaunch.apply(graph, intent)
+        // A link that started the app; a recreate (rotation, theme) must not open it twice.
+        if (savedInstanceState == null) openLink(intent)
         setContent {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
             SystemBarsFollowTheme(dark, graph.themeManager.mode)
@@ -48,6 +51,32 @@ class MainActivity : AppCompatActivity() {
                 else OnboardingRoute(graph, resumeTick.intValue)
             }
         }
+    }
+
+    /** singleTask: a link tapped while the app runs arrives here instead of a second activity. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        openLink(intent)
+    }
+
+    /**
+     * iOS TripTrackApp.handleDeepLink: App Links (`trip-track.app/u/`, `/s/`, `/j/`) and the
+     * `triptrack://` scheme. A tapped notification arrives with its push category and data as
+     * extras: the seam the FCM service (later) fills, routed the way iOS routes a push tap.
+     */
+    private fun openLink(intent: Intent?) {
+        val social = (application as TripTrackApplication).appGraph.social
+        val category = intent?.getStringExtra(EXTRA_PUSH_CATEGORY)
+        if (category != null) {
+            val data = intent.extras?.keySet().orEmpty().filter { it != EXTRA_PUSH_CATEGORY }
+                .mapNotNull { key -> intent.getStringExtra(key)?.let { key to it } }.toMap()
+            social.pushTapped(category, data)
+            return
+        }
+        if (intent?.action != Intent.ACTION_VIEW) return
+        val link = intent.dataString?.let(com.onezee.triptrack.feature.social.DeepLink::parse) ?: return
+        social.open(link)
     }
 
     override fun onStart() {
@@ -97,9 +126,12 @@ class MainActivity : AppCompatActivity() {
         ThemeMode.system -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
-    private companion object {
+    companion object {
+        /** The push category a notification tap carries (REACTION, COMMENT, FOLLOW …). */
+        const val EXTRA_PUSH_CATEGORY = "push_category"
+
         // The scrims androidx.activity puts behind three-button navigation by default.
-        val LightNavigationScrim = Color.argb(0xE6, 0xFF, 0xFF, 0xFF)
-        val DarkNavigationScrim = Color.argb(0x80, 0x1B, 0x1B, 0x1B)
+        private val LightNavigationScrim = Color.argb(0xE6, 0xFF, 0xFF, 0xFF)
+        private val DarkNavigationScrim = Color.argb(0x80, 0x1B, 0x1B, 0x1B)
     }
 }

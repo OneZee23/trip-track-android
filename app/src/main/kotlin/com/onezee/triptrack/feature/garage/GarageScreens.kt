@@ -191,16 +191,17 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
 
 // iOS: GarageMileageCard.swift. A single year compares nothing and has no bar.
 @Composable
-internal fun GarageMileageCard(odometerKm: Double, trackedKm: Double, years: List<VehicleYearDistance>, unit: DistanceUnit, onEdit: () -> Unit) {
+internal fun GarageMileageCard(odometerKm: Double, trackedKm: Double, years: List<VehicleYearDistance>, unit: DistanceUnit, editable: Boolean = true, onEdit: () -> Unit) {
     val strings = appStrings
     Column(Modifier.fillMaxWidth().surfaceCard(20.dp).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(strings.garageMileage(), Modifier.testTag("garage_mileage"), style = AppType.section, color = AppTheme.colors.text)
-        Column(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onEdit)) {
+        // Someone else's car (PublicVehicleView) reads the odometer; only one's own edits it.
+        Column(Modifier.fillMaxWidth().clickable(enabled = editable, role = Role.Button, onClick = onEdit)) {
             val parts = Measure.distancePartsKm(odometerKm, unit, strings.language.code, strings)
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(parts.value, style = interScaled(28f, InterWeight.heavy), color = AppTheme.colors.text)
                 Text(parts.unit, Modifier.weight(1f).padding(start = 5.dp, bottom = 3.dp), style = interScaled(13f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
-                Glyph(AppGlyph.chevronRight, null, tint = AppTheme.colors.textTertiary, size = 16.dp)
+                if (editable) Glyph(AppGlyph.chevronRight, null, tint = AppTheme.colors.textTertiary, size = 16.dp)
             }
             Text(strings.garageOnOdometer().uppercase(strings.language.locale), style = AppType.statCaption, color = AppTheme.colors.textTertiary)
         }

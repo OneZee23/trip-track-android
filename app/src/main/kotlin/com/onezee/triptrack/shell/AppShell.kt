@@ -71,6 +71,7 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
         LocalTabBarVisibility provides visibility,
         LocalTripPhotoImages provides trips.photos,
         LocalDistanceUnit provides unit,
+        com.onezee.triptrack.feature.social.LocalSocial provides graph.social,
     ) {
         Box(
             Modifier
@@ -87,6 +88,7 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
                     TabScreen(tab, graph, feedScrollToTop, resumeTick, offline, onSelect = tabs::select)
                 }
             }
+            SocialMessages(graph.social)
             AnimatedVisibility(
                 visible = selected != AppTab.record && !visibility.isHiddenByScreen,
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -103,6 +105,20 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
             }
         }
     }
+}
+
+/** Feedback of the link router (a shared trip that no longer exists): a toast over every tab. */
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.SocialMessages(social: com.onezee.triptrack.feature.social.SocialFeature) {
+    val strings = com.onezee.triptrack.designsystem.theme.appStrings
+    var toast by remember { androidx.compose.runtime.mutableStateOf<com.onezee.triptrack.designsystem.components.ToastItem?>(null) }
+    androidx.compose.runtime.LaunchedEffect(social) {
+        social.messages.collect { message ->
+            toast = com.onezee.triptrack.designsystem.components.ToastItem(com.onezee.triptrack.designsystem.components.ToastType.error,
+                if (message == com.onezee.triptrack.feature.social.SocialMessage.tripUnavailable) strings.tripLoadFailed() else strings.publicDataLoadFailed())
+        }
+    }
+    com.onezee.triptrack.designsystem.components.ToastHost(toast, onDismiss = { toast = null })
 }
 
 // SwiftUI .snappy(duration: 0.22), the animation of every tab switch.

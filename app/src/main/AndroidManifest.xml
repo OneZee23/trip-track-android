@@ -20,17 +20,42 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/support_paths" />
         </provider>
         <!-- uiMode: the theme picker switches in place, as on iOS. Without it AppCompat recreates
-             the activity on every pick, and the screen flashes and loses its state. -->
+             the activity on every pick, and the screen flashes and loses its state.
+             singleTask: a link opened while the app runs reaches this activity (onNewIntent). -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:configChanges="uiMode"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.TripTrack.Starting"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!--
+              App Links: a profile (/u/<id>), a shared trip (/s/<code>) and a shared journey
+              (/j/<code>). Verified against https://trip-track.app/.well-known/assetlinks.json, which
+              the website serves (docs/release.md).
+            -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="trip-track.app" />
+                <data android:host="www.trip-track.app" />
+                <data android:pathPrefix="/u/" />
+                <data android:pathPrefix="/s/" />
+                <data android:pathPrefix="/j/" />
+            </intent-filter>
+            <!-- iOS: the triptrack:// scheme, which the share pages' «open in the app» fires. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="triptrack" />
             </intent-filter>
         </activity>
         <!--

@@ -45,13 +45,14 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         onClear: () -> Unit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit,
                         onPin: (java.util.UUID) -> Unit, onReload: () -> Unit,
                         account: @Composable () -> Unit = {}, coverPhotos: List<ProfileCoverPhoto> = emptyList(), api: com.onezee.triptrack.network.ApiClient? = null, onPhotos: () -> Unit = {},
-                        coverPromptHidden: Boolean = false, onHideCoverPrompt: () -> Unit = {}, onUnpinElsewhere: () -> Unit = {}, onComposeJourney: (Trip) -> Unit = {}) {
+                        coverPromptHidden: Boolean = false, onHideCoverPrompt: () -> Unit = {}, onUnpinElsewhere: () -> Unit = {}, onComposeJourney: (Trip) -> Unit = {},
+                        onStats: () -> Unit = {}) {
     val strings = appStrings
     var sections by rememberSaveable { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("screen_me"),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = tabBarContentClearance()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item(key = "title") { Text(strings.tabMe(), style = AppType.title, color = AppTheme.colors.text, modifier = Modifier.semantics { heading() }) }
-        item(key = "hero") { ProfileHeroCard(state.hero, unit, onSettings, onVehicle, onAddVehicle, onProfile, onLevel, coverPhotos, api, onPhotos) }
+        item(key = "hero") { ProfileHeroCard(state.hero, unit, onSettings, onVehicle, onAddVehicle, onProfile, onLevel, coverPhotos, api, onPhotos, onStats) }
         if (coverPhotos.isEmpty() && !coverPromptHidden) item(key = "cover_prompt") {
             Row(Modifier.surfaceCard(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f)) { MeRow(strings.profileAddCover(), tag = "profile_add_cover", onClick = onPhotos) }
