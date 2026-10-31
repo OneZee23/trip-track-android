@@ -127,12 +127,16 @@ class PlacesTabViewModel(
         preferences.set(PlacesSort.defaultsKey, sort.rawValue)
         mutableState.update { present(it.copy(sort = sort)) }
     }
-    fun openSearch() { mutableState.update { it.copy(search = PlacesSearch(results = it.items)) } }
-    fun search(query: String) { mutableState.update { it.copy(search = PlacesSearch(query, PlacesPresentation.filter(it.items, query, locale))) } }
+    fun openSearch() { mutableState.update { it.copy(search = PlacesSearch(results = matches(it, ""))) } }
+    fun search(query: String) { mutableState.update { it.copy(search = PlacesSearch(query, matches(it, query))) } }
+    // iOS searchMatches: the matches WITHOUT groups (a heading over the results would answer a question
+    // nobody asked), in the chosen order: the sort chips stay where they were.
+    private fun matches(state: PlacesTabState, query: String) =
+        PlacesPresentation.sort(PlacesPresentation.filter(state.items, query, locale), state.sort, locale)
     fun dismissSearch() { mutableState.update { it.copy(search = null) } }
     private fun present(value: PlacesTabState) = value.copy(
         groups = PlacesPresentation.build(value.items, "", value.sort, locale, now(), zone),
-        search = value.search?.let { it.copy(results = PlacesPresentation.filter(value.items, it.query, locale)) },
+        search = value.search?.let { it.copy(results = matches(value, it.query)) },
     )
     private fun seenKey(reading: PlaceLastPass.Reading) = "${reading.placeId.toString().uppercase(Locale.ROOT)}|${reading.at.epochSecond}"
     companion object {

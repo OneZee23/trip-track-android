@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -98,6 +99,7 @@ fun AtlasSheet(
     testTag: String = "atlas_sheet",
     handleTag: String = "atlas_sheet_handle",
     draggable: Boolean = true,
+    shadowRadius: Dp = 14.dp,
     header: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -122,8 +124,11 @@ fun AtlasSheet(
             .offset { IntOffset(0, with(density) { top.dp.roundToPx() }) }
             .fillMaxWidth()
             .height((screenHeight.value - top).coerceAtLeast(0f).dp)
-            .iosShadow(shape, shadow, radius = 14.dp, y = (-8).dp)
+            .iosShadow(shape, shadow, radius = shadowRadius, y = (-8).dp)
             .background(AtlasTheme.colors.background, shape)
+            // The content is CUT by the frame: a half without a scroll would otherwise spill its
+            // extra cards over the tab bar.
+            .clipToBounds()
             .then(
                 if (!draggable) Modifier else Modifier.draggable(
                     state = rememberDraggableState { delta ->
