@@ -130,14 +130,13 @@ private fun TrackingBackButton(onClose: () -> Unit) {
 internal fun MePlaceholder(
     themeManager: ThemeManager,
     languageManager: LanguageManager,
-    // The sign-in card or the «Account & Sync» row (feature/account), above the app settings.
+    // The sign-in card or the «Account & Sync» row (feature/account), under the app settings.
     account: @Composable () -> Unit = {},
 ) {
     val strings = appStrings
     val language = languageManager.current(LocalConfiguration.current)
     var picking by rememberSaveable { mutableStateOf<Picker?>(null) }
     PlaceholderScreen(strings.tabMe(), rememberScrollState(), "screen_me") {
-        account()
         // iOS: ProfileSettingsSheet.swift, appGroup: words, then look.
         Column(Modifier.fillMaxWidth().surfaceCard()) {
             SettingsRow(AppGlyph.characterBubble, strings.lang(), language.endonym, "settings_language") { picking = Picker.language }
@@ -146,6 +145,7 @@ internal fun MePlaceholder(
             // next to «Тёмная» reads as a stale row.
             SettingsRow(themeGlyph(themeManager.mode), strings.theme(), themeLabel(themeManager.mode, strings), "settings_theme") { picking = Picker.theme }
         }
+        account()
     }
     when (picking) {
         Picker.theme -> SettingsOptionPicker(

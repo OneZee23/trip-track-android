@@ -16,6 +16,7 @@ import com.onezee.triptrack.designsystem.theme.AppColors
 import com.onezee.triptrack.designsystem.theme.ThemeMode
 import org.junit.After
 import org.junit.Rule
+import org.junit.rules.RuleChain
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -31,8 +32,10 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35], qualifiers = "ru")
 class AppShellTests {
-    @get:Rule
     val compose = createAndroidComposeRule<MainActivity>()
+
+    @get:Rule
+    val rules: RuleChain = RuleChain.outerRule(OnboardingDone()).around(compose)
 
     private val graph get() = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
 

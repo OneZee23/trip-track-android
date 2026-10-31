@@ -104,51 +104,26 @@ fun OnboardingScreen(
     startPage: Int = 0,
 ) {
     val context = LocalContext.current
-    val coordinator = remember { OnboardingPermissionCoordinator(ledger, Build.VERSION.SDK_INT) }
+    val coordinator = remember { OnboardingPermissionCoordinator(ledger, Build.VERSION.SDK_INT) { grantedPermissions(context) } }
     var page by rememberSaveable { mutableIntStateOf(startPage) }
     // Re-read on every page and every return from the system's question or its settings page.
     var answers by remember { mutableIntStateOf(0) }
     val granted = remember(page, resumeTick, answers) { grantedPermissions(context) }
     val notificationsOn = remember(page, resumeTick, answers) { NotificationManagerCompat.from(context).areNotificationsEnabled() }
-    var pending by remember { mutableIntStateOf(0) }
-    var pendingStep by remember { mutableIntStateOf(-1) }
-    var requesting by remember { mutableIntStateOf(0) }
-
-    fun advance(step: OnboardingPermissionCoordinator.Step) {
-        when (step) {
-            OnboardingPermissionCoordinator.Step.location -> page = 3
-            OnboardingPermissionCoordinator.Step.background -> page = 4
-            OnboardingPermissionCoordinator.Step.notifications -> onFinished()
-        }
-    }
-
-    lateinit var proceed: (OnboardingPermissionCoordinator.Step) -> Unit
+    var pendingToken by remember { mutableIntStateOf(0) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        val step = OnboardingPermissionCoordinator.Step.entries.getOrNull(pendingStep)
-        if (coordinator.complete(pending) && step != null) {
-            answers++
-            requesting = 0
-            // The next question of the same page, after this one closed; never two at once.
-            proceed(step)
-        }
+        answers++
+        coordinator.answered(pendingToken)
     }
-    proceed = { step ->
-        val next = coordinator.nextQuestion(step, grantedPermissions(context))
-        if (next == null) {
-            requesting = 0
-            advance(step)
-        } else coordinator.begin(next)?.let { token ->
-            pending = token
-            pendingStep = step.ordinal
-            requesting = 1
-            launcher.launch(OnboardingPermissionCoordinator.manifestNames(next))
-        }
+    coordinator.ask = { permission, token ->
+        pendingToken = token
+        launcher.launch(OnboardingPermissionCoordinator.manifestNames(permission))
     }
 
     OnboardingContent(
         page = page,
         distanceUnit = distanceUnit,
-        isRequesting = requesting == 1,
+        isRequesting = coordinator.isRequesting,
         locationGranted = RecordingPermission.fineLocation in granted,
         backgroundGranted = RecordingPermission.backgroundLocation in granted,
         notificationsGranted = notificationsOn,
@@ -156,9 +131,9 @@ fun OnboardingScreen(
             when (current) {
                 0 -> page = 1
                 1 -> page = 2
-                2 -> proceed(OnboardingPermissionCoordinator.Step.location)
-                3 -> proceed(OnboardingPermissionCoordinator.Step.background)
-                else -> proceed(OnboardingPermissionCoordinator.Step.notifications)
+                2 -> coordinator.proceed(OnboardingPermissionCoordinator.Step.location) { page = 3 }
+                3 -> coordinator.proceed(OnboardingPermissionCoordinator.Step.background) { page = 4 }
+                else -> coordinator.proceed(OnboardingPermissionCoordinator.Step.notifications, onFinished)
             }
         },
     )

@@ -49,6 +49,7 @@ import com.onezee.triptrack.R
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.ContentSizedSheet
 import com.onezee.triptrack.designsystem.components.Glyph
+import com.onezee.triptrack.designsystem.components.SheetScope
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.strings.AppLanguage
@@ -186,12 +187,25 @@ fun SignInPromptSheet(
     )
 }
 
-/** The sheet without the service, for screenshots: the sign-in is a callback. */
+/** The sheet without the service: the sign-in is a callback. */
 @Composable
 fun SignInPromptContent(
     action: SignInAction,
     isAuthenticating: Boolean,
     onDismissRequest: () -> Unit,
+    onSignIn: (Context, (SignInOutcome) -> Unit) -> Unit,
+    onAuthenticated: () -> Unit = {},
+) {
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = AppTheme.colors.bg) {
+        SignInPromptBody(action, isAuthenticating, onSignIn, onAuthenticated)
+    }
+}
+
+/** The sheet's column, for screenshots outside the dialog window. */
+@Composable
+fun SheetScope.SignInPromptBody(
+    action: SignInAction,
+    isAuthenticating: Boolean,
     onSignIn: (Context, (SignInOutcome) -> Unit) -> Unit,
     onAuthenticated: () -> Unit = {},
     initialError: String? = null,
@@ -201,7 +215,7 @@ fun SignInPromptContent(
     val context = LocalContext.current
     var error by remember { mutableStateOf(initialError) }
     val authenticated by rememberUpdatedState(onAuthenticated)
-    ContentSizedSheet(onDismissRequest = onDismissRequest, background = colors.bg) {
+    run {
         val sheet = this
         SheetGrabber()
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 44.dp), horizontalArrangement = Arrangement.End) {
@@ -307,11 +321,12 @@ fun GuestSignInCard(
     isAuthenticating: Boolean,
     onSignIn: (Context, GoogleSignInFlow, (SignInOutcome) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
+    initialError: String? = null,
 ) {
     val colors = AppTheme.colors
     val strings = appStrings
     val context = LocalContext.current
-    var error by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf(initialError) }
     Column(
         modifier
             .fillMaxWidth()

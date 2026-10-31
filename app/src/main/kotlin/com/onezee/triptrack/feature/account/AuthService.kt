@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.model.EmptyRequest
+import com.onezee.triptrack.model.EmptyResponse
 import com.onezee.triptrack.model.LoginResponse
 import com.onezee.triptrack.model.MeResponse
 import com.onezee.triptrack.model.ProfileUpdateRequest
@@ -34,7 +35,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.JsonObject
 
 /** The Google side of sign-in, from BuildConfig and the device. */
 data class GoogleSignInConfig(
@@ -330,7 +330,7 @@ class AuthService(
         }
         val accountId = session.accountId
         try {
-            client.post<ProfileUpdateRequest, JsonObject>(ApiEndpoint.profileUpdate, ProfileUpdateRequest(displayName = name))
+            client.post<ProfileUpdateRequest, EmptyResponse>(ApiEndpoint.profileUpdate, ProfileUpdateRequest(displayName = name))
             // Only for a session that is still ours: a sign-out landing meanwhile already reset the
             // latch, and «confirmed» written now would swallow the NEXT account's first push.
             if (tokenStore.state.value.isSignedIn && tokenStore.state.value.accountId == accountId) latch.markConfirmed()
@@ -388,7 +388,7 @@ class AuthService(
     suspend fun setPublicProfile(isPublic: Boolean): Boolean {
         val generation = ++publicProfileGeneration
         return try {
-            client.post<ProfileUpdateRequest, JsonObject>(ApiEndpoint.profileUpdate, ProfileUpdateRequest(isPublic = isPublic))
+            client.post<ProfileUpdateRequest, EmptyResponse>(ApiEndpoint.profileUpdate, ProfileUpdateRequest(isPublic = isPublic))
             if (generation == publicProfileGeneration) extras.update { it.copy(isPublicProfile = isPublic) }
             true
         } catch (cancelled: CancellationException) {

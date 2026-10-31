@@ -159,8 +159,13 @@ class AccountSyncWorker(
     parameters: WorkerParameters,
     private val coordinator: suspend () -> SyncCoordinator?,
 ) : CoroutineWorker(context, parameters) {
-    override suspend fun doWork(): Result {
-        val current = coordinator() ?: return Result.success()
-        return if (current.runFullSync()) Result.success() else Result.retry()
+    override suspend fun doWork(): Result = pass(coordinator())
+
+    companion object {
+        /** Nobody signed in: nothing to sync, and no reason for WorkManager to try again. */
+        suspend fun pass(coordinator: SyncCoordinator?): Result {
+            val current = coordinator ?: return Result.success()
+            return if (current.runFullSync()) Result.success() else Result.retry()
+        }
     }
 }

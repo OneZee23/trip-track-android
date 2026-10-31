@@ -9,7 +9,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.json.JsonObject
 
 // iOS: PrivacySettingsView.swift.
 data class PrivacySettingsState(
@@ -29,7 +28,8 @@ interface ProfilePrivacyService {
 // iOS: APIClient.post.
 class ApiProfilePrivacyService(private val apiClient: ApiClient) : ProfilePrivacyService {
     override suspend fun load(): MeResponse = apiClient.post(ApiEndpoint.authMe, EmptyRequest())
-    override suspend fun save(patch: ProfileUpdateRequest) { apiClient.post<ProfileUpdateRequest, JsonObject>(ApiEndpoint.profileUpdate, patch) }
+    // The server answers `{"status":"ok"}` without a payload: only EmptyResponse decodes that.
+    override suspend fun save(patch: ProfileUpdateRequest) { apiClient.post<ProfileUpdateRequest, EmptyResponse>(ApiEndpoint.profileUpdate, patch) }
 }
 // iOS: PrivacySettingsView.swift. Each block has its own serial writes and optimistic generation.
 class PrivacySettingsViewModel(

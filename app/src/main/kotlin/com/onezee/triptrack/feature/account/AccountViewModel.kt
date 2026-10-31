@@ -141,6 +141,7 @@ class AccountViewModel(
 
     /** The consent's confirm: the full mirror is the settings effect's (SyncSettingsEffects). */
     fun confirmEnableCloudSync() {
+        mutableState.update { it.copy(dialog = null) }
         preferences.set(AccountSettings.FIRST_TOGGLE_KEY, "true")
         settingsManager.setCloudSync(true)
     }

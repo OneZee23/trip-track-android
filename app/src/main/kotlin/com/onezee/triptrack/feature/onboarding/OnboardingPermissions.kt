@@ -49,12 +49,57 @@ class OnboardingStore(private val preferences: SharedPreferences) {
  * location decision). Nearby devices are not asked here, as iOS asks nothing about Bluetooth in
  * onboarding; the car stereo screen asks when someone picks one.
  */
-class OnboardingPermissionCoordinator(private val ledger: PermissionLedger, private val sdkInt: Int) {
+class OnboardingPermissionCoordinator(
+    private val ledger: PermissionLedger,
+    private val sdkInt: Int,
+    /** Read fresh before every question: an answer, or the settings page, changes it. */
+    private val granted: () -> Set<RecordingPermission>,
+) {
     enum class Step { location, background, notifications }
 
     private val flow = PermissionFlow(ledger)
+    private var step: Step? = null
+    private var completion: (() -> Unit)? = null
 
-    val isRequesting: Boolean get() = flow.isRequesting
+    /** Puts the system question; its answer comes back through [answered] with the same token. */
+    var ask: (permission: RecordingPermission, token: Int) -> Unit = { _, _ -> }
+
+    /** From Continue until the page may move on, across all of its questions. */
+    var isRequesting: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * iOS: proceed(from:completion:). A second tap while a page is still asking does nothing; a page
+     * with nothing left to ask completes at once.
+     */
+    fun proceed(from: Step, completion: () -> Unit) {
+        if (isRequesting) return
+        step = from
+        this.completion = completion
+        isRequesting = true
+        next()
+    }
+
+    /** The system answered, granted or not: both are decisions. A late answer of an earlier page is ignored. */
+    fun answered(token: Int) {
+        if (!flow.complete(token)) return
+        next()
+    }
+
+    private fun next() {
+        val current = step ?: return
+        val question = nextQuestion(current, granted())
+        if (question == null) {
+            val done = completion
+            completion = null
+            step = null
+            isRequesting = false
+            done?.invoke()
+            return
+        }
+        val token = flow.begin(question) ?: return
+        ask(question, token)
+    }
 
     /**
      * The next system question this page still has to put, or null when it may move on: not
@@ -71,12 +116,6 @@ class OnboardingPermissionCoordinator(private val ledger: PermissionLedger, priv
         }
         return null
     }
-
-    /** Continue pressed on a question: the token its answer must carry, or null while one is pending. */
-    fun begin(permission: RecordingPermission): Int? = flow.begin(permission)
-
-    /** The system answered. False for a late answer that belongs to an earlier page. */
-    fun complete(token: Int): Boolean = flow.complete(token)
 
     companion object {
         fun questions(step: Step): List<RecordingPermission> = when (step) {
