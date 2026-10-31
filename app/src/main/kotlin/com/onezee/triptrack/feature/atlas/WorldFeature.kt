@@ -104,6 +104,9 @@ class WorldFeature(
 
     val placesNavigator = TabNavigator<PlacesDestination>()
 
+    /** Where the Places panel stands and which pin is chosen; the tab's one panel. */
+    val placesPanel = com.onezee.triptrack.feature.places.PlacesPanelModel()
+
     /** A trip opened from the Atlas: over the map, like iOS `fullScreenCover`. */
     val atlasTrips = TabNavigator<TripsDestination>()
 

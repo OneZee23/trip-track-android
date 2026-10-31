@@ -157,11 +157,7 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
     val keyboard = LocalSoftwareKeyboardController.current
     val reduceMotion = LocalReduceMotion.current
 
-    var stop by rememberSaveable { mutableStateOf<PlacesPanelStop?>(null) }
-    var stopBeforeSelection by rememberSaveable { mutableStateOf(PlacesPanelStop.half) }
-    var stopBeforeSearch by rememberSaveable { mutableStateOf(PlacesPanelStop.list) }
-    var selectedPlace by rememberSaveable { mutableStateOf<String?>(null) }
-    var selectedHint by rememberSaveable { mutableStateOf<String?>(null) }
+    val panel = feature.placesPanel
     var showsBeta by rememberSaveable { mutableStateOf(false) }
     val searchFocus = remember { FocusRequester() }
     val mapState = remember { MapHostState() }
@@ -175,49 +171,34 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
         val slot = PlacesSlot((screenHeight - tappable).value.toDouble(), safeTop.value.toDouble(), safeBottom.value.toDouble())
         // Not loaded yet reads as a library: the empty tab is decided by the first batch (divergences).
         val emptyState = if (!state.loaded) PlacesEmptyState.notEmpty else PlacesEmptyState.resolve(state.items.size, state.recentTrips.size)
-        val current = stop ?: emptyState.stop(slot).also { stop = it }
+        val current = panel.stop ?: emptyState.stop(slot).also { panel.stop = it }
         LaunchedEffect(emptyState, state.loaded) {
             // During a search the panel holds the list: a place arriving by a pull must not drop it
             // from under the finger typing the query.
             if (!state.loaded || searching) return@LaunchedEffect
-            if (emptyState.isPinned) stop = emptyState.stop(slot)
-            else if (stop?.isDraggable != true && selectedPlace == null && selectedHint == null) stop = slot.defaultStop
+            if (emptyState.isPinned) panel.stop = emptyState.stop(slot)
+            else if (panel.stop?.isDraggable != true && !panel.hasSelection) panel.stop = slot.defaultStop
         }
 
-        fun clearSelection() { selectedPlace = null; selectedHint = null }
-        fun move(target: PlacesPanelStop) { clearSelection(); stop = target }
         fun push(id: UUID) {
             haptics.tap()
             feature.placesNavigator.push(PlacesDestination.PlaceDetail(id))
         }
         fun beginSearch() {
             if (searching) return
-            stopBeforeSearch = if (current.isDraggable) current else PlacesPanelStop.list
-            clearSelection()
+            panel.beginSearch()
             vm.openSearch()
-            stop = PlacesPanelStop.list
         }
         fun endSearch() {
             focusManager.clearFocus()
             keyboard?.hide()
             vm.dismissSearch()
-            stop = stopBeforeSearch
-        }
-        // Tapping a pin CHANGES THE PANEL, it opens no screen: the row in the panel does, and a missed
-        // pin does not carry the person off the tab. A suggestion now has its card with «Save».
-        fun selectPin(id: UUID) {
-            val isPlace = state.items.any { it.place.id == id }
-            val isHint = state.knownSuggestions.any { it.id == id }
-            if (!isPlace && !isHint) return
-            if (current.isDraggable) stopBeforeSelection = current
-            selectedPlace = if (isPlace) id.toString() else null
-            selectedHint = if (isPlace) null else id.toString()
-            stop = if (isPlace) PlacesPanelStop.selectedPlace else PlacesPanelStop.selectedHint
+            panel.endSearch()
         }
         LaunchedEffect(searching) { if (searching) runCatching { searchFocus.requestFocus() } }
 
-        BackHandler(enabled = searching || selectedPlace != null || selectedHint != null) {
-            if (searching) endSearch() else { clearSelection(); stop = stopBeforeSelection }
+        BackHandler(enabled = searching || panel.hasSelection) {
+            if (searching) endSearch() else panel.closeSelection()
         }
 
         val pins = remember(state.items, state.suggestions) {
@@ -228,11 +209,11 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
         PlacesMapLayer(
             pins = pins,
             routes = emptyList(),
-            selectedId = (selectedPlace ?: selectedHint)?.let(UUID::fromString),
+            selectedId = panel.selectedPlace ?: panel.selectedHint,
             mapState = mapState,
             chrome = MapInsets(bottom = chromeBottom.coerceAtLeast(0.0)),
             strings = strings,
-            onPinTap = { haptics.tap(); selectPin(it) },
+            onPinTap = { haptics.tap(); panel.selectPin(it, state) },
         )
 
         val motion = rememberSlotMotion(slot.top(current))
@@ -259,7 +240,7 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
             screenHeight = screenHeight,
             accessibilityTitle = strings.tabPlaces(),
             onDrag = { slot.clamped(it) },
-            onSettle = { top, velocity -> stop = slot.settle(top, velocity, current) },
+            onSettle = { top, velocity -> panel.stop = slot.settle(top, velocity, current) },
             onTapHandle = {},
             testTag = "places_panel",
             handleTag = "places_panel_handle",
@@ -268,15 +249,15 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
             header = {
                 // The tab's title is HIDDEN while searching: one looks for a place, the switch has
                 // nowhere to lead.
-                if (!searching) PanelHeader(current, onBeta = { showsBeta = true }, onList = { move(PlacesPanelStop.list) }, onMap = { move(PlacesPanelStop.map) })
+                if (!searching) PanelHeader(current, onBeta = { showsBeta = true }, onList = { panel.move(PlacesPanelStop.list) }, onMap = { panel.move(PlacesPanelStop.map) })
             },
         ) {
             when {
                 searching -> SearchContent(state, vm, searchFocus, onCancel = { haptics.tap(); endSearch() }, onOpen = ::push)
                 current == PlacesPanelStop.map -> Unit
                 current == PlacesPanelStop.selectedPlace || current == PlacesPanelStop.selectedHint -> SelectionContent(
-                    state, selectedPlace?.let(UUID::fromString), selectedHint?.let(UUID::fromString),
-                    onOpen = ::push, onSave = vm::save, onClose = { haptics.tap(); clearSelection(); stop = stopBeforeSelection },
+                    state, panel.selectedPlace, panel.selectedHint,
+                    onOpen = ::push, onSave = vm::save, onClose = { haptics.tap(); panel.closeSelection() },
                 )
                 current == PlacesPanelStop.empty -> EmptyContent(state, vm, now(), onOpenTrip = { feature.openPlacesTrip(it.id, TripSummary.from(it).asPreviewTrip()) })
                 current == PlacesPanelStop.half -> Column(Modifier.fillMaxWidth().padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
