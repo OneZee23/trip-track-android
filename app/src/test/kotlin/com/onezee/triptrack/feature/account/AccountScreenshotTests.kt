@@ -153,6 +153,22 @@ class AccountScreenshotTests(private val dark: Boolean) {
         Column(Modifier.padding(16.dp)) { GuestSignInCard(expired = true, isAuthenticating = false, onSignIn = { _, _, _ -> }) }
     }
 
+    @Test fun blockedList() = shot("blocked_list") {
+        SheetFrame {
+            BlockedListContent(
+                users = listOf(
+                    com.onezee.triptrack.model.BlockedUser(UUID.fromString("c0000000-0000-4000-8000-00000000000c"), "Тихий Странник 512", "🚐", 7, "2026-09-14T10:00:00.000Z"),
+                    com.onezee.triptrack.model.BlockedUser(UUID.fromString("d0000000-0000-4000-8000-00000000000d"), null, null, 3, null),
+                ),
+                loading = false, failed = false, pending = null, onRetry = {}, onUnblock = {},
+            )
+        }
+    }
+
+    @Test fun blockedListFailed() = shot("blocked_list_failed") {
+        SheetFrame { BlockedListContent(users = emptyList(), loading = false, failed = true, pending = null, onRetry = {}, onUnblock = {}) }
+    }
+
     @Test fun onboardingWelcome() = onboarding(0)
     @Test fun onboardingValue() = onboarding(1)
     @Test fun onboardingLocation() = onboarding(2)

@@ -35,6 +35,7 @@ fun AccountEntry(graph: AppGraph, modifier: Modifier = Modifier) {
     val auth by graph.auth.state.collectAsState()
     val syncState by remember { syncStateFlow(graph.settingsManager, graph.syncHost) }.collectAsState(SyncState.Off)
     var showsAccount by rememberSaveable { mutableStateOf(false) }
+    var showsBlocked by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxWidth()) {
         if (auth.isSignedIn) {
             Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {
@@ -62,6 +63,14 @@ fun AccountEntry(graph: AppGraph, modifier: Modifier = Modifier) {
     if (showsAccount) {
         val viewModel = remember { graph.accountViewModel() }
         DisposableEffect(viewModel) { onDispose { viewModel.dispose() } }
-        CloudSyncRoute(viewModel, onDismissRequest = { showsAccount = false })
+        CloudSyncRoute(viewModel, onDismissRequest = { showsAccount = false }, onOpenBlocked = { showsBlocked = true })
+        if (showsBlocked) {
+            val blocked = remember { BlockedUsers(graph.apiClient) }
+            BlockedListSheet(blocked, onDismissRequest = {
+                showsBlocked = false
+                // iOS re-reads on the way back: an unblock changed the count.
+                viewModel.refresh()
+            })
+        }
     }
 }
