@@ -120,6 +120,15 @@ class TripsFeature(
         get() = preferences.getBoolean(FEED_FOLLOWING_KEY, false)
         set(value) = preferences.edit { putBoolean(FEED_FOLLOWING_KEY, value) }
 
+    suspend fun vehicle(id: UUID): com.onezee.triptrack.model.Vehicle? = vehicles.vehicle(id)
+
+    /** The journey whose window holds the trip: «Открыть путешествие» instead of «Объединить». */
+    suspend fun journeyContaining(tripId: UUID): Journey? = repository.journeyContaining(tripId)
+
+    suspend fun deletePhoto(id: UUID, tripId: UUID) = repository.deletePhoto(id, tripId)
+
+    suspend fun journey(id: UUID): Journey? = repository.fetchJourney(id)
+
     /** «Make private» from a feed card's menu: the same door as the trip screen's. */
     suspend fun makePrivate(id: UUID) = repository.updatePrivacy(id, true)
 

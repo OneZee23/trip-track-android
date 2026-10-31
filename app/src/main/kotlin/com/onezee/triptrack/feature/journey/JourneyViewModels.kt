@@ -35,6 +35,8 @@ class JourneyComposerViewModel(
     private val zone: ZoneId = ZoneId.systemDefault(),
 ) : ViewModel() {
     private var candidates = preselected?.sortedBy { it.startDate } ?: emptyList()
+    /** The trip the sheet was opened from: marked in the list, but it can be unticked like any other. */
+    val anchorId: UUID get() = anchor.id
     private val mutable = MutableStateFlow(JourneyComposerState(candidates.map(TripSummary::from), candidates.map { it.id }.toSet()))
     val state = mutable.asStateFlow()
     init {

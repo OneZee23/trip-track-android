@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(project(":core:map"))
     implementation(libs.serialization.json)
+    implementation(libs.exifinterface)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.appcompat)

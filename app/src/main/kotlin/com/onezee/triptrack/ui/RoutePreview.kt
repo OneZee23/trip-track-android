@@ -32,6 +32,7 @@ fun LightRoutePreview(
     modifier: Modifier = Modifier,
     accent: Color = SystemColors.orange(AppTheme.isDark),
     background: Color = AppTheme.colors.cardAlt,
+    padding: androidx.compose.ui.unit.Dp = 16.dp,
 ) {
     val dark = AppTheme.isDark
     // Previews from the feed are ~20 points already; only a full track is thinned.
@@ -56,9 +57,9 @@ fun LightRoutePreview(
         val latRange = maxLat - minLat
         val lonRange = maxLon - minLon
         if (latRange <= 0 && lonRange <= 0) return@Canvas
-        val padding = 16.dp.toPx()
-        val drawW = size.width - padding * 2
-        val drawH = size.height - padding * 2
+        val inset = padding.toPx()
+        val drawW = size.width - inset * 2
+        val drawH = size.height - inset * 2
         val latScale = if (latRange > 0) drawH / latRange else 1.0
         val lonScale = if (lonRange > 0) drawW / lonRange else 1.0
         val scale = min(latScale, lonScale)
