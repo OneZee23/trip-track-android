@@ -121,6 +121,8 @@ fun DetailTopBar(
     modifier: Modifier = Modifier,
     actions: (@Composable () -> Unit)? = null,
     backTag: String = "detail_back",
+    /** iOS TripDetailTopBar `pill`: whose trip it is, beside «Назад», gone once the page scrolls. */
+    pill: (@Composable () -> Unit)? = null,
 ) {
     val strings = appStrings
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -147,8 +149,13 @@ fun DetailTopBar(
                     .alpha(((progress - 0.6f) / 0.4f).coerceIn(0f, 1f)),
             )
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                MapChromeButton(AppGlyph.chevronLeft, strings.back(), onBack, Modifier.testTag(backTag), progress)
-                Spacer(Modifier.weight(1f))
+                // Back and the pill share the start; the pill takes what it needs of the rest.
+                Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                    MapChromeButton(AppGlyph.chevronLeft, strings.back(), onBack, Modifier.testTag(backTag), progress)
+                    if (pill != null && progress < 0.4f) {
+                        Box(Modifier.padding(start = 8.dp, end = 8.dp).weight(1f, fill = false).alpha((1f - progress * 2.5f).coerceIn(0f, 1f))) { pill() }
+                    }
+                }
                 actions?.invoke()
             }
         }

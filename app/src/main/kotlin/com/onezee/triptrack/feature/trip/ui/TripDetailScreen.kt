@@ -134,11 +134,17 @@ fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, n
     val vm = entryViewModel("trip:${dest.id}") { feature.tripDetail(dest.id, dest.preview, dest.social) }
     LaunchedEffect(vm) { vm.load() }
     val state by vm.state.collectAsState()
-    TripDetailContent(state, vm, feature, navigator)
+    TripDetailContent(state, vm, feature, navigator, dest.social)
 }
 
 @Composable
-private fun TripDetailContent(state: TripDetailState, vm: TripDetailViewModel, feature: TripsFeature, navigator: TabNavigator<TripsDestination>) {
+private fun TripDetailContent(
+    state: TripDetailState,
+    vm: TripDetailViewModel,
+    feature: TripsFeature,
+    navigator: TabNavigator<TripsDestination>,
+    social: com.onezee.triptrack.model.SocialFeedTrip?,
+) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
@@ -255,6 +261,7 @@ private fun TripDetailContent(state: TripDetailState, vm: TripDetailViewModel, f
                 InfoPanel(
                     now = feature.clock(),
                     state = state,
+                    foreignVehicle = social?.vehicle,
                     vehicle = vehicle,
                     vehicleKnown = vehicleKnown,
                     journey = journey,
@@ -278,6 +285,7 @@ private fun TripDetailContent(state: TripDetailState, vm: TripDetailViewModel, f
                 title = trip.detailTitle(strings),
                 onBack = { navigator.pop() },
                 backTag = if (state.isLoading) "detail_loading_back" else "detail_back",
+                pill = social?.author?.takeIf { !state.isOwn }?.let { author -> { AuthorPill(author) } },
                 actions = if (state.isOwn && !state.isLoading) ({
                     Box {
                         MapChromeButton(AppGlyph.ellipsis, strings.moreActions(), { haptics.tap(); showActions = true }, Modifier.testTag("detail_actions"), progress)
@@ -310,7 +318,7 @@ private fun TripDetailContent(state: TripDetailState, vm: TripDetailViewModel, f
             PhotoViewer(
                 pages = state.photos.map { ViewerPage(it.id, it.source(thumbnail = false), it.source(thumbnail = true), it.timestamp) },
                 initialIndex = index,
-                region = trip?.region,
+                region = com.onezee.triptrack.ui.RegionDisplay.localized(trip?.region, strings.language),
                 onDismiss = { viewerIndex = null },
                 onDelete = if (state.isOwn) ({ id -> deletePhoto(feature, vm, state, id, scope, { toast = it }, strings.photoDeleted()) }) else null,
             )
@@ -449,6 +457,7 @@ private fun Hero(
 private fun InfoPanel(
     now: java.time.Instant,
     state: TripDetailState,
+    foreignVehicle: com.onezee.triptrack.model.SocialFeedVehicle?,
     vehicle: Vehicle?,
     vehicleKnown: Boolean,
     journey: Journey?,
@@ -476,7 +485,7 @@ private fun InfoPanel(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             TripTitleBlock(trip)
-            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown)
+            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown, foreignVehicle = foreignVehicle)
             if (journey != null) {
                 JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) }, modifier = Modifier.testTag("detail_journey_row"), now = now)
             }
@@ -508,7 +517,8 @@ private fun InfoPanel(
                 ElevationChartCard(
                     state.elevationSeries,
                     summary = strings.chartMaxElev(Measure.elevation(state.maxAltitude, unit, lang, strings), Measure.elevation(state.elevationGain, unit, lang, strings)),
-                    leftLabel = trip.region.orEmpty(),
+                    // iOS prints the raw column; it is in the phone's language there, the seeds' names are not.
+                    leftLabel = com.onezee.triptrack.ui.RegionDisplay.localized(trip.region, strings.language).orEmpty(),
                     rightLabel = groupedDistance(trip.distance),
                 )
             }

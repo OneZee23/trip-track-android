@@ -79,6 +79,16 @@ import com.onezee.triptrack.ui.cards.hasDisplayableName
 import com.onezee.triptrack.ui.durationSegments
 import java.time.Instant
 import kotlin.math.roundToLong
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.style.TextOverflow
+import com.onezee.triptrack.R
+import com.onezee.triptrack.model.SocialAuthor
+import com.onezee.triptrack.model.SocialFeedVehicle
 
 /** A section of the detail panel: its heading over its content, 10 apart (iOS infoPanel sections). */
 @Composable
@@ -129,7 +139,15 @@ fun AppStrings.timeRange(start: Instant, end: Instant?): String {
 
 /** iOS: TripDetailView.chipsRow. Time, the car, «Вписана рукой», and the privacy of one's own trip. */
 @Composable
-fun TripChipsRow(trip: TripSummary, isOwn: Boolean, signedIn: Boolean, vehicle: Vehicle?, vehicleKnown: Boolean, modifier: Modifier = Modifier) {
+fun TripChipsRow(
+    trip: TripSummary,
+    isOwn: Boolean,
+    signedIn: Boolean,
+    vehicle: Vehicle?,
+    vehicleKnown: Boolean,
+    modifier: Modifier = Modifier,
+    foreignVehicle: SocialFeedVehicle? = null,
+) {
     val strings = appStrings
     Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         DetailChip { Text(strings.timeRange(trip.startDate, trip.endDate), style = inter(12f, InterWeight.medium, monospacedDigits = true)) }
@@ -150,6 +168,19 @@ fun TripChipsRow(trip: TripSummary, isOwn: Boolean, signedIn: Boolean, vehicle: 
                     }
                     else -> Text("…")
                 }
+            }
+        }
+        // Someone else's car is a name and an avatar the server rendered, not a row in our garage.
+        // iOS opens its public page; until that screen exists here the chip is a plain label.
+        if (!isOwn && foreignVehicle != null) {
+            DetailChip(Modifier.testTag("detail_foreign_vehicle")) {
+                if (foreignVehicle.avatarEmoji.startsWith(PIXEL_AVATAR_PREFIX)) {
+                    Image(ImageBitmap.imageResource(R.drawable.pixel_car), contentDescription = null, modifier = Modifier.size(14.dp),
+                        contentScale = ContentScale.Fit, filterQuality = FilterQuality.None)
+                } else {
+                    Text(foreignVehicle.avatarEmoji, style = inter(12f))
+                }
+                Text(foreignVehicle.name, maxLines = 1)
             }
         }
         if (trip.source == TripOrigin.manual) {
@@ -415,5 +446,33 @@ fun TripPhotosSection(
                 }
             }
         }
+    }
+}
+
+/** iOS VehicleAvatar.assetPrefix: an avatar that names a sprite, not an emoji to print. */
+private const val PIXEL_AVATAR_PREFIX = "pixel_"
+
+/**
+ * iOS: TripDetailView.authorPill. Whose trip this is, on someone else's only: the avatar, the name,
+ * «LVL n». iOS opens their profile; that screen is not ported yet, so here it is a label.
+ */
+@Composable
+fun AuthorPill(author: SocialAuthor, modifier: Modifier = Modifier) {
+    val strings = appStrings
+    Row(
+        modifier
+            .background(Color.Black.copy(alpha = 0.42f), CircleShape)
+            .padding(start = 5.dp, end = 12.dp, top = 5.dp, bottom = 5.dp)
+            .semantics(mergeDescendants = true) {}
+            .testTag("detail_author_pill"),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(28.dp).background(Color(0xFFF4F2EE), CircleShape), contentAlignment = Alignment.Center) {
+            Text(author.avatarEmoji ?: "🚗", style = inter(16f))
+        }
+        Text(author.displayName ?: strings.companionsNoName(), style = inter(13f, InterWeight.bold), color = Color.White,
+            maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+        Text("LVL ${author.profileLevel}", style = pressStart2P(7f), color = Color(0xFFD9DBE5).copy(alpha = 0.7f), maxLines = 1, softWrap = false)
     }
 }
