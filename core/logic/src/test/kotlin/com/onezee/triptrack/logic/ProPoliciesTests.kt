@@ -6,6 +6,22 @@ import kotlin.test.*
 
 // iOS: PlusGateTests.swift, PlusStoreTests.swift (pure part), PlusAvailabilityTests.swift, PlusAccess.swift.
 class PlusStoreTests {
+    // iOS: PlusStoreTests.swift, testUnknownStorefrontIsAskedAgainOnReturn (read policy only).
+    @Test fun testUnknownStorefrontIsAskedAgainOnReturn() {
+        var country: String? = null
+        var answer: String? = null
+        var reads = 0
+        val read = { reads++; answer }
+        assertNull(PlusStore.refreshUnknownStorefront(country, read))
+        assertTrue(PlusAccess.initialStorefrontHidesPlus(country, "RU", true))
+        answer = "USA"
+        country = PlusStore.refreshUnknownStorefront(country, read)
+        assertEquals("USA", country)
+        assertFalse(PlusStore.hidesPlus(country, true))
+        assertNull(PlusStore.refreshUnknownStorefront(country, read))
+        assertEquals(2, reads)
+        assertTrue(PlusStore.hidesPlus(country, false), "PRO stays hidden at Android launch")
+    }
     @Test fun testAllFiveFeaturesAndAllAccessCombinations() {
         assertEquals(setOf("profileBackgrounds", "avatarFrame", "vehicleCardStyle", "routeLineStyle", "manualTrip"), PlusFeature.entries.map { it.name }.toSet())
         for (feature in PlusFeature.entries) {

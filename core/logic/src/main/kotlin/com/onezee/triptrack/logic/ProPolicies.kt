@@ -25,6 +25,9 @@ object PlusAccess {
 // iOS: PlusStore.swift. Android launch supplies available=false; the gate stays generic.
 fun PlusStore.hidesPlus(countryCode: String?, available: Boolean): Boolean =
     !available || countryCode?.uppercase(Locale.ROOT) in setOf("RU", "RUS")
+// iOS: PlusStore.swift, refreshUnknownStorefront. A known country is updated by storefront events.
+fun PlusStore.refreshUnknownStorefront(knownCountry: String?, readCountry: () -> String?): String? =
+    if (knownCountry == null) readCountry()?.uppercase(Locale.ROOT) else null
 fun PlusStore.grants(state: PlusStore.State): Boolean = state in setOf(PlusStore.State.trial, PlusStore.State.active, PlusStore.State.grace)
 fun PlusStore.resolve(entitled: Boolean, isTrial: Boolean, renewal: PlusStore.RenewalSummary?): PlusStore.State = when {
     renewal == PlusStore.RenewalSummary.inGracePeriod || renewal == PlusStore.RenewalSummary.inBillingRetryPeriod -> PlusStore.State.grace
@@ -143,6 +146,26 @@ fun ProContextOffer.moment(input: ProContextOffer.Input): ProOfferMoment? {
 fun ProContextOffer.sells(moment: ProOfferMoment, storefrontHidesPlus: Boolean): Boolean = !storefrontHidesPlus
 fun ProContextOffer.feature(moment: ProOfferMoment): PlusFeature =
     if (moment == ProOfferMoment.oneMonth) PlusFeature.routeLineStyle else PlusFeature.profileBackgrounds
+
+// iOS: ProOfferCoordinator.swift (session policy only). No purchase UI is enabled on Android.
+class ProOfferSession(private var isFirstSession: Boolean) {
+    private var recordedTripThisSession = false
+    private var shownThisSession = false
+
+    fun recordingEnded() { recordedTripThisSession = true }
+
+    fun sessionEnded() {
+        isFirstSession = false
+        recordedTripThisSession = false
+        // M4 can repeat: keep the shown flag for the whole process, as on iOS.
+    }
+
+    fun moment(input: ProContextOffer.Input): ProOfferMoment? = ProContextOffer.moment(input.copy(
+        isFirstSession = isFirstSession,
+        recordedTripThisSession = recordedTripThisSession,
+        alreadyShownThisSession = shownThisSession,
+    ))?.also { shownThisSession = true }
+}
 
 // iOS: RoadSceneTime.swift. The caller supplies local time; the scene never requests location.
 fun RoadSceneTime.Companion.slot(date: Instant, zone: ZoneId): RoadSceneTime = when (date.atZone(zone).hour) {
