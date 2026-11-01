@@ -141,7 +141,7 @@ fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, n
     val vm = entryViewModel("trip:${dest.id}") { feature.tripDetail(dest.id, dest.preview, dest.social) }
     LaunchedEffect(vm) { vm.load() }
     val state by vm.state.collectAsState()
-    TripDetailContent(state, vm, feature, navigator, dest.social)
+    TripDetailContent(state, vm, feature, navigator, dest.social, (dest.focus as? com.onezee.triptrack.model.TripFocus.Checkpoint)?.id)
 }
 
 @Composable
@@ -151,6 +151,7 @@ private fun TripDetailContent(
     feature: TripsFeature,
     navigator: DestinationNavigator<TripsDestination>,
     social: com.onezee.triptrack.model.SocialFeedTrip?,
+    focusCheckpointId: UUID?,
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -181,6 +182,22 @@ private fun TripDetailContent(
     var photoToDelete by remember { mutableStateOf<DetailPhotoState?>(null) }
     var journeyTick by remember { mutableIntStateOf(0) }
     var composerOpenings by remember { mutableIntStateOf(0) }
+    var focusConsumed by remember { mutableStateOf(false) }
+    var momentScrollTarget by remember { mutableStateOf<UUID?>(null) }
+    var highlightedMomentId by remember { mutableStateOf<UUID?>(null) }
+    LaunchedEffect(focusCheckpointId, state.moments, state.isLoading) {
+        if (!focusConsumed && !state.isLoading && focusCheckpointId != null && state.moments.any { it.id == focusCheckpointId }) {
+            focusConsumed = true
+            momentScrollTarget = focusCheckpointId
+            highlightedMomentId = focusCheckpointId
+        }
+    }
+    LaunchedEffect(highlightedMomentId) {
+        if (highlightedMomentId != null) {
+            kotlinx.coroutines.delay(1_400)
+            highlightedMomentId = null
+        }
+    }
 
     // Effects of the view model: a toast per message, the share sheet per export, leaving per delete.
     LaunchedEffect(state.message) { state.message?.let { toast = strings.toast(it); vm.consumeMessage() } }
@@ -318,6 +335,10 @@ private fun TripDetailContent(
                     onEnergyMode = { vm.setEnergyMode(it) },
                     onSelectCheckpoint = { selectedCheckpoint = it },
                     onSelectSegment = { selectedSegment = it },
+                    onOpenPlace = feature.openPlace,
+                    focusCheckpointId = momentScrollTarget,
+                    highlightedMomentId = highlightedMomentId,
+                    onFocusConsumed = { momentScrollTarget = null },
                     onOpenPhoto = { id -> state.photos.indexOfFirst { it.id == id }.takeIf { it >= 0 }?.let { viewerIndex = it } },
                     onOpenPhotoAt = { viewerIndex = it },
                     onDeletePhoto = { photoToDelete = it },
@@ -523,6 +544,10 @@ private fun InfoPanel(
     onOpenPhotoAt: (Int) -> Unit,
     onDeletePhoto: (DetailPhotoState) -> Unit,
     onAddPhotos: () -> Unit,
+    onOpenPlace: (UUID) -> Unit,
+    focusCheckpointId: UUID?,
+    highlightedMomentId: UUID?,
+    onFocusConsumed: () -> Unit,
 ) {
     val trip = state.trip ?: return
     val strings = appStrings
@@ -559,6 +584,10 @@ private fun InfoPanel(
                     onSelectCheckpoint = onSelectCheckpoint,
                     onOpenPhoto = { onOpenPhoto(it.id) },
                     onSelectSegment = onSelectSegment,
+                    focusId = focusCheckpointId,
+                    highlightedId = highlightedMomentId,
+                    onFocusConsumed = onFocusConsumed,
+                    onOpenPlace = onOpenPlace,
                 )
             }
         }

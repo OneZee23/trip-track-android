@@ -21,6 +21,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -110,6 +115,9 @@ fun TripMomentsTimeline(
     onSelectSegment: ((SegmentState) -> Unit)?,
     modifier: Modifier = Modifier,
     highlightedId: UUID? = null,
+    focusId: UUID? = null,
+    onOpenPlace: ((UUID) -> Unit)? = null,
+    onFocusConsumed: () -> Unit = {},
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -138,11 +146,19 @@ fun TripMomentsTimeline(
         moments.forEachIndexed { index, moment ->
             Connector(index, moments, segments, checkpoints, totalElapsed, totalMetres, metrics)
             val highlight by animateColorAsState(if (moment.id == highlightedId) AppTheme.accent.copy(alpha = 0.12f) else Color.Transparent, tween(400), label = "momentHighlight")
-            Column(Modifier.background(highlight)) {
+            val target = remember(moment.id) { BringIntoViewRequester() }
+            LaunchedEffect(focusId == moment.id) {
+                if (focusId == moment.id) {
+                    withFrameNanos { }
+                    target.bringIntoView()
+                    onFocusConsumed()
+                }
+            }
+            Column(Modifier.bringIntoViewRequester(target).background(highlight)) {
                 val checkpoint = moment.checkpointId?.let(byCheckpoint::get)
                 if (checkpoint != null) {
                     CheckpointRow(checkpoint, moment, metrics, onSelectCheckpoint, onOpenPhoto)
-                    placeChips[checkpoint.id]?.let { PlaceChipRow(it, metrics) }
+                    placeChips[checkpoint.id]?.let { PlaceChipRow(it, metrics, onOpenPlace) }
                     segments.filter { it.resolved(checkpoints)?.first?.id == checkpoint.id }.forEach { segment ->
                         SegmentBlock(segment, checkpoints, metrics, onSelectSegment)
                     }
@@ -337,7 +353,7 @@ private fun PhotoStack(photos: List<PhotoState>) {
  * раз · обычно 2 ч 14 мин». A sibling below the row, never a button inside the row's button.
  */
 @Composable
-private fun PlaceChipRow(chip: PlaceChip, metrics: TimelineMetrics) {
+private fun PlaceChipRow(chip: PlaceChip, metrics: TimelineMetrics, onOpenPlace: ((UUID) -> Unit)?) {
     val strings = appStrings
     val text = if (chip.count <= 1) strings.placeChipFirst() else strings.placeHereTimes(chip.count) +
         (chip.usual?.let { " · " + strings.placeChipUsually(CheckpointReading.clock(it, strings)) } ?: "")
@@ -346,6 +362,7 @@ private fun PlaceChipRow(chip: PlaceChip, metrics: TimelineMetrics) {
             .padding(start = metrics.contentInset, end = 14.dp)
             .offset(y = (-4).dp)
             .background(AppTheme.accentBg, CapsuleShape)
+            .then(if (onOpenPlace != null) Modifier.clickable { onOpenPlace(chip.placeId) } else Modifier)
             .padding(horizontal = 10.dp, vertical = 5.dp)
             .testTag("checkpoint_place_chip"),
         horizontalArrangement = Arrangement.spacedBy(5.dp),

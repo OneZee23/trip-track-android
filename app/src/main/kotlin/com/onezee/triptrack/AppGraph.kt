@@ -14,6 +14,8 @@ import com.onezee.triptrack.data.GeohashOf
 import com.onezee.triptrack.data.LocalDataWipe
 import com.onezee.triptrack.data.PreferencesDataFlags
 import com.onezee.triptrack.data.RoomPlaceStore
+import com.onezee.triptrack.data.PlaceManager
+import com.onezee.triptrack.data.PreferencesPendingPlaceHistory
 import com.onezee.triptrack.data.RoomRevealedTileStore
 import com.onezee.triptrack.data.RoomSettingsStore
 import com.onezee.triptrack.data.RoomTerritoryStore
@@ -48,6 +50,7 @@ import com.onezee.triptrack.feature.settings.AndroidPresentationPreferences
 import com.onezee.triptrack.feature.settings.ApiProfilePrivacyService
 import com.onezee.triptrack.feature.settings.RecordingSettings
 import com.onezee.triptrack.feature.settings.RoomWorldChanges
+import com.onezee.triptrack.feature.settings.WorldChange
 import com.onezee.triptrack.feature.settings.SettingsManager
 import com.onezee.triptrack.feature.settings.SyncSettingsEffects
 import com.onezee.triptrack.feature.RecordingDraftQueue
@@ -77,6 +80,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -144,6 +148,8 @@ class AppGraph(
     private val vehiclePhotoFiles = DirectoryVehiclePhotoFiles(File(context.noBackupFilesDir, "VehiclePhotos"))
     private val meVehiclePhotos = RoomVehiclePhotoStore(database, vehiclePhotoFiles, syncHost)
     val trips = RoomTripRepository(database, environment, tripPhotoFiles, syncHost)
+    private val placeStore = RoomPlaceStore(database)
+    val placeManager = PlaceManager(trips, placeStore, PreferencesPendingPlaceHistory(preferences), scope)
     val vehicles = RoomVehicleStore(database, trips, meVehiclePhotos, environment, syncHost)
 
     val strings: AppStrings get() = AppStrings(context)
@@ -152,7 +158,7 @@ class AppGraph(
     val revealedLayer = RevealedLayerStore(RoomRevealedTileStore(database), PreferencesDataFlags(context), preferences, Dispatchers.Default)
 
     val location = LocationGraph(
-        context, database, trips, settings, vehicles, RoomPlaceStore(database), RoomTerritoryStore(database), syncHost, environment,
+        context, database, trips, settings, vehicles, placeManager, RoomTerritoryStore(database), syncHost, environment,
         strings = { strings },
         autoTitle = ::autoTitle,
         isOffline = ::isOffline,
@@ -185,7 +191,7 @@ class AppGraph(
     private val profileLatch = ProfileSyncLatch(presentationPreferences)
     val accountState = AccountScopedState(database, trips, accountSettings, profileLatch)
     private val localDataWipe = LocalDataWipe(database, tripPhotoFiles, vehiclePhotoFiles, PreferencesDataFlags(context),
-        afterWipe = listOf({ location.rawFixLog.wipe() }, { revealedLayer.forgetRegions() }))
+        afterWipe = listOf({ location.rawFixLog.wipe() }, { revealedLayer.forgetRegions() }, { placeManager.reload() }))
 
     val auth: AuthService = AuthService(
         client = apiClient,
@@ -205,20 +211,24 @@ class AppGraph(
     ).also { sessionEvents.listener = it }
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */
-    val tripsFeature by lazy {
-        TripsFeature(trips, RoomPlaceStore(database), vehicles, tripPhotoFiles, RecordingDraftQueue(location), location.recorder.state,
-            tripChanges(database), preferences, syncHost, ::isOffline)
+    val tripsFeature: TripsFeature by lazy {
+        TripsFeature(trips, placeStore, vehicles, tripPhotoFiles, RecordingDraftQueue(location), location.recorder.state,
+            tripChanges(database), preferences, syncHost, ::isOffline, placeManager = placeManager,
+            placeChanges = RoomWorldChanges(database).events.filter { it == WorldChange.places }.map { },
+            nameCheckpoint = location.checkpointNamer::name,
+        ).also { feature -> feature.openPlace = { world.openPlace(it) } }
     }
 
     /** The Atlas and Places tabs, with their view models and stacks. */
-    val world by lazy {
+    val world: WorldFeature by lazy {
         WorldFeature(
-            repository = trips, places = RoomPlaceStore(database), territory = RoomTerritoryStore(database),
+            repository = trips, places = placeStore, territory = RoomTerritoryStore(database),
             tiles = RoomRevealedTileStore(database), revealed = revealedLayer, presentation = presentationPreferences,
             location = AndroidAtlasLocation(context),
             home = settingsManager.state.map { it.home }.stateIn(scope, SharingStarted.Eagerly, settingsManager.state.value.home),
             events = RoomWorldChanges(database).events, online = networkOnline(context, scope), trips = tripsFeature,
             saveHome = { home -> settingsManager.setHome(home) },
+            placeManager = placeManager,
         ).also { it.selectTab = tabStore::select }
     }
 
@@ -245,10 +255,12 @@ class AppGraph(
             // Atlas counts cities by it), then the one-off build of the opened world.
             RoomTerritoryStore(database).backfillIfNeeded(PreferencesDataFlags(context), GeohashOf { lat, lon -> GeohashEncoder.encode(lat, lon, 6) })
             revealedLayer.rebuildIfNeeded()
+            placeManager.reconcile()
         }
         // A pull brings trips past the finish and the build: the fog reads what it brought.
         scope.launch {
             syncHost.engine.flatMapLatest { it?.coordinator?.completed ?: emptyFlow() }.collect { pulled ->
+                launch { placeManager.reconcile() }
                 revealedLayer.reconcile(RevealedLayerStore.ReconcileRequest.Ids(pulled.appliedTripIds.toSet()))
             }
         }

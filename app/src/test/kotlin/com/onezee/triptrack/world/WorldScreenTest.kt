@@ -66,6 +66,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.TimeZone
 import java.util.UUID
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,6 +125,8 @@ abstract class WorldScreenTest {
     /** What the world reads trips from; a loading test holds the map's read behind a gate. */
     protected open fun worldRepository(repository: RoomTripRepository): com.onezee.triptrack.data.TripRepository = repository
 
+    private val placeScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
     @Before fun openWorld() {
         savedZone = TimeZone.getDefault()
         TimeZone.setDefault(TimeZone.getTimeZone(ZONE))
@@ -152,6 +156,9 @@ abstract class WorldScreenTest {
             revealed = revealed, presentation = MemoryPreferences(), location = object : AtlasLocationSource { override val permission = this@WorldScreenTest.permission },
             home = home, events = RoomWorldChanges(db).events, online = online, trips = trips, saveHome = { home.value = it },
             worker = Dispatchers.Main,
+            placeManager = com.onezee.triptrack.data.PlaceManager(repository, places,
+                com.onezee.triptrack.data.PreferencesPendingPlaceHistory(preferences), placeScope,
+                io = Dispatchers.Main, geometry = Dispatchers.Main),
         ).also { feature -> feature.selectTab = { selectedTab = it } }
         // The bundled atlas once, before any clock: the regions are what the sheet lists.
         RegionAtlas.shared
@@ -173,6 +180,7 @@ abstract class WorldScreenTest {
         world.close()
         trips.close()
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+        placeScope.cancel()
         db.close()
         root.deleteRecursively()
         TimeZone.setDefault(savedZone)

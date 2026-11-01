@@ -104,7 +104,7 @@ class PlacesTabViewModelTests : WorldTest() {
         assertEquals("к морю", vm.state.value.directionLabels[today])
         assertEquals("к морю", vm.state.value.routeNames[today])
         assertEquals(1, vm.state.value.tiles.size)
-        assertEquals(PlaceTripFocus.Top, vm.focus(driveBy))
+        assertEquals(TripFocus.Top, vm.focus(driveBy))
         vm.rename("Джубга"); runCurrent(); assertEquals("Джубга", vm.state.value.place?.name)
         vm.delete(); assertNull(vm.state.value.place); runCurrent(); assertNull(places.fetchPlace(place.id))
     }

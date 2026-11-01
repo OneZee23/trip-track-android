@@ -106,6 +106,7 @@ private fun RecordScreen(graph: LocationGraph, strings: AppStrings, resumeTick: 
         }
         if (state.isRecording) {
             Button(if (state.isPaused) strings.resumeAction() else strings.pauseAction()) { scope.launch { graph.togglePause() } }
+            Button(strings.checkpointMarkPlace()) { scope.launch { graph.recorder.markCheckpoint() } }
             Button(strings.live_finish()) { scope.launch { graph.stopRecording() } }
         } else if (state.recovery == null && !state.isFinishing) {
             if (precise) Button(strings.recordTripCta()) { scope.launch { graph.startRecording() } }

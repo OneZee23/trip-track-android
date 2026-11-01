@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.onezee.triptrack.data.PlaceStore
+import com.onezee.triptrack.data.PlaceManager
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.data.VehicleStore
 import com.onezee.triptrack.data.db.TripTrackDatabase
@@ -77,6 +78,9 @@ class TripsFeature(
     val worker: CoroutineDispatcher = Dispatchers.IO,
     /** The screens' «now»: relative dates, day groups, journeys' open ends. Tests fix it. */
     @Volatile var clock: () -> Instant = Instant::now,
+    private val placeManager: PlaceManager? = null,
+    placeChanges: Flow<Unit> = kotlinx.coroutines.flow.emptyFlow(),
+    private val nameCheckpoint: suspend (com.onezee.triptrack.model.TripCheckpoint, UUID) -> Unit = { _, _ -> },
 ) {
     @Volatile var accountId: () -> UUID? = { null }
     @Volatile var socialApi: TripSocialApi = NoAccountSocialApi
@@ -90,11 +94,14 @@ class TripsFeature(
 
     /** Invalidations of trips and journeys: what iOS posts as `.tripSaved`, `.syncPullCompleted`. */
     private val tripChanges: Flow<Unit> = changes.shareIn(scope, SharingStarted.WhileSubscribed())
+    private val placesChanged: Flow<Unit> = placeChanges.shareIn(scope, SharingStarted.WhileSubscribed())
 
     /** The live API at call time: the account wave can replace it after the screens are built. */
     val social: TripSocialApi = DelegatingSocial { socialApi }
 
     val photos = TripPhotoImages(photoFiles, remote = { url -> remotePhotoBytes?.invoke(url) ?: throw ApiError.Transport("No account client") }, io = worker)
+
+    @Volatile var openPlace: (UUID) -> Unit = {}
 
     val signedIn: () -> Boolean = { accountId() != null }
 
@@ -154,13 +161,17 @@ class TripsFeature(
     suspend fun makePrivate(id: UUID) = repository.updatePrivacy(id, true)
 
     /** «Delete» from a feed card's menu. */
-    suspend fun deleteTrip(id: UUID) = repository.deleteTrip(id)
+    suspend fun deleteTrip(id: UUID) {
+        repository.deleteTrip(id)
+        placeManager?.forget(id)
+    }
 
     val feedNavigator = TabNavigator<TripsDestination>()
 
     fun tripDetail(id: UUID, preview: Trip?, social: SocialFeedTrip?): TripDetailViewModel = TripDetailViewModel(
         id, repository, this.social, worker, accountId, preview = preview, social = social, places = places,
-        vehicles = vehicles, clock = { clock() }, localPhotoExists = photoFiles::exists, draftDecisions = draftQueue,
+        vehicles = vehicles, clock = { clock() }, placeManager = placeManager, recording = { recorder.value.isRecording },
+        placeChanges = placesChanged, nameCheckpoint = nameCheckpoint, localPhotoExists = photoFiles::exists, draftDecisions = draftQueue,
     )
 
     fun journeyDetail(id: UUID, social: SocialJourneyResponse? = null): JourneyDetailViewModel = JourneyDetailViewModel(
@@ -194,7 +205,8 @@ class TripsFeature(
 /** What a tab of the trip screens can push (iOS: FeedView's destinations and `MeDest.drafts`). */
 sealed interface TripsDestination : com.onezee.triptrack.ui.navigation.NavDestination {
     /** A trip, opened with what the list already knows so the first frame has its numbers. */
-    data class TripDetail(val id: UUID, val preview: Trip? = null, val social: SocialFeedTrip? = null) : TripsDestination {
+    data class TripDetail(val id: UUID, val preview: Trip? = null, val social: SocialFeedTrip? = null,
+        val focus: com.onezee.triptrack.model.TripFocus = com.onezee.triptrack.model.TripFocus.Top) : TripsDestination {
         override val key: Any get() = "trip:$id"
     }
 

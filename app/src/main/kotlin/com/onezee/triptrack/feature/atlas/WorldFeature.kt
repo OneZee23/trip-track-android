@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.onezee.triptrack.data.PlaceStore
+import com.onezee.triptrack.data.PlaceManager
 import com.onezee.triptrack.data.RevealedTileStore
 import com.onezee.triptrack.data.TerritoryStore
 import com.onezee.triptrack.data.TripRepository
@@ -75,6 +76,7 @@ class WorldFeature(
     private val saveHome: (HomeState) -> Unit,
     /** Where the view models and their builds run. Tests pass the main dispatcher. */
     val worker: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(1),
+    private val placeManager: PlaceManager,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + worker)
     private val appViewModels = ViewModelStore()
@@ -86,7 +88,7 @@ class WorldFeature(
     /** The shell's tab switch, set by the app graph: the place card leads into the Places tab. */
     @Volatile var selectTab: (AppTab) -> Unit = {}
 
-    val history = PlaceHistory(places, repository, worker)
+    val history = PlaceHistory(placeManager)
 
     /** Kept for the app's life like iOS `MyMapViewModel.shared`: the Atlas survives tab switches. */
     val atlas: MyMapViewModel by lazy {
@@ -100,7 +102,7 @@ class WorldFeature(
         appViewModel("places") { PlacesTabViewModel(places, repository, presentation, history, worker, sharedEvents) }
     }
 
-    fun placeDetail(id: UUID): PlaceDetailViewModel = PlaceDetailViewModel(id, places, repository, worker, sharedEvents)
+    fun placeDetail(id: UUID): PlaceDetailViewModel = PlaceDetailViewModel(id, places, repository, worker, sharedEvents, placeManager = placeManager)
 
     val placesNavigator = TabNavigator<PlacesDestination>()
 

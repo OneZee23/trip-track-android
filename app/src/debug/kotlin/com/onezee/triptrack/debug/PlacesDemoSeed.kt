@@ -65,6 +65,7 @@ class PlacesDemoSeed(
         if (places.fetchPlaces().size >= 8) return
         for ((name, latitude, longitude) in MANY) {
             history.createPlace(Place.cell(latitude, longitude), GeoPoint(latitude, longitude), name)
+            history.settle()
         }
     }
 

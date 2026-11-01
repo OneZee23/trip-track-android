@@ -79,6 +79,10 @@ class TripDetailViewModel(
     private val localPhotoExists: (String) -> Boolean = { true },
     changes: Flow<UUID> = emptyFlow(),
     private val draftDecisions: DraftDecisionQueue? = null,
+    private val placeManager: com.onezee.triptrack.data.PlaceManager? = null,
+    private val recording: () -> Boolean = { false },
+    placeChanges: Flow<Unit> = emptyFlow(),
+    private val nameCheckpoint: suspend (TripCheckpoint, UUID) -> Unit = { _, _ -> },
 ) : ViewModel() {
     private val opening = preview?.takeIf { it.id == tripId } ?: social?.takeIf { it.id == tripId }?.asTrip()
     private val mutable = MutableStateFlow(TripDetailState(trip = opening?.copy(trackPoints = emptyList())?.let(TripSummary::from),
@@ -97,6 +101,7 @@ class TripDetailViewModel(
 
     init {
         viewModelScope.launch { changes.filter { it == tripId }.collect { load() } }
+        viewModelScope.launch { placeChanges.collect { load() } }
     }
 
     fun load(): Job {
@@ -331,7 +336,10 @@ class TripDetailViewModel(
                 val queue = requireNotNull(draftDecisions)
                 queue.enqueue(tripId, DraftDecision.discard)
                 queue.decisionsQueued()
-            } else repository.deleteTrip(tripId)
+            } else {
+                repository.deleteTrip(tripId)
+                placeManager?.forget(tripId)
+            }
         }
         mutable.update { it.copy(confirmation = HouseConfirmation(titleKey = "deleteTrip", messageKey = null,
             destructiveKey = "delete", itemIds = listOf(tripId))) }
@@ -398,8 +406,12 @@ class TripDetailViewModel(
         return edit { repository.addSegment(tripId, from, to) }
     }
     fun addCheckpoint(fix: TripRouteLocator.Fix): Job? = edit {
-        repository.addCheckpoint(TripCheckpoint(timestamp = fix.timestamp, latitude = fix.coordinate.latitude,
-            longitude = fix.coordinate.longitude, distanceFromStart = fix.distanceFromStart, elapsedFromStart = fix.elapsedFromStart), tripId)
+        val checkpoint = TripCheckpoint(timestamp = fix.timestamp, latitude = fix.coordinate.latitude,
+            longitude = fix.coordinate.longitude, distanceFromStart = fix.distanceFromStart, elapsedFromStart = fix.elapsedFromStart)
+        if (repository.addCheckpoint(checkpoint, tripId) != null) {
+            nameCheckpoint(checkpoint, tripId)
+            placeManager?.registerCheckpoint(checkpoint, tripId, recording = recording())
+        }
     }
     fun renameSegment(id: UUID, name: String?): Job? = edit { repository.updateSegment(id, name) }
     fun deleteSegment(id: UUID): Job? = edit { repository.deleteSegment(id) }

@@ -28,6 +28,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -362,6 +365,7 @@ private fun RecentSection(state: PlaceDetailState, strings: AppStrings) {
 
 @Composable
 private fun PassesSection(state: PlaceDetailState, vm: PlaceDetailViewModel, feature: WorldFeature, strings: AppStrings) {
+    val scope = rememberCoroutineScope()
     if (state.passes.isEmpty()) return
     val atlas = AtlasTheme.colors
     val unit = LocalDistanceUnit.current
@@ -379,7 +383,10 @@ private fun PassesSection(state: PlaceDetailState, vm: PlaceDetailViewModel, fea
                 val route = state.routeNames[pass.tripId]
                 val date = LocalizedDateFormatter.templates("dMMMEEE", strings.zone).getValue(strings.language).format(pass.timestamp)
                 val reading = CheckpointReading.text(pass.elapsedFromStart, pass.distanceFromStart, unit, strings)
-                PressableCard(onClick = { haptics.tap(); feature.openPlacesTrip(pass.tripId) }, modifier = Modifier.fillMaxWidth().testTag("place_pass_row")) {
+                PressableCard(onClick = { haptics.tap(); scope.launch {
+                    val focus = withContext(feature.worker) { vm.focus(pass.tripId) }
+                    feature.openPlacesTrip(pass.tripId, focus = focus)
+                } }, modifier = Modifier.fillMaxWidth().testTag("place_pass_row")) {
                     Row(Modifier.fillMaxWidth().heightIn(min = 58.dp).padding(vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             // The hour tells «there and back» on one day apart: one date names both.

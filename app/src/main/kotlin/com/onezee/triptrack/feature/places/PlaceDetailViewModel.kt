@@ -13,12 +13,6 @@ import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-// iOS: TripFocus.swift. Navigation adapters translate this to the trip screen's focus.
-sealed interface PlaceTripFocus {
-    data object Top : PlaceTripFocus
-    data class Checkpoint(val id: UUID) : PlaceTripFocus
-}
-
 // iOS: PlaceDetailViewModel.swift.
 data class PlaceDetailState(
     val place: Place? = null,
@@ -45,6 +39,7 @@ class PlaceDetailViewModel(
     dispatcher: CoroutineDispatcher,
     events: Flow<WorldChange> = emptyFlow(),
     private val zone: ZoneId = ZoneId.systemDefault(),
+    private val placeManager: com.onezee.triptrack.data.PlaceManager? = null,
     private val localityLookup: suspend (GeoPoint) -> String? = {
         repository.cachedLocality(GeohashEncoder.encode(it.latitude, it.longitude, 5))
     },
@@ -97,18 +92,20 @@ class PlaceDetailViewModel(
         }
     }
     fun showAllPasses() { mutableState.update { it.copy(showsAllPasses = true) } }
-    fun rename(name: String?) = edit { placeStore.rename(placeId, name) }
+    fun rename(name: String?) = edit {
+        if (placeManager != null) placeManager.rename(placeId, name) else placeStore.rename(placeId, name)
+    }
     fun delete() {
         loadTask?.cancel()
         mutableState.update { it.copy(place = null) }
-        edit { placeStore.deletePlace(placeId) }
+        edit { if (placeManager != null) placeManager.delete(placeId) else placeStore.deletePlace(placeId) }
     }
     private fun edit(block: suspend () -> Unit) { viewModelScope.launch {
         try { block(); load() }
         catch (error: CancellationException) { throw error }
         catch (_: Exception) { mutableState.update { it.copy(failed = true) } }
     } }
-    suspend fun focus(tripId: UUID): PlaceTripFocus = repository.fetchTripDetail(tripId)?.checkpoints
-        ?.firstOrNull { it.placeId == placeId }?.let { PlaceTripFocus.Checkpoint(it.id) } ?: PlaceTripFocus.Top
+    suspend fun focus(tripId: UUID): TripFocus = repository.fetchTripDetail(tripId)?.checkpoints
+        ?.firstOrNull { it.placeId == placeId }?.let { TripFocus.Checkpoint(it.id) } ?: TripFocus.Top
     companion object { const val maxRoutes = 20 }
 }

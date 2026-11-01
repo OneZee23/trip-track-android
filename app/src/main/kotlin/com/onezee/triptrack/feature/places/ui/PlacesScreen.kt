@@ -136,8 +136,8 @@ fun PlacesTab(feature: WorldFeature, onOpenRecord: () -> Unit = {}) {
 }
 
 /** Opens a trip from the Places tab over its stack, with what the list already knows of it. */
-fun WorldFeature.openPlacesTrip(id: UUID, preview: Trip? = null) {
-    placesTrips.push(TripsDestination.TripDetail(id, preview = preview))
+fun WorldFeature.openPlacesTrip(id: UUID, preview: Trip? = null, focus: com.onezee.triptrack.model.TripFocus = com.onezee.triptrack.model.TripFocus.Top) {
+    placesTrips.push(TripsDestination.TripDetail(id, preview = preview, focus = focus))
 }
 
 /**
