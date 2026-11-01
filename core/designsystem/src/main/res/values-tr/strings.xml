@@ -188,6 +188,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Tümü</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google hesabı</string>
     <string name="android_health_activity_off" formatted="false">Fiziksel aktivite izni kapalı: sürüşler algılanmaz.</string>
@@ -285,6 +286,14 @@
     <string name="autoRecordOff" formatted="false">Kapalı</string>
     <string name="autoRecordOn" formatted="false">Açık</string>
     <string name="autoRecordRemind" formatted="false">Hatırlat</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Telefon eşleştirilmiş teybe bağlandığında kayıt kendiliğinden başlar</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Hareket veya teyp</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Hareket sensörü takside veya yolcuyken de devreye girer</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">“Yalnızca teyp” seçeneği için yukarıdan bir teyp eşleştirin</string>
+    <string name="autoRecordTriggerSection" formatted="false">Ne zaman başlasın</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Yalnızca teyp</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Kayıt yalnızca telefon eşleştirilmiş teybe veya Android Auto’ya bağlandığında başlar</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Eşleştirilmiş teyp yok, otomatik kayıt başlamayacak</string>
     <string name="autoStopDescription" formatted="false">Teyp bağlantısı kesildiğinde normal bir yolculuk hemen, çok kısa bir yolculuk bu süreden sonra biter</string>
     <string name="autoStopRowLabel" formatted="false">Şu süre sonra bitir</string>
     <string name="autoStopTimeout" formatted="false">Otomatik bitiş</string>

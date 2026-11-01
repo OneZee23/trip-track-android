@@ -188,6 +188,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Lahat</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google account</string>
     <string name="android_health_activity_off" formatted="false">Naka-off ang access sa pisikal na aktibidad: hindi matutukoy ang mga biyahe.</string>
@@ -285,6 +286,14 @@
     <string name="autoRecordOff" formatted="false">Naka-off</string>
     <string name="autoRecordOn" formatted="false">Naka-on</string>
     <string name="autoRecordRemind" formatted="false">Paalala</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Kusang magsisimula ang pag-record kapag kumonekta ang telepono sa naka-link na stereo</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Galaw o stereo</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Gumagana rin ang sensor ng galaw sa taxi o kapag pasahero ka</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Mag-link ng stereo sa itaas para piliin ang “Stereo lang”</string>
+    <string name="autoRecordTriggerSection" formatted="false">Kailan magsisimula</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Stereo lang</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Magsisimula lang ang pag-record kapag kumonekta ang telepono sa naka-link na stereo o Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Walang naka-link na stereo, kaya hindi magsisimula ang auto-record</string>
     <string name="autoStopDescription" formatted="false">Kapag nadiskonekta ang stereo, agad matatapos ang karaniwang biyahe, at ang napakaikli ay pagkatapos ng tagal na ito</string>
     <string name="autoStopRowLabel" formatted="false">Tapusin pagkalipas ng</string>
     <string name="autoStopTimeout" formatted="false">Awtomatikong pagtatapos</string>

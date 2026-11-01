@@ -218,6 +218,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Todas</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Conta Google</string>
     <string name="android_health_activity_off" formatted="false">O acesso à atividade física está desativado: as viagens não são detectadas.</string>
@@ -315,6 +316,14 @@
     <string name="autoRecordOff" formatted="false">Desl.</string>
     <string name="autoRecordOn" formatted="false">Lig.</string>
     <string name="autoRecordRemind" formatted="false">Lembrete</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">A gravação começa sozinha quando o telefone se conecta a um rádio vinculado</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Movimento ou rádio</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">O sensor de movimento também é ativado no táxi ou quando você viaja como passageiro</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Vincule um rádio acima para escolher “Só rádio”</string>
+    <string name="autoRecordTriggerSection" formatted="false">Quando começar</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Só rádio</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">A gravação só começa quando o telefone se conecta a um rádio vinculado ou ao Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Nenhum rádio vinculado, então a gravação automática não começará</string>
     <string name="autoStopDescription" formatted="false">Quando o som do carro desconecta, uma viagem normal termina na hora e uma bem curta depois deste tempo</string>
     <string name="autoStopRowLabel" formatted="false">Encerrar depois de</string>
     <string name="autoStopTimeout" formatted="false">Encerramento automático</string>

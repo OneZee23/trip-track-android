@@ -158,6 +158,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Semua</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Akun Google</string>
     <string name="android_health_activity_off" formatted="false">Akses aktivitas fisik nonaktif: perjalanan tidak terdeteksi.</string>
@@ -255,6 +256,14 @@
     <string name="autoRecordOff" formatted="false">Mati</string>
     <string name="autoRecordOn" formatted="false">Nyala</string>
     <string name="autoRecordRemind" formatted="false">Ingatkan</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Perekaman dimulai sendiri saat ponsel terhubung ke stereo tertaut</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Gerak atau stereo</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Sensor gerak juga aktif saat naik taksi atau menjadi penumpang</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Tautkan stereo di atas untuk memilih “Hanya stereo”</string>
+    <string name="autoRecordTriggerSection" formatted="false">Kapan mulai</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Hanya stereo</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Perekaman hanya dimulai saat ponsel terhubung ke stereo tertaut atau Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Belum ada stereo tertaut, jadi perekaman otomatis tidak akan dimulai</string>
     <string name="autoStopDescription" formatted="false">Saat head unit terputus, perjalanan biasa langsung selesai, yang sangat singkat setelah jeda ini</string>
     <string name="autoStopRowLabel" formatted="false">Akhiri setelah</string>
     <string name="autoStopTimeout" formatted="false">Berhenti otomatis</string>

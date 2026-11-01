@@ -248,6 +248,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Wszystkie</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Konto Google</string>
     <string name="android_health_activity_off" formatted="false">Brak dostępu do aktywności fizycznej: przejazdy nie są wykrywane.</string>
@@ -345,6 +346,14 @@
     <string name="autoRecordOff" formatted="false">Wył.</string>
     <string name="autoRecordOn" formatted="false">Wł.</string>
     <string name="autoRecordRemind" formatted="false">Przypomnienie</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Nagrywanie zacznie się samo, gdy telefon połączy się z przypisanym radiem</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Ruch lub radio</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Czujnik ruchu reaguje też w taksówce lub gdy jedziesz jako pasażer</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Przypisz radio powyżej, aby wybrać „Tylko radio”</string>
+    <string name="autoRecordTriggerSection" formatted="false">Kiedy zaczynać</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Tylko radio</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Nagrywanie zacznie się dopiero po połączeniu telefonu z przypisanym radiem lub Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Brak przypisanego radia, więc automatyczne nagrywanie się nie rozpocznie</string>
     <string name="autoStopDescription" formatted="false">Gdy radio się rozłączy, zwykły przejazd kończy się od razu, a bardzo krótki po tym czasie</string>
     <string name="autoStopRowLabel" formatted="false">Zakończ po</string>
     <string name="autoStopTimeout" formatted="false">Automatyczne zakończenie</string>

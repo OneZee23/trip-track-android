@@ -248,6 +248,7 @@
     <string name="adminYearly" formatted="false">Год</string>
     <string name="adminYou" formatted="false">это вы</string>
     <string name="all" formatted="false">Все</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Аккаунт Google</string>
     <string name="android_health_activity_off" formatted="false">Нет доступа к физической активности: поездки не распознаются.</string>
@@ -345,6 +346,14 @@
     <string name="autoRecordOff" formatted="false">Выкл</string>
     <string name="autoRecordOn" formatted="false">Вкл</string>
     <string name="autoRecordRemind" formatted="false">Напоминание</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Запись начнётся сама, когда телефон подключится к привязанной магнитоле</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Движение или магнитола</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Датчик движения срабатывает и в такси, и когда вы пассажир</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Чтобы выбрать «Только магнитола», привяжите магнитолу выше</string>
+    <string name="autoRecordTriggerSection" formatted="false">Когда начинать</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Только магнитола</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Запись начнётся, только когда телефон подключится к привязанной магнитоле или Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Магнитола не привязана, автозапись не начнётся</string>
     <string name="autoStopDescription" formatted="false">После отключения магнитолы обычная поездка завершается сразу, а совсем короткая — через это время</string>
     <string name="autoStopRowLabel" formatted="false">Завершить через</string>
     <string name="autoStopTimeout" formatted="false">Автозавершение</string>

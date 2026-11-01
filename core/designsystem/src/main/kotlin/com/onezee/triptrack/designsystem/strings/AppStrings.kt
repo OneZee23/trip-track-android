@@ -29,6 +29,9 @@ class AppStrings(
     fun withLanguage(language: AppLanguage): AppStrings =
         if (language == this.language) this else AppStrings(localizedContext, language, zone)
 
+    // iOS: BluetoothScanSheet.swift (.carAudio label); platform wording lives in android.json.
+    fun androidAuto(): String = tr(R.string.android_auto)
+
     override fun tr(id: Int, vararg args: Any): String =
         if (args.isEmpty()) resources.getString(id) else format(id, resources.getString(id), args)
 

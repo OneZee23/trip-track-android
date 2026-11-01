@@ -1252,5 +1252,40 @@
       "kk": "Жұмыс",
       "pt": "Trabalho"
     }
+  },
+  "android_auto": {
+    "values": {
+      "en": "Android Auto",
+      "ru": "Android Auto",
+      "de": "Android Auto",
+      "es": "Android Auto",
+      "fr": "Android Auto",
+      "it": "Android Auto",
+      "pl": "Android Auto",
+      "id": "Android Auto",
+      "tr": "Android Auto",
+      "fil": "Android Auto",
+      "uk": "Android Auto",
+      "kk": "Android Auto",
+      "pt": "Android Auto"
+    }
+  },
+  "autoRecordTriggerStereoCaption": {
+    "replace": true,
+    "values": {
+      "en": "Recording starts only when the phone connects to a linked stereo or Android Auto",
+      "ru": "Запись начнётся, только когда телефон подключится к привязанной магнитоле или Android Auto",
+      "de": "Die Aufnahme startet nur, wenn sich das Handy mit einem verknüpften Autoradio oder Android Auto verbindet",
+      "es": "La grabación empieza solo cuando el teléfono se conecta a una radio vinculada o a Android Auto",
+      "fr": "L’enregistrement démarre uniquement quand le téléphone se connecte à un autoradio associé ou à Android Auto",
+      "it": "La registrazione inizia solo quando il telefono si connette a uno stereo associato o a Android Auto",
+      "pl": "Nagrywanie zacznie się dopiero po połączeniu telefonu z przypisanym radiem lub Android Auto",
+      "id": "Perekaman hanya dimulai saat ponsel terhubung ke stereo tertaut atau Android Auto",
+      "tr": "Kayıt yalnızca telefon eşleştirilmiş teybe veya Android Auto’ya bağlandığında başlar",
+      "fil": "Magsisimula lang ang pag-record kapag kumonekta ang telepono sa naka-link na stereo o Android Auto",
+      "uk": "Запис почнеться, лише коли телефон під’єднається до прив’язаної магнітоли або Android Auto",
+      "kk": "Жазба телефон байланыстырылған магнитолаға немесе Android Auto жүйесіне қосылғанда ғана басталады",
+      "pt": "A gravação só começa quando o telefone se conecta a um rádio vinculado ou ao Android Auto"
+    }
   }
 }

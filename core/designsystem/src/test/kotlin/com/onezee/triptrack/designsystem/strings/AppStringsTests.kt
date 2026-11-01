@@ -24,6 +24,13 @@ class AppStringsTests(private val language: AppLanguage) {
     private val context: Context get() = RuntimeEnvironment.getApplication()
     private val strings get() = AppStrings(context, language, ZoneId.of("UTC"))
 
+    // iOS: AppStrings.swift, BluetoothScanSheet.swift; platform override in every language.
+    @Test fun linkedStereoCaptionNamesAndroidAuto() {
+        assertEquals("Android Auto", strings.androidAuto())
+        assertTrue(strings.autoRecordTriggerStereoCaption().contains(strings.androidAuto()))
+        assertFalse(strings.autoRecordTriggerStereoCaption().contains("CarPlay"))
+    }
+
     @Test fun originalSwiftFunctionOutputs() {
         val facade = strings
         val failures = mutableListOf<String>()

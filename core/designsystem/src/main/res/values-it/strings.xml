@@ -218,6 +218,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Tutti</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Account Google</string>
     <string name="android_health_activity_off" formatted="false">Accesso all’attività fisica disattivato: i viaggi non vengono rilevati.</string>
@@ -315,6 +316,14 @@
     <string name="autoRecordOff" formatted="false">No</string>
     <string name="autoRecordOn" formatted="false">Sì</string>
     <string name="autoRecordRemind" formatted="false">Promemoria</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">La registrazione inizia da sola quando il telefono si connette a uno stereo associato</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Movimento o stereo</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Il sensore di movimento si attiva anche in taxi o quando viaggi come passeggero</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Associa uno stereo qui sopra per scegliere «Solo stereo»</string>
+    <string name="autoRecordTriggerSection" formatted="false">Quando iniziare</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Solo stereo</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">La registrazione inizia solo quando il telefono si connette a uno stereo associato o a Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Nessuno stereo associato: la registrazione automatica non inizierà</string>
     <string name="autoStopDescription" formatted="false">Quando l\'autoradio si scollega, un viaggio normale finisce subito, uno molto breve dopo questo tempo</string>
     <string name="autoStopRowLabel" formatted="false">Chiudi dopo</string>
     <string name="autoStopTimeout" formatted="false">Chiusura automatica</string>

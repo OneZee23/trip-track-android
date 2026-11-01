@@ -188,6 +188,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Alle</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google-Konto</string>
     <string name="android_health_activity_off" formatted="false">Zugriff auf körperliche Aktivität fehlt: Fahrten werden nicht erkannt.</string>
@@ -285,6 +286,14 @@
     <string name="autoRecordOff" formatted="false">Aus</string>
     <string name="autoRecordOn" formatted="false">An</string>
     <string name="autoRecordRemind" formatted="false">Erinnerung</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Die Aufnahme startet von selbst, wenn sich das Handy mit einem verknüpften Autoradio verbindet</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Bewegung oder Radio</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Der Bewegungssensor reagiert auch im Taxi oder wenn Sie mitfahren</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Verknüpfen Sie oben ein Autoradio, um „Nur Autoradio“ zu wählen</string>
+    <string name="autoRecordTriggerSection" formatted="false">Wann starten</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Nur Autoradio</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Die Aufnahme startet nur, wenn sich das Handy mit einem verknüpften Autoradio oder Android Auto verbindet</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Kein Autoradio verknüpft, die automatische Aufnahme startet nicht</string>
     <string name="autoStopDescription" formatted="false">Trennt sich das Autoradio, endet eine normale Fahrt sofort, eine sehr kurze erst nach dieser Zeit</string>
     <string name="autoStopRowLabel" formatted="false">Beenden nach</string>
     <string name="autoStopTimeout" formatted="false">Automatisch beenden</string>

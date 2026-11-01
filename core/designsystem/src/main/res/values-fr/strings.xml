@@ -218,6 +218,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Tous</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Compte Google</string>
     <string name="android_health_activity_off" formatted="false">L’accès à l’activité physique est désactivé : les trajets ne sont pas détectés.</string>
@@ -315,6 +316,14 @@
     <string name="autoRecordOff" formatted="false">Off</string>
     <string name="autoRecordOn" formatted="false">On</string>
     <string name="autoRecordRemind" formatted="false">Rappel</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">L’enregistrement démarre tout seul quand le téléphone se connecte à un autoradio associé</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Mouvement ou radio</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Le capteur de mouvement se déclenche aussi en taxi ou quand vous êtes passager</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Associez un autoradio ci-dessus pour choisir « Radio seule »</string>
+    <string name="autoRecordTriggerSection" formatted="false">Quand démarrer</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Radio seule</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">L’enregistrement démarre uniquement quand le téléphone se connecte à un autoradio associé ou à Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Aucun autoradio associé, l’enregistrement automatique ne démarrera pas</string>
     <string name="autoStopDescription" formatted="false">Quand l\'autoradio se déconnecte, un trajet normal se termine aussitôt, un très court après ce délai</string>
     <string name="autoStopRowLabel" formatted="false">Terminer après</string>
     <string name="autoStopTimeout" formatted="false">Arrêt automatique</string>

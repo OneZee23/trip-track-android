@@ -188,6 +188,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">Барлығы</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google есептік жазбасы</string>
     <string name="android_health_activity_off" formatted="false">Физикалық белсенділікке рұқсат жоқ: сапарлар анықталмайды.</string>
@@ -285,6 +286,14 @@
     <string name="autoRecordOff" formatted="false">Өшірулі</string>
     <string name="autoRecordOn" formatted="false">Қосулы</string>
     <string name="autoRecordRemind" formatted="false">Еске салу</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Телефон байланыстырылған магнитолаға қосылғанда жазба өздігінен басталады</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Қозғалыс не магнитола</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">Қозғалыс датчигі таксиде де, жолаушы болып отырғанда да іске қосылады</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">«Тек магнитола» нұсқасын таңдау үшін жоғарыда магнитоланы байланыстырыңыз</string>
+    <string name="autoRecordTriggerSection" formatted="false">Қашан бастау керек</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Тек магнитола</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Жазба телефон байланыстырылған магнитолаға немесе Android Auto жүйесіне қосылғанда ғана басталады</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">Магнитола байланыстырылмаған, автожазба басталмайды</string>
     <string name="autoStopDescription" formatted="false">Магнитола ажыратылғанда кәдімгі сапар бірден, ал өте қысқасы осы уақыттан кейін аяқталады</string>
     <string name="autoStopRowLabel" formatted="false">Мына уақыттан кейін аяқтау</string>
     <string name="autoStopTimeout" formatted="false">Автоаяқтау</string>

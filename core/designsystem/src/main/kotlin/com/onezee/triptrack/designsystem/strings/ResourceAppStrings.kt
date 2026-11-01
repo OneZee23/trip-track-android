@@ -813,1979 +813,1995 @@ abstract class ResourceAppStrings {
     fun nearbyDevices(): String = tr(R.string.nearbyDevices)
     // iOS: AppStrings.swift:2231
     fun autoRecordDescription(): String = tr(R.string.autoRecordDescription)
+    // iOS: AppStrings.swift:2236
+    fun autoRecordTriggerSection(): String = tr(R.string.autoRecordTriggerSection)
     // iOS: AppStrings.swift:2239
-    fun remindModeDescription(): String = tr(R.string.remindModeDescription)
-    // iOS: AppStrings.swift:2244
-    fun autoModeDescription(): String = tr(R.string.autoModeDescription)
-    // iOS: AppStrings.swift:2251
-    fun autoStopDescription(): String = tr(R.string.autoStopDescription)
-    // iOS: AppStrings.swift:2256
-    fun autoStopTimeout(): String = tr(R.string.autoStopTimeout)
-    // iOS: AppStrings.swift:2262
-    fun scanningDevices(): String = tr(R.string.scanningDevices)
+    fun autoRecordTriggerMotion(): String = tr(R.string.autoRecordTriggerMotion)
+    // iOS: AppStrings.swift:2242
+    fun autoRecordTriggerStereo(): String = tr(R.string.autoRecordTriggerStereo)
+    // iOS: AppStrings.swift:2245
+    fun autoRecordTriggerMotionCaption(): String = tr(R.string.autoRecordTriggerMotionCaption)
+    // iOS: AppStrings.swift:2250
+    fun autoRecordTriggerStereoCaption(): String = tr(R.string.autoRecordTriggerStereoCaption)
+    // iOS: AppStrings.swift:2255
+    fun autoRecordTriggerNeedsStereo(): String = tr(R.string.autoRecordTriggerNeedsStereo)
+    // iOS: AppStrings.swift:2260
+    fun autoRecordTriggerStereoMissing(): String = tr(R.string.autoRecordTriggerStereoMissing)
     // iOS: AppStrings.swift:2265
-    fun scanHint(): String = tr(R.string.scanHint)
-    // iOS: AppStrings.swift:2270
-    fun noDevicesFound(): String = tr(R.string.noDevicesFound)
+    fun autoRecordStereoOnlyDescription(): String = tr(R.string.autoRecordStereoOnlyDescription)
     // iOS: AppStrings.swift:2273
+    fun remindModeDescription(): String = tr(R.string.remindModeDescription)
+    // iOS: AppStrings.swift:2278
+    fun autoModeDescription(): String = tr(R.string.autoModeDescription)
+    // iOS: AppStrings.swift:2285
+    fun autoStopDescription(): String = tr(R.string.autoStopDescription)
+    // iOS: AppStrings.swift:2290
+    fun autoStopTimeout(): String = tr(R.string.autoStopTimeout)
+    // iOS: AppStrings.swift:2296
+    fun scanningDevices(): String = tr(R.string.scanningDevices)
+    // iOS: AppStrings.swift:2299
+    fun scanHint(): String = tr(R.string.scanHint)
+    // iOS: AppStrings.swift:2304
+    fun noDevicesFound(): String = tr(R.string.noDevicesFound)
+    // iOS: AppStrings.swift:2307
     fun currentAudioOutput(): String = tr(R.string.currentAudioOutput)
-    // iOS: AppStrings.swift:2276
+    // iOS: AppStrings.swift:2310
     fun bluetoothRequired(): String = tr(R.string.bluetoothRequired)
-    // iOS: AppStrings.swift:2281
+    // iOS: AppStrings.swift:2315
     fun notificationsRequired(): String = tr(R.string.notificationsRequired)
-    // iOS: AppStrings.swift:2286
+    // iOS: AppStrings.swift:2320
     fun openSettings(): String = tr(R.string.openSettings)
-    // iOS: AppStrings.swift:2291
+    // iOS: AppStrings.swift:2325
     fun notifTripStartTitle(): String = tr(R.string.notifTripStartTitle)
-    // iOS: AppStrings.swift:2313
+    // iOS: AppStrings.swift:2347
     fun notifTripStartAction(): String = tr(R.string.notifTripStartAction)
-    // iOS: AppStrings.swift:2316
-    fun notifSkipAction(): String = tr(R.string.notifSkipAction)
-    // iOS: AppStrings.swift:2322
-    fun checkpointsTitle(): String = tr(R.string.checkpointsTitle)
-    // iOS: AppStrings.swift:2326
-    fun tripMomentsTitle(): String = tr(R.string.tripMomentsTitle)
-    // iOS: AppStrings.swift:2329
-    fun momentStart(): String = tr(R.string.momentStart)
-    // iOS: AppStrings.swift:2332
-    fun momentFinish(): String = tr(R.string.momentFinish)
-    // iOS: AppStrings.swift:2336
-    fun momentNamePlace(): String = tr(R.string.momentNamePlace)
-    // iOS: AppStrings.swift:2340
-    fun checkpointWord(): String = tr(R.string.checkpointWord)
-    // iOS: AppStrings.swift:2346
-    fun checkpointAdd(): String = tr(R.string.checkpointAdd)
     // iOS: AppStrings.swift:2350
-    fun checkpointFromStart(): String = tr(R.string.checkpointFromStart)
-    // iOS: AppStrings.swift:2354
-    fun checkpointLeg(): String = tr(R.string.checkpointLeg)
-    // iOS: AppStrings.swift:2357
-    fun checkpointNamePlaceholder(): String = tr(R.string.checkpointNamePlaceholder)
+    fun notifSkipAction(): String = tr(R.string.notifSkipAction)
+    // iOS: AppStrings.swift:2356
+    fun checkpointsTitle(): String = tr(R.string.checkpointsTitle)
     // iOS: AppStrings.swift:2360
-    fun checkpointDelete(): String = tr(R.string.checkpointDelete)
+    fun tripMomentsTitle(): String = tr(R.string.tripMomentsTitle)
     // iOS: AppStrings.swift:2363
-    fun checkpointAttachPhoto(): String = tr(R.string.checkpointAttachPhoto)
+    fun momentStart(): String = tr(R.string.momentStart)
     // iOS: AppStrings.swift:2366
-    fun checkpointEmpty(): String = tr(R.string.checkpointEmpty)
-    // iOS: AppStrings.swift:2369
-    fun checkpointEmptyHint(): String = tr(R.string.checkpointEmptyHint)
-    // iOS: AppStrings.swift:2376
-    fun checkpointChoosePass(): String = tr(R.string.checkpointChoosePass)
+    fun momentFinish(): String = tr(R.string.momentFinish)
+    // iOS: AppStrings.swift:2370
+    fun momentNamePlace(): String = tr(R.string.momentNamePlace)
+    // iOS: AppStrings.swift:2374
+    fun checkpointWord(): String = tr(R.string.checkpointWord)
     // iOS: AppStrings.swift:2380
-    fun checkpointPhotosNearby(): String = tr(R.string.checkpointPhotosNearby)
-    // iOS: AppStrings.swift:2383
-    fun checkpointPhotosOther(): String = tr(R.string.checkpointPhotosOther)
-    // iOS: AppStrings.swift:2387
-    fun checkpointCover(): String = tr(R.string.checkpointCover)
+    fun checkpointAdd(): String = tr(R.string.checkpointAdd)
+    // iOS: AppStrings.swift:2384
+    fun checkpointFromStart(): String = tr(R.string.checkpointFromStart)
+    // iOS: AppStrings.swift:2388
+    fun checkpointLeg(): String = tr(R.string.checkpointLeg)
     // iOS: AppStrings.swift:2391
-    fun checkpointMarkPlace(): String = tr(R.string.checkpointMarkPlace)
+    fun checkpointNamePlaceholder(): String = tr(R.string.checkpointNamePlaceholder)
     // iOS: AppStrings.swift:2394
-    fun checkpointChoosePassHint(): String = tr(R.string.checkpointChoosePassHint)
-    // iOS: AppStrings.swift:2404
-    fun segmentTo(): String = tr(R.string.segmentTo)
-    // iOS: AppStrings.swift:2408
-    fun segmentPickTitle(): String = tr(R.string.segmentPickTitle)
-    // iOS: AppStrings.swift:2411
-    fun segmentNameField(): String = tr(R.string.segmentNameField)
+    fun checkpointDelete(): String = tr(R.string.checkpointDelete)
+    // iOS: AppStrings.swift:2397
+    fun checkpointAttachPhoto(): String = tr(R.string.checkpointAttachPhoto)
+    // iOS: AppStrings.swift:2400
+    fun checkpointEmpty(): String = tr(R.string.checkpointEmpty)
+    // iOS: AppStrings.swift:2403
+    fun checkpointEmptyHint(): String = tr(R.string.checkpointEmptyHint)
+    // iOS: AppStrings.swift:2410
+    fun checkpointChoosePass(): String = tr(R.string.checkpointChoosePass)
     // iOS: AppStrings.swift:2414
-    fun segmentDelete(): String = tr(R.string.segmentDelete)
+    fun checkpointPhotosNearby(): String = tr(R.string.checkpointPhotosNearby)
     // iOS: AppStrings.swift:2417
-    fun segmentCreated(): String = tr(R.string.segmentCreated)
+    fun checkpointPhotosOther(): String = tr(R.string.checkpointPhotosOther)
+    // iOS: AppStrings.swift:2421
+    fun checkpointCover(): String = tr(R.string.checkpointCover)
+    // iOS: AppStrings.swift:2425
+    fun checkpointMarkPlace(): String = tr(R.string.checkpointMarkPlace)
+    // iOS: AppStrings.swift:2428
+    fun checkpointChoosePassHint(): String = tr(R.string.checkpointChoosePassHint)
     // iOS: AppStrings.swift:2438
-    fun segmentDeleteConfirm(): String = tr(R.string.segmentDeleteConfirm)
-    // iOS: AppStrings.swift:2444
-    fun journeyWord(): String = tr(R.string.journeyWord)
-    // iOS: AppStrings.swift:2447
-    fun journeysTitle(): String = tr(R.string.journeysTitle)
+    fun segmentTo(): String = tr(R.string.segmentTo)
+    // iOS: AppStrings.swift:2442
+    fun segmentPickTitle(): String = tr(R.string.segmentPickTitle)
+    // iOS: AppStrings.swift:2445
+    fun segmentNameField(): String = tr(R.string.segmentNameField)
+    // iOS: AppStrings.swift:2448
+    fun segmentDelete(): String = tr(R.string.segmentDelete)
     // iOS: AppStrings.swift:2451
-    fun journeyCombine(): String = tr(R.string.journeyCombine)
-    // iOS: AppStrings.swift:2454
-    fun journeyOpen(): String = tr(R.string.journeyOpen)
-    // iOS: AppStrings.swift:2457
-    fun journeyCreate(): String = tr(R.string.journeyCreate)
-    // iOS: AppStrings.swift:2463
-    fun journeyComposeTitle(): String = tr(R.string.journeyComposeTitle)
-    // iOS: AppStrings.swift:2469
-    fun journeyComposeHint(): String = tr(R.string.journeyComposeHint)
-    // iOS: AppStrings.swift:2475
-    fun journeyComposeAnchor(): String = tr(R.string.journeyComposeAnchor)
+    fun segmentCreated(): String = tr(R.string.segmentCreated)
+    // iOS: AppStrings.swift:2472
+    fun segmentDeleteConfirm(): String = tr(R.string.segmentDeleteConfirm)
     // iOS: AppStrings.swift:2478
-    fun journeyTitlePlaceholder(): String = tr(R.string.journeyTitlePlaceholder)
-    // iOS: AppStrings.swift:2482
-    fun journeyByDays(): String = tr(R.string.journeyByDays)
-    // iOS: AppStrings.swift:2494
-    fun journeyAroundTown(): String = tr(R.string.journeyAroundTown)
+    fun journeyWord(): String = tr(R.string.journeyWord)
+    // iOS: AppStrings.swift:2481
+    fun journeysTitle(): String = tr(R.string.journeysTitle)
+    // iOS: AppStrings.swift:2485
+    fun journeyCombine(): String = tr(R.string.journeyCombine)
+    // iOS: AppStrings.swift:2488
+    fun journeyOpen(): String = tr(R.string.journeyOpen)
+    // iOS: AppStrings.swift:2491
+    fun journeyCreate(): String = tr(R.string.journeyCreate)
+    // iOS: AppStrings.swift:2497
+    fun journeyComposeTitle(): String = tr(R.string.journeyComposeTitle)
+    // iOS: AppStrings.swift:2503
+    fun journeyComposeHint(): String = tr(R.string.journeyComposeHint)
     // iOS: AppStrings.swift:2509
-    fun journeyStayFallback(): String = tr(R.string.journeyStayFallback)
+    fun journeyComposeAnchor(): String = tr(R.string.journeyComposeAnchor)
     // iOS: AppStrings.swift:2512
+    fun journeyTitlePlaceholder(): String = tr(R.string.journeyTitlePlaceholder)
+    // iOS: AppStrings.swift:2516
+    fun journeyByDays(): String = tr(R.string.journeyByDays)
+    // iOS: AppStrings.swift:2528
+    fun journeyAroundTown(): String = tr(R.string.journeyAroundTown)
+    // iOS: AppStrings.swift:2543
+    fun journeyStayFallback(): String = tr(R.string.journeyStayFallback)
+    // iOS: AppStrings.swift:2546
     fun journeyDurationLabel(): String = tr(R.string.journeyDurationLabel)
-    // iOS: AppStrings.swift:2515
+    // iOS: AppStrings.swift:2549
     fun journeyDistanceLabel(): String = tr(R.string.journeyDistanceLabel)
-    // iOS: AppStrings.swift:2519
+    // iOS: AppStrings.swift:2553
     fun journeyLegsLabel(): String = tr(R.string.journeyLegsLabel)
-    // iOS: AppStrings.swift:2522
+    // iOS: AppStrings.swift:2556
     fun journeyDrivingLabel(): String = tr(R.string.journeyDrivingLabel)
-    // iOS: AppStrings.swift:2525
+    // iOS: AppStrings.swift:2559
     fun journeyEdit(): String = tr(R.string.journeyEdit)
-    // iOS: AppStrings.swift:2529
+    // iOS: AppStrings.swift:2563
     fun journeyInDates(): String = tr(R.string.journeyInDates)
-    // iOS: AppStrings.swift:2532
+    // iOS: AppStrings.swift:2566
     fun journeyDatesEmpty(): String = tr(R.string.journeyDatesEmpty)
-    // iOS: AppStrings.swift:2535
+    // iOS: AppStrings.swift:2569
     fun journeyDates(): String = tr(R.string.journeyDates)
-    // iOS: AppStrings.swift:2538
+    // iOS: AppStrings.swift:2572
     fun journeyCover(): String = tr(R.string.journeyCover)
-    // iOS: AppStrings.swift:2541
+    // iOS: AppStrings.swift:2575
     fun journeyRemoveLeg(): String = tr(R.string.journeyRemoveLeg)
-    // iOS: AppStrings.swift:2548
+    // iOS: AppStrings.swift:2582
     fun journeyRemoveLegHint(): String = tr(R.string.journeyRemoveLegHint)
-    // iOS: AppStrings.swift:2554
+    // iOS: AppStrings.swift:2588
     fun journeyRemovedLegs(): String = tr(R.string.journeyRemovedLegs)
-    // iOS: AppStrings.swift:2558
+    // iOS: AppStrings.swift:2592
     fun journeyReturnLeg(): String = tr(R.string.journeyReturnLeg)
-    // iOS: AppStrings.swift:2561
+    // iOS: AppStrings.swift:2595
     fun journeyDelete(): String = tr(R.string.journeyDelete)
-    // iOS: AppStrings.swift:2565
+    // iOS: AppStrings.swift:2599
     fun journeyDeleteHint(): String = tr(R.string.journeyDeleteHint)
-    // iOS: AppStrings.swift:2568
+    // iOS: AppStrings.swift:2602
     fun journeyOverlaps(): String = tr(R.string.journeyOverlaps)
-    // iOS: AppStrings.swift:2573
+    // iOS: AppStrings.swift:2607
     fun journeyEmptyTitle(): String = tr(R.string.journeyEmptyTitle)
-    // iOS: AppStrings.swift:2576
+    // iOS: AppStrings.swift:2610
     fun journeyAddFromTrip(): String = tr(R.string.journeyAddFromTrip)
-    // iOS: AppStrings.swift:2581
+    // iOS: AppStrings.swift:2615
     fun journeyCreated(): String = tr(R.string.journeyCreated)
-    // iOS: AppStrings.swift:2590
+    // iOS: AppStrings.swift:2624
     fun journeySuggestTitle(): String = tr(R.string.journeySuggestTitle)
-    // iOS: AppStrings.swift:2593
+    // iOS: AppStrings.swift:2627
     fun journeySuggestCombine(): String = tr(R.string.journeySuggestCombine)
-    // iOS: AppStrings.swift:2598
+    // iOS: AppStrings.swift:2632
     fun journeyNotNow(): String = tr(R.string.journeyNotNow)
-    // iOS: AppStrings.swift:2605
+    // iOS: AppStrings.swift:2639
     fun journeyPublish(): String = tr(R.string.journeyPublish)
-    // iOS: AppStrings.swift:2608
+    // iOS: AppStrings.swift:2642
     fun journeyHide(): String = tr(R.string.journeyHide)
-    // iOS: AppStrings.swift:2612
+    // iOS: AppStrings.swift:2646
     fun journeyPublishTitle(): String = tr(R.string.journeyPublishTitle)
-    // iOS: AppStrings.swift:2629
+    // iOS: AppStrings.swift:2663
     fun journeyPublishIntro(title: String): String = tr(R.string.journeyPublishIntro, title)
-    // iOS: AppStrings.swift:2637
+    // iOS: AppStrings.swift:2671
     fun journeyLegPrivateNow(): String = tr(R.string.journeyLegPrivateNow)
-    // iOS: AppStrings.swift:2672
+    // iOS: AppStrings.swift:2706
     fun journeyPublishButtonNoLegs(): String = tr(R.string.journeyPublishButtonNoLegs)
-    // iOS: AppStrings.swift:2675
+    // iOS: AppStrings.swift:2709
     fun journeyHideTitle(): String = tr(R.string.journeyHideTitle)
-    // iOS: AppStrings.swift:2679
+    // iOS: AppStrings.swift:2713
     fun journeyHideMessage(): String = tr(R.string.journeyHideMessage)
-    // iOS: AppStrings.swift:2686
+    // iOS: AppStrings.swift:2720
     fun journeyPublished(): String = tr(R.string.journeyPublished)
-    // iOS: AppStrings.swift:2692
+    // iOS: AppStrings.swift:2726
     fun tripPrivateLegOfPublicJourney(title: String): String = tr(R.string.tripPrivateLegOfPublicJourney, title)
-    // iOS: AppStrings.swift:2699
+    // iOS: AppStrings.swift:2733
     fun journeyPartOf(title: String): String = tr(R.string.journeyPartOf, title)
-    // iOS: AppStrings.swift:2705
+    // iOS: AppStrings.swift:2739
     fun journeyPublicLegsLabel(): String = tr(R.string.journeyPublicLegsLabel)
-    // iOS: AppStrings.swift:2712
+    // iOS: AppStrings.swift:2746
     fun journeyUnavailable(): String = tr(R.string.journeyUnavailable)
-    // iOS: AppStrings.swift:2719
+    // iOS: AppStrings.swift:2753
     fun homeQuestionTitle(): String = tr(R.string.homeQuestionTitle)
-    // iOS: AppStrings.swift:2722
+    // iOS: AppStrings.swift:2756
     fun homeQuestionHint(): String = tr(R.string.homeQuestionHint)
-    // iOS: AppStrings.swift:2727
+    // iOS: AppStrings.swift:2761
     fun homeYes(): String = tr(R.string.homeYes)
-    // iOS: AppStrings.swift:2730
+    // iOS: AppStrings.swift:2764
     fun homeNo(): String = tr(R.string.homeNo)
-    // iOS: AppStrings.swift:2734
+    // iOS: AppStrings.swift:2768
     fun notifTripStopTitle(): String = tr(R.string.notifTripStopTitle)
-    // iOS: AppStrings.swift:2793
+    // iOS: AppStrings.swift:2827
     fun notifStopNowAction(): String = tr(R.string.notifStopNowAction)
-    // iOS: AppStrings.swift:2796
+    // iOS: AppStrings.swift:2830
     fun notifContinueAction(): String = tr(R.string.notifContinueAction)
-    // iOS: AppStrings.swift:2799
+    // iOS: AppStrings.swift:2833
     fun notifAutoStartTitle(): String = tr(R.string.notifAutoStartTitle)
-    // iOS: AppStrings.swift:2802
+    // iOS: AppStrings.swift:2836
     fun notifAutoStartBody(): String = tr(R.string.notifAutoStartBody)
-    // iOS: AppStrings.swift:2808
+    // iOS: AppStrings.swift:2842
     fun photoAccessAlertTitle(): String = tr(R.string.photoAccessAlertTitle)
-    // iOS: AppStrings.swift:2813
+    // iOS: AppStrings.swift:2847
     fun photoAccessAlertBody(): String = tr(R.string.photoAccessAlertBody)
-    // iOS: AppStrings.swift:2818
+    // iOS: AppStrings.swift:2852
     fun close(): String = tr(R.string.close)
-    // iOS: AppStrings.swift:2865
-    fun noCommentsYet(): String = tr(R.string.noCommentsYet)
-    // iOS: AppStrings.swift:2870
-    fun addReaction(): String = tr(R.string.addReaction)
-    // iOS: AppStrings.swift:2876
-    fun publishForReactionsTitle(): String = tr(R.string.publishForReactionsTitle)
-    // iOS: AppStrings.swift:2881
-    fun publishForReactionsBody(): String = tr(R.string.publishForReactionsBody)
-    // iOS: AppStrings.swift:2886
-    fun publishForCommentsTitle(): String = tr(R.string.publishForCommentsTitle)
-    // iOS: AppStrings.swift:2891
-    fun publishForCommentsBody(): String = tr(R.string.publishForCommentsBody)
     // iOS: AppStrings.swift:2899
-    fun choosePhotosTitle(): String = tr(R.string.choosePhotosTitle)
-    // iOS: AppStrings.swift:2902
-    fun managePhotoAccess(): String = tr(R.string.managePhotoAccess)
-    // iOS: AppStrings.swift:2905
-    fun noPhotosInLibrary(): String = tr(R.string.noPhotosInLibrary)
+    fun noCommentsYet(): String = tr(R.string.noCommentsYet)
+    // iOS: AppStrings.swift:2904
+    fun addReaction(): String = tr(R.string.addReaction)
     // iOS: AppStrings.swift:2910
+    fun publishForReactionsTitle(): String = tr(R.string.publishForReactionsTitle)
+    // iOS: AppStrings.swift:2915
+    fun publishForReactionsBody(): String = tr(R.string.publishForReactionsBody)
+    // iOS: AppStrings.swift:2920
+    fun publishForCommentsTitle(): String = tr(R.string.publishForCommentsTitle)
+    // iOS: AppStrings.swift:2925
+    fun publishForCommentsBody(): String = tr(R.string.publishForCommentsBody)
+    // iOS: AppStrings.swift:2933
+    fun choosePhotosTitle(): String = tr(R.string.choosePhotosTitle)
+    // iOS: AppStrings.swift:2936
+    fun managePhotoAccess(): String = tr(R.string.managePhotoAccess)
+    // iOS: AppStrings.swift:2939
+    fun noPhotosInLibrary(): String = tr(R.string.noPhotosInLibrary)
+    // iOS: AppStrings.swift:2944
     fun photoAccessDenied(): String = tr(R.string.photoAccessDenied)
-    // iOS: AppStrings.swift:3015
+    // iOS: AppStrings.swift:3049
     fun editTripTitle(): String = tr(R.string.editTripTitle)
-    // iOS: AppStrings.swift:3018
+    // iOS: AppStrings.swift:3052
     fun tripTitleLabel(): String = tr(R.string.tripTitleLabel)
-    // iOS: AppStrings.swift:3021
+    // iOS: AppStrings.swift:3055
     fun vehicleSectionLabel(): String = tr(R.string.vehicleSectionLabel)
-    // iOS: AppStrings.swift:3024
+    // iOS: AppStrings.swift:3058
     fun accessSectionLabel(): String = tr(R.string.accessSectionLabel)
-    // iOS: AppStrings.swift:3029
+    // iOS: AppStrings.swift:3063
     fun privacyPublicHint(): String = tr(R.string.privacyPublicHint)
-    // iOS: AppStrings.swift:3034
+    // iOS: AppStrings.swift:3068
     fun privacyOnlyMeHint(): String = tr(R.string.privacyOnlyMeHint)
-    // iOS: AppStrings.swift:3043
+    // iOS: AppStrings.swift:3077
     fun junkTripDiscarded(): String = tr(R.string.junkTripDiscarded)
-    // iOS: AppStrings.swift:3048
+    // iOS: AppStrings.swift:3082
     fun notifAutoStartFailedTitle(): String = tr(R.string.notifAutoStartFailedTitle)
-    // iOS: AppStrings.swift:3074
+    // iOS: AppStrings.swift:3108
     fun notifAutoStopTitle(): String = tr(R.string.notifAutoStopTitle)
-    // iOS: AppStrings.swift:3091
+    // iOS: AppStrings.swift:3125
     fun notifAutoStopBody(): String = tr(R.string.notifAutoStopBody)
-    // iOS: AppStrings.swift:3095
+    // iOS: AppStrings.swift:3129
     fun notifDraftStartedTitle(): String = tr(R.string.notifDraftStartedTitle)
-    // iOS: AppStrings.swift:3098
+    // iOS: AppStrings.swift:3132
     fun notifDraftStartedBody(): String = tr(R.string.notifDraftStartedBody)
-    // iOS: AppStrings.swift:3101
+    // iOS: AppStrings.swift:3135
     fun notifDraftConfirmTitle(): String = tr(R.string.notifDraftConfirmTitle)
-    // iOS: AppStrings.swift:3105
+    // iOS: AppStrings.swift:3139
     fun notifDraftConfirmBody(distance: String): String = tr(R.string.notifDraftConfirmBody, distance)
-    // iOS: AppStrings.swift:3111
-    fun draftConfirm(): String = tr(R.string.draftConfirm)
-    // iOS: AppStrings.swift:3114
-    fun draftDiscard(): String = tr(R.string.draftDiscard)
-    // iOS: AppStrings.swift:3121
-    fun draftsTitle(): String = tr(R.string.draftsTitle)
-    // iOS: AppStrings.swift:3126
-    fun draftsCardLast(date: String, time: String): String = tr(R.string.draftsCardLast, date, time)
     // iOS: AppStrings.swift:3145
+    fun draftConfirm(): String = tr(R.string.draftConfirm)
+    // iOS: AppStrings.swift:3148
+    fun draftDiscard(): String = tr(R.string.draftDiscard)
+    // iOS: AppStrings.swift:3155
+    fun draftsTitle(): String = tr(R.string.draftsTitle)
+    // iOS: AppStrings.swift:3160
+    fun draftsCardLast(date: String, time: String): String = tr(R.string.draftsCardLast, date, time)
+    // iOS: AppStrings.swift:3179
     fun draftsSelect(): String = tr(R.string.draftsSelect)
-    // iOS: AppStrings.swift:3149
+    // iOS: AppStrings.swift:3183
     fun draftsSelectAll(): String = tr(R.string.draftsSelectAll)
-    // iOS: AppStrings.swift:3161
+    // iOS: AppStrings.swift:3195
     fun draftsTabHint(): String = tr(R.string.draftsTabHint)
-    // iOS: AppStrings.swift:3166
+    // iOS: AppStrings.swift:3200
     fun draftsEmptyTitle(): String = tr(R.string.draftsEmptyTitle)
-    // iOS: AppStrings.swift:3170
+    // iOS: AppStrings.swift:3204
     fun draftsEmptyBody(): String = tr(R.string.draftsEmptyBody)
-    // iOS: AppStrings.swift:3188
+    // iOS: AppStrings.swift:3222
     fun draftsDeleteBody(): String = tr(R.string.draftsDeleteBody)
-    // iOS: AppStrings.swift:3194
+    // iOS: AppStrings.swift:3228
     fun draftBannerTitle(): String = tr(R.string.draftBannerTitle)
-    // iOS: AppStrings.swift:3199
+    // iOS: AppStrings.swift:3233
     fun draftBannerBody(): String = tr(R.string.draftBannerBody)
-    // iOS: AppStrings.swift:3205
+    // iOS: AppStrings.swift:3239
     fun draftRecordingLabel(): String = tr(R.string.draftRecordingLabel)
-    // iOS: AppStrings.swift:3208
+    // iOS: AppStrings.swift:3242
     fun bluetoothAudio(): String = tr(R.string.bluetoothAudio)
-    // iOS: AppStrings.swift:3211
+    // iOS: AppStrings.swift:3245
     fun strongSignal(): String = tr(R.string.strongSignal)
-    // iOS: AppStrings.swift:3214
+    // iOS: AppStrings.swift:3248
     fun mediumSignal(): String = tr(R.string.mediumSignal)
-    // iOS: AppStrings.swift:3217
+    // iOS: AppStrings.swift:3251
     fun weakSignal(): String = tr(R.string.weakSignal)
-    // iOS: AppStrings.swift:3220
+    // iOS: AppStrings.swift:3254
     fun done(): String = tr(R.string.done)
-    // iOS: AppStrings.swift:3223
+    // iOS: AppStrings.swift:3257
     fun car(): String = tr(R.string.car)
-    // iOS: AppStrings.swift:3226
+    // iOS: AppStrings.swift:3260
     fun added(): String = tr(R.string.added)
-    // iOS: AppStrings.swift:3229
+    // iOS: AppStrings.swift:3263
     fun linked(): String = tr(R.string.linked)
-    // iOS: AppStrings.swift:3235
+    // iOS: AppStrings.swift:3269
     fun guest(): String = tr(R.string.guest)
-    // iOS: AppStrings.swift:3238
+    // iOS: AppStrings.swift:3272
     fun signInToSync(): String = tr(R.string.signInToSync)
-    // iOS: AppStrings.swift:3241
+    // iOS: AppStrings.swift:3275
     fun signedIn(): String = tr(R.string.signedIn)
-    // iOS: AppStrings.swift:3244
+    // iOS: AppStrings.swift:3278
     fun synced(): String = tr(R.string.synced)
-    // iOS: AppStrings.swift:3247
+    // iOS: AppStrings.swift:3281
     fun syncComingSoon(): String = tr(R.string.syncComingSoon)
-    // iOS: AppStrings.swift:3250
-    fun signOut(): String = tr(R.string.signOut)
-    // iOS: AppStrings.swift:3253
-    fun signOutConfirmTitle(): String = tr(R.string.signOutConfirmTitle)
-    // iOS: AppStrings.swift:3256
-    fun signOutConfirmMessage(): String = tr(R.string.signOutConfirmMessage)
-    // iOS: AppStrings.swift:3261
-    fun deleteAccount(): String = tr(R.string.deleteAccount)
-    // iOS: AppStrings.swift:3273
-    fun deleteAccountSubtitle(): String = tr(R.string.deleteAccountSubtitle)
-    // iOS: AppStrings.swift:3276
-    fun deleteAccountConfirmTitle(): String = tr(R.string.deleteAccountConfirmTitle)
     // iOS: AppStrings.swift:3284
-    fun deleteAccountConfirmBody(): String = tr(R.string.deleteAccountConfirmBody)
-    // iOS: AppStrings.swift:3289
-    fun deleteAccountConfirmAction(): String = tr(R.string.deleteAccountConfirmAction)
-    // iOS: AppStrings.swift:3292
-    fun deleteAccountFailed(): String = tr(R.string.deleteAccountFailed)
-    // iOS: AppStrings.swift:3297
-    fun dangerZone(): String = tr(R.string.dangerZone)
-    // iOS: AppStrings.swift:3303
-    fun syncStatusTitle(): String = tr(R.string.syncStatusTitle)
-    // iOS: AppStrings.swift:3306
-    fun syncStatusPendingHeader(): String = tr(R.string.syncStatusPendingHeader)
-    // iOS: AppStrings.swift:3309
-    fun syncStatusFailedHeader(): String = tr(R.string.syncStatusFailedHeader)
-    // iOS: AppStrings.swift:3312
-    fun syncStatusEmpty(): String = tr(R.string.syncStatusEmpty)
-    // iOS: AppStrings.swift:3315
-    fun syncStatusRetry(): String = tr(R.string.syncStatusRetry)
+    fun signOut(): String = tr(R.string.signOut)
+    // iOS: AppStrings.swift:3287
+    fun signOutConfirmTitle(): String = tr(R.string.signOutConfirmTitle)
+    // iOS: AppStrings.swift:3290
+    fun signOutConfirmMessage(): String = tr(R.string.signOutConfirmMessage)
+    // iOS: AppStrings.swift:3295
+    fun deleteAccount(): String = tr(R.string.deleteAccount)
+    // iOS: AppStrings.swift:3307
+    fun deleteAccountSubtitle(): String = tr(R.string.deleteAccountSubtitle)
+    // iOS: AppStrings.swift:3310
+    fun deleteAccountConfirmTitle(): String = tr(R.string.deleteAccountConfirmTitle)
     // iOS: AppStrings.swift:3318
-    fun syncStatusNowLabel(): String = tr(R.string.syncStatusNowLabel)
+    fun deleteAccountConfirmBody(): String = tr(R.string.deleteAccountConfirmBody)
+    // iOS: AppStrings.swift:3323
+    fun deleteAccountConfirmAction(): String = tr(R.string.deleteAccountConfirmAction)
+    // iOS: AppStrings.swift:3326
+    fun deleteAccountFailed(): String = tr(R.string.deleteAccountFailed)
+    // iOS: AppStrings.swift:3331
+    fun dangerZone(): String = tr(R.string.dangerZone)
+    // iOS: AppStrings.swift:3337
+    fun syncStatusTitle(): String = tr(R.string.syncStatusTitle)
+    // iOS: AppStrings.swift:3340
+    fun syncStatusPendingHeader(): String = tr(R.string.syncStatusPendingHeader)
     // iOS: AppStrings.swift:3343
-    fun signInPromptReact(): String = tr(R.string.signInPromptReact)
+    fun syncStatusFailedHeader(): String = tr(R.string.syncStatusFailedHeader)
     // iOS: AppStrings.swift:3346
-    fun signInPromptFollow(): String = tr(R.string.signInPromptFollow)
+    fun syncStatusEmpty(): String = tr(R.string.syncStatusEmpty)
     // iOS: AppStrings.swift:3349
-    fun signInPromptShare(): String = tr(R.string.signInPromptShare)
+    fun syncStatusRetry(): String = tr(R.string.syncStatusRetry)
     // iOS: AppStrings.swift:3352
+    fun syncStatusNowLabel(): String = tr(R.string.syncStatusNowLabel)
+    // iOS: AppStrings.swift:3377
+    fun signInPromptReact(): String = tr(R.string.signInPromptReact)
+    // iOS: AppStrings.swift:3380
+    fun signInPromptFollow(): String = tr(R.string.signInPromptFollow)
+    // iOS: AppStrings.swift:3383
+    fun signInPromptShare(): String = tr(R.string.signInPromptShare)
+    // iOS: AppStrings.swift:3386
     fun signInPromptSync(): String = tr(R.string.signInPromptSync)
-    // iOS: AppStrings.swift:3355
+    // iOS: AppStrings.swift:3389
     fun signInPromptPublish(): String = tr(R.string.signInPromptPublish)
-    // iOS: AppStrings.swift:3358
+    // iOS: AppStrings.swift:3392
     fun signInPromptCompanions(): String = tr(R.string.signInPromptCompanions)
-    // iOS: AppStrings.swift:3363
+    // iOS: AppStrings.swift:3397
     fun signInPromptGeneric(): String = tr(R.string.signInPromptGeneric)
-    // iOS: AppStrings.swift:3366
+    // iOS: AppStrings.swift:3400
     fun signInPromptSubtitle(): String = tr(R.string.signInPromptSubtitle)
-    // iOS: AppStrings.swift:3371
+    // iOS: AppStrings.swift:3405
     fun signInLoading(): String = tr(R.string.signInLoading)
-    // iOS: AppStrings.swift:3374
+    // iOS: AppStrings.swift:3408
     fun signInErrorRetry(): String = tr(R.string.signInErrorRetry)
-    // iOS: AppStrings.swift:3401
+    // iOS: AppStrings.swift:3435
     fun signInPromptAppleFailed(): String = tr(R.string.signInPromptAppleFailed)
-    // iOS: AppStrings.swift:3406
+    // iOS: AppStrings.swift:3440
     fun signInFailedTitle(): String = tr(R.string.signInFailedTitle)
-    // iOS: AppStrings.swift:3409
-    fun ok(): String = tr(R.string.ok)
-    // iOS: AppStrings.swift:3415
-    fun guestFeedBanner(): String = tr(R.string.guestFeedBanner)
-    // iOS: AppStrings.swift:3420
-    fun syncCardKicker(): String = tr(R.string.syncCardKicker)
-    // iOS: AppStrings.swift:3423
-    fun syncCardTitle(): String = tr(R.string.syncCardTitle)
-    // iOS: AppStrings.swift:3431
-    fun syncCardBody(): String = tr(R.string.syncCardBody)
-    // iOS: AppStrings.swift:3436
-    fun syncCardLater(): String = tr(R.string.syncCardLater)
     // iOS: AppStrings.swift:3443
+    fun ok(): String = tr(R.string.ok)
+    // iOS: AppStrings.swift:3449
+    fun guestFeedBanner(): String = tr(R.string.guestFeedBanner)
+    // iOS: AppStrings.swift:3454
+    fun syncCardKicker(): String = tr(R.string.syncCardKicker)
+    // iOS: AppStrings.swift:3457
+    fun syncCardTitle(): String = tr(R.string.syncCardTitle)
+    // iOS: AppStrings.swift:3465
+    fun syncCardBody(): String = tr(R.string.syncCardBody)
+    // iOS: AppStrings.swift:3470
+    fun syncCardLater(): String = tr(R.string.syncCardLater)
+    // iOS: AppStrings.swift:3477
     fun signInWithApple(): String = tr(R.string.signInWithApple)
-    // iOS: AppStrings.swift:3450
+    // iOS: AppStrings.swift:3484
     fun sessionExpiredTitle(): String = tr(R.string.sessionExpiredTitle)
-    // iOS: AppStrings.swift:3455
+    // iOS: AppStrings.swift:3489
     fun sessionExpiredBody(): String = tr(R.string.sessionExpiredBody)
-    // iOS: AppStrings.swift:3467
+    // iOS: AppStrings.swift:3501
     fun entityVehicle(): String = tr(R.string.entityVehicle)
-    // iOS: AppStrings.swift:3510
+    // iOS: AppStrings.swift:3544
     fun vehicleMainLabel(): String = tr(R.string.vehicleMainLabel)
-    // iOS: AppStrings.swift:3513
+    // iOS: AppStrings.swift:3547
     fun myVehicle(): String = tr(R.string.myVehicle)
-    // iOS: AppStrings.swift:3516
+    // iOS: AppStrings.swift:3550
     fun renameVehicle(): String = tr(R.string.renameVehicle)
-    // iOS: AppStrings.swift:3519
+    // iOS: AppStrings.swift:3553
     fun deleteVehicle(): String = tr(R.string.deleteVehicle)
-    // iOS: AppStrings.swift:3522
+    // iOS: AppStrings.swift:3556
     fun deleteVehicleConfirm(): String = tr(R.string.deleteVehicleConfirm)
-    // iOS: AppStrings.swift:3525
+    // iOS: AppStrings.swift:3559
     fun makeMainVehicle(): String = tr(R.string.makeMainVehicle)
-    // iOS: AppStrings.swift:3528
+    // iOS: AppStrings.swift:3562
     fun odometerLabel(): String = tr(R.string.odometerLabel)
-    // iOS: AppStrings.swift:3531
+    // iOS: AppStrings.swift:3565
     fun avgConsumptionLabel(): String = tr(R.string.avgConsumptionLabel)
-    // iOS: AppStrings.swift:3534
+    // iOS: AppStrings.swift:3568
     fun stickersLabel(): String = tr(R.string.stickersLabel)
-    // iOS: AppStrings.swift:3537
+    // iOS: AppStrings.swift:3571
     fun fuelSectionLabel(): String = tr(R.string.fuelSectionLabel)
-    // iOS: AppStrings.swift:3540
-    fun fuelCityRow(): String = tr(R.string.fuelCityRow)
-    // iOS: AppStrings.swift:3543
-    fun fuelHighwayRow(): String = tr(R.string.fuelHighwayRow)
-    // iOS: AppStrings.swift:3546
-    fun fuelPriceRow(): String = tr(R.string.fuelPriceRow)
-    // iOS: AppStrings.swift:3549
-    fun addVehicleTitle(): String = tr(R.string.addVehicleTitle)
-    // iOS: AppStrings.swift:3552
-    fun vehicleNameSection(): String = tr(R.string.vehicleNameSection)
-    // iOS: AppStrings.swift:3560
-    fun vehicleWhatSection(): String = tr(R.string.vehicleWhatSection)
-    // iOS: AppStrings.swift:3563
-    fun vehicleMakeModel(): String = tr(R.string.vehicleMakeModel)
-    // iOS: AppStrings.swift:3566
-    fun vehicleYear(): String = tr(R.string.vehicleYear)
     // iOS: AppStrings.swift:3574
-    fun vehicleBiographyEmpty(): String = tr(R.string.vehicleBiographyEmpty)
-    // iOS: AppStrings.swift:3582
-    fun passengerToggle(): String = tr(R.string.passengerToggle)
-    // iOS: AppStrings.swift:3587
-    fun vehicleRecordingSection(): String = tr(R.string.vehicleRecordingSection)
-    // iOS: AppStrings.swift:3591
-    fun vehicleStateSection(): String = tr(R.string.vehicleStateSection)
+    fun fuelCityRow(): String = tr(R.string.fuelCityRow)
+    // iOS: AppStrings.swift:3577
+    fun fuelHighwayRow(): String = tr(R.string.fuelHighwayRow)
+    // iOS: AppStrings.swift:3580
+    fun fuelPriceRow(): String = tr(R.string.fuelPriceRow)
+    // iOS: AppStrings.swift:3583
+    fun addVehicleTitle(): String = tr(R.string.addVehicleTitle)
+    // iOS: AppStrings.swift:3586
+    fun vehicleNameSection(): String = tr(R.string.vehicleNameSection)
     // iOS: AppStrings.swift:3594
-    fun vehicleSoldHint(): String = tr(R.string.vehicleSoldHint)
-    // iOS: AppStrings.swift:3599
-    fun vehicleSoldHintOn(): String = tr(R.string.vehicleSoldHintOn)
-    // iOS: AppStrings.swift:3604
-    fun vehicleSellConfirmTitle(): String = tr(R.string.vehicleSellConfirmTitle)
-    // iOS: AppStrings.swift:3607
-    fun vehicleSellConfirmBody(): String = tr(R.string.vehicleSellConfirmBody)
-    // iOS: AppStrings.swift:3612
-    fun vehicleMarkSold(): String = tr(R.string.vehicleMarkSold)
-    // iOS: AppStrings.swift:3617
-    fun vehicleUnsell(): String = tr(R.string.vehicleUnsell)
+    fun vehicleWhatSection(): String = tr(R.string.vehicleWhatSection)
+    // iOS: AppStrings.swift:3597
+    fun vehicleMakeModel(): String = tr(R.string.vehicleMakeModel)
+    // iOS: AppStrings.swift:3600
+    fun vehicleYear(): String = tr(R.string.vehicleYear)
+    // iOS: AppStrings.swift:3608
+    fun vehicleBiographyEmpty(): String = tr(R.string.vehicleBiographyEmpty)
+    // iOS: AppStrings.swift:3616
+    fun passengerToggle(): String = tr(R.string.passengerToggle)
     // iOS: AppStrings.swift:3621
-    fun vehicleSoldBadge(): String = tr(R.string.vehicleSoldBadge)
+    fun vehicleRecordingSection(): String = tr(R.string.vehicleRecordingSection)
+    // iOS: AppStrings.swift:3625
+    fun vehicleStateSection(): String = tr(R.string.vehicleStateSection)
+    // iOS: AppStrings.swift:3628
+    fun vehicleSoldHint(): String = tr(R.string.vehicleSoldHint)
+    // iOS: AppStrings.swift:3633
+    fun vehicleSoldHintOn(): String = tr(R.string.vehicleSoldHintOn)
+    // iOS: AppStrings.swift:3638
+    fun vehicleSellConfirmTitle(): String = tr(R.string.vehicleSellConfirmTitle)
     // iOS: AppStrings.swift:3641
-    fun vehiclePrivacyRowHint(): String = tr(R.string.vehiclePrivacyRowHint)
+    fun vehicleSellConfirmBody(): String = tr(R.string.vehicleSellConfirmBody)
     // iOS: AppStrings.swift:3646
+    fun vehicleMarkSold(): String = tr(R.string.vehicleMarkSold)
+    // iOS: AppStrings.swift:3651
+    fun vehicleUnsell(): String = tr(R.string.vehicleUnsell)
+    // iOS: AppStrings.swift:3655
+    fun vehicleSoldBadge(): String = tr(R.string.vehicleSoldBadge)
+    // iOS: AppStrings.swift:3675
+    fun vehiclePrivacyRowHint(): String = tr(R.string.vehiclePrivacyRowHint)
+    // iOS: AppStrings.swift:3680
     fun vehicleWhoSees(): String = tr(R.string.vehicleWhoSees)
-    // iOS: AppStrings.swift:3649
+    // iOS: AppStrings.swift:3683
     fun vehicleShowMap(): String = tr(R.string.vehicleShowMap)
-    // iOS: AppStrings.swift:3652
+    // iOS: AppStrings.swift:3686
     fun vehicleShowMapHint(): String = tr(R.string.vehicleShowMapHint)
-    // iOS: AppStrings.swift:3657
+    // iOS: AppStrings.swift:3691
     fun vehicleShowPhotos(): String = tr(R.string.vehicleShowPhotos)
-    // iOS: AppStrings.swift:3660
+    // iOS: AppStrings.swift:3694
     fun vehicleShowPhotosHint(): String = tr(R.string.vehicleShowPhotosHint)
-    // iOS: AppStrings.swift:3671
-    fun vehiclePhotoAskTitle(): String = tr(R.string.vehiclePhotoAskTitle)
-    // iOS: AppStrings.swift:3676
-    fun vehiclePhotoAskBody(): String = tr(R.string.vehiclePhotoAskBody)
-    // iOS: AppStrings.swift:3681
-    fun vehiclePhotoAskShow(): String = tr(R.string.vehiclePhotoAskShow)
-    // iOS: AppStrings.swift:3684
-    fun vehiclePhotoAskKeep(): String = tr(R.string.vehiclePhotoAskKeep)
-    // iOS: AppStrings.swift:3687
-    fun vehiclePlateHint(): String = tr(R.string.vehiclePlateHint)
-    // iOS: AppStrings.swift:3692
-    fun vehiclePrivacyFooter(): String = tr(R.string.vehiclePrivacyFooter)
-    // iOS: AppStrings.swift:3700
-    fun publicGarageEntrySubtitle(): String = tr(R.string.publicGarageEntrySubtitle)
     // iOS: AppStrings.swift:3705
-    fun publicGarageEmpty(): String = tr(R.string.publicGarageEmpty)
+    fun vehiclePhotoAskTitle(): String = tr(R.string.vehiclePhotoAskTitle)
     // iOS: AppStrings.swift:3710
-    fun publicVehicleUnavailable(): String = tr(R.string.publicVehicleUnavailable)
+    fun vehiclePhotoAskBody(): String = tr(R.string.vehiclePhotoAskBody)
     // iOS: AppStrings.swift:3715
-    fun publicVehicleSold(): String = tr(R.string.publicVehicleSold)
+    fun vehiclePhotoAskShow(): String = tr(R.string.vehiclePhotoAskShow)
     // iOS: AppStrings.swift:3718
+    fun vehiclePhotoAskKeep(): String = tr(R.string.vehiclePhotoAskKeep)
+    // iOS: AppStrings.swift:3721
+    fun vehiclePlateHint(): String = tr(R.string.vehiclePlateHint)
+    // iOS: AppStrings.swift:3726
+    fun vehiclePrivacyFooter(): String = tr(R.string.vehiclePrivacyFooter)
+    // iOS: AppStrings.swift:3734
+    fun publicGarageEntrySubtitle(): String = tr(R.string.publicGarageEntrySubtitle)
+    // iOS: AppStrings.swift:3739
+    fun publicGarageEmpty(): String = tr(R.string.publicGarageEmpty)
+    // iOS: AppStrings.swift:3744
+    fun publicVehicleUnavailable(): String = tr(R.string.publicVehicleUnavailable)
+    // iOS: AppStrings.swift:3749
+    fun publicVehicleSold(): String = tr(R.string.publicVehicleSold)
+    // iOS: AppStrings.swift:3752
     fun publicRecordsNote(): String = tr(R.string.publicRecordsNote)
-    // iOS: AppStrings.swift:3740
+    // iOS: AppStrings.swift:3774
     fun garageLoadFailed(): String = tr(R.string.garageLoadFailed)
-    // iOS: AppStrings.swift:3743
+    // iOS: AppStrings.swift:3777
     fun garageActive(): String = tr(R.string.garageActive)
-    // iOS: AppStrings.swift:3746
+    // iOS: AppStrings.swift:3780
     fun garageActiveHint(): String = tr(R.string.garageActiveHint)
-    // iOS: AppStrings.swift:3751
+    // iOS: AppStrings.swift:3785
     fun garageArchiveHint(): String = tr(R.string.garageArchiveHint)
-    // iOS: AppStrings.swift:3759
+    // iOS: AppStrings.swift:3793
     fun garageSold(): String = tr(R.string.garageSold)
-    // iOS: AppStrings.swift:3762
+    // iOS: AppStrings.swift:3796
     fun garageSoldHint(): String = tr(R.string.garageSoldHint)
-    // iOS: AppStrings.swift:3767
+    // iOS: AppStrings.swift:3801
     fun garageOthers(): String = tr(R.string.garageOthers)
-    // iOS: AppStrings.swift:3773
+    // iOS: AppStrings.swift:3807
     fun garageNoActiveHint(): String = tr(R.string.garageNoActiveHint)
-    // iOS: AppStrings.swift:3778
-    fun vehicleAboutFooter(): String = tr(R.string.vehicleAboutFooter)
-    // iOS: AppStrings.swift:3781
-    fun recordHighest(): String = tr(R.string.recordHighest)
-    // iOS: AppStrings.swift:3803
-    fun vehicleTripsShort(): String = tr(R.string.vehicleTripsShort)
-    // iOS: AppStrings.swift:3806
-    fun sortByDate(): String = tr(R.string.sortByDate)
-    // iOS: AppStrings.swift:3809
-    fun sortByDistance(): String = tr(R.string.sortByDistance)
     // iOS: AppStrings.swift:3812
-    fun sortByElevation(): String = tr(R.string.sortByElevation)
-    // iOS: AppStrings.swift:3816
-    fun vehicleTripsPrivateNote(): String = tr(R.string.vehicleTripsPrivateNote)
-    // iOS: AppStrings.swift:3821
-    fun vehiclePhotos(): String = tr(R.string.vehiclePhotos)
-    // iOS: AppStrings.swift:3824
-    fun vehiclePhotoMain(): String = tr(R.string.vehiclePhotoMain)
-    // iOS: AppStrings.swift:3827
-    fun vehiclePhotoMakeMain(): String = tr(R.string.vehiclePhotoMakeMain)
-    // iOS: AppStrings.swift:3830
-    fun vehiclePhotoActions(): String = tr(R.string.vehiclePhotoActions)
-    // iOS: AppStrings.swift:3833
-    fun vehiclePhotosHint(): String = tr(R.string.vehiclePhotosHint)
-    // iOS: AppStrings.swift:3838
-    fun vehiclePhotosEmpty(): String = tr(R.string.vehiclePhotosEmpty)
+    fun vehicleAboutFooter(): String = tr(R.string.vehicleAboutFooter)
+    // iOS: AppStrings.swift:3815
+    fun recordHighest(): String = tr(R.string.recordHighest)
+    // iOS: AppStrings.swift:3837
+    fun vehicleTripsShort(): String = tr(R.string.vehicleTripsShort)
+    // iOS: AppStrings.swift:3840
+    fun sortByDate(): String = tr(R.string.sortByDate)
     // iOS: AppStrings.swift:3843
-    fun vehicleWhereWas(): String = tr(R.string.vehicleWhereWas)
+    fun sortByDistance(): String = tr(R.string.sortByDistance)
     // iOS: AppStrings.swift:3846
-    fun vehicleStickers(): String = tr(R.string.vehicleStickers)
-    // iOS: AppStrings.swift:3849
-    fun vehicleTripsTitle(): String = tr(R.string.vehicleTripsTitle)
-    // iOS: AppStrings.swift:3852
-    fun vehicleAbout(): String = tr(R.string.vehicleAbout)
+    fun sortByElevation(): String = tr(R.string.sortByElevation)
+    // iOS: AppStrings.swift:3850
+    fun vehicleTripsPrivateNote(): String = tr(R.string.vehicleTripsPrivateNote)
     // iOS: AppStrings.swift:3855
-    fun vehicleAboutPlaceholder(): String = tr(R.string.vehicleAboutPlaceholder)
-    // iOS: AppStrings.swift:3862
-    fun vehicleNotSet(): String = tr(R.string.vehicleNotSet)
-    // iOS: AppStrings.swift:3865
-    fun catalogSearchPlaceholder(): String = tr(R.string.catalogSearchPlaceholder)
-    // iOS: AppStrings.swift:3870
-    fun catalogNothingFound(): String = tr(R.string.catalogNothingFound)
-    // iOS: AppStrings.swift:3875
-    fun catalogOtherModels(): String = tr(R.string.catalogOtherModels)
-    // iOS: AppStrings.swift:3879
-    fun catalogGeneration(): String = tr(R.string.catalogGeneration)
+    fun vehiclePhotos(): String = tr(R.string.vehiclePhotos)
+    // iOS: AppStrings.swift:3858
+    fun vehiclePhotoMain(): String = tr(R.string.vehiclePhotoMain)
+    // iOS: AppStrings.swift:3861
+    fun vehiclePhotoMakeMain(): String = tr(R.string.vehiclePhotoMakeMain)
+    // iOS: AppStrings.swift:3864
+    fun vehiclePhotoActions(): String = tr(R.string.vehiclePhotoActions)
+    // iOS: AppStrings.swift:3867
+    fun vehiclePhotosHint(): String = tr(R.string.vehiclePhotosHint)
+    // iOS: AppStrings.swift:3872
+    fun vehiclePhotosEmpty(): String = tr(R.string.vehiclePhotosEmpty)
+    // iOS: AppStrings.swift:3877
+    fun vehicleWhereWas(): String = tr(R.string.vehicleWhereWas)
+    // iOS: AppStrings.swift:3880
+    fun vehicleStickers(): String = tr(R.string.vehicleStickers)
     // iOS: AppStrings.swift:3883
-    fun catalogVariant(): String = tr(R.string.catalogVariant)
-    // iOS: AppStrings.swift:3887
-    fun catalogUnknownEngine(): String = tr(R.string.catalogUnknownEngine)
-    // iOS: AppStrings.swift:3891
-    fun catalogHasYear(year: Int): String = tr(R.string.catalogHasYear, year)
+    fun vehicleTripsTitle(): String = tr(R.string.vehicleTripsTitle)
+    // iOS: AppStrings.swift:3886
+    fun vehicleAbout(): String = tr(R.string.vehicleAbout)
+    // iOS: AppStrings.swift:3889
+    fun vehicleAboutPlaceholder(): String = tr(R.string.vehicleAboutPlaceholder)
     // iOS: AppStrings.swift:3896
-    fun catalogUseTyped(): String = tr(R.string.catalogUseTyped)
+    fun vehicleNotSet(): String = tr(R.string.vehicleNotSet)
     // iOS: AppStrings.swift:3899
-    fun vehicleNamePlaceholder(): String = tr(R.string.vehicleNamePlaceholder)
-    // iOS: AppStrings.swift:3902
-    fun avatarSection(): String = tr(R.string.avatarSection)
+    fun catalogSearchPlaceholder(): String = tr(R.string.catalogSearchPlaceholder)
+    // iOS: AppStrings.swift:3904
+    fun catalogNothingFound(): String = tr(R.string.catalogNothingFound)
     // iOS: AppStrings.swift:3909
+    fun catalogOtherModels(): String = tr(R.string.catalogOtherModels)
+    // iOS: AppStrings.swift:3913
+    fun catalogGeneration(): String = tr(R.string.catalogGeneration)
+    // iOS: AppStrings.swift:3917
+    fun catalogVariant(): String = tr(R.string.catalogVariant)
+    // iOS: AppStrings.swift:3921
+    fun catalogUnknownEngine(): String = tr(R.string.catalogUnknownEngine)
+    // iOS: AppStrings.swift:3925
+    fun catalogHasYear(year: Int): String = tr(R.string.catalogHasYear, year)
+    // iOS: AppStrings.swift:3930
+    fun catalogUseTyped(): String = tr(R.string.catalogUseTyped)
+    // iOS: AppStrings.swift:3933
+    fun vehicleNamePlaceholder(): String = tr(R.string.vehicleNamePlaceholder)
+    // iOS: AppStrings.swift:3936
+    fun avatarSection(): String = tr(R.string.avatarSection)
+    // iOS: AppStrings.swift:3943
     fun avatarStyleSection(): String = tr(R.string.avatarStyleSection)
-    // iOS: AppStrings.swift:3915
+    // iOS: AppStrings.swift:3949
     fun avatarColorSection(): String = tr(R.string.avatarColorSection)
-    // iOS: AppStrings.swift:3966
+    // iOS: AppStrings.swift:4000
     fun fuelCity(): String = tr(R.string.fuelCity)
-    // iOS: AppStrings.swift:3969
+    // iOS: AppStrings.swift:4003
     fun fuelHighway(): String = tr(R.string.fuelHighway)
-    // iOS: AppStrings.swift:3972
-    fun mileageSection(): String = tr(R.string.mileageSection)
-    // iOS: AppStrings.swift:3975
-    fun mileageAutoHint(): String = tr(R.string.mileageAutoHint)
-    // iOS: AppStrings.swift:3980
-    fun stereoSection(): String = tr(R.string.stereoSection)
-    // iOS: AppStrings.swift:3983
-    fun btOffTitle(): String = tr(R.string.btOffTitle)
-    // iOS: AppStrings.swift:3986
-    fun btOffChipBody(): String = tr(R.string.btOffChipBody)
-    // iOS: AppStrings.swift:3991
-    fun btOffSheetBody(): String = tr(R.string.btOffSheetBody)
-    // iOS: AppStrings.swift:3996
-    fun settingsButton(): String = tr(R.string.settingsButton)
-    // iOS: AppStrings.swift:3999
-    fun maxVehiclesHint(): String = tr(R.string.maxVehiclesHint)
     // iOS: AppStrings.swift:4006
-    fun garageAllVehicles(): String = tr(R.string.garageAllVehicles)
+    fun mileageSection(): String = tr(R.string.mileageSection)
     // iOS: AppStrings.swift:4009
+    fun mileageAutoHint(): String = tr(R.string.mileageAutoHint)
+    // iOS: AppStrings.swift:4014
+    fun stereoSection(): String = tr(R.string.stereoSection)
+    // iOS: AppStrings.swift:4017
+    fun btOffTitle(): String = tr(R.string.btOffTitle)
+    // iOS: AppStrings.swift:4020
+    fun btOffChipBody(): String = tr(R.string.btOffChipBody)
+    // iOS: AppStrings.swift:4025
+    fun btOffSheetBody(): String = tr(R.string.btOffSheetBody)
+    // iOS: AppStrings.swift:4030
+    fun settingsButton(): String = tr(R.string.settingsButton)
+    // iOS: AppStrings.swift:4033
+    fun maxVehiclesHint(): String = tr(R.string.maxVehiclesHint)
+    // iOS: AppStrings.swift:4040
+    fun garageAllVehicles(): String = tr(R.string.garageAllVehicles)
+    // iOS: AppStrings.swift:4043
     fun unnamedVehicle(): String = tr(R.string.unnamedVehicle)
-    // iOS: AppStrings.swift:4060
+    // iOS: AppStrings.swift:4094
     fun vehicleTypeSection(): String = tr(R.string.vehicleTypeSection)
-    // iOS: AppStrings.swift:4063
+    // iOS: AppStrings.swift:4097
     fun plateSection(): String = tr(R.string.plateSection)
-    // iOS: AppStrings.swift:4066
-    fun platePlaceholder(): String = tr(R.string.platePlaceholder)
-    // iOS: AppStrings.swift:4069
-    fun plateShowToOthers(): String = tr(R.string.plateShowToOthers)
-    // iOS: AppStrings.swift:4074
-    fun plateVisibilityHint(): String = tr(R.string.plateVisibilityHint)
-    // iOS: AppStrings.swift:4079
-    fun privacySection(): String = tr(R.string.privacySection)
-    // iOS: AppStrings.swift:4084
-    fun vehicleHiddenFromOthers(): String = tr(R.string.vehicleHiddenFromOthers)
-    // iOS: AppStrings.swift:4087
-    fun editVehicleTitle(): String = tr(R.string.editVehicleTitle)
-    // iOS: AppStrings.swift:4093
-    fun plateVisibilityHintOn(): String = tr(R.string.plateVisibilityHintOn)
     // iOS: AppStrings.swift:4100
-    fun garageEmptyPickerHint(): String = tr(R.string.garageEmptyPickerHint)
-    // iOS: AppStrings.swift:4107
-    fun autoStopRowLabel(): String = tr(R.string.autoStopRowLabel)
-    // iOS: AppStrings.swift:4114
-    fun stereoConnectedTitle(): String = tr(R.string.stereoConnectedTitle)
-    // iOS: AppStrings.swift:4117
-    fun stereoStartsItself(): String = tr(R.string.stereoStartsItself)
-    // iOS: AppStrings.swift:4123
-    fun stereoLinkedTitle(): String = tr(R.string.stereoLinkedTitle)
-    // iOS: AppStrings.swift:4126
-    fun stereoStartsOnConnect(): String = tr(R.string.stereoStartsOnConnect)
-    // iOS: AppStrings.swift:4131
-    fun stereoNotLinkedTitle(): String = tr(R.string.stereoNotLinkedTitle)
+    fun platePlaceholder(): String = tr(R.string.platePlaceholder)
+    // iOS: AppStrings.swift:4103
+    fun plateShowToOthers(): String = tr(R.string.plateShowToOthers)
+    // iOS: AppStrings.swift:4108
+    fun plateVisibilityHint(): String = tr(R.string.plateVisibilityHint)
+    // iOS: AppStrings.swift:4113
+    fun privacySection(): String = tr(R.string.privacySection)
+    // iOS: AppStrings.swift:4118
+    fun vehicleHiddenFromOthers(): String = tr(R.string.vehicleHiddenFromOthers)
+    // iOS: AppStrings.swift:4121
+    fun editVehicleTitle(): String = tr(R.string.editVehicleTitle)
+    // iOS: AppStrings.swift:4127
+    fun plateVisibilityHintOn(): String = tr(R.string.plateVisibilityHintOn)
     // iOS: AppStrings.swift:4134
+    fun garageEmptyPickerHint(): String = tr(R.string.garageEmptyPickerHint)
+    // iOS: AppStrings.swift:4141
+    fun autoStopRowLabel(): String = tr(R.string.autoStopRowLabel)
+    // iOS: AppStrings.swift:4148
+    fun stereoConnectedTitle(): String = tr(R.string.stereoConnectedTitle)
+    // iOS: AppStrings.swift:4151
+    fun stereoStartsItself(): String = tr(R.string.stereoStartsItself)
+    // iOS: AppStrings.swift:4157
+    fun stereoLinkedTitle(): String = tr(R.string.stereoLinkedTitle)
+    // iOS: AppStrings.swift:4160
+    fun stereoStartsOnConnect(): String = tr(R.string.stereoStartsOnConnect)
+    // iOS: AppStrings.swift:4165
+    fun stereoNotLinkedTitle(): String = tr(R.string.stereoNotLinkedTitle)
+    // iOS: AppStrings.swift:4168
     fun stereoNotLinkedBody(): String = tr(R.string.stereoNotLinkedBody)
-    // iOS: AppStrings.swift:4139
+    // iOS: AppStrings.swift:4173
     fun showVehicleToggle(): String = tr(R.string.showVehicleToggle)
-    // iOS: AppStrings.swift:4142
+    // iOS: AppStrings.swift:4176
     fun showVehicleHint(): String = tr(R.string.showVehicleHint)
-    // iOS: AppStrings.swift:4147
-    fun fuelPriceSection(): String = tr(R.string.fuelPriceSection)
-    // iOS: AppStrings.swift:4167
-    fun currencyPickerTitle(): String = tr(R.string.currencyPickerTitle)
-    // iOS: AppStrings.swift:4170
-    fun currencyPickerHint(): String = tr(R.string.currencyPickerHint)
-    // iOS: AppStrings.swift:4178
-    fun garageEmptyTitle(): String = tr(R.string.garageEmptyTitle)
     // iOS: AppStrings.swift:4181
+    fun fuelPriceSection(): String = tr(R.string.fuelPriceSection)
+    // iOS: AppStrings.swift:4201
+    fun currencyPickerTitle(): String = tr(R.string.currencyPickerTitle)
+    // iOS: AppStrings.swift:4204
+    fun currencyPickerHint(): String = tr(R.string.currencyPickerHint)
+    // iOS: AppStrings.swift:4212
+    fun garageEmptyTitle(): String = tr(R.string.garageEmptyTitle)
+    // iOS: AppStrings.swift:4215
     fun garageEmptyBody(): String = tr(R.string.garageEmptyBody)
-    // iOS: AppStrings.swift:4189
+    // iOS: AppStrings.swift:4223
     fun deleteVehicleBody(): String = tr(R.string.deleteVehicleBody)
-    // iOS: AppStrings.swift:4194
+    // iOS: AppStrings.swift:4228
     fun vehicleDeletedNote(): String = tr(R.string.vehicleDeletedNote)
-    // iOS: AppStrings.swift:4200
+    // iOS: AppStrings.swift:4234
     fun noVehicleOption(): String = tr(R.string.noVehicleOption)
-    // iOS: AppStrings.swift:4206
+    // iOS: AppStrings.swift:4240
     fun vehicleLevelTitle(): String = tr(R.string.vehicleLevelTitle)
-    // iOS: AppStrings.swift:4230
+    // iOS: AppStrings.swift:4264
     fun vehicleLevelHowGrows(): String = tr(R.string.vehicleLevelHowGrows)
-    // iOS: AppStrings.swift:4233
+    // iOS: AppStrings.swift:4267
     fun vehicleLevelHowGrowsBody(): String = tr(R.string.vehicleLevelHowGrowsBody)
-    // iOS: AppStrings.swift:4238
+    // iOS: AppStrings.swift:4272
     fun vehicleLevelAffects(): String = tr(R.string.vehicleLevelAffects)
-    // iOS: AppStrings.swift:4241
+    // iOS: AppStrings.swift:4275
     fun vehicleLevelAffectsBody(): String = tr(R.string.vehicleLevelAffectsBody)
-    // iOS: AppStrings.swift:4246
+    // iOS: AppStrings.swift:4280
     fun vehicleLevelColors(): String = tr(R.string.vehicleLevelColors)
-    // iOS: AppStrings.swift:4268
-    fun feedSegmentFollowing(): String = tr(R.string.feedSegmentFollowing)
-    // iOS: AppStrings.swift:4271
-    fun followingEmptyTitle(): String = tr(R.string.followingEmptyTitle)
-    // iOS: AppStrings.swift:4274
-    fun followingEmptyBody(): String = tr(R.string.followingEmptyBody)
-    // iOS: AppStrings.swift:4279
-    fun followingGuestTitle(): String = tr(R.string.followingGuestTitle)
-    // iOS: AppStrings.swift:4282
-    fun followingGuestBody(): String = tr(R.string.followingGuestBody)
-    // iOS: AppStrings.swift:4287
-    fun feedEmptyTitle(): String = tr(R.string.feedEmptyTitle)
-    // iOS: AppStrings.swift:4290
-    fun feedEmptyBody(): String = tr(R.string.feedEmptyBody)
-    // iOS: AppStrings.swift:4295
-    fun findPeople(): String = tr(R.string.findPeople)
-    // iOS: AppStrings.swift:4299
-    fun hoursUnitShort(): String = tr(R.string.hoursUnitShort)
     // iOS: AppStrings.swift:4302
-    fun minutesUnitShort(): String = tr(R.string.minutesUnitShort)
-    // iOS: AppStrings.swift:4306
-    fun comments(): String = tr(R.string.comments)
-    // iOS: AppStrings.swift:4311
-    fun activityTitle(): String = tr(R.string.activityTitle)
-    // iOS: AppStrings.swift:4314
-    fun chipReactions(): String = tr(R.string.chipReactions)
-    // iOS: AppStrings.swift:4317
-    fun chipFollows(): String = tr(R.string.chipFollows)
-    // iOS: AppStrings.swift:4320
-    fun chipComments(): String = tr(R.string.chipComments)
+    fun feedSegmentFollowing(): String = tr(R.string.feedSegmentFollowing)
+    // iOS: AppStrings.swift:4305
+    fun followingEmptyTitle(): String = tr(R.string.followingEmptyTitle)
+    // iOS: AppStrings.swift:4308
+    fun followingEmptyBody(): String = tr(R.string.followingEmptyBody)
+    // iOS: AppStrings.swift:4313
+    fun followingGuestTitle(): String = tr(R.string.followingGuestTitle)
+    // iOS: AppStrings.swift:4316
+    fun followingGuestBody(): String = tr(R.string.followingGuestBody)
+    // iOS: AppStrings.swift:4321
+    fun feedEmptyTitle(): String = tr(R.string.feedEmptyTitle)
     // iOS: AppStrings.swift:4324
-    fun chipAchievements(): String = tr(R.string.chipAchievements)
-    // iOS: AppStrings.swift:4327
-    fun today(): String = tr(R.string.today)
-    // iOS: AppStrings.swift:4330
-    fun yesterday(): String = tr(R.string.yesterday)
+    fun feedEmptyBody(): String = tr(R.string.feedEmptyBody)
+    // iOS: AppStrings.swift:4329
+    fun findPeople(): String = tr(R.string.findPeople)
     // iOS: AppStrings.swift:4333
-    fun earlier(): String = tr(R.string.earlier)
+    fun hoursUnitShort(): String = tr(R.string.hoursUnitShort)
     // iOS: AppStrings.swift:4336
+    fun minutesUnitShort(): String = tr(R.string.minutesUnitShort)
+    // iOS: AppStrings.swift:4340
+    fun comments(): String = tr(R.string.comments)
+    // iOS: AppStrings.swift:4345
+    fun activityTitle(): String = tr(R.string.activityTitle)
+    // iOS: AppStrings.swift:4348
+    fun chipReactions(): String = tr(R.string.chipReactions)
+    // iOS: AppStrings.swift:4351
+    fun chipFollows(): String = tr(R.string.chipFollows)
+    // iOS: AppStrings.swift:4354
+    fun chipComments(): String = tr(R.string.chipComments)
+    // iOS: AppStrings.swift:4358
+    fun chipAchievements(): String = tr(R.string.chipAchievements)
+    // iOS: AppStrings.swift:4361
+    fun today(): String = tr(R.string.today)
+    // iOS: AppStrings.swift:4364
+    fun yesterday(): String = tr(R.string.yesterday)
+    // iOS: AppStrings.swift:4367
+    fun earlier(): String = tr(R.string.earlier)
+    // iOS: AppStrings.swift:4370
     fun noFilteredNotifications(): String = tr(R.string.noFilteredNotifications)
-    // iOS: AppStrings.swift:4362
+    // iOS: AppStrings.swift:4396
     fun activityFollowedYou(): String = tr(R.string.activityFollowedYou)
-    // iOS: AppStrings.swift:4401
+    // iOS: AppStrings.swift:4435
     fun activityYourTrip(): String = tr(R.string.activityYourTrip)
-    // iOS: AppStrings.swift:4436
+    // iOS: AppStrings.swift:4470
     fun activityAchievementUnlockedGeneric(): String = tr(R.string.activityAchievementUnlockedGeneric)
-    // iOS: AppStrings.swift:4442
+    // iOS: AppStrings.swift:4476
     fun followBack(): String = tr(R.string.followBack)
-    // iOS: AppStrings.swift:4450
+    // iOS: AppStrings.swift:4484
     fun notifyCompanionsTitle(): String = tr(R.string.notifyCompanionsTitle)
-    // iOS: AppStrings.swift:4453
+    // iOS: AppStrings.swift:4487
     fun notifyCompanionsSubtitle(): String = tr(R.string.notifyCompanionsSubtitle)
-    // iOS: AppStrings.swift:4462
+    // iOS: AppStrings.swift:4496
     fun chipCompanions(): String = tr(R.string.chipCompanions)
-    // iOS: AppStrings.swift:4467
+    // iOS: AppStrings.swift:4501
     fun companionInviteAction(): String = tr(R.string.companionInviteAction)
-    // iOS: AppStrings.swift:4473
+    // iOS: AppStrings.swift:4507
     fun companionAcceptedAction(): String = tr(R.string.companionAcceptedAction)
-    // iOS: AppStrings.swift:4481
+    // iOS: AppStrings.swift:4515
     fun companionInviteAcceptedNote(): String = tr(R.string.companionInviteAcceptedNote)
-    // iOS: AppStrings.swift:4486
-    fun companionInviteDeclinedNote(): String = tr(R.string.companionInviteDeclinedNote)
-    // iOS: AppStrings.swift:4491
-    fun companionAccept(): String = tr(R.string.companionAccept)
-    // iOS: AppStrings.swift:4494
-    fun companionDecline(): String = tr(R.string.companionDecline)
-    // iOS: AppStrings.swift:4497
-    fun companionRespondFailed(): String = tr(R.string.companionRespondFailed)
-    // iOS: AppStrings.swift:4502
-    fun companionInvitePreviewFailed(): String = tr(R.string.companionInvitePreviewFailed)
-    // iOS: AppStrings.swift:4509
-    fun companionTripUnavailable(): String = tr(R.string.companionTripUnavailable)
     // iOS: AppStrings.swift:4520
-    fun companionInviteUnavailableNote(): String = tr(R.string.companionInviteUnavailableNote)
-    // iOS: AppStrings.swift:4529
-    fun suggestedByRegions(): String = tr(R.string.suggestedByRegions)
-    // iOS: AppStrings.swift:4538
-    fun suggestReasonSharedRegion(): String = tr(R.string.suggestReasonSharedRegion)
+    fun companionInviteDeclinedNote(): String = tr(R.string.companionInviteDeclinedNote)
+    // iOS: AppStrings.swift:4525
+    fun companionAccept(): String = tr(R.string.companionAccept)
+    // iOS: AppStrings.swift:4528
+    fun companionDecline(): String = tr(R.string.companionDecline)
+    // iOS: AppStrings.swift:4531
+    fun companionRespondFailed(): String = tr(R.string.companionRespondFailed)
+    // iOS: AppStrings.swift:4536
+    fun companionInvitePreviewFailed(): String = tr(R.string.companionInvitePreviewFailed)
     // iOS: AppStrings.swift:4543
-    fun suggestReasonNearby(): String = tr(R.string.suggestReasonNearby)
-    // iOS: AppStrings.swift:4546
-    fun suggestReasonPopular(): String = tr(R.string.suggestReasonPopular)
-    // iOS: AppStrings.swift:4551
-    fun copyAction(): String = tr(R.string.copyAction)
+    fun companionTripUnavailable(): String = tr(R.string.companionTripUnavailable)
     // iOS: AppStrings.swift:4554
+    fun companionInviteUnavailableNote(): String = tr(R.string.companionInviteUnavailableNote)
+    // iOS: AppStrings.swift:4563
+    fun suggestedByRegions(): String = tr(R.string.suggestedByRegions)
+    // iOS: AppStrings.swift:4572
+    fun suggestReasonSharedRegion(): String = tr(R.string.suggestReasonSharedRegion)
+    // iOS: AppStrings.swift:4577
+    fun suggestReasonNearby(): String = tr(R.string.suggestReasonNearby)
+    // iOS: AppStrings.swift:4580
+    fun suggestReasonPopular(): String = tr(R.string.suggestReasonPopular)
+    // iOS: AppStrings.swift:4585
+    fun copyAction(): String = tr(R.string.copyAction)
+    // iOS: AppStrings.swift:4588
     fun reportAnonymousNote(): String = tr(R.string.reportAnonymousNote)
-    // iOS: AppStrings.swift:4564
+    // iOS: AppStrings.swift:4598
     fun accountSyncTitle(): String = tr(R.string.accountSyncTitle)
-    // iOS: AppStrings.swift:4570
+    // iOS: AppStrings.swift:4604
     fun accountAppleIdOnly(): String = tr(R.string.accountAppleIdOnly)
-    // iOS: AppStrings.swift:4573
+    // iOS: AppStrings.swift:4607
     fun sectionSyncLabel(): String = tr(R.string.sectionSyncLabel)
-    // iOS: AppStrings.swift:4579
+    // iOS: AppStrings.swift:4613
     fun cloudSyncTitle(): String = tr(R.string.cloudSyncTitle)
-    // iOS: AppStrings.swift:4600
-    fun syncStateOn(): String = tr(R.string.syncStateOn)
-    // iOS: AppStrings.swift:4603
-    fun syncStateOff(): String = tr(R.string.syncStateOff)
-    // iOS: AppStrings.swift:4606
-    fun syncPerItemStatus(): String = tr(R.string.syncPerItemStatus)
-    // iOS: AppStrings.swift:4609
-    fun syncAllDone(): String = tr(R.string.syncAllDone)
-    // iOS: AppStrings.swift:4619
-    fun syncOffState(): String = tr(R.string.syncOffState)
-    // iOS: AppStrings.swift:4625
-    fun syncingNow(): String = tr(R.string.syncingNow)
-    // iOS: AppStrings.swift:4631
-    fun sectionPrivacyLabel(): String = tr(R.string.sectionPrivacyLabel)
     // iOS: AppStrings.swift:4634
-    fun publicProfileTitle(): String = tr(R.string.publicProfileTitle)
+    fun syncStateOn(): String = tr(R.string.syncStateOn)
     // iOS: AppStrings.swift:4637
-    fun publicProfileSubtitle(): String = tr(R.string.publicProfileSubtitle)
-    // iOS: AppStrings.swift:4642
-    fun blockedUsersShort(): String = tr(R.string.blockedUsersShort)
-    // iOS: AppStrings.swift:4645
-    fun sectionAccountLabel(): String = tr(R.string.sectionAccountLabel)
-    // iOS: AppStrings.swift:4648
-    fun signOutSubtitle(): String = tr(R.string.signOutSubtitle)
+    fun syncStateOff(): String = tr(R.string.syncStateOff)
+    // iOS: AppStrings.swift:4640
+    fun syncPerItemStatus(): String = tr(R.string.syncPerItemStatus)
+    // iOS: AppStrings.swift:4643
+    fun syncAllDone(): String = tr(R.string.syncAllDone)
     // iOS: AppStrings.swift:4653
+    fun syncOffState(): String = tr(R.string.syncOffState)
+    // iOS: AppStrings.swift:4659
+    fun syncingNow(): String = tr(R.string.syncingNow)
+    // iOS: AppStrings.swift:4665
+    fun sectionPrivacyLabel(): String = tr(R.string.sectionPrivacyLabel)
+    // iOS: AppStrings.swift:4668
+    fun publicProfileTitle(): String = tr(R.string.publicProfileTitle)
+    // iOS: AppStrings.swift:4671
+    fun publicProfileSubtitle(): String = tr(R.string.publicProfileSubtitle)
+    // iOS: AppStrings.swift:4676
+    fun blockedUsersShort(): String = tr(R.string.blockedUsersShort)
+    // iOS: AppStrings.swift:4679
+    fun sectionAccountLabel(): String = tr(R.string.sectionAccountLabel)
+    // iOS: AppStrings.swift:4682
+    fun signOutSubtitle(): String = tr(R.string.signOutSubtitle)
+    // iOS: AppStrings.swift:4687
     fun clearServerTitle(): String = tr(R.string.clearServerTitle)
-    // iOS: AppStrings.swift:4656
+    // iOS: AppStrings.swift:4690
     fun clearServerSubtitle(): String = tr(R.string.clearServerSubtitle)
-    // iOS: AppStrings.swift:4661
+    // iOS: AppStrings.swift:4695
     fun clearServerInProgress(): String = tr(R.string.clearServerInProgress)
-    // iOS: AppStrings.swift:4666
+    // iOS: AppStrings.swift:4700
     fun syncEnableConfirmTitle(): String = tr(R.string.syncEnableConfirmTitle)
-    // iOS: AppStrings.swift:4672
+    // iOS: AppStrings.swift:4706
     fun syncEnableConfirmBody(): String = tr(R.string.syncEnableConfirmBody)
-    // iOS: AppStrings.swift:4677
+    // iOS: AppStrings.swift:4711
     fun syncEnableConfirmAction(): String = tr(R.string.syncEnableConfirmAction)
-    // iOS: AppStrings.swift:4681
+    // iOS: AppStrings.swift:4715
     fun wipeServerConfirmTitle(): String = tr(R.string.wipeServerConfirmTitle)
-    // iOS: AppStrings.swift:4686
+    // iOS: AppStrings.swift:4720
     fun wipeServerConfirmBody(): String = tr(R.string.wipeServerConfirmBody)
-    // iOS: AppStrings.swift:4693
+    // iOS: AppStrings.swift:4727
     fun wipeServerPartial(): String = tr(R.string.wipeServerPartial)
-    // iOS: AppStrings.swift:4698
+    // iOS: AppStrings.swift:4732
     fun wipeServerConfirmAction(): String = tr(R.string.wipeServerConfirmAction)
-    // iOS: AppStrings.swift:4702
+    // iOS: AppStrings.swift:4736
     fun signOutPublishedTitle(): String = tr(R.string.signOutPublishedTitle)
-    // iOS: AppStrings.swift:4707
+    // iOS: AppStrings.swift:4741
     fun signOutHidePublic(): String = tr(R.string.signOutHidePublic)
-    // iOS: AppStrings.swift:4712
+    // iOS: AppStrings.swift:4746
     fun signOutKeepPublic(): String = tr(R.string.signOutKeepPublic)
-    // iOS: AppStrings.swift:4718
+    // iOS: AppStrings.swift:4752
     fun syncSheetTitle(): String = tr(R.string.syncSheetTitle)
-    // iOS: AppStrings.swift:4728
+    // iOS: AppStrings.swift:4762
     fun logsJournalTitle(): String = tr(R.string.logsJournalTitle)
-    // iOS: AppStrings.swift:4731
+    // iOS: AppStrings.swift:4765
     fun logsSendCTA(): String = tr(R.string.logsSendCTA)
-    // iOS: AppStrings.swift:4734
+    // iOS: AppStrings.swift:4768
     fun logsShareFile(): String = tr(R.string.logsShareFile)
-    // iOS: AppStrings.swift:4739
+    // iOS: AppStrings.swift:4773
     fun logsPrivacyCaption(): String = tr(R.string.logsPrivacyCaption)
-    // iOS: AppStrings.swift:4744
+    // iOS: AppStrings.swift:4778
     fun logsEmpty(): String = tr(R.string.logsEmpty)
-    // iOS: AppStrings.swift:4747
+    // iOS: AppStrings.swift:4781
     fun logsLoadFailed(): String = tr(R.string.logsLoadFailed)
-    // iOS: AppStrings.swift:4771
-    fun meGuestName(): String = tr(R.string.meGuestName)
-    // iOS: AppStrings.swift:4776
-    fun meAddYourName(): String = tr(R.string.meAddYourName)
-    // iOS: AppStrings.swift:4779
-    fun achievementsSection(): String = tr(R.string.achievementsSection)
-    // iOS: AppStrings.swift:4789
-    fun achievementPinned(): String = tr(R.string.achievementPinned)
-    // iOS: AppStrings.swift:4792
-    fun achievementsEmpty(): String = tr(R.string.achievementsEmpty)
-    // iOS: AppStrings.swift:4797
-    fun achievementsEmptyHint(): String = tr(R.string.achievementsEmptyHint)
     // iOS: AppStrings.swift:4805
-    fun achievementsEmptyOtherHint(): String = tr(R.string.achievementsEmptyOtherHint)
+    fun meGuestName(): String = tr(R.string.meGuestName)
     // iOS: AppStrings.swift:4810
+    fun meAddYourName(): String = tr(R.string.meAddYourName)
+    // iOS: AppStrings.swift:4813
+    fun achievementsSection(): String = tr(R.string.achievementsSection)
+    // iOS: AppStrings.swift:4823
+    fun achievementPinned(): String = tr(R.string.achievementPinned)
+    // iOS: AppStrings.swift:4826
+    fun achievementsEmpty(): String = tr(R.string.achievementsEmpty)
+    // iOS: AppStrings.swift:4831
+    fun achievementsEmptyHint(): String = tr(R.string.achievementsEmptyHint)
+    // iOS: AppStrings.swift:4839
+    fun achievementsEmptyOtherHint(): String = tr(R.string.achievementsEmptyOtherHint)
+    // iOS: AppStrings.swift:4844
     fun historySection(): String = tr(R.string.historySection)
-    // iOS: AppStrings.swift:4814
+    // iOS: AppStrings.swift:4848
     fun historyModeList(): String = tr(R.string.historyModeList)
-    // iOS: AppStrings.swift:4817
+    // iOS: AppStrings.swift:4851
     fun historyModeGrid(): String = tr(R.string.historyModeGrid)
-    // iOS: AppStrings.swift:4820
+    // iOS: AppStrings.swift:4854
     fun calendarClearFilter(): String = tr(R.string.calendarClearFilter)
-    // iOS: AppStrings.swift:4847
+    // iOS: AppStrings.swift:4881
     fun statsRegions(): String = tr(R.string.statsRegions)
-    // iOS: AppStrings.swift:4877
+    // iOS: AppStrings.swift:4911
     fun statsRecords(): String = tr(R.string.statsRecords)
-    // iOS: AppStrings.swift:4880
+    // iOS: AppStrings.swift:4914
     fun recordLongest(): String = tr(R.string.recordLongest)
-    // iOS: AppStrings.swift:4883
+    // iOS: AppStrings.swift:4917
     fun recordLongestDay(): String = tr(R.string.recordLongestDay)
-    // iOS: AppStrings.swift:4886
+    // iOS: AppStrings.swift:4920
     fun recordPerDay(): String = tr(R.string.recordPerDay)
-    // iOS: AppStrings.swift:4889
-    fun recordStreak(): String = tr(R.string.recordStreak)
-    // iOS: AppStrings.swift:4892
-    fun recordStreakSub(): String = tr(R.string.recordStreakSub)
-    // iOS: AppStrings.swift:4903
-    fun statsEmptyTitle(): String = tr(R.string.statsEmptyTitle)
-    // iOS: AppStrings.swift:4908
-    fun statsEmptyBody(): String = tr(R.string.statsEmptyBody)
-    // iOS: AppStrings.swift:4913
-    fun recordTripCta(): String = tr(R.string.recordTripCta)
-    // iOS: AppStrings.swift:4916
-    fun settingsTitle(): String = tr(R.string.settingsTitle)
     // iOS: AppStrings.swift:4923
-    fun settingsPublicProfile(): String = tr(R.string.settingsPublicProfile)
-    // iOS: AppStrings.swift:4928
-    fun settingsNotifications(): String = tr(R.string.settingsNotifications)
-    // iOS: AppStrings.swift:4938
-    fun adminSectionTitle(): String = tr(R.string.adminSectionTitle)
-    // iOS: AppStrings.swift:4944
-    fun adminNotifyNewUsers(): String = tr(R.string.adminNotifyNewUsers)
-    // iOS: AppStrings.swift:4948
-    fun adminHintNewUsers(): String = tr(R.string.adminHintNewUsers)
+    fun recordStreak(): String = tr(R.string.recordStreak)
+    // iOS: AppStrings.swift:4926
+    fun recordStreakSub(): String = tr(R.string.recordStreakSub)
+    // iOS: AppStrings.swift:4937
+    fun statsEmptyTitle(): String = tr(R.string.statsEmptyTitle)
+    // iOS: AppStrings.swift:4942
+    fun statsEmptyBody(): String = tr(R.string.statsEmptyBody)
+    // iOS: AppStrings.swift:4947
+    fun recordTripCta(): String = tr(R.string.recordTripCta)
+    // iOS: AppStrings.swift:4950
+    fun settingsTitle(): String = tr(R.string.settingsTitle)
     // iOS: AppStrings.swift:4957
-    fun privacyTitle(): String = tr(R.string.privacyTitle)
-    // iOS: AppStrings.swift:4961
-    fun privacyRowSub(): String = tr(R.string.privacyRowSub)
-    // iOS: AppStrings.swift:4966
-    fun privacyPublicProfileSub(): String = tr(R.string.privacyPublicProfileSub)
-    // iOS: AppStrings.swift:4974
-    fun privacyCompanionSub(): String = tr(R.string.privacyCompanionSub)
-    // iOS: AppStrings.swift:4983
-    fun privacyFootnote(): String = tr(R.string.privacyFootnote)
-    // iOS: AppStrings.swift:4988
-    fun settingsInbox(): String = tr(R.string.settingsInbox)
+    fun settingsPublicProfile(): String = tr(R.string.settingsPublicProfile)
+    // iOS: AppStrings.swift:4962
+    fun settingsNotifications(): String = tr(R.string.settingsNotifications)
+    // iOS: AppStrings.swift:4972
+    fun adminSectionTitle(): String = tr(R.string.adminSectionTitle)
+    // iOS: AppStrings.swift:4978
+    fun adminNotifyNewUsers(): String = tr(R.string.adminNotifyNewUsers)
+    // iOS: AppStrings.swift:4982
+    fun adminHintNewUsers(): String = tr(R.string.adminHintNewUsers)
     // iOS: AppStrings.swift:4991
-    fun settingsUnits(): String = tr(R.string.settingsUnits)
-    // iOS: AppStrings.swift:4994
-    fun themeSystem(): String = tr(R.string.themeSystem)
-    // iOS: AppStrings.swift:4997
-    fun settingsAvgSpeed(): String = tr(R.string.settingsAvgSpeed)
+    fun privacyTitle(): String = tr(R.string.privacyTitle)
+    // iOS: AppStrings.swift:4995
+    fun privacyRowSub(): String = tr(R.string.privacyRowSub)
     // iOS: AppStrings.swift:5000
-    fun settingsAccountSync(): String = tr(R.string.settingsAccountSync)
-    // iOS: AppStrings.swift:5003
-    fun settingsShareProfile(): String = tr(R.string.settingsShareProfile)
-    // iOS: AppStrings.swift:5006
-    fun settingsSendLogs(): String = tr(R.string.settingsSendLogs)
-    // iOS: AppStrings.swift:5012
-    fun settingsSendLogsSub(): String = tr(R.string.settingsSendLogsSub)
-    // iOS: AppStrings.swift:5018
-    fun settingsAppPrefs(): String = tr(R.string.settingsAppPrefs)
-    // iOS: AppStrings.swift:5023
-    fun appPrefsFootnote(): String = tr(R.string.appPrefsFootnote)
+    fun privacyPublicProfileSub(): String = tr(R.string.privacyPublicProfileSub)
+    // iOS: AppStrings.swift:5008
+    fun privacyCompanionSub(): String = tr(R.string.privacyCompanionSub)
+    // iOS: AppStrings.swift:5017
+    fun privacyFootnote(): String = tr(R.string.privacyFootnote)
+    // iOS: AppStrings.swift:5022
+    fun settingsInbox(): String = tr(R.string.settingsInbox)
+    // iOS: AppStrings.swift:5025
+    fun settingsUnits(): String = tr(R.string.settingsUnits)
     // iOS: AppStrings.swift:5028
-    fun settingsProfileBackground(): String = tr(R.string.settingsProfileBackground)
+    fun themeSystem(): String = tr(R.string.themeSystem)
     // iOS: AppStrings.swift:5031
-    fun rankProgressTitle(): String = tr(R.string.rankProgressTitle)
+    fun settingsAvgSpeed(): String = tr(R.string.settingsAvgSpeed)
     // iOS: AppStrings.swift:5034
-    fun awards(): String = tr(R.string.awards)
+    fun settingsAccountSync(): String = tr(R.string.settingsAccountSync)
     // iOS: AppStrings.swift:5037
+    fun settingsShareProfile(): String = tr(R.string.settingsShareProfile)
+    // iOS: AppStrings.swift:5040
+    fun settingsSendLogs(): String = tr(R.string.settingsSendLogs)
+    // iOS: AppStrings.swift:5046
+    fun settingsSendLogsSub(): String = tr(R.string.settingsSendLogsSub)
+    // iOS: AppStrings.swift:5052
+    fun settingsAppPrefs(): String = tr(R.string.settingsAppPrefs)
+    // iOS: AppStrings.swift:5057
+    fun appPrefsFootnote(): String = tr(R.string.appPrefsFootnote)
+    // iOS: AppStrings.swift:5062
+    fun settingsProfileBackground(): String = tr(R.string.settingsProfileBackground)
+    // iOS: AppStrings.swift:5065
+    fun rankProgressTitle(): String = tr(R.string.rankProgressTitle)
+    // iOS: AppStrings.swift:5068
+    fun awards(): String = tr(R.string.awards)
+    // iOS: AppStrings.swift:5071
     fun nameEditorTitle(): String = tr(R.string.nameEditorTitle)
-    // iOS: AppStrings.swift:5067
+    // iOS: AppStrings.swift:5101
     fun followDepthNote(): String = tr(R.string.followDepthNote)
-    // iOS: AppStrings.swift:5112
+    // iOS: AppStrings.swift:5146
     fun moreActions(): String = tr(R.string.moreActions)
-    // iOS: AppStrings.swift:5115
+    // iOS: AppStrings.swift:5149
     fun openRouteMapA11y(): String = tr(R.string.openRouteMapA11y)
-    // iOS: AppStrings.swift:5120
+    // iOS: AppStrings.swift:5154
     fun openPhotoAction(): String = tr(R.string.openPhotoAction)
-    // iOS: AppStrings.swift:5124
+    // iOS: AppStrings.swift:5158
     fun editTitleA11y(): String = tr(R.string.editTitleA11y)
-    // iOS: AppStrings.swift:5127
+    // iOS: AppStrings.swift:5161
     fun blockedListLoadFailed(): String = tr(R.string.blockedListLoadFailed)
-    // iOS: AppStrings.swift:5133
+    // iOS: AppStrings.swift:5167
     fun followersCaption(n: Int): String = plural(R.plurals.followersCaption, n)
-    // iOS: AppStrings.swift:5150
+    // iOS: AppStrings.swift:5184
     fun followingCaption(n: Int): String = plural(R.plurals.followingCaption, n)
-    // iOS: AppStrings.swift:5172
-    fun edit(): String = tr(R.string.edit)
-    // iOS: AppStrings.swift:5175
-    fun makePrivateAction(): String = tr(R.string.makePrivateAction)
-    // iOS: AppStrings.swift:5182
-    fun tripHiddenToast(): String = tr(R.string.tripHiddenToast)
-    // iOS: AppStrings.swift:5185
-    fun tripDeletedToast(): String = tr(R.string.tripDeletedToast)
-    // iOS: AppStrings.swift:5188
-    fun undoAction(): String = tr(R.string.undoAction)
-    // iOS: AppStrings.swift:5192
-    fun hideFromFeedAlertTitle(): String = tr(R.string.hideFromFeedAlertTitle)
-    // iOS: AppStrings.swift:5198
-    fun hideFromFeedAlertBody(): String = tr(R.string.hideFromFeedAlertBody)
-    // iOS: AppStrings.swift:5203
-    fun hideFromFeedAlertConfirm(): String = tr(R.string.hideFromFeedAlertConfirm)
     // iOS: AppStrings.swift:5206
-    fun deleteTripAlertTitle(): String = tr(R.string.deleteTripAlertTitle)
+    fun edit(): String = tr(R.string.edit)
     // iOS: AppStrings.swift:5209
+    fun makePrivateAction(): String = tr(R.string.makePrivateAction)
+    // iOS: AppStrings.swift:5216
+    fun tripHiddenToast(): String = tr(R.string.tripHiddenToast)
+    // iOS: AppStrings.swift:5219
+    fun tripDeletedToast(): String = tr(R.string.tripDeletedToast)
+    // iOS: AppStrings.swift:5222
+    fun undoAction(): String = tr(R.string.undoAction)
+    // iOS: AppStrings.swift:5226
+    fun hideFromFeedAlertTitle(): String = tr(R.string.hideFromFeedAlertTitle)
+    // iOS: AppStrings.swift:5232
+    fun hideFromFeedAlertBody(): String = tr(R.string.hideFromFeedAlertBody)
+    // iOS: AppStrings.swift:5237
+    fun hideFromFeedAlertConfirm(): String = tr(R.string.hideFromFeedAlertConfirm)
+    // iOS: AppStrings.swift:5240
+    fun deleteTripAlertTitle(): String = tr(R.string.deleteTripAlertTitle)
+    // iOS: AppStrings.swift:5243
     fun deleteTripAlertBody(): String = tr(R.string.deleteTripAlertBody)
-    // iOS: AppStrings.swift:5214
+    // iOS: AppStrings.swift:5248
     fun deleteTripAlertConfirm(): String = tr(R.string.deleteTripAlertConfirm)
-    // iOS: AppStrings.swift:5217
+    // iOS: AppStrings.swift:5251
     fun no(): String = tr(R.string.no)
-    // iOS: AppStrings.swift:5221
+    // iOS: AppStrings.swift:5255
     fun makePrivateConfirmTitle(): String = tr(R.string.makePrivateConfirmTitle)
-    // iOS: AppStrings.swift:5228
-    fun commentsSeeAll(): String = tr(R.string.commentsSeeAll)
-    // iOS: AppStrings.swift:5231
-    fun commentReply(): String = tr(R.string.commentReply)
-    // iOS: AppStrings.swift:5253
-    fun signInShort(): String = tr(R.string.signInShort)
-    // iOS: AppStrings.swift:5257
-    fun shareTripTitle(): String = tr(R.string.shareTripTitle)
     // iOS: AppStrings.swift:5262
-    fun shareCardCaption(): String = tr(R.string.shareCardCaption)
-    // iOS: AppStrings.swift:5267
-    fun shareCopyLink(): String = tr(R.string.shareCopyLink)
-    // iOS: AppStrings.swift:5272
-    fun closeSheet(): String = tr(R.string.closeSheet)
-    // iOS: AppStrings.swift:5275
-    fun reportProfileAction(): String = tr(R.string.reportProfileAction)
-    // iOS: AppStrings.swift:5284
-    fun blockProfileUnblock(): String = tr(R.string.blockProfileUnblock)
+    fun commentsSeeAll(): String = tr(R.string.commentsSeeAll)
+    // iOS: AppStrings.swift:5265
+    fun commentReply(): String = tr(R.string.commentReply)
     // iOS: AppStrings.swift:5287
-    fun blockProfileBlock(): String = tr(R.string.blockProfileBlock)
-    // iOS: AppStrings.swift:5314
-    fun copyProfileLink(): String = tr(R.string.copyProfileLink)
+    fun signInShort(): String = tr(R.string.signInShort)
+    // iOS: AppStrings.swift:5291
+    fun shareTripTitle(): String = tr(R.string.shareTripTitle)
+    // iOS: AppStrings.swift:5296
+    fun shareCardCaption(): String = tr(R.string.shareCardCaption)
+    // iOS: AppStrings.swift:5301
+    fun shareCopyLink(): String = tr(R.string.shareCopyLink)
+    // iOS: AppStrings.swift:5306
+    fun closeSheet(): String = tr(R.string.closeSheet)
+    // iOS: AppStrings.swift:5309
+    fun reportProfileAction(): String = tr(R.string.reportProfileAction)
     // iOS: AppStrings.swift:5318
+    fun blockProfileUnblock(): String = tr(R.string.blockProfileUnblock)
+    // iOS: AppStrings.swift:5321
+    fun blockProfileBlock(): String = tr(R.string.blockProfileBlock)
+    // iOS: AppStrings.swift:5348
+    fun copyProfileLink(): String = tr(R.string.copyProfileLink)
+    // iOS: AppStrings.swift:5352
     fun profileLinkCopied(): String = tr(R.string.profileLinkCopied)
-    // iOS: AppStrings.swift:5323
+    // iOS: AppStrings.swift:5357
     fun profileNameCopied(): String = tr(R.string.profileNameCopied)
-    // iOS: AppStrings.swift:5327
+    // iOS: AppStrings.swift:5361
     fun commentRateLimited(): String = tr(R.string.commentRateLimited)
-    // iOS: AppStrings.swift:5335
+    // iOS: AppStrings.swift:5369
     fun companionsSection(): String = tr(R.string.companionsSection)
-    // iOS: AppStrings.swift:5338
-    fun companionsAddPrompt(): String = tr(R.string.companionsAddPrompt)
-    // iOS: AppStrings.swift:5341
-    fun companionsEmptyHint(): String = tr(R.string.companionsEmptyHint)
-    // iOS: AppStrings.swift:5350
-    fun companionsPublishFirstHint(): String = tr(R.string.companionsPublishFirstHint)
-    // iOS: AppStrings.swift:5360
-    fun companionsSignInHint(): String = tr(R.string.companionsSignInHint)
-    // iOS: AppStrings.swift:5368
-    fun companionsInvite(): String = tr(R.string.companionsInvite)
     // iOS: AppStrings.swift:5372
-    fun companionsWaiting(): String = tr(R.string.companionsWaiting)
-    // iOS: AppStrings.swift:5379
-    fun companionsDeclinedNote(): String = tr(R.string.companionsDeclinedNote)
-    // iOS: AppStrings.swift:5383
-    fun companionsNoName(): String = tr(R.string.companionsNoName)
-    // iOS: AppStrings.swift:5391
-    fun companionsRodeWithYou(): String = tr(R.string.companionsRodeWithYou)
-    // iOS: AppStrings.swift:5397
-    fun companionsRodeTogether(): String = tr(R.string.companionsRodeTogether)
+    fun companionsAddPrompt(): String = tr(R.string.companionsAddPrompt)
+    // iOS: AppStrings.swift:5375
+    fun companionsEmptyHint(): String = tr(R.string.companionsEmptyHint)
+    // iOS: AppStrings.swift:5384
+    fun companionsPublishFirstHint(): String = tr(R.string.companionsPublishFirstHint)
+    // iOS: AppStrings.swift:5394
+    fun companionsSignInHint(): String = tr(R.string.companionsSignInHint)
     // iOS: AppStrings.swift:5402
+    fun companionsInvite(): String = tr(R.string.companionsInvite)
+    // iOS: AppStrings.swift:5406
+    fun companionsWaiting(): String = tr(R.string.companionsWaiting)
+    // iOS: AppStrings.swift:5413
+    fun companionsDeclinedNote(): String = tr(R.string.companionsDeclinedNote)
+    // iOS: AppStrings.swift:5417
+    fun companionsNoName(): String = tr(R.string.companionsNoName)
+    // iOS: AppStrings.swift:5425
+    fun companionsRodeWithYou(): String = tr(R.string.companionsRodeWithYou)
+    // iOS: AppStrings.swift:5431
+    fun companionsRodeTogether(): String = tr(R.string.companionsRodeTogether)
+    // iOS: AppStrings.swift:5436
     fun companionsAwaitingReply(count: Int): String = plural(R.plurals.companionsAwaitingReply, count)
-    // iOS: AppStrings.swift:5447
+    // iOS: AppStrings.swift:5481
     fun companionsAllDeclined(count: Int): String = plural(R.plurals.companionsAllDeclined, count)
-    // iOS: AppStrings.swift:5487
+    // iOS: AppStrings.swift:5521
     fun companionsLoadFailed(): String = tr(R.string.companionsLoadFailed)
-    // iOS: AppStrings.swift:5497
+    // iOS: AppStrings.swift:5531
     fun companionsCachedNotice(): String = tr(R.string.companionsCachedNotice)
-    // iOS: AppStrings.swift:5524
+    // iOS: AppStrings.swift:5558
     fun companionsRemoveFailed(): String = tr(R.string.companionsRemoveFailed)
-    // iOS: AppStrings.swift:5533
+    // iOS: AppStrings.swift:5567
     fun companionPhotoUploadFailed(): String = tr(R.string.companionPhotoUploadFailed)
-    // iOS: AppStrings.swift:5541
+    // iOS: AppStrings.swift:5575
     fun companionPhotoUploadDegraded(): String = tr(R.string.companionPhotoUploadDegraded)
-    // iOS: AppStrings.swift:5574
+    // iOS: AppStrings.swift:5608
     fun companionPhotoReloadFailed(): String = tr(R.string.companionPhotoReloadFailed)
-    // iOS: AppStrings.swift:5582
+    // iOS: AppStrings.swift:5616
     fun companionPhotoDeleteFailed(): String = tr(R.string.companionPhotoDeleteFailed)
-    // iOS: AppStrings.swift:5587
-    fun companionsRemoveConfirmTitle(): String = tr(R.string.companionsRemoveConfirmTitle)
-    // iOS: AppStrings.swift:5594
-    fun companionsRemove(): String = tr(R.string.companionsRemove)
-    // iOS: AppStrings.swift:5601
-    fun companionsLeaveTrip(): String = tr(R.string.companionsLeaveTrip)
-    // iOS: AppStrings.swift:5604
-    fun companionsLeaveConfirmTitle(): String = tr(R.string.companionsLeaveConfirmTitle)
-    // iOS: AppStrings.swift:5607
-    fun companionsLeaveFailed(): String = tr(R.string.companionsLeaveFailed)
-    // iOS: AppStrings.swift:5618
-    fun companionsPickerTitle(): String = tr(R.string.companionsPickerTitle)
     // iOS: AppStrings.swift:5621
-    fun companionsSearchPlaceholder(): String = tr(R.string.companionsSearchPlaceholder)
+    fun companionsRemoveConfirmTitle(): String = tr(R.string.companionsRemoveConfirmTitle)
     // iOS: AppStrings.swift:5628
-    fun companionsCandidatesEmptyTitle(): String = tr(R.string.companionsCandidatesEmptyTitle)
-    // iOS: AppStrings.swift:5631
-    fun companionsCandidatesEmptyHint(): String = tr(R.string.companionsCandidatesEmptyHint)
-    // iOS: AppStrings.swift:5636
-    fun companionsCandidatesLoadFailed(): String = tr(R.string.companionsCandidatesLoadFailed)
+    fun companionsRemove(): String = tr(R.string.companionsRemove)
+    // iOS: AppStrings.swift:5635
+    fun companionsLeaveTrip(): String = tr(R.string.companionsLeaveTrip)
+    // iOS: AppStrings.swift:5638
+    fun companionsLeaveConfirmTitle(): String = tr(R.string.companionsLeaveConfirmTitle)
     // iOS: AppStrings.swift:5641
-    fun companionsInviteFailed(): String = tr(R.string.companionsInviteFailed)
-    // iOS: AppStrings.swift:5646
-    fun companionsInvited(): String = tr(R.string.companionsInvited)
+    fun companionsLeaveFailed(): String = tr(R.string.companionsLeaveFailed)
+    // iOS: AppStrings.swift:5652
+    fun companionsPickerTitle(): String = tr(R.string.companionsPickerTitle)
     // iOS: AppStrings.swift:5655
+    fun companionsSearchPlaceholder(): String = tr(R.string.companionsSearchPlaceholder)
+    // iOS: AppStrings.swift:5662
+    fun companionsCandidatesEmptyTitle(): String = tr(R.string.companionsCandidatesEmptyTitle)
+    // iOS: AppStrings.swift:5665
+    fun companionsCandidatesEmptyHint(): String = tr(R.string.companionsCandidatesEmptyHint)
+    // iOS: AppStrings.swift:5670
+    fun companionsCandidatesLoadFailed(): String = tr(R.string.companionsCandidatesLoadFailed)
+    // iOS: AppStrings.swift:5675
+    fun companionsInviteFailed(): String = tr(R.string.companionsInviteFailed)
+    // iOS: AppStrings.swift:5680
+    fun companionsInvited(): String = tr(R.string.companionsInvited)
+    // iOS: AppStrings.swift:5689
     fun withMeSection(): String = tr(R.string.withMeSection)
-    // iOS: AppStrings.swift:5658
+    // iOS: AppStrings.swift:5692
     fun withMeLoadFailed(): String = tr(R.string.withMeLoadFailed)
-    // iOS: AppStrings.swift:5667
+    // iOS: AppStrings.swift:5701
     fun withMeDriverNoName(): String = tr(R.string.withMeDriverNoName)
-    // iOS: AppStrings.swift:5688
+    // iOS: AppStrings.swift:5722
     fun achievementsCollectHint(): String = tr(R.string.achievementsCollectHint)
-    // iOS: AppStrings.swift:5693
+    // iOS: AppStrings.swift:5727
     fun achievementsFilterAll(): String = tr(R.string.achievementsFilterAll)
-    // iOS: AppStrings.swift:5696
+    // iOS: AppStrings.swift:5730
     fun achievementsFilterUnlocked(): String = tr(R.string.achievementsFilterUnlocked)
-    // iOS: AppStrings.swift:5699
+    // iOS: AppStrings.swift:5733
     fun achievementsFilterSecret(): String = tr(R.string.achievementsFilterSecret)
-    // iOS: AppStrings.swift:5705
+    // iOS: AppStrings.swift:5739
     fun achievementsSecretTitle(): String = tr(R.string.achievementsSecretTitle)
-    // iOS: AppStrings.swift:5708
+    // iOS: AppStrings.swift:5742
     fun achievementsSecretCaption(): String = tr(R.string.achievementsSecretCaption)
-    // iOS: AppStrings.swift:5755
+    // iOS: AppStrings.swift:5789
     fun achievementDetailTitle(): String = tr(R.string.achievementDetailTitle)
-    // iOS: AppStrings.swift:5758
+    // iOS: AppStrings.swift:5792
     fun achievementPin(): String = tr(R.string.achievementPin)
-    // iOS: AppStrings.swift:5761
+    // iOS: AppStrings.swift:5795
     fun achievementUnpin(): String = tr(R.string.achievementUnpin)
-    // iOS: AppStrings.swift:5764
+    // iOS: AppStrings.swift:5798
     fun achievementPinConfirmTitle(): String = tr(R.string.achievementPinConfirmTitle)
-    // iOS: AppStrings.swift:5774
+    // iOS: AppStrings.swift:5808
     fun achievementPinConfirmBody(): String = tr(R.string.achievementPinConfirmBody)
-    // iOS: AppStrings.swift:5790
+    // iOS: AppStrings.swift:5824
     fun myProfileTitle(): String = tr(R.string.myProfileTitle)
-    // iOS: AppStrings.swift:5793
+    // iOS: AppStrings.swift:5827
     fun myProfileChangeAvatar(): String = tr(R.string.myProfileChangeAvatar)
-    // iOS: AppStrings.swift:5797
+    // iOS: AppStrings.swift:5831
     fun myProfileAvatarHint(): String = tr(R.string.myProfileAvatarHint)
-    // iOS: AppStrings.swift:5814
+    // iOS: AppStrings.swift:5848
     fun myProfileRowLevel(): String = tr(R.string.myProfileRowLevel)
-    // iOS: AppStrings.swift:5817
+    // iOS: AppStrings.swift:5851
     fun myProfileRowCountry(): String = tr(R.string.myProfileRowCountry)
-    // iOS: AppStrings.swift:5821
+    // iOS: AppStrings.swift:5855
     fun myProfileRowPreview(): String = tr(R.string.myProfileRowPreview)
-    // iOS: AppStrings.swift:5849
+    // iOS: AppStrings.swift:5883
     fun myProfileUsernameUnset(): String = tr(R.string.myProfileUsernameUnset)
-    // iOS: AppStrings.swift:5852
+    // iOS: AppStrings.swift:5886
     fun myProfileAboutUnset(): String = tr(R.string.myProfileAboutUnset)
-    // iOS: AppStrings.swift:5865
+    // iOS: AppStrings.swift:5899
     fun usernameTitle(): String = tr(R.string.usernameTitle)
-    // iOS: AppStrings.swift:5871
+    // iOS: AppStrings.swift:5905
     fun usernameHint(): String = tr(R.string.usernameHint)
-    // iOS: AppStrings.swift:5876
-    fun usernameFree(): String = tr(R.string.usernameFree)
-    // iOS: AppStrings.swift:5879
-    fun usernameTaken(): String = tr(R.string.usernameTaken)
-    // iOS: AppStrings.swift:5882
-    fun usernameTooShort(): String = tr(R.string.usernameTooShort)
-    // iOS: AppStrings.swift:5885
-    fun usernameInvalidChars(): String = tr(R.string.usernameInvalidChars)
-    // iOS: AppStrings.swift:5892
-    fun usernameTakenHint(): String = tr(R.string.usernameTakenHint)
-    // iOS: AppStrings.swift:5898
-    fun usernameCheckFailed(): String = tr(R.string.usernameCheckFailed)
-    // iOS: AppStrings.swift:5907
-    fun aboutTitle(): String = tr(R.string.aboutTitle)
     // iOS: AppStrings.swift:5910
-    fun aboutHint(): String = tr(R.string.aboutHint)
-    // iOS: AppStrings.swift:5918
-    fun countryTitle(): String = tr(R.string.countryTitle)
-    // iOS: AppStrings.swift:5921
-    fun countryHint(): String = tr(R.string.countryHint)
+    fun usernameFree(): String = tr(R.string.usernameFree)
+    // iOS: AppStrings.swift:5913
+    fun usernameTaken(): String = tr(R.string.usernameTaken)
+    // iOS: AppStrings.swift:5916
+    fun usernameTooShort(): String = tr(R.string.usernameTooShort)
+    // iOS: AppStrings.swift:5919
+    fun usernameInvalidChars(): String = tr(R.string.usernameInvalidChars)
     // iOS: AppStrings.swift:5926
-    fun countrySectionAll(): String = tr(R.string.countrySectionAll)
-    // iOS: AppStrings.swift:5929
-    fun countryNone(): String = tr(R.string.countryNone)
+    fun usernameTakenHint(): String = tr(R.string.usernameTakenHint)
     // iOS: AppStrings.swift:5932
-    fun countryWorld(): String = tr(R.string.countryWorld)
-    // iOS: AppStrings.swift:5935
-    fun countryNeutral(): String = tr(R.string.countryNeutral)
+    fun usernameCheckFailed(): String = tr(R.string.usernameCheckFailed)
+    // iOS: AppStrings.swift:5941
+    fun aboutTitle(): String = tr(R.string.aboutTitle)
     // iOS: AppStrings.swift:5944
+    fun aboutHint(): String = tr(R.string.aboutHint)
+    // iOS: AppStrings.swift:5952
+    fun countryTitle(): String = tr(R.string.countryTitle)
+    // iOS: AppStrings.swift:5955
+    fun countryHint(): String = tr(R.string.countryHint)
+    // iOS: AppStrings.swift:5960
+    fun countrySectionAll(): String = tr(R.string.countrySectionAll)
+    // iOS: AppStrings.swift:5963
+    fun countryNone(): String = tr(R.string.countryNone)
+    // iOS: AppStrings.swift:5966
+    fun countryWorld(): String = tr(R.string.countryWorld)
+    // iOS: AppStrings.swift:5969
+    fun countryNeutral(): String = tr(R.string.countryNeutral)
+    // iOS: AppStrings.swift:5978
     fun levelsTitle(): String = tr(R.string.levelsTitle)
-    // iOS: AppStrings.swift:5996
+    // iOS: AppStrings.swift:6030
     fun levelsRankRangePrefix(): String = tr(R.string.levelsRankRangePrefix)
-    // iOS: AppStrings.swift:6013
+    // iOS: AppStrings.swift:6047
     fun levelsHowToEarn(): String = tr(R.string.levelsHowToEarn)
-    // iOS: AppStrings.swift:6016
+    // iOS: AppStrings.swift:6050
     fun levelsAllRanks(): String = tr(R.string.levelsAllRanks)
-    // iOS: AppStrings.swift:6021
-    fun levelsCurrentMarker(): String = tr(R.string.levelsCurrentMarker)
-    // iOS: AppStrings.swift:6051
-    fun levelsMaxLevel(): String = tr(R.string.levelsMaxLevel)
     // iOS: AppStrings.swift:6055
+    fun levelsCurrentMarker(): String = tr(R.string.levelsCurrentMarker)
+    // iOS: AppStrings.swift:6085
+    fun levelsMaxLevel(): String = tr(R.string.levelsMaxLevel)
+    // iOS: AppStrings.swift:6089
     fun levelsFinalRank(): String = tr(R.string.levelsFinalRank)
-    // iOS: AppStrings.swift:6060
+    // iOS: AppStrings.swift:6094
     fun levelsRuleKmBadge(): String = tr(R.string.levelsRuleKmBadge)
-    // iOS: AppStrings.swift:6063
+    // iOS: AppStrings.swift:6097
     fun levelsRuleKm(): String = tr(R.string.levelsRuleKm)
-    // iOS: AppStrings.swift:6066
+    // iOS: AppStrings.swift:6100
     fun levelsRuleFirstBadge(): String = tr(R.string.levelsRuleFirstBadge)
-    // iOS: AppStrings.swift:6069
+    // iOS: AppStrings.swift:6103
     fun levelsRuleFirst(): String = tr(R.string.levelsRuleFirst)
-    // iOS: AppStrings.swift:6074
+    // iOS: AppStrings.swift:6108
     fun levelsRuleRegionBadge(): String = tr(R.string.levelsRuleRegionBadge)
-    // iOS: AppStrings.swift:6077
+    // iOS: AppStrings.swift:6111
     fun levelsRuleRegion(): String = tr(R.string.levelsRuleRegion)
-    // iOS: AppStrings.swift:6083
+    // iOS: AppStrings.swift:6117
     fun levelsRuleLongBadge(): String = tr(R.string.levelsRuleLongBadge)
-    // iOS: AppStrings.swift:6086
+    // iOS: AppStrings.swift:6120
     fun levelsRuleLong(): String = tr(R.string.levelsRuleLong)
-    // iOS: AppStrings.swift:6099
+    // iOS: AppStrings.swift:6133
     fun settingsCompanionAdds(): String = tr(R.string.settingsCompanionAdds)
-    // iOS: AppStrings.swift:6106
+    // iOS: AppStrings.swift:6140
     fun settingsWriteToAuthorSub(): String = tr(R.string.settingsWriteToAuthorSub)
-    // iOS: AppStrings.swift:6109
+    // iOS: AppStrings.swift:6143
     fun settingsTelegramSub(): String = tr(R.string.settingsTelegramSub)
-    // iOS: AppStrings.swift:6114
+    // iOS: AppStrings.swift:6148
     fun settingsHintTitle(): String = tr(R.string.settingsHintTitle)
-    // iOS: AppStrings.swift:6119
+    // iOS: AppStrings.swift:6153
     fun settingsHintPublicProfile(): String = tr(R.string.settingsHintPublicProfile)
-    // iOS: AppStrings.swift:6127
+    // iOS: AppStrings.swift:6161
     fun settingsHintNotifications(): String = tr(R.string.settingsHintNotifications)
-    // iOS: AppStrings.swift:6132
+    // iOS: AppStrings.swift:6166
     fun settingsHintCompanionAdds(): String = tr(R.string.settingsHintCompanionAdds)
-    // iOS: AppStrings.swift:6141
+    // iOS: AppStrings.swift:6175
     fun unitsPickerFootnote(): String = tr(R.string.unitsPickerFootnote)
-    // iOS: AppStrings.swift:6146
+    // iOS: AppStrings.swift:6180
     fun languagePickerFootnote(): String = tr(R.string.languagePickerFootnote)
-    // iOS: AppStrings.swift:6151
+    // iOS: AppStrings.swift:6185
     fun themePickerFootnote(): String = tr(R.string.themePickerFootnote)
-    // iOS: AppStrings.swift:6159
+    // iOS: AppStrings.swift:6193
     fun loadingTrips(): String = tr(R.string.loadingTrips)
-    // iOS: AppStrings.swift:6165
+    // iOS: AppStrings.swift:6199
     fun loadingGeneric(): String = tr(R.string.loadingGeneric)
-    // iOS: AppStrings.swift:6169
+    // iOS: AppStrings.swift:6203
     fun avgSpeedPickerFootnote(): String = tr(R.string.avgSpeedPickerFootnote)
-    // iOS: AppStrings.swift:6177
+    // iOS: AppStrings.swift:6211
     fun statsYearAgoToday(): String = tr(R.string.statsYearAgoToday)
-    // iOS: AppStrings.swift:6231
+    // iOS: AppStrings.swift:6265
     fun statsNewPlaces(): String = tr(R.string.statsNewPlaces)
-    // iOS: AppStrings.swift:6327
+    // iOS: AppStrings.swift:6361
     fun recordLongestDaySubtitle(): String = tr(R.string.recordLongestDaySubtitle)
-    // iOS: AppStrings.swift:6330
+    // iOS: AppStrings.swift:6364
     fun statsRecordMostPhotos(): String = tr(R.string.statsRecordMostPhotos)
-    // iOS: AppStrings.swift:6333
+    // iOS: AppStrings.swift:6367
     fun statsRecordChampionRoad(): String = tr(R.string.statsRecordChampionRoad)
-    // iOS: AppStrings.swift:6336
+    // iOS: AppStrings.swift:6370
     fun statsRecordFarthest(): String = tr(R.string.statsRecordFarthest)
-    // iOS: AppStrings.swift:6412
+    // iOS: AppStrings.swift:6446
     fun previewBannerSubtitle(): String = tr(R.string.previewBannerSubtitle)
-    // iOS: AppStrings.swift:6419
-    fun previewBannerBody(): String = tr(R.string.previewBannerBody)
-    // iOS: AppStrings.swift:6425
-    fun previewThisIsYou(): String = tr(R.string.previewThisIsYou)
-    // iOS: AppStrings.swift:6435
-    fun vehicleTypeCar(): String = tr(R.string.vehicleTypeCar)
-    // iOS: AppStrings.swift:6438
-    fun vehicleTypeMoto(): String = tr(R.string.vehicleTypeMoto)
-    // iOS: AppStrings.swift:6441
-    fun vehicleTypeMoped(): String = tr(R.string.vehicleTypeMoped)
-    // iOS: AppStrings.swift:6444
-    fun vehicleTypeBike(): String = tr(R.string.vehicleTypeBike)
-    // iOS: AppStrings.swift:6447
-    fun contentFilterContainsInappropriateLanguage(): String = tr(R.string.contentFilterContainsInappropriateLanguage)
     // iOS: AppStrings.swift:6453
+    fun previewBannerBody(): String = tr(R.string.previewBannerBody)
+    // iOS: AppStrings.swift:6459
+    fun previewThisIsYou(): String = tr(R.string.previewThisIsYou)
+    // iOS: AppStrings.swift:6469
+    fun vehicleTypeCar(): String = tr(R.string.vehicleTypeCar)
+    // iOS: AppStrings.swift:6472
+    fun vehicleTypeMoto(): String = tr(R.string.vehicleTypeMoto)
+    // iOS: AppStrings.swift:6475
+    fun vehicleTypeMoped(): String = tr(R.string.vehicleTypeMoped)
+    // iOS: AppStrings.swift:6478
+    fun vehicleTypeBike(): String = tr(R.string.vehicleTypeBike)
+    // iOS: AppStrings.swift:6481
+    fun contentFilterContainsInappropriateLanguage(): String = tr(R.string.contentFilterContainsInappropriateLanguage)
+    // iOS: AppStrings.swift:6487
     fun contentFilterMustContainAt(): String = tr(R.string.contentFilterMustContainAt)
-    // iOS: AppStrings.swift:6458
+    // iOS: AppStrings.swift:6492
     fun contentFilterTooManyRepeated(): String = tr(R.string.contentFilterTooManyRepeated)
-    // iOS: AppStrings.swift:6463
-    fun contentFilterTooManySymbols(): String = tr(R.string.contentFilterTooManySymbols)
-    // iOS: AppStrings.swift:6468
-    fun contentFilterMixingLatinAnd(): String = tr(R.string.contentFilterMixingLatinAnd)
-    // iOS: AppStrings.swift:6473
-    fun relativeTripDateJustNow(): String = tr(R.string.relativeTripDateJustNow)
-    // iOS: AppStrings.swift:6476
-    fun feedViewModelThisMonth(): String = tr(R.string.feedViewModelThisMonth)
-    // iOS: AppStrings.swift:6479
-    fun feedViewModelLastMonth(): String = tr(R.string.feedViewModelLastMonth)
-    // iOS: AppStrings.swift:6482
-    fun badgeDetailHiddenAchievement(): String = tr(R.string.badgeDetailHiddenAchievement)
-    // iOS: AppStrings.swift:6485
-    fun badgeDetailLocked(): String = tr(R.string.badgeDetailLocked)
-    // iOS: AppStrings.swift:6488
-    fun fullscreenMapClearPlayback(): String = tr(R.string.fullscreenMapClearPlayback)
-    // iOS: AppStrings.swift:6491
-    fun fullscreenMapZoomIn(): String = tr(R.string.fullscreenMapZoomIn)
-    // iOS: AppStrings.swift:6494
-    fun fullscreenMapZoomOut(): String = tr(R.string.fullscreenMapZoomOut)
     // iOS: AppStrings.swift:6497
-    fun feedLoadingFeed(): String = tr(R.string.feedLoadingFeed)
-    // iOS: AppStrings.swift:6500
-    fun feedServerUnreachable(): String = tr(R.string.feedServerUnreachable)
-    // iOS: AppStrings.swift:6503
-    fun feedSyncIncomplete(): String = tr(R.string.feedSyncIncomplete)
-    // iOS: AppStrings.swift:6506
-    fun feedTryADifferent(): String = tr(R.string.feedTryADifferent)
-    // iOS: AppStrings.swift:6512
-    fun feedAFewItems(): String = tr(R.string.feedAFewItems)
-    // iOS: AppStrings.swift:6517
-    fun feedOfflineTripsAre(): String = tr(R.string.feedOfflineTripsAre)
+    fun contentFilterTooManySymbols(): String = tr(R.string.contentFilterTooManySymbols)
+    // iOS: AppStrings.swift:6502
+    fun contentFilterMixingLatinAnd(): String = tr(R.string.contentFilterMixingLatinAnd)
+    // iOS: AppStrings.swift:6507
+    fun relativeTripDateJustNow(): String = tr(R.string.relativeTripDateJustNow)
+    // iOS: AppStrings.swift:6510
+    fun feedViewModelThisMonth(): String = tr(R.string.feedViewModelThisMonth)
+    // iOS: AppStrings.swift:6513
+    fun feedViewModelLastMonth(): String = tr(R.string.feedViewModelLastMonth)
+    // iOS: AppStrings.swift:6516
+    fun badgeDetailHiddenAchievement(): String = tr(R.string.badgeDetailHiddenAchievement)
+    // iOS: AppStrings.swift:6519
+    fun badgeDetailLocked(): String = tr(R.string.badgeDetailLocked)
     // iOS: AppStrings.swift:6522
-    fun feedCouldnTLoad(): String = tr(R.string.feedCouldnTLoad)
+    fun fullscreenMapClearPlayback(): String = tr(R.string.fullscreenMapClearPlayback)
     // iOS: AppStrings.swift:6525
+    fun fullscreenMapZoomIn(): String = tr(R.string.fullscreenMapZoomIn)
+    // iOS: AppStrings.swift:6528
+    fun fullscreenMapZoomOut(): String = tr(R.string.fullscreenMapZoomOut)
+    // iOS: AppStrings.swift:6531
+    fun feedLoadingFeed(): String = tr(R.string.feedLoadingFeed)
+    // iOS: AppStrings.swift:6534
+    fun feedServerUnreachable(): String = tr(R.string.feedServerUnreachable)
+    // iOS: AppStrings.swift:6537
+    fun feedSyncIncomplete(): String = tr(R.string.feedSyncIncomplete)
+    // iOS: AppStrings.swift:6540
+    fun feedTryADifferent(): String = tr(R.string.feedTryADifferent)
+    // iOS: AppStrings.swift:6546
+    fun feedAFewItems(): String = tr(R.string.feedAFewItems)
+    // iOS: AppStrings.swift:6551
+    fun feedOfflineTripsAre(): String = tr(R.string.feedOfflineTripsAre)
+    // iOS: AppStrings.swift:6556
+    fun feedCouldnTLoad(): String = tr(R.string.feedCouldnTLoad)
+    // iOS: AppStrings.swift:6559
     fun feedCheckYourInternet(): String = tr(R.string.feedCheckYourInternet)
-    // iOS: AppStrings.swift:6530
+    // iOS: AppStrings.swift:6564
     fun feedPublishOneOf(): String = tr(R.string.feedPublishOneOf)
-    // iOS: AppStrings.swift:6535
+    // iOS: AppStrings.swift:6569
     fun socialFeedNoReactionsYet(): String = tr(R.string.socialFeedNoReactionsYet)
-    // iOS: AppStrings.swift:6538
+    // iOS: AppStrings.swift:6572
     fun socialFeedReact(): String = tr(R.string.socialFeedReact)
-    // iOS: AppStrings.swift:6541
+    // iOS: AppStrings.swift:6575
     fun myMapAvg(): String = tr(R.string.myMapAvg)
-    // iOS: AppStrings.swift:6544
-    fun myMapMax(): String = tr(R.string.myMapMax)
-    // iOS: AppStrings.swift:6547
-    fun notificationPreferencesWhenSomeoneReacts(): String = tr(R.string.notificationPreferencesWhenSomeoneReacts)
-    // iOS: AppStrings.swift:6552
-    fun notificationPreferencesWhenSomeoneFollows(): String = tr(R.string.notificationPreferencesWhenSomeoneFollows)
-    // iOS: AppStrings.swift:6557
-    fun notificationPreferencesComments(): String = tr(R.string.notificationPreferencesComments)
-    // iOS: AppStrings.swift:6560
-    fun notificationPreferencesWhenSomeoneComments(): String = tr(R.string.notificationPreferencesWhenSomeoneComments)
-    // iOS: AppStrings.swift:6565
-    fun notificationPreferencesWeeklyRecap(): String = tr(R.string.notificationPreferencesWeeklyRecap)
-    // iOS: AppStrings.swift:6568
-    fun notificationPreferencesEveryMondayHow(): String = tr(R.string.notificationPreferencesEveryMondayHow)
-    // iOS: AppStrings.swift:6573
-    fun notificationPreferencesWhatToNotify(): String = tr(R.string.notificationPreferencesWhatToNotify)
     // iOS: AppStrings.swift:6578
-    fun notificationPreferencesPickWhatYou(): String = tr(R.string.notificationPreferencesPickWhatYou)
-    // iOS: AppStrings.swift:6583
-    fun notificationPreferencesNotificationsYouTurn(): String = tr(R.string.notificationPreferencesNotificationsYouTurn)
-    // iOS: AppStrings.swift:6588
-    fun notificationsInboxFollowing(): String = tr(R.string.notificationsInboxFollowing)
+    fun myMapMax(): String = tr(R.string.myMapMax)
+    // iOS: AppStrings.swift:6581
+    fun notificationPreferencesWhenSomeoneReacts(): String = tr(R.string.notificationPreferencesWhenSomeoneReacts)
+    // iOS: AppStrings.swift:6586
+    fun notificationPreferencesWhenSomeoneFollows(): String = tr(R.string.notificationPreferencesWhenSomeoneFollows)
     // iOS: AppStrings.swift:6591
-    fun notificationsInboxSomeone(): String = tr(R.string.notificationsInboxSomeone)
+    fun notificationPreferencesComments(): String = tr(R.string.notificationPreferencesComments)
     // iOS: AppStrings.swift:6594
-    fun notificationsInboxNothingYet(): String = tr(R.string.notificationsInboxNothingYet)
-    // iOS: AppStrings.swift:6597
-    fun notificationsInboxWhenSomeoneReacts(): String = tr(R.string.notificationsInboxWhenSomeoneReacts)
+    fun notificationPreferencesWhenSomeoneComments(): String = tr(R.string.notificationPreferencesWhenSomeoneComments)
+    // iOS: AppStrings.swift:6599
+    fun notificationPreferencesWeeklyRecap(): String = tr(R.string.notificationPreferencesWeeklyRecap)
     // iOS: AppStrings.swift:6602
+    fun notificationPreferencesEveryMondayHow(): String = tr(R.string.notificationPreferencesEveryMondayHow)
+    // iOS: AppStrings.swift:6607
+    fun notificationPreferencesWhatToNotify(): String = tr(R.string.notificationPreferencesWhatToNotify)
+    // iOS: AppStrings.swift:6612
+    fun notificationPreferencesPickWhatYou(): String = tr(R.string.notificationPreferencesPickWhatYou)
+    // iOS: AppStrings.swift:6617
+    fun notificationPreferencesNotificationsYouTurn(): String = tr(R.string.notificationPreferencesNotificationsYouTurn)
+    // iOS: AppStrings.swift:6622
+    fun notificationsInboxFollowing(): String = tr(R.string.notificationsInboxFollowing)
+    // iOS: AppStrings.swift:6625
+    fun notificationsInboxSomeone(): String = tr(R.string.notificationsInboxSomeone)
+    // iOS: AppStrings.swift:6628
+    fun notificationsInboxNothingYet(): String = tr(R.string.notificationsInboxNothingYet)
+    // iOS: AppStrings.swift:6631
+    fun notificationsInboxWhenSomeoneReacts(): String = tr(R.string.notificationsInboxWhenSomeoneReacts)
+    // iOS: AppStrings.swift:6636
     fun nameEditorEGAlex(): String = tr(R.string.nameEditorEGAlex)
-    // iOS: AppStrings.swift:6605
+    // iOS: AppStrings.swift:6639
     fun profileYourTripsWill(): String = tr(R.string.profileYourTripsWill)
-    // iOS: AppStrings.swift:6613
+    // iOS: AppStrings.swift:6647
     fun profileRecordingStartsBy(): String = tr(R.string.profileRecordingStartsBy)
-    // iOS: AppStrings.swift:6618
+    // iOS: AppStrings.swift:6652
     fun profileRecordingStartsByButton(): String = tr(R.string.profileRecordingStartsByButton)
-    // iOS: AppStrings.swift:6623
-    fun profileRecordYourFirst(): String = tr(R.string.profileRecordYourFirst)
-    // iOS: AppStrings.swift:6632
-    fun profileYourKilometersStreaks(): String = tr(R.string.profileYourKilometersStreaks)
-    // iOS: AppStrings.swift:6637
-    fun syncStatusMarkerOff(): String = tr(R.string.syncStatusMarkerOff)
-    // iOS: AppStrings.swift:6640
-    fun syncStatusMarkerSynced(): String = tr(R.string.syncStatusMarkerSynced)
-    // iOS: AppStrings.swift:6643
-    fun roadCollectionRoads(): String = tr(R.string.roadCollectionRoads)
-    // iOS: AppStrings.swift:6646
-    fun roadCollectionMastered(): String = tr(R.string.roadCollectionMastered)
-    // iOS: AppStrings.swift:6649
-    fun roadCollectionRecordATrip(): String = tr(R.string.roadCollectionRecordATrip)
-    // iOS: AppStrings.swift:6654
-    fun roadCollectionRoadCollection(): String = tr(R.string.roadCollectionRoadCollection)
     // iOS: AppStrings.swift:6657
+    fun profileRecordYourFirst(): String = tr(R.string.profileRecordYourFirst)
+    // iOS: AppStrings.swift:6666
+    fun profileYourKilometersStreaks(): String = tr(R.string.profileYourKilometersStreaks)
+    // iOS: AppStrings.swift:6671
+    fun syncStatusMarkerOff(): String = tr(R.string.syncStatusMarkerOff)
+    // iOS: AppStrings.swift:6674
+    fun syncStatusMarkerSynced(): String = tr(R.string.syncStatusMarkerSynced)
+    // iOS: AppStrings.swift:6677
+    fun roadCollectionRoads(): String = tr(R.string.roadCollectionRoads)
+    // iOS: AppStrings.swift:6680
+    fun roadCollectionMastered(): String = tr(R.string.roadCollectionMastered)
+    // iOS: AppStrings.swift:6683
+    fun roadCollectionRecordATrip(): String = tr(R.string.roadCollectionRecordATrip)
+    // iOS: AppStrings.swift:6688
+    fun roadCollectionRoadCollection(): String = tr(R.string.roadCollectionRoadCollection)
+    // iOS: AppStrings.swift:6691
     fun blockedListYouHavenT(): String = tr(R.string.blockedListYouHavenT)
-    // iOS: AppStrings.swift:6662
+    // iOS: AppStrings.swift:6696
     fun blockedListUser(): String = tr(R.string.blockedListUser)
-    // iOS: AppStrings.swift:6665
+    // iOS: AppStrings.swift:6699
     fun discoverSearchByName(): String = tr(R.string.discoverSearchByName)
-    // iOS: AppStrings.swift:6668
+    // iOS: AppStrings.swift:6702
     fun discoverNoSuggestionsYet(): String = tr(R.string.discoverNoSuggestionsYet)
-    // iOS: AppStrings.swift:6673
+    // iOS: AppStrings.swift:6707
     fun discoverWhenNewDrivers(): String = tr(R.string.discoverWhenNewDrivers)
-    // iOS: AppStrings.swift:6678
+    // iOS: AppStrings.swift:6712
     fun discoverResults(): String = tr(R.string.discoverResults)
-    // iOS: AppStrings.swift:6681
+    // iOS: AppStrings.swift:6715
     fun discoverNoUsersFound(): String = tr(R.string.discoverNoUsersFound)
-    // iOS: AppStrings.swift:6684
+    // iOS: AppStrings.swift:6718
     fun discoverTryADifferent(): String = tr(R.string.discoverTryADifferent)
-    // iOS: AppStrings.swift:6689
+    // iOS: AppStrings.swift:6723
     fun discoverFollow(): String = tr(R.string.discoverFollow)
-    // iOS: AppStrings.swift:6692
+    // iOS: AppStrings.swift:6726
     fun followListFollowers(): String = tr(R.string.followListFollowers)
-    // iOS: AppStrings.swift:6695
-    fun followListNoFollowersYet(): String = tr(R.string.followListNoFollowersYet)
-    // iOS: AppStrings.swift:6698
-    fun followListNotFollowingAnyone(): String = tr(R.string.followListNotFollowingAnyone)
-    // iOS: AppStrings.swift:6703
-    fun followListCouldnTLoad(): String = tr(R.string.followListCouldnTLoad)
-    // iOS: AppStrings.swift:6708
-    fun publicProfileDriver(): String = tr(R.string.publicProfileDriver)
-    // iOS: AppStrings.swift:6714
-    fun publicProfileHiddenRoadsThis(): String = tr(R.string.publicProfileHiddenRoadsThis)
-    // iOS: AppStrings.swift:6719
-    fun publicProfileNoPublicTrips(): String = tr(R.string.publicProfileNoPublicTrips)
-    // iOS: AppStrings.swift:6724
-    fun publicProfileCouldnTLoad(): String = tr(R.string.publicProfileCouldnTLoad)
     // iOS: AppStrings.swift:6729
+    fun followListNoFollowersYet(): String = tr(R.string.followListNoFollowersYet)
+    // iOS: AppStrings.swift:6732
+    fun followListNotFollowingAnyone(): String = tr(R.string.followListNotFollowingAnyone)
+    // iOS: AppStrings.swift:6737
+    fun followListCouldnTLoad(): String = tr(R.string.followListCouldnTLoad)
+    // iOS: AppStrings.swift:6742
+    fun publicProfileDriver(): String = tr(R.string.publicProfileDriver)
+    // iOS: AppStrings.swift:6748
+    fun publicProfileHiddenRoadsThis(): String = tr(R.string.publicProfileHiddenRoadsThis)
+    // iOS: AppStrings.swift:6753
+    fun publicProfileNoPublicTrips(): String = tr(R.string.publicProfileNoPublicTrips)
+    // iOS: AppStrings.swift:6758
+    fun publicProfileCouldnTLoad(): String = tr(R.string.publicProfileCouldnTLoad)
+    // iOS: AppStrings.swift:6763
     fun reactionsListCouldnTLoad(): String = tr(R.string.reactionsListCouldnTLoad)
-    // iOS: AppStrings.swift:6734
-    fun reactionsListCheckYourConnection(): String = tr(R.string.reactionsListCheckYourConnection)
-    // iOS: AppStrings.swift:6739
-    fun reactionsListBeTheFirst(): String = tr(R.string.reactionsListBeTheFirst)
-    // iOS: AppStrings.swift:6744
-    fun reportWeReviewReports(): String = tr(R.string.reportWeReviewReports)
-    // iOS: AppStrings.swift:6749
-    fun reportAdditionalDetailsOptional(): String = tr(R.string.reportAdditionalDetailsOptional)
-    // iOS: AppStrings.swift:6754
-    fun reportSubmit(): String = tr(R.string.reportSubmit)
-    // iOS: AppStrings.swift:6757
-    fun reportReportSent(): String = tr(R.string.reportReportSent)
-    // iOS: AppStrings.swift:6760
-    fun reportThankYouWe(): String = tr(R.string.reportThankYouWe)
-    // iOS: AppStrings.swift:6765
-    fun sharePosterPoster(): String = tr(R.string.sharePosterPoster)
     // iOS: AppStrings.swift:6768
-    fun sharePosterStory(): String = tr(R.string.sharePosterStory)
-    // iOS: AppStrings.swift:6771
-    fun sharePosterStickerPng(): String = tr(R.string.sharePosterStickerPng)
-    // iOS: AppStrings.swift:6774
-    fun sharePosterPhoto(): String = tr(R.string.sharePosterPhoto)
-    // iOS: AppStrings.swift:6777
-    fun sharePosterMinimal(): String = tr(R.string.sharePosterMinimal)
-    // iOS: AppStrings.swift:6780
-    fun sharedTripLinkCopied(): String = tr(R.string.sharedTripLinkCopied)
+    fun reactionsListCheckYourConnection(): String = tr(R.string.reactionsListCheckYourConnection)
+    // iOS: AppStrings.swift:6773
+    fun reactionsListBeTheFirst(): String = tr(R.string.reactionsListBeTheFirst)
+    // iOS: AppStrings.swift:6778
+    fun reportWeReviewReports(): String = tr(R.string.reportWeReviewReports)
     // iOS: AppStrings.swift:6783
-    fun sharedTripLinkCopy(): String = tr(R.string.sharedTripLinkCopy)
-    // iOS: AppStrings.swift:6786
-    fun storyShareSaved(): String = tr(R.string.storyShareSaved)
-    // iOS: AppStrings.swift:6789
-    fun tripDetailMakeTripPrivate(): String = tr(R.string.tripDetailMakeTripPrivate)
+    fun reportAdditionalDetailsOptional(): String = tr(R.string.reportAdditionalDetailsOptional)
+    // iOS: AppStrings.swift:6788
+    fun reportSubmit(): String = tr(R.string.reportSubmit)
+    // iOS: AppStrings.swift:6791
+    fun reportReportSent(): String = tr(R.string.reportReportSent)
     // iOS: AppStrings.swift:6794
-    fun tripDetailThisTripWill(): String = tr(R.string.tripDetailThisTripWill)
+    fun reportThankYouWe(): String = tr(R.string.reportThankYouWe)
     // iOS: AppStrings.swift:6799
-    fun tripDetailMyTrip(): String = tr(R.string.tripDetailMyTrip)
-    // iOS: AppStrings.swift:6803
-    fun tripDetailYourFirstPublic(): String = tr(R.string.tripDetailYourFirstPublic)
+    fun sharePosterPoster(): String = tr(R.string.sharePosterPoster)
+    // iOS: AppStrings.swift:6802
+    fun sharePosterStory(): String = tr(R.string.sharePosterStory)
+    // iOS: AppStrings.swift:6805
+    fun sharePosterStickerPng(): String = tr(R.string.sharePosterStickerPng)
     // iOS: AppStrings.swift:6808
-    fun unitGallonsShort(): String = tr(R.string.unitGallonsShort)
+    fun sharePosterPhoto(): String = tr(R.string.sharePosterPhoto)
     // iOS: AppStrings.swift:6811
+    fun sharePosterMinimal(): String = tr(R.string.sharePosterMinimal)
+    // iOS: AppStrings.swift:6814
+    fun sharedTripLinkCopied(): String = tr(R.string.sharedTripLinkCopied)
+    // iOS: AppStrings.swift:6817
+    fun sharedTripLinkCopy(): String = tr(R.string.sharedTripLinkCopy)
+    // iOS: AppStrings.swift:6820
+    fun storyShareSaved(): String = tr(R.string.storyShareSaved)
+    // iOS: AppStrings.swift:6823
+    fun tripDetailMakeTripPrivate(): String = tr(R.string.tripDetailMakeTripPrivate)
+    // iOS: AppStrings.swift:6828
+    fun tripDetailThisTripWill(): String = tr(R.string.tripDetailThisTripWill)
+    // iOS: AppStrings.swift:6833
+    fun tripDetailMyTrip(): String = tr(R.string.tripDetailMyTrip)
+    // iOS: AppStrings.swift:6837
+    fun tripDetailYourFirstPublic(): String = tr(R.string.tripDetailYourFirstPublic)
+    // iOS: AppStrings.swift:6842
+    fun unitGallonsShort(): String = tr(R.string.unitGallonsShort)
+    // iOS: AppStrings.swift:6845
     fun unitLitresShort(): String = tr(R.string.unitLitresShort)
-    // iOS: AppStrings.swift:6819
+    // iOS: AppStrings.swift:6853
     fun unitKWhShort(): String = tr(R.string.unitKWhShort)
-    // iOS: AppStrings.swift:6822
+    // iOS: AppStrings.swift:6856
     fun tripEditAPublicTrip(): String = tr(R.string.tripEditAPublicTrip)
-    // iOS: AppStrings.swift:6829
+    // iOS: AppStrings.swift:6863
     fun secondsUnitShort(): String = tr(R.string.secondsUnitShort)
-    // iOS: AppStrings.swift:6835
+    // iOS: AppStrings.swift:6869
     fun hoursUnitCompact(): String = tr(R.string.hoursUnitCompact)
-    // iOS: AppStrings.swift:6838
+    // iOS: AppStrings.swift:6872
     fun minutesUnitCompact(): String = tr(R.string.minutesUnitCompact)
-    // iOS: AppStrings.swift:6938
+    // iOS: AppStrings.swift:6972
     fun reportReasonSpam(): String = tr(R.string.reportReasonSpam)
-    // iOS: AppStrings.swift:6941
+    // iOS: AppStrings.swift:6975
     fun reportReasonHarassment(): String = tr(R.string.reportReasonHarassment)
-    // iOS: AppStrings.swift:6945
+    // iOS: AppStrings.swift:6979
     fun reportReasonHate(): String = tr(R.string.reportReasonHate)
-    // iOS: AppStrings.swift:6948
+    // iOS: AppStrings.swift:6982
     fun reportReasonNudity(): String = tr(R.string.reportReasonNudity)
-    // iOS: AppStrings.swift:6952
+    // iOS: AppStrings.swift:6986
     fun reportReasonViolence(): String = tr(R.string.reportReasonViolence)
-    // iOS: AppStrings.swift:6955
+    // iOS: AppStrings.swift:6989
     fun reportReasonIllegal(): String = tr(R.string.reportReasonIllegal)
-    // iOS: AppStrings.swift:6958
+    // iOS: AppStrings.swift:6992
     fun reportReasonImpersonation(): String = tr(R.string.reportReasonImpersonation)
-    // iOS: AppStrings.swift:6962
+    // iOS: AppStrings.swift:6996
     fun reportReasonOther(): String = tr(R.string.reportReasonOther)
-    // iOS: AppStrings.swift:6966
+    // iOS: AppStrings.swift:7000
     fun publishConfirmBody(): String = tr(R.string.publishConfirmBody)
-    // iOS: AppStrings.swift:6973
+    // iOS: AppStrings.swift:7007
     fun publishConfirmCloudOff(): String = tr(R.string.publishConfirmCloudOff)
-    // iOS: AppStrings.swift:7002
+    // iOS: AppStrings.swift:7036
     fun replayShowWholeRoute(): String = tr(R.string.replayShowWholeRoute)
-    // iOS: AppStrings.swift:7006
+    // iOS: AppStrings.swift:7040
     fun replayFollowTheCar(): String = tr(R.string.replayFollowTheCar)
-    // iOS: AppStrings.swift:7012
+    // iOS: AppStrings.swift:7046
     fun defaultVehicleName(): String = tr(R.string.defaultVehicleName)
-    // iOS: AppStrings.swift:7018
+    // iOS: AppStrings.swift:7052
     fun clubPerkFeed(): String = tr(R.string.clubPerkFeed)
-    // iOS: AppStrings.swift:7022
+    // iOS: AppStrings.swift:7056
     fun clubPerkLeaderboard(): String = tr(R.string.clubPerkLeaderboard)
-    // iOS: AppStrings.swift:7026
-    fun clubPerkMeetups(): String = tr(R.string.clubPerkMeetups)
-    // iOS: AppStrings.swift:7033
-    fun privacyProfileUnavailable(): String = tr(R.string.privacyProfileUnavailable)
-    // iOS: AppStrings.swift:7045
-    fun storeRecoveryTitle(): String = tr(R.string.storeRecoveryTitle)
-    // iOS: AppStrings.swift:7051
-    fun storeRecoveryBody(): String = tr(R.string.storeRecoveryBody)
     // iOS: AppStrings.swift:7060
+    fun clubPerkMeetups(): String = tr(R.string.clubPerkMeetups)
+    // iOS: AppStrings.swift:7067
+    fun privacyProfileUnavailable(): String = tr(R.string.privacyProfileUnavailable)
+    // iOS: AppStrings.swift:7079
+    fun storeRecoveryTitle(): String = tr(R.string.storeRecoveryTitle)
+    // iOS: AppStrings.swift:7085
+    fun storeRecoveryBody(): String = tr(R.string.storeRecoveryBody)
+    // iOS: AppStrings.swift:7094
     fun storeRecoveryFileKept(): String = tr(R.string.storeRecoveryFileKept)
-    // iOS: AppStrings.swift:7066
+    // iOS: AppStrings.swift:7100
     fun storeRecoveryRetry(): String = tr(R.string.storeRecoveryRetry)
-    // iOS: AppStrings.swift:7071
+    // iOS: AppStrings.swift:7105
     fun storeRecoveryStartFresh(): String = tr(R.string.storeRecoveryStartFresh)
-    // iOS: AppStrings.swift:7081
+    // iOS: AppStrings.swift:7115
     fun storeRecoveryStartFreshConfirm(): String = tr(R.string.storeRecoveryStartFreshConfirm)
-    // iOS: AppStrings.swift:7092
-    fun profileStatsEntrySubtitle(): String = tr(R.string.profileStatsEntrySubtitle)
-    // iOS: AppStrings.swift:7097
-    fun profileMapEntryTitle(): String = tr(R.string.profileMapEntryTitle)
-    // iOS: AppStrings.swift:7102
-    fun profileMapEntrySubtitle(): String = tr(R.string.profileMapEntrySubtitle)
-    // iOS: AppStrings.swift:7113
-    fun publicRoutesCaption(): String = tr(R.string.publicRoutesCaption)
-    // iOS: AppStrings.swift:7118
-    fun publicMapOnlyPublic(): String = tr(R.string.publicMapOnlyPublic)
-    // iOS: AppStrings.swift:7123
-    fun publicMapEmptyTitle(): String = tr(R.string.publicMapEmptyTitle)
     // iOS: AppStrings.swift:7126
+    fun profileStatsEntrySubtitle(): String = tr(R.string.profileStatsEntrySubtitle)
+    // iOS: AppStrings.swift:7131
+    fun profileMapEntryTitle(): String = tr(R.string.profileMapEntryTitle)
+    // iOS: AppStrings.swift:7136
+    fun profileMapEntrySubtitle(): String = tr(R.string.profileMapEntrySubtitle)
+    // iOS: AppStrings.swift:7147
+    fun publicRoutesCaption(): String = tr(R.string.publicRoutesCaption)
+    // iOS: AppStrings.swift:7152
+    fun publicMapOnlyPublic(): String = tr(R.string.publicMapOnlyPublic)
+    // iOS: AppStrings.swift:7157
+    fun publicMapEmptyTitle(): String = tr(R.string.publicMapEmptyTitle)
+    // iOS: AppStrings.swift:7160
     fun publicMapEmptyBody(): String = tr(R.string.publicMapEmptyBody)
-    // iOS: AppStrings.swift:7134
+    // iOS: AppStrings.swift:7168
     fun visibilityTitle(): String = tr(R.string.visibilityTitle)
-    // iOS: AppStrings.swift:7137
+    // iOS: AppStrings.swift:7171
     fun visibilityIntro(): String = tr(R.string.visibilityIntro)
-    // iOS: AppStrings.swift:7142
+    // iOS: AppStrings.swift:7176
     fun visibilityCounters(): String = tr(R.string.visibilityCounters)
-    // iOS: AppStrings.swift:7145
-    fun visibilityCountersSub(): String = tr(R.string.visibilityCountersSub)
-    // iOS: AppStrings.swift:7150
-    fun visibilityStats(): String = tr(R.string.visibilityStats)
-    // iOS: AppStrings.swift:7153
-    fun visibilityStatsSub(): String = tr(R.string.visibilityStatsSub)
-    // iOS: AppStrings.swift:7158
-    fun visibilityMap(): String = tr(R.string.visibilityMap)
-    // iOS: AppStrings.swift:7161
-    fun visibilityMapSub(): String = tr(R.string.visibilityMapSub)
-    // iOS: AppStrings.swift:7166
-    fun visibilityAchievements(): String = tr(R.string.visibilityAchievements)
-    // iOS: AppStrings.swift:7169
-    fun visibilityAchievementsSub(): String = tr(R.string.visibilityAchievementsSub)
-    // iOS: AppStrings.swift:7174
-    fun visibilityFootnote(): String = tr(R.string.visibilityFootnote)
     // iOS: AppStrings.swift:7179
+    fun visibilityCountersSub(): String = tr(R.string.visibilityCountersSub)
+    // iOS: AppStrings.swift:7184
+    fun visibilityStats(): String = tr(R.string.visibilityStats)
+    // iOS: AppStrings.swift:7187
+    fun visibilityStatsSub(): String = tr(R.string.visibilityStatsSub)
+    // iOS: AppStrings.swift:7192
+    fun visibilityMap(): String = tr(R.string.visibilityMap)
+    // iOS: AppStrings.swift:7195
+    fun visibilityMapSub(): String = tr(R.string.visibilityMapSub)
+    // iOS: AppStrings.swift:7200
+    fun visibilityAchievements(): String = tr(R.string.visibilityAchievements)
+    // iOS: AppStrings.swift:7203
+    fun visibilityAchievementsSub(): String = tr(R.string.visibilityAchievementsSub)
+    // iOS: AppStrings.swift:7208
+    fun visibilityFootnote(): String = tr(R.string.visibilityFootnote)
+    // iOS: AppStrings.swift:7213
     fun visibilityPreviewLink(): String = tr(R.string.visibilityPreviewLink)
-    // iOS: AppStrings.swift:7182
+    // iOS: AppStrings.swift:7216
     fun visibilityPreviewSub(): String = tr(R.string.visibilityPreviewSub)
-    // iOS: AppStrings.swift:7188
+    // iOS: AppStrings.swift:7222
     fun visibilityNoticeTitle(): String = tr(R.string.visibilityNoticeTitle)
-    // iOS: AppStrings.swift:7193
-    fun visibilityNoticeBody(): String = tr(R.string.visibilityNoticeBody)
-    // iOS: AppStrings.swift:7198
-    fun visibilityNoticeConfigure(): String = tr(R.string.visibilityNoticeConfigure)
-    // iOS: AppStrings.swift:7201
-    fun visibilityNoticeDismiss(): String = tr(R.string.visibilityNoticeDismiss)
-    // iOS: AppStrings.swift:7207
-    fun closedProfileTitle(): String = tr(R.string.closedProfileTitle)
-    // iOS: AppStrings.swift:7210
-    fun closedProfileBody(): String = tr(R.string.closedProfileBody)
-    // iOS: AppStrings.swift:7221
-    fun publicDataLoadFailed(): String = tr(R.string.publicDataLoadFailed)
     // iOS: AppStrings.swift:7227
+    fun visibilityNoticeBody(): String = tr(R.string.visibilityNoticeBody)
+    // iOS: AppStrings.swift:7232
+    fun visibilityNoticeConfigure(): String = tr(R.string.visibilityNoticeConfigure)
+    // iOS: AppStrings.swift:7235
+    fun visibilityNoticeDismiss(): String = tr(R.string.visibilityNoticeDismiss)
+    // iOS: AppStrings.swift:7241
+    fun closedProfileTitle(): String = tr(R.string.closedProfileTitle)
+    // iOS: AppStrings.swift:7244
+    fun closedProfileBody(): String = tr(R.string.closedProfileBody)
+    // iOS: AppStrings.swift:7255
+    fun publicDataLoadFailed(): String = tr(R.string.publicDataLoadFailed)
+    // iOS: AppStrings.swift:7261
     fun publicDataPartial(): String = tr(R.string.publicDataPartial)
-    // iOS: AppStrings.swift:7237
-    fun visibilityUnavailable(): String = tr(R.string.visibilityUnavailable)
-    // iOS: AppStrings.swift:7245
-    fun profileTeaserLastTrip(): String = tr(R.string.profileTeaserLastTrip)
-    // iOS: AppStrings.swift:7248
-    fun profileTeaserStreak(): String = tr(R.string.profileTeaserStreak)
-    // iOS: AppStrings.swift:7254
-    fun odometerRealLabel(): String = tr(R.string.odometerRealLabel)
-    // iOS: AppStrings.swift:7258
-    fun odometerTrackedLine(km: String): String = tr(R.string.odometerTrackedLine, km)
-    // iOS: AppStrings.swift:7265
-    fun odometerUntrackedLine(km: String): String = tr(R.string.odometerUntrackedLine, km)
     // iOS: AppStrings.swift:7271
+    fun visibilityUnavailable(): String = tr(R.string.visibilityUnavailable)
+    // iOS: AppStrings.swift:7279
+    fun profileTeaserLastTrip(): String = tr(R.string.profileTeaserLastTrip)
+    // iOS: AppStrings.swift:7282
+    fun profileTeaserStreak(): String = tr(R.string.profileTeaserStreak)
+    // iOS: AppStrings.swift:7288
+    fun odometerRealLabel(): String = tr(R.string.odometerRealLabel)
+    // iOS: AppStrings.swift:7292
+    fun odometerTrackedLine(km: String): String = tr(R.string.odometerTrackedLine, km)
+    // iOS: AppStrings.swift:7299
+    fun odometerUntrackedLine(km: String): String = tr(R.string.odometerUntrackedLine, km)
+    // iOS: AppStrings.swift:7305
     fun odometerEditTitle(): String = tr(R.string.odometerEditTitle)
-    // iOS: AppStrings.swift:7274
+    // iOS: AppStrings.swift:7308
     fun odometerEditHint(): String = tr(R.string.odometerEditHint)
-    // iOS: AppStrings.swift:7290
+    // iOS: AppStrings.swift:7324
     fun vehicleDashboardTitle(): String = tr(R.string.vehicleDashboardTitle)
-    // iOS: AppStrings.swift:7296
+    // iOS: AppStrings.swift:7330
     fun vehicleDashboardSubtitle(): String = tr(R.string.vehicleDashboardSubtitle)
-    // iOS: AppStrings.swift:7304
+    // iOS: AppStrings.swift:7338
     fun dashboardUnitsApp(): String = tr(R.string.dashboardUnitsApp)
-    // iOS: AppStrings.swift:7314
+    // iOS: AppStrings.swift:7348
     fun dashboardUnitsMetricFuel(): String = tr(R.string.dashboardUnitsMetricFuel)
-    // iOS: AppStrings.swift:7322
+    // iOS: AppStrings.swift:7356
     fun dashboardUnitsImperialFuel(): String = tr(R.string.dashboardUnitsImperialFuel)
-    // iOS: AppStrings.swift:7335
+    // iOS: AppStrings.swift:7369
     fun dashboardUnitsPickerFootnote(): String = tr(R.string.dashboardUnitsPickerFootnote)
-    // iOS: AppStrings.swift:7345
+    // iOS: AppStrings.swift:7379
     fun vehiclePowertrainTitle(): String = tr(R.string.vehiclePowertrainTitle)
-    // iOS: AppStrings.swift:7349
+    // iOS: AppStrings.swift:7383
     fun vehiclePowertrainSubtitle(): String = tr(R.string.vehiclePowertrainSubtitle)
-    // iOS: AppStrings.swift:7359
+    // iOS: AppStrings.swift:7393
     fun powertrainPickerTitle(): String = tr(R.string.powertrainPickerTitle)
-    // iOS: AppStrings.swift:7368
+    // iOS: AppStrings.swift:7402
     fun powertrainFuel(): String = tr(R.string.powertrainFuel)
-    // iOS: AppStrings.swift:7371
+    // iOS: AppStrings.swift:7405
     fun powertrainElectric(): String = tr(R.string.powertrainElectric)
-    // iOS: AppStrings.swift:7374
+    // iOS: AppStrings.swift:7408
     fun powertrainHybrid(): String = tr(R.string.powertrainHybrid)
-    // iOS: AppStrings.swift:7381
-    fun powertrainFuelHint(): String = tr(R.string.powertrainFuelHint)
-    // iOS: AppStrings.swift:7386
-    fun powertrainElectricHint(): String = tr(R.string.powertrainElectricHint)
-    // iOS: AppStrings.swift:7391
-    fun powertrainHybridHint(): String = tr(R.string.powertrainHybridHint)
-    // iOS: AppStrings.swift:7401
-    fun powertrainPickerFootnote(): String = tr(R.string.powertrainPickerFootnote)
-    // iOS: AppStrings.swift:7406
-    fun electricSectionLabel(): String = tr(R.string.electricSectionLabel)
-    // iOS: AppStrings.swift:7409
-    fun electricConsumptionRow(): String = tr(R.string.electricConsumptionRow)
-    // iOS: AppStrings.swift:7412
-    fun electricPriceSection(): String = tr(R.string.electricPriceSection)
     // iOS: AppStrings.swift:7415
-    fun electricRangeLabel(): String = tr(R.string.electricRangeLabel)
+    fun powertrainFuelHint(): String = tr(R.string.powertrainFuelHint)
     // iOS: AppStrings.swift:7420
-    fun electricRangeHint(): String = tr(R.string.electricRangeHint)
-    // iOS: AppStrings.swift:7426
-    fun statElectricity(): String = tr(R.string.statElectricity)
-    // iOS: AppStrings.swift:7430
-    fun statCostFuel(): String = tr(R.string.statCostFuel)
-    // iOS: AppStrings.swift:7434
-    fun statCostElectricity(): String = tr(R.string.statCostElectricity)
-    // iOS: AppStrings.swift:7438
-    fun tripEnergyModeTitle(): String = tr(R.string.tripEnergyModeTitle)
+    fun powertrainElectricHint(): String = tr(R.string.powertrainElectricHint)
+    // iOS: AppStrings.swift:7425
+    fun powertrainHybridHint(): String = tr(R.string.powertrainHybridHint)
+    // iOS: AppStrings.swift:7435
+    fun powertrainPickerFootnote(): String = tr(R.string.powertrainPickerFootnote)
+    // iOS: AppStrings.swift:7440
+    fun electricSectionLabel(): String = tr(R.string.electricSectionLabel)
     // iOS: AppStrings.swift:7443
-    fun energyModeAuto(): String = tr(R.string.energyModeAuto)
+    fun electricConsumptionRow(): String = tr(R.string.electricConsumptionRow)
+    // iOS: AppStrings.swift:7446
+    fun electricPriceSection(): String = tr(R.string.electricPriceSection)
     // iOS: AppStrings.swift:7449
-    fun energyModeElectric(): String = tr(R.string.energyModeElectric)
-    // iOS: AppStrings.swift:7452
-    fun energyModeFuel(): String = tr(R.string.energyModeFuel)
-    // iOS: AppStrings.swift:7459
-    fun tripOnBattery(distance: String): String = tr(R.string.tripOnBattery, distance)
-    // iOS: AppStrings.swift:7471
-    fun dashboardUnitsFieldHint(units: String): String = tr(R.string.dashboardUnitsFieldHint, units)
+    fun electricRangeLabel(): String = tr(R.string.electricRangeLabel)
+    // iOS: AppStrings.swift:7454
+    fun electricRangeHint(): String = tr(R.string.electricRangeHint)
+    // iOS: AppStrings.swift:7460
+    fun statElectricity(): String = tr(R.string.statElectricity)
+    // iOS: AppStrings.swift:7464
+    fun statCostFuel(): String = tr(R.string.statCostFuel)
+    // iOS: AppStrings.swift:7468
+    fun statCostElectricity(): String = tr(R.string.statCostElectricity)
+    // iOS: AppStrings.swift:7472
+    fun tripEnergyModeTitle(): String = tr(R.string.tripEnergyModeTitle)
+    // iOS: AppStrings.swift:7477
+    fun energyModeAuto(): String = tr(R.string.energyModeAuto)
     // iOS: AppStrings.swift:7483
+    fun energyModeElectric(): String = tr(R.string.energyModeElectric)
+    // iOS: AppStrings.swift:7486
+    fun energyModeFuel(): String = tr(R.string.energyModeFuel)
+    // iOS: AppStrings.swift:7493
+    fun tripOnBattery(distance: String): String = tr(R.string.tripOnBattery, distance)
+    // iOS: AppStrings.swift:7505
+    fun dashboardUnitsFieldHint(units: String): String = tr(R.string.dashboardUnitsFieldHint, units)
+    // iOS: AppStrings.swift:7517
     fun dashboardUnitsChange(): String = tr(R.string.dashboardUnitsChange)
-    // iOS: AppStrings.swift:7487
+    // iOS: AppStrings.swift:7521
     fun tripTransferTitle(): String = tr(R.string.tripTransferTitle)
-    // iOS: AppStrings.swift:7490
+    // iOS: AppStrings.swift:7524
     fun tripTransferHint(): String = tr(R.string.tripTransferHint)
-    // iOS: AppStrings.swift:7495
+    // iOS: AppStrings.swift:7529
     fun profileUnavailableTitle(): String = tr(R.string.profileUnavailableTitle)
-    // iOS: AppStrings.swift:7498
+    // iOS: AppStrings.swift:7532
     fun profileUnavailableBody(): String = tr(R.string.profileUnavailableBody)
-    // iOS: AppStrings.swift:7573
+    // iOS: AppStrings.swift:7607
     fun riddleSolvedTitle(): String = tr(R.string.riddleSolvedTitle)
-    // iOS: AppStrings.swift:7584
+    // iOS: AppStrings.swift:7618
     fun osmAttribution(): String = tr(R.string.osmAttribution)
-    // iOS: AppStrings.swift:7599
+    // iOS: AppStrings.swift:7633
     fun naturalEarthAttribution(): String = tr(R.string.naturalEarthAttribution)
-    // iOS: AppStrings.swift:7653
+    // iOS: AppStrings.swift:7687
     fun profileFindsTitle(): String = tr(R.string.profileFindsTitle)
-    // iOS: AppStrings.swift:7679
+    // iOS: AppStrings.swift:7713
     fun findFirstLabel(): String = tr(R.string.findFirstLabel)
-    // iOS: AppStrings.swift:7695
+    // iOS: AppStrings.swift:7729
     fun meProSection(): String = tr(R.string.meProSection)
-    // iOS: AppStrings.swift:7700
+    // iOS: AppStrings.swift:7734
     fun meProNone(): String = tr(R.string.meProNone)
-    // iOS: AppStrings.swift:7705
+    // iOS: AppStrings.swift:7739
     fun meProNoneSub(): String = tr(R.string.meProNoneSub)
-    // iOS: AppStrings.swift:7712
+    // iOS: AppStrings.swift:7746
     fun meProActiveSub(date: String): String = tr(R.string.meProActiveSub, date)
-    // iOS: AppStrings.swift:7717
+    // iOS: AppStrings.swift:7751
     fun meProTrialSub(date: String): String = tr(R.string.meProTrialSub, date)
-    // iOS: AppStrings.swift:7725
+    // iOS: AppStrings.swift:7759
     fun meProExpired(date: String): String = tr(R.string.meProExpired, date)
-    // iOS: AppStrings.swift:7731
+    // iOS: AppStrings.swift:7765
     fun meProExpiredSub(): String = tr(R.string.meProExpiredSub)
-    // iOS: AppStrings.swift:7738
+    // iOS: AppStrings.swift:7772
     fun meProGraceSub(): String = tr(R.string.meProGraceSub)
-    // iOS: AppStrings.swift:7745
+    // iOS: AppStrings.swift:7779
     fun meProPendingSub(): String = tr(R.string.meProPendingSub)
-    // iOS: AppStrings.swift:7757
+    // iOS: AppStrings.swift:7791
     fun proManageTitle(): String = tr(R.string.proManageTitle)
-    // iOS: AppStrings.swift:7790
+    // iOS: AppStrings.swift:7824
     fun proManageEndsOn(date: String): String = tr(R.string.proManageEndsOn, date)
-    // iOS: AppStrings.swift:7797
+    // iOS: AppStrings.swift:7831
     fun proManageUntil(date: String): String = tr(R.string.proManageUntil, date)
-    // iOS: AppStrings.swift:7801
-    fun proManageIncluded(): String = tr(R.string.proManageIncluded)
-    // iOS: AppStrings.swift:7805
-    fun proManageManualOn(): String = tr(R.string.proManageManualOn)
-    // iOS: AppStrings.swift:7810
-    fun proManageVehicleCardWhere(): String = tr(R.string.proManageVehicleCardWhere)
-    // iOS: AppStrings.swift:7815
-    fun proManageAppStore(): String = tr(R.string.proManageAppStore)
-    // iOS: AppStrings.swift:7820
-    fun proManageAppStoreHint(): String = tr(R.string.proManageAppStoreHint)
     // iOS: AppStrings.swift:7835
-    fun proTitle(): String = tr(R.string.proTitle)
-    // iOS: AppStrings.swift:7841
-    fun proPromise(): String = tr(R.string.proPromise)
-    // iOS: AppStrings.swift:7846
-    fun proGroupVisible(): String = tr(R.string.proGroupVisible)
+    fun proManageIncluded(): String = tr(R.string.proManageIncluded)
+    // iOS: AppStrings.swift:7839
+    fun proManageManualOn(): String = tr(R.string.proManageManualOn)
+    // iOS: AppStrings.swift:7844
+    fun proManageVehicleCardWhere(): String = tr(R.string.proManageVehicleCardWhere)
     // iOS: AppStrings.swift:7849
-    fun proGroupPrivate(): String = tr(R.string.proGroupPrivate)
-    // iOS: AppStrings.swift:7853
-    fun proFeatureBg(): String = tr(R.string.proFeatureBg)
-    // iOS: AppStrings.swift:7858
-    fun proFeatureBgSub(): String = tr(R.string.proFeatureBgSub)
-    // iOS: AppStrings.swift:7862
-    fun proFeatureFrame(): String = tr(R.string.proFeatureFrame)
-    // iOS: AppStrings.swift:7865
-    fun proFeatureFrameSub(): String = tr(R.string.proFeatureFrameSub)
+    fun proManageAppStore(): String = tr(R.string.proManageAppStore)
+    // iOS: AppStrings.swift:7854
+    fun proManageAppStoreHint(): String = tr(R.string.proManageAppStoreHint)
     // iOS: AppStrings.swift:7869
-    fun proFeatureCar(): String = tr(R.string.proFeatureCar)
-    // iOS: AppStrings.swift:7872
-    fun proFeatureCarSub(): String = tr(R.string.proFeatureCarSub)
-    // iOS: AppStrings.swift:7876
-    fun proFeatureLine(): String = tr(R.string.proFeatureLine)
-    // iOS: AppStrings.swift:7879
-    fun proFeatureLineSub(): String = tr(R.string.proFeatureLineSub)
+    fun proTitle(): String = tr(R.string.proTitle)
+    // iOS: AppStrings.swift:7875
+    fun proPromise(): String = tr(R.string.proPromise)
+    // iOS: AppStrings.swift:7880
+    fun proGroupVisible(): String = tr(R.string.proGroupVisible)
     // iOS: AppStrings.swift:7883
-    fun proFeatureManual(): String = tr(R.string.proFeatureManual)
-    // iOS: AppStrings.swift:7886
-    fun proFeatureManualSub(): String = tr(R.string.proFeatureManualSub)
-    // iOS: AppStrings.swift:7893
-    fun proPlanYear(price: String): String = tr(R.string.proPlanYear, price)
-    // iOS: AppStrings.swift:7898
-    fun proPlanYearTrial(): String = tr(R.string.proPlanYearTrial)
+    fun proGroupPrivate(): String = tr(R.string.proGroupPrivate)
+    // iOS: AppStrings.swift:7887
+    fun proFeatureBg(): String = tr(R.string.proFeatureBg)
+    // iOS: AppStrings.swift:7892
+    fun proFeatureBgSub(): String = tr(R.string.proFeatureBgSub)
+    // iOS: AppStrings.swift:7896
+    fun proFeatureFrame(): String = tr(R.string.proFeatureFrame)
+    // iOS: AppStrings.swift:7899
+    fun proFeatureFrameSub(): String = tr(R.string.proFeatureFrameSub)
     // iOS: AppStrings.swift:7903
-    fun proPlanYearPerMonth(price: String): String = tr(R.string.proPlanYearPerMonth, price)
+    fun proFeatureCar(): String = tr(R.string.proFeatureCar)
+    // iOS: AppStrings.swift:7906
+    fun proFeatureCarSub(): String = tr(R.string.proFeatureCarSub)
     // iOS: AppStrings.swift:7910
+    fun proFeatureLine(): String = tr(R.string.proFeatureLine)
+    // iOS: AppStrings.swift:7913
+    fun proFeatureLineSub(): String = tr(R.string.proFeatureLineSub)
+    // iOS: AppStrings.swift:7917
+    fun proFeatureManual(): String = tr(R.string.proFeatureManual)
+    // iOS: AppStrings.swift:7920
+    fun proFeatureManualSub(): String = tr(R.string.proFeatureManualSub)
+    // iOS: AppStrings.swift:7927
+    fun proPlanYear(price: String): String = tr(R.string.proPlanYear, price)
+    // iOS: AppStrings.swift:7932
+    fun proPlanYearTrial(): String = tr(R.string.proPlanYearTrial)
+    // iOS: AppStrings.swift:7937
+    fun proPlanYearPerMonth(price: String): String = tr(R.string.proPlanYearPerMonth, price)
+    // iOS: AppStrings.swift:7944
     fun proPlanSave(percent: Int): String = tr(R.string.proPlanSave, percent)
-    // iOS: AppStrings.swift:7914
+    // iOS: AppStrings.swift:7948
     fun proPlanMonth(price: String): String = tr(R.string.proPlanMonth, price)
-    // iOS: AppStrings.swift:7918
+    // iOS: AppStrings.swift:7952
     fun proPlanMonthSub(): String = tr(R.string.proPlanMonthSub)
-    // iOS: AppStrings.swift:7924
+    // iOS: AppStrings.swift:7958
     fun proCtaTrial(): String = tr(R.string.proCtaTrial)
-    // iOS: AppStrings.swift:7928
-    fun proCtaYear(price: String): String = tr(R.string.proCtaYear, price)
-    // iOS: AppStrings.swift:7933
-    fun proCtaMonth(price: String): String = tr(R.string.proCtaMonth, price)
-    // iOS: AppStrings.swift:7941
-    fun proTermsTrial(price: String): String = tr(R.string.proTermsTrial, price)
-    // iOS: AppStrings.swift:7947
-    fun proTermsAuto(): String = tr(R.string.proTermsAuto)
-    // iOS: AppStrings.swift:7953
-    fun proPricesFailed(): String = tr(R.string.proPricesFailed)
-    // iOS: AppStrings.swift:7956
-    fun proPricesFailedSub(): String = tr(R.string.proPricesFailedSub)
     // iOS: AppStrings.swift:7962
-    fun proDeferredTitle(): String = tr(R.string.proDeferredTitle)
-    // iOS: AppStrings.swift:7965
-    fun proDeferredText(): String = tr(R.string.proDeferredText)
-    // iOS: AppStrings.swift:7970
-    fun proFailed(): String = tr(R.string.proFailed)
-    // iOS: AppStrings.swift:7978
-    fun proRestored(): String = tr(R.string.proRestored)
+    fun proCtaYear(price: String): String = tr(R.string.proCtaYear, price)
+    // iOS: AppStrings.swift:7967
+    fun proCtaMonth(price: String): String = tr(R.string.proCtaMonth, price)
+    // iOS: AppStrings.swift:7975
+    fun proTermsTrial(price: String): String = tr(R.string.proTermsTrial, price)
     // iOS: AppStrings.swift:7981
-    fun proRestoreNone(): String = tr(R.string.proRestoreNone)
-    // iOS: AppStrings.swift:7993
-    fun commonOk(): String = tr(R.string.commonOk)
-    // iOS: AppStrings.swift:8008
-    fun proDemoBgTitle(): String = tr(R.string.proDemoBgTitle)
+    fun proTermsAuto(): String = tr(R.string.proTermsAuto)
+    // iOS: AppStrings.swift:7987
+    fun proPricesFailed(): String = tr(R.string.proPricesFailed)
+    // iOS: AppStrings.swift:7990
+    fun proPricesFailedSub(): String = tr(R.string.proPricesFailedSub)
+    // iOS: AppStrings.swift:7996
+    fun proDeferredTitle(): String = tr(R.string.proDeferredTitle)
+    // iOS: AppStrings.swift:7999
+    fun proDeferredText(): String = tr(R.string.proDeferredText)
+    // iOS: AppStrings.swift:8004
+    fun proFailed(): String = tr(R.string.proFailed)
+    // iOS: AppStrings.swift:8012
+    fun proRestored(): String = tr(R.string.proRestored)
     // iOS: AppStrings.swift:8015
-    fun proDemoBgText(): String = tr(R.string.proDemoBgText)
-    // iOS: AppStrings.swift:8020
-    fun proDemoFrameTitle(): String = tr(R.string.proDemoFrameTitle)
-    // iOS: AppStrings.swift:8024
-    fun proDemoFrameText(): String = tr(R.string.proDemoFrameText)
-    // iOS: AppStrings.swift:8029
-    fun proDemoCarTitle(): String = tr(R.string.proDemoCarTitle)
-    // iOS: AppStrings.swift:8035
-    fun proDemoCarText(): String = tr(R.string.proDemoCarText)
+    fun proRestoreNone(): String = tr(R.string.proRestoreNone)
+    // iOS: AppStrings.swift:8027
+    fun commonOk(): String = tr(R.string.commonOk)
     // iOS: AppStrings.swift:8042
+    fun proDemoBgTitle(): String = tr(R.string.proDemoBgTitle)
+    // iOS: AppStrings.swift:8049
+    fun proDemoBgText(): String = tr(R.string.proDemoBgText)
+    // iOS: AppStrings.swift:8054
+    fun proDemoFrameTitle(): String = tr(R.string.proDemoFrameTitle)
+    // iOS: AppStrings.swift:8058
+    fun proDemoFrameText(): String = tr(R.string.proDemoFrameText)
+    // iOS: AppStrings.swift:8063
+    fun proDemoCarTitle(): String = tr(R.string.proDemoCarTitle)
+    // iOS: AppStrings.swift:8069
+    fun proDemoCarText(): String = tr(R.string.proDemoCarText)
+    // iOS: AppStrings.swift:8076
     fun proDemoCarTextNoVehicle(): String = tr(R.string.proDemoCarTextNoVehicle)
-    // iOS: AppStrings.swift:8048
-    fun tipsAwaitingApproval(): String = tr(R.string.tipsAwaitingApproval)
-    // iOS: AppStrings.swift:8053
-    fun proDemoCarEmptyTitle(): String = tr(R.string.proDemoCarEmptyTitle)
-    // iOS: AppStrings.swift:8056
-    fun proDemoCarEmptySub(): String = tr(R.string.proDemoCarEmptySub)
-    // iOS: AppStrings.swift:8061
-    fun proDemoLineTitle(): String = tr(R.string.proDemoLineTitle)
-    // iOS: AppStrings.swift:8065
-    fun proDemoLineText(): String = tr(R.string.proDemoLineText)
-    // iOS: AppStrings.swift:8070
-    fun proDemoLineTextNoTrips(): String = tr(R.string.proDemoLineTextNoTrips)
-    // iOS: AppStrings.swift:8075
-    fun proDemoManualTitle(): String = tr(R.string.proDemoManualTitle)
     // iOS: AppStrings.swift:8082
-    fun proDemoManualText(): String = tr(R.string.proDemoManualText)
-    // iOS: AppStrings.swift:8089
-    fun proDemoExample(): String = tr(R.string.proDemoExample)
+    fun tipsAwaitingApproval(): String = tr(R.string.tipsAwaitingApproval)
+    // iOS: AppStrings.swift:8087
+    fun proDemoCarEmptyTitle(): String = tr(R.string.proDemoCarEmptyTitle)
+    // iOS: AppStrings.swift:8090
+    fun proDemoCarEmptySub(): String = tr(R.string.proDemoCarEmptySub)
     // iOS: AppStrings.swift:8095
+    fun proDemoLineTitle(): String = tr(R.string.proDemoLineTitle)
+    // iOS: AppStrings.swift:8099
+    fun proDemoLineText(): String = tr(R.string.proDemoLineText)
+    // iOS: AppStrings.swift:8104
+    fun proDemoLineTextNoTrips(): String = tr(R.string.proDemoLineTextNoTrips)
+    // iOS: AppStrings.swift:8109
+    fun proDemoManualTitle(): String = tr(R.string.proDemoManualTitle)
+    // iOS: AppStrings.swift:8116
+    fun proDemoManualText(): String = tr(R.string.proDemoManualText)
+    // iOS: AppStrings.swift:8123
+    fun proDemoExample(): String = tr(R.string.proDemoExample)
+    // iOS: AppStrings.swift:8129
     fun proBoughtTitle(): String = tr(R.string.proBoughtTitle)
-    // iOS: AppStrings.swift:8101
-    fun proBoughtTrial(date: String, price: String): String = tr(R.string.proBoughtTrial, date, price)
-    // iOS: AppStrings.swift:8110
-    fun proBoughtPaid(date: String): String = tr(R.string.proBoughtPaid, date)
-    // iOS: AppStrings.swift:8119
-    fun proBoughtText(): String = tr(R.string.proBoughtText)
-    // iOS: AppStrings.swift:8126
-    fun proBoughtBadge(): String = tr(R.string.proBoughtBadge)
-    // iOS: AppStrings.swift:8131
-    fun proBoughtPickBg(): String = tr(R.string.proBoughtPickBg)
     // iOS: AppStrings.swift:8135
+    fun proBoughtTrial(date: String, price: String): String = tr(R.string.proBoughtTrial, date, price)
+    // iOS: AppStrings.swift:8144
+    fun proBoughtPaid(date: String): String = tr(R.string.proBoughtPaid, date)
+    // iOS: AppStrings.swift:8153
+    fun proBoughtText(): String = tr(R.string.proBoughtText)
+    // iOS: AppStrings.swift:8160
+    fun proBoughtBadge(): String = tr(R.string.proBoughtBadge)
+    // iOS: AppStrings.swift:8165
+    fun proBoughtPickBg(): String = tr(R.string.proBoughtPickBg)
+    // iOS: AppStrings.swift:8169
     fun proBoughtPickFrame(): String = tr(R.string.proBoughtPickFrame)
-    // iOS: AppStrings.swift:8138
+    // iOS: AppStrings.swift:8172
     fun proBoughtPickLine(): String = tr(R.string.proBoughtPickLine)
-    // iOS: AppStrings.swift:8143
+    // iOS: AppStrings.swift:8177
     fun proBoughtBackToTrip(): String = tr(R.string.proBoughtBackToTrip)
-    // iOS: AppStrings.swift:8149
+    // iOS: AppStrings.swift:8183
     fun proCtxM1Title(): String = tr(R.string.proCtxM1Title)
-    // iOS: AppStrings.swift:8155
+    // iOS: AppStrings.swift:8189
     fun proCtxM1Text(): String = tr(R.string.proCtxM1Text)
-    // iOS: AppStrings.swift:8161
+    // iOS: AppStrings.swift:8195
     fun proCtxM3Title(): String = tr(R.string.proCtxM3Title)
-    // iOS: AppStrings.swift:8166
+    // iOS: AppStrings.swift:8200
     fun proCtxM3Text(): String = tr(R.string.proCtxM3Text)
-    // iOS: AppStrings.swift:8173
+    // iOS: AppStrings.swift:8207
     fun proCtxM4Title(): String = tr(R.string.proCtxM4Title)
-    // iOS: AppStrings.swift:8176
+    // iOS: AppStrings.swift:8210
     fun proCtxM4Text(): String = tr(R.string.proCtxM4Text)
-    // iOS: AppStrings.swift:8181
+    // iOS: AppStrings.swift:8215
     fun proCtxMore(): String = tr(R.string.proCtxMore)
-    // iOS: AppStrings.swift:8184
+    // iOS: AppStrings.swift:8218
     fun proCtxRenew(): String = tr(R.string.proCtxRenew)
-    // iOS: AppStrings.swift:8187
+    // iOS: AppStrings.swift:8221
     fun proCtxNotNow(): String = tr(R.string.proCtxNotNow)
-    // iOS: AppStrings.swift:8197
-    fun commonLater(): String = tr(R.string.commonLater)
-    // iOS: AppStrings.swift:8208
-    fun carPlayRecordingTitle(): String = tr(R.string.carPlayRecordingTitle)
-    // iOS: AppStrings.swift:8211
-    fun carPlayPausedTitle(): String = tr(R.string.carPlayPausedTitle)
-    // iOS: AppStrings.swift:8216
-    fun carPlayIdleTitle(): String = tr(R.string.carPlayIdleTitle)
-    // iOS: AppStrings.swift:8219
-    fun carPlayIdleBody(): String = tr(R.string.carPlayIdleBody)
-    // iOS: AppStrings.swift:8226
-    fun carPlayUnavailableBody(): String = tr(R.string.carPlayUnavailableBody)
     // iOS: AppStrings.swift:8231
-    fun carPlayDistance(): String = tr(R.string.carPlayDistance)
-    // iOS: AppStrings.swift:8234
-    fun carPlayTime(): String = tr(R.string.carPlayTime)
-    // iOS: AppStrings.swift:8237
-    fun carPlaySpeed(): String = tr(R.string.carPlaySpeed)
-    // iOS: AppStrings.swift:8244
-    fun carPlayStart(): String = tr(R.string.carPlayStart)
-    // iOS: AppStrings.swift:8247
-    fun carPlayPause(): String = tr(R.string.carPlayPause)
+    fun commonLater(): String = tr(R.string.commonLater)
+    // iOS: AppStrings.swift:8242
+    fun carPlayRecordingTitle(): String = tr(R.string.carPlayRecordingTitle)
+    // iOS: AppStrings.swift:8245
+    fun carPlayPausedTitle(): String = tr(R.string.carPlayPausedTitle)
     // iOS: AppStrings.swift:8250
-    fun carPlayResume(): String = tr(R.string.carPlayResume)
-    // iOS: AppStrings.swift:8255
-    fun carPlayFinish(): String = tr(R.string.carPlayFinish)
+    fun carPlayIdleTitle(): String = tr(R.string.carPlayIdleTitle)
+    // iOS: AppStrings.swift:8253
+    fun carPlayIdleBody(): String = tr(R.string.carPlayIdleBody)
+    // iOS: AppStrings.swift:8260
+    fun carPlayUnavailableBody(): String = tr(R.string.carPlayUnavailableBody)
     // iOS: AppStrings.swift:8265
-    fun showcaseBg(): String = tr(R.string.showcaseBg)
+    fun carPlayDistance(): String = tr(R.string.carPlayDistance)
     // iOS: AppStrings.swift:8268
-    fun showcaseFrame(): String = tr(R.string.showcaseFrame)
+    fun carPlayTime(): String = tr(R.string.carPlayTime)
     // iOS: AppStrings.swift:8271
-    fun showcaseCar(): String = tr(R.string.showcaseCar)
-    // iOS: AppStrings.swift:8274
-    fun showcaseLine(): String = tr(R.string.showcaseLine)
-    // iOS: AppStrings.swift:8280
-    fun showcaseFree(): String = tr(R.string.showcaseFree)
+    fun carPlaySpeed(): String = tr(R.string.carPlaySpeed)
+    // iOS: AppStrings.swift:8278
+    fun carPlayStart(): String = tr(R.string.carPlayStart)
+    // iOS: AppStrings.swift:8281
+    fun carPlayPause(): String = tr(R.string.carPlayPause)
     // iOS: AppStrings.swift:8284
-    fun showcasePro(): String = tr(R.string.showcasePro)
-    // iOS: AppStrings.swift:8287
-    fun showcaseDone(): String = tr(R.string.showcaseDone)
-    // iOS: AppStrings.swift:8291
-    fun showcaseGetPro(): String = tr(R.string.showcaseGetPro)
-    // iOS: AppStrings.swift:8297
-    fun showcaseExpiredTitle(date: String): String = tr(R.string.showcaseExpiredTitle, date)
-    // iOS: AppStrings.swift:8304
-    fun showcaseExpiredText(): String = tr(R.string.showcaseExpiredText)
-    // iOS: AppStrings.swift:8311
-    fun showcaseLineSpeed(): String = tr(R.string.showcaseLineSpeed)
+    fun carPlayResume(): String = tr(R.string.carPlayResume)
+    // iOS: AppStrings.swift:8289
+    fun carPlayFinish(): String = tr(R.string.carPlayFinish)
+    // iOS: AppStrings.swift:8299
+    fun showcaseBg(): String = tr(R.string.showcaseBg)
+    // iOS: AppStrings.swift:8302
+    fun showcaseFrame(): String = tr(R.string.showcaseFrame)
+    // iOS: AppStrings.swift:8305
+    fun showcaseCar(): String = tr(R.string.showcaseCar)
+    // iOS: AppStrings.swift:8308
+    fun showcaseLine(): String = tr(R.string.showcaseLine)
     // iOS: AppStrings.swift:8314
-    fun showcaseLineSpeedSub(): String = tr(R.string.showcaseLineSpeedSub)
-    // iOS: AppStrings.swift:8327
-    fun manualFailedProTitle(): String = tr(R.string.manualFailedProTitle)
-    // iOS: AppStrings.swift:8337
-    fun manualFailedProText(): String = tr(R.string.manualFailedProText)
-    // iOS: AppStrings.swift:8342
-    fun manualFailedDbTitle(): String = tr(R.string.manualFailedDbTitle)
+    fun showcaseFree(): String = tr(R.string.showcaseFree)
+    // iOS: AppStrings.swift:8318
+    fun showcasePro(): String = tr(R.string.showcasePro)
+    // iOS: AppStrings.swift:8321
+    fun showcaseDone(): String = tr(R.string.showcaseDone)
+    // iOS: AppStrings.swift:8325
+    fun showcaseGetPro(): String = tr(R.string.showcaseGetPro)
+    // iOS: AppStrings.swift:8331
+    fun showcaseExpiredTitle(date: String): String = tr(R.string.showcaseExpiredTitle, date)
+    // iOS: AppStrings.swift:8338
+    fun showcaseExpiredText(): String = tr(R.string.showcaseExpiredText)
     // iOS: AppStrings.swift:8345
+    fun showcaseLineSpeed(): String = tr(R.string.showcaseLineSpeed)
+    // iOS: AppStrings.swift:8348
+    fun showcaseLineSpeedSub(): String = tr(R.string.showcaseLineSpeedSub)
+    // iOS: AppStrings.swift:8361
+    fun manualFailedProTitle(): String = tr(R.string.manualFailedProTitle)
+    // iOS: AppStrings.swift:8371
+    fun manualFailedProText(): String = tr(R.string.manualFailedProText)
+    // iOS: AppStrings.swift:8376
+    fun manualFailedDbTitle(): String = tr(R.string.manualFailedDbTitle)
+    // iOS: AppStrings.swift:8379
     fun manualFailedDbText(): String = tr(R.string.manualFailedDbText)
-    // iOS: AppStrings.swift:8351
+    // iOS: AppStrings.swift:8385
     fun plusRestore(): String = tr(R.string.plusRestore)
-    // iOS: AppStrings.swift:8354
+    // iOS: AppStrings.swift:8388
     fun plusTermsLink(): String = tr(R.string.plusTermsLink)
-    // iOS: AppStrings.swift:8357
+    // iOS: AppStrings.swift:8391
     fun plusPrivacyLink(): String = tr(R.string.plusPrivacyLink)
-    // iOS: AppStrings.swift:8365
-    fun plusPricesUnavailable(): String = tr(R.string.plusPricesUnavailable)
     // iOS: AppStrings.swift:8399
+    fun plusPricesUnavailable(): String = tr(R.string.plusPricesUnavailable)
+    // iOS: AppStrings.swift:8433
     fun settingsTipsSub(): String = tr(R.string.settingsTipsSub)
-    // iOS: AppStrings.swift:8411
-    fun tipMomentLine(): String = tr(R.string.tipMomentLine)
-    // iOS: AppStrings.swift:8416
-    fun tipsEntry(): String = tr(R.string.tipsEntry)
-    // iOS: AppStrings.swift:8422
-    fun tipsTitle(): String = tr(R.string.tipsTitle)
-    // iOS: AppStrings.swift:8429
-    fun tipsText(): String = tr(R.string.tipsText)
-    // iOS: AppStrings.swift:8435
-    fun tipsCoffee(): String = tr(R.string.tipsCoffee)
-    // iOS: AppStrings.swift:8438
-    fun tipsMeal(): String = tr(R.string.tipsMeal)
-    // iOS: AppStrings.swift:8441
-    fun tipsFuel(): String = tr(R.string.tipsFuel)
     // iOS: AppStrings.swift:8445
-    fun tipsThanks(): String = tr(R.string.tipsThanks)
-    // iOS: AppStrings.swift:8452
-    fun tipsThanksText(): String = tr(R.string.tipsThanksText)
-    // iOS: AppStrings.swift:8461
-    fun plusBadgeLabel(): String = tr(R.string.plusBadgeLabel)
-    // iOS: AppStrings.swift:8467
-    fun cosmeticDefaultOption(): String = tr(R.string.cosmeticDefaultOption)
-    // iOS: AppStrings.swift:8471
-    fun settingsAvatarFrame(): String = tr(R.string.settingsAvatarFrame)
+    fun tipMomentLine(): String = tr(R.string.tipMomentLine)
+    // iOS: AppStrings.swift:8450
+    fun tipsEntry(): String = tr(R.string.tipsEntry)
+    // iOS: AppStrings.swift:8456
+    fun tipsTitle(): String = tr(R.string.tipsTitle)
+    // iOS: AppStrings.swift:8463
+    fun tipsText(): String = tr(R.string.tipsText)
+    // iOS: AppStrings.swift:8469
+    fun tipsCoffee(): String = tr(R.string.tipsCoffee)
+    // iOS: AppStrings.swift:8472
+    fun tipsMeal(): String = tr(R.string.tipsMeal)
     // iOS: AppStrings.swift:8475
-    fun settingsVehicleCardStyle(): String = tr(R.string.settingsVehicleCardStyle)
-    // iOS: AppStrings.swift:8482
-    fun showcaseVisibleAfterSignIn(): String = tr(R.string.showcaseVisibleAfterSignIn)
-    // iOS: AppStrings.swift:8488
-    fun showcaseVisibleAfterSync(): String = tr(R.string.showcaseVisibleAfterSync)
-    // iOS: AppStrings.swift:8493
-    fun vehicleCardStylePickerFootnote(): String = tr(R.string.vehicleCardStylePickerFootnote)
-    // iOS: AppStrings.swift:8499
-    fun settingsRouteLine(): String = tr(R.string.settingsRouteLine)
+    fun tipsFuel(): String = tr(R.string.tipsFuel)
+    // iOS: AppStrings.swift:8479
+    fun tipsThanks(): String = tr(R.string.tipsThanks)
+    // iOS: AppStrings.swift:8486
+    fun tipsThanksText(): String = tr(R.string.tipsThanksText)
+    // iOS: AppStrings.swift:8495
+    fun plusBadgeLabel(): String = tr(R.string.plusBadgeLabel)
+    // iOS: AppStrings.swift:8501
+    fun cosmeticDefaultOption(): String = tr(R.string.cosmeticDefaultOption)
     // iOS: AppStrings.swift:8505
-    fun routeLineSpeedGradient(): String = tr(R.string.routeLineSpeedGradient)
-    // iOS: AppStrings.swift:8512
-    fun routeLinePickerFootnote(): String = tr(R.string.routeLinePickerFootnote)
+    fun settingsAvatarFrame(): String = tr(R.string.settingsAvatarFrame)
+    // iOS: AppStrings.swift:8509
+    fun settingsVehicleCardStyle(): String = tr(R.string.settingsVehicleCardStyle)
     // iOS: AppStrings.swift:8516
-    fun privacyPlusBadgeTitle(): String = tr(R.string.privacyPlusBadgeTitle)
-    // iOS: AppStrings.swift:8520
-    fun privacyPlusBadgeSub(): String = tr(R.string.privacyPlusBadgeSub)
-    // iOS: AppStrings.swift:8529
-    fun manualTripEntry(): String = tr(R.string.manualTripEntry)
-    // iOS: AppStrings.swift:8534
-    fun manualTripSubtitle(): String = tr(R.string.manualTripSubtitle)
-    // iOS: AppStrings.swift:8541
-    fun manualTripFrom(): String = tr(R.string.manualTripFrom)
+    fun showcaseVisibleAfterSignIn(): String = tr(R.string.showcaseVisibleAfterSignIn)
+    // iOS: AppStrings.swift:8522
+    fun showcaseVisibleAfterSync(): String = tr(R.string.showcaseVisibleAfterSync)
+    // iOS: AppStrings.swift:8527
+    fun vehicleCardStylePickerFootnote(): String = tr(R.string.vehicleCardStylePickerFootnote)
+    // iOS: AppStrings.swift:8533
+    fun settingsRouteLine(): String = tr(R.string.settingsRouteLine)
+    // iOS: AppStrings.swift:8539
+    fun routeLineSpeedGradient(): String = tr(R.string.routeLineSpeedGradient)
     // iOS: AppStrings.swift:8546
+    fun routeLinePickerFootnote(): String = tr(R.string.routeLinePickerFootnote)
+    // iOS: AppStrings.swift:8550
+    fun privacyPlusBadgeTitle(): String = tr(R.string.privacyPlusBadgeTitle)
+    // iOS: AppStrings.swift:8554
+    fun privacyPlusBadgeSub(): String = tr(R.string.privacyPlusBadgeSub)
+    // iOS: AppStrings.swift:8563
+    fun manualTripEntry(): String = tr(R.string.manualTripEntry)
+    // iOS: AppStrings.swift:8568
+    fun manualTripSubtitle(): String = tr(R.string.manualTripSubtitle)
+    // iOS: AppStrings.swift:8575
+    fun manualTripFrom(): String = tr(R.string.manualTripFrom)
+    // iOS: AppStrings.swift:8580
     fun manualTripTo(): String = tr(R.string.manualTripTo)
-    // iOS: AppStrings.swift:8551
-    fun manualTripVia(): String = tr(R.string.manualTripVia)
-    // iOS: AppStrings.swift:8557
-    fun manualTripAddVia(): String = tr(R.string.manualTripAddVia)
-    // iOS: AppStrings.swift:8562
-    fun manualTripSearchHint(): String = tr(R.string.manualTripSearchHint)
-    // iOS: AppStrings.swift:8567
-    fun manualTripStart(): String = tr(R.string.manualTripStart)
-    // iOS: AppStrings.swift:8572
-    fun manualTripDuration(): String = tr(R.string.manualTripDuration)
-    // iOS: AppStrings.swift:8578
-    fun manualTripSuggestedTime(time: String): String = tr(R.string.manualTripSuggestedTime, time)
     // iOS: AppStrings.swift:8585
+    fun manualTripVia(): String = tr(R.string.manualTripVia)
+    // iOS: AppStrings.swift:8591
+    fun manualTripAddVia(): String = tr(R.string.manualTripAddVia)
+    // iOS: AppStrings.swift:8596
+    fun manualTripSearchHint(): String = tr(R.string.manualTripSearchHint)
+    // iOS: AppStrings.swift:8601
+    fun manualTripStart(): String = tr(R.string.manualTripStart)
+    // iOS: AppStrings.swift:8606
+    fun manualTripDuration(): String = tr(R.string.manualTripDuration)
+    // iOS: AppStrings.swift:8612
+    fun manualTripSuggestedTime(time: String): String = tr(R.string.manualTripSuggestedTime, time)
+    // iOS: AppStrings.swift:8619
     fun manualTripCreate(): String = tr(R.string.manualTripCreate)
-    // iOS: AppStrings.swift:8590
+    // iOS: AppStrings.swift:8624
     fun manualTripRouting(): String = tr(R.string.manualTripRouting)
-    // iOS: AppStrings.swift:8595
+    // iOS: AppStrings.swift:8629
     fun manualTripErrorNoRoute(): String = tr(R.string.manualTripErrorNoRoute)
-    // iOS: AppStrings.swift:8602
+    // iOS: AppStrings.swift:8636
     fun manualTripErrorOffline(): String = tr(R.string.manualTripErrorOffline)
-    // iOS: AppStrings.swift:8610
+    // iOS: AppStrings.swift:8644
     fun manualTripErrorTooLong(): String = tr(R.string.manualTripErrorTooLong)
-    // iOS: AppStrings.swift:8617
+    // iOS: AppStrings.swift:8651
     fun manualTripErrorFailed(): String = tr(R.string.manualTripErrorFailed)
-    // iOS: AppStrings.swift:8625
-    fun manualTripErrorEndsLater(): String = tr(R.string.manualTripErrorEndsLater)
-    // iOS: AppStrings.swift:8635
-    fun manualTripBadge(): String = tr(R.string.manualTripBadge)
-    // iOS: AppStrings.swift:8642
-    fun manualTripChipHome(): String = tr(R.string.manualTripChipHome)
-    // iOS: AppStrings.swift:8649
-    fun manualTripSuccessMessage(): String = tr(R.string.manualTripSuccessMessage)
-    // iOS: AppStrings.swift:8655
-    fun manualTripPointOnMap(): String = tr(R.string.manualTripPointOnMap)
     // iOS: AppStrings.swift:8659
-    fun manualTripTapMapHint(): String = tr(R.string.manualTripTapMapHint)
-    // iOS: AppStrings.swift:8664
-    fun manualTripReturnShort(): String = tr(R.string.manualTripReturnShort)
-    // iOS: AppStrings.swift:8672
-    fun exportGPX(): String = tr(R.string.exportGPX)
-    // iOS: AppStrings.swift:8677
-    fun exportCSV(): String = tr(R.string.exportCSV)
+    fun manualTripErrorEndsLater(): String = tr(R.string.manualTripErrorEndsLater)
+    // iOS: AppStrings.swift:8669
+    fun manualTripBadge(): String = tr(R.string.manualTripBadge)
+    // iOS: AppStrings.swift:8676
+    fun manualTripChipHome(): String = tr(R.string.manualTripChipHome)
     // iOS: AppStrings.swift:8683
+    fun manualTripSuccessMessage(): String = tr(R.string.manualTripSuccessMessage)
+    // iOS: AppStrings.swift:8689
+    fun manualTripPointOnMap(): String = tr(R.string.manualTripPointOnMap)
+    // iOS: AppStrings.swift:8693
+    fun manualTripTapMapHint(): String = tr(R.string.manualTripTapMapHint)
+    // iOS: AppStrings.swift:8698
+    fun manualTripReturnShort(): String = tr(R.string.manualTripReturnShort)
+    // iOS: AppStrings.swift:8706
+    fun exportGPX(): String = tr(R.string.exportGPX)
+    // iOS: AppStrings.swift:8711
+    fun exportCSV(): String = tr(R.string.exportCSV)
+    // iOS: AppStrings.swift:8717
     fun exportFailed(): String = tr(R.string.exportFailed)
-    // iOS: AppStrings.swift:8692
+    // iOS: AppStrings.swift:8726
     fun posterFailed(): String = tr(R.string.posterFailed)
-    // iOS: AppStrings.swift:8701
+    // iOS: AppStrings.swift:8735
     fun homeRow(): String = tr(R.string.homeRow)
-    // iOS: AppStrings.swift:8705
+    // iOS: AppStrings.swift:8739
     fun homeNotSet(): String = tr(R.string.homeNotSet)
-    // iOS: AppStrings.swift:8708
+    // iOS: AppStrings.swift:8742
     fun homeSheetTitle(): String = tr(R.string.homeSheetTitle)
-    // iOS: AppStrings.swift:8713
+    // iOS: AppStrings.swift:8747
     fun homePlaceHint(): String = tr(R.string.homePlaceHint)
-    // iOS: AppStrings.swift:8718
+    // iOS: AppStrings.swift:8752
     fun homeShowOnMap(): String = tr(R.string.homeShowOnMap)
-    // iOS: AppStrings.swift:8722
+    // iOS: AppStrings.swift:8756
     fun homeVisibleOnlyToYou(): String = tr(R.string.homeVisibleOnlyToYou)
-    // iOS: AppStrings.swift:8725
+    // iOS: AppStrings.swift:8759
     fun homeHiddenOnMap(): String = tr(R.string.homeHiddenOnMap)
-    // iOS: AppStrings.swift:8728
-    fun homeRadiusTitle(): String = tr(R.string.homeRadiusTitle)
-    // iOS: AppStrings.swift:8731
-    fun homeZoneTitle(): String = tr(R.string.homeZoneTitle)
-    // iOS: AppStrings.swift:8734
-    fun homeZoneToggle(): String = tr(R.string.homeZoneToggle)
-    // iOS: AppStrings.swift:8745
-    fun homeZoneNote(): String = tr(R.string.homeZoneNote)
-    // iOS: AppStrings.swift:8751
-    fun homeZoneShort(radius: String): String = tr(R.string.homeZoneShort, radius)
-    // iOS: AppStrings.swift:8755
-    fun homeRemove(): String = tr(R.string.homeRemove)
-    // iOS: AppStrings.swift:8758
-    fun homeRemoveTitle(): String = tr(R.string.homeRemoveTitle)
     // iOS: AppStrings.swift:8762
-    fun homeRemoveBodyNoZone(): String = tr(R.string.homeRemoveBodyNoZone)
-    // iOS: AppStrings.swift:8767
-    fun homeRemoveBody(): String = tr(R.string.homeRemoveBody)
-    // iOS: AppStrings.swift:8776
-    fun vehicleFinishGloss(): String = tr(R.string.vehicleFinishGloss)
+    fun homeRadiusTitle(): String = tr(R.string.homeRadiusTitle)
+    // iOS: AppStrings.swift:8765
+    fun homeZoneTitle(): String = tr(R.string.homeZoneTitle)
+    // iOS: AppStrings.swift:8768
+    fun homeZoneToggle(): String = tr(R.string.homeZoneToggle)
     // iOS: AppStrings.swift:8779
-    fun vehicleFinishMatte(): String = tr(R.string.vehicleFinishMatte)
-    // iOS: AppStrings.swift:8782
-    fun vehicleFinishPearl(): String = tr(R.string.vehicleFinishPearl)
+    fun homeZoneNote(): String = tr(R.string.homeZoneNote)
     // iOS: AppStrings.swift:8785
+    fun homeZoneShort(radius: String): String = tr(R.string.homeZoneShort, radius)
+    // iOS: AppStrings.swift:8789
+    fun homeRemove(): String = tr(R.string.homeRemove)
+    // iOS: AppStrings.swift:8792
+    fun homeRemoveTitle(): String = tr(R.string.homeRemoveTitle)
+    // iOS: AppStrings.swift:8796
+    fun homeRemoveBodyNoZone(): String = tr(R.string.homeRemoveBodyNoZone)
+    // iOS: AppStrings.swift:8801
+    fun homeRemoveBody(): String = tr(R.string.homeRemoveBody)
+    // iOS: AppStrings.swift:8810
+    fun vehicleFinishGloss(): String = tr(R.string.vehicleFinishGloss)
+    // iOS: AppStrings.swift:8813
+    fun vehicleFinishMatte(): String = tr(R.string.vehicleFinishMatte)
+    // iOS: AppStrings.swift:8816
+    fun vehicleFinishPearl(): String = tr(R.string.vehicleFinishPearl)
+    // iOS: AppStrings.swift:8819
     fun vehicleFinishChrome(): String = tr(R.string.vehicleFinishChrome)
-    // iOS: AppStrings.swift:8788
+    // iOS: AppStrings.swift:8822
     fun garageFinish(): String = tr(R.string.garageFinish)
-    // iOS: AppStrings.swift:8791
+    // iOS: AppStrings.swift:8825
     fun garageTags(): String = tr(R.string.garageTags)
-    // iOS: AppStrings.swift:8794
+    // iOS: AppStrings.swift:8828
     fun garageTagsHint(): String = tr(R.string.garageTagsHint)
-    // iOS: AppStrings.swift:8797
+    // iOS: AppStrings.swift:8831
     fun garageDrive2Title(): String = tr(R.string.garageDrive2Title)
-    // iOS: AppStrings.swift:8800
+    // iOS: AppStrings.swift:8834
     fun garageDrive2Connect(): String = tr(R.string.garageDrive2Connect)
-    // iOS: AppStrings.swift:8803
+    // iOS: AppStrings.swift:8837
     fun garageDrive2Help(): String = tr(R.string.garageDrive2Help)
-    // iOS: AppStrings.swift:8806
+    // iOS: AppStrings.swift:8840
     fun garageDrive2Field(): String = tr(R.string.garageDrive2Field)
-    // iOS: AppStrings.swift:8809
+    // iOS: AppStrings.swift:8843
     fun garageDrive2Valid(make: String, model: String): String = tr(R.string.garageDrive2Valid, make, model)
-    // iOS: AppStrings.swift:8812
+    // iOS: AppStrings.swift:8846
     fun garageDrive2Hint(): String = tr(R.string.garageDrive2Hint)
-    // iOS: AppStrings.swift:8815
+    // iOS: AppStrings.swift:8849
     fun garageDrive2PublicNote(): String = tr(R.string.garageDrive2PublicNote)
-    // iOS: AppStrings.swift:8818
+    // iOS: AppStrings.swift:8852
     fun garageDrive2LocalNote(): String = tr(R.string.garageDrive2LocalNote)
-    // iOS: AppStrings.swift:8821
+    // iOS: AppStrings.swift:8855
     fun garageDrive2Unlink(): String = tr(R.string.garageDrive2Unlink)
-    // iOS: AppStrings.swift:8824
+    // iOS: AppStrings.swift:8858
     fun garageMileage(): String = tr(R.string.garageMileage)
-    // iOS: AppStrings.swift:8827
+    // iOS: AppStrings.swift:8861
     fun garageOnOdometer(): String = tr(R.string.garageOnOdometer)
-    // iOS: AppStrings.swift:8830
+    // iOS: AppStrings.swift:8864
     fun garageTracked(distance: String): String = tr(R.string.garageTracked, distance)
-    // iOS: AppStrings.swift:8833
+    // iOS: AppStrings.swift:8867
     fun garageTripPhotos(): String = tr(R.string.garageTripPhotos)
-    // iOS: AppStrings.swift:8836
+    // iOS: AppStrings.swift:8870
     fun garagePlatform(): String = tr(R.string.garagePlatform)
-    // iOS: AppStrings.swift:8839
+    // iOS: AppStrings.swift:8873
     fun garagePower(value: String): String = tr(R.string.garagePower, value)
-    // iOS: AppStrings.swift:8842
+    // iOS: AppStrings.swift:8876
     fun garageAcceleration(value: String): String = tr(R.string.garageAcceleration, value)
     // iOS: AppStringsCore.swift:148
     fun nounTrips(n: Int): String = plural(R.plurals.nounTrips, n)

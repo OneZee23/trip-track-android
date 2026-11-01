@@ -188,6 +188,7 @@
     <string name="adminYearly" formatted="false">Yearly</string>
     <string name="adminYou" formatted="false">you</string>
     <string name="all" formatted="false">All</string>
+    <string name="android_auto" formatted="false">Android Auto</string>
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google account</string>
     <string name="android_health_activity_off" formatted="false">Physical activity access is off: drives are not detected.</string>
@@ -285,6 +286,14 @@
     <string name="autoRecordOff" formatted="false">Off</string>
     <string name="autoRecordOn" formatted="false">On</string>
     <string name="autoRecordRemind" formatted="false">Remind</string>
+    <string name="autoRecordStereoOnlyDescription" formatted="false">Recording starts by itself when the phone connects to a linked stereo</string>
+    <string name="autoRecordTriggerMotion" formatted="false">Motion or stereo</string>
+    <string name="autoRecordTriggerMotionCaption" formatted="false">The motion sensor also fires in a taxi or when you ride as a passenger</string>
+    <string name="autoRecordTriggerNeedsStereo" formatted="false">Link a stereo above to choose “Stereo only”</string>
+    <string name="autoRecordTriggerSection" formatted="false">When to start</string>
+    <string name="autoRecordTriggerStereo" formatted="false">Stereo only</string>
+    <string name="autoRecordTriggerStereoCaption" formatted="false">Recording starts only when the phone connects to a linked stereo or Android Auto</string>
+    <string name="autoRecordTriggerStereoMissing" formatted="false">No stereo linked, so auto-record won\'t start</string>
     <string name="autoStopDescription" formatted="false">When the stereo disconnects, a normal trip ends right away and a very short one after this delay</string>
     <string name="autoStopRowLabel" formatted="false">Stop after</string>
     <string name="autoStopTimeout" formatted="false">Auto-stop</string>
