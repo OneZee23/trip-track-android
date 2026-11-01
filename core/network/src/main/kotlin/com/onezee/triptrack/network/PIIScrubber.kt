@@ -39,11 +39,14 @@ object PIIScrubber {
             key to if (key is String && PIISensitiveKeys.matches(key)) redactedMarker else redactValue(item)
         }
         is List<*> -> value.map(::redactValue)
+        is Array<*> -> value.map(::redactValue)
         else -> value
     }
 
     fun redactUrl(raw: String): String = try {
-        val uri = URI(raw)
+        // SDK outbox events can carry an already-scrubbed breadcrumb. URI rejects literal angle
+        // brackets, whereas iOS URLComponents accepts them: encode our marker before parsing.
+        val uri = URI(raw.replace(idMarker, "%3Cid%3E"))
         val host = uri.host ?: return redactedMarker
         val path = uri.path.orEmpty().split('/').filter(String::isNotEmpty).joinToString("/") {
             if (it.length <= 24 && it.matches(Regex("[a-zA-Z_.-]+"))) it else idMarker

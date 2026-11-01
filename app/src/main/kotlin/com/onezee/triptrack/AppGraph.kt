@@ -80,6 +80,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -245,6 +246,11 @@ class AppGraph(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     fun start() {
+        // iOS: AuthService.swift -> SentryService.setAccount; only the account UUID enters the scope.
+        scope.launch {
+            auth.state.map { it.accountId?.toString() }.distinctUntilChanged()
+                .collect(com.onezee.triptrack.diagnostics.SentryService::setAccount)
+        }
         auth.start { userIdLoaded.await() }
         scope.launch {
             val id = settings.loadOrCreate().id

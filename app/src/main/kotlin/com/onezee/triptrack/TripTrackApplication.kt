@@ -27,5 +27,8 @@ open class TripTrackApplication : Application(), LocationGraphOwner, Configurati
         startServices()
     }
 
-    protected open fun startServices() = appGraph.start()
+    protected open fun startServices() {
+        com.onezee.triptrack.diagnostics.SentryService.start(this)
+        appGraph.start()
+    }
 }

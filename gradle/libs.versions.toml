@@ -27,8 +27,11 @@ playServicesLocation = "21.4.0"
 credentials = "1.6.0"
 googleid = "1.2.1"
 splashscreen = "1.2.0"
+sentry = "8.62.0"
 
 [libraries]
+sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentry" }
+sentry-android-ndk = { module = "io.sentry:sentry-android-ndk", version.ref = "sentry" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-ui = { module = "androidx.compose.ui:ui" }
