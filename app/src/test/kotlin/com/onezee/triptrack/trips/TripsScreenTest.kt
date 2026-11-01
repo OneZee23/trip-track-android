@@ -1,6 +1,7 @@
 // iOS: TripTrackUITests' tours on the -seed-map-demo library, here composed under Robolectric.
 package com.onezee.triptrack.trips
 
+import com.onezee.triptrack.ui.LocalClock
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
@@ -191,6 +192,7 @@ abstract class TripsScreenTest {
                     LocalTripPhotoImages provides feature.photos,
                     LocalDistanceUnit provides DistanceUnit.km,
                     LocalLiveMaps provides false,
+                    LocalClock provides java.time.Clock.fixed(NOW, ZoneId.of(ZONE)),
                 ) {
                     Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) {
                         content()

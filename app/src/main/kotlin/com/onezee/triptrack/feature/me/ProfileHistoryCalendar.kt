@@ -20,6 +20,7 @@ import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.surfaceCard
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.settings.MeRow
+import com.onezee.triptrack.ui.LocalClock
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -47,7 +48,7 @@ internal fun calendarHeatStep(km: Double, scale: Double): Int? = when {
 
 @Composable
 internal fun ProfileHistoryCalendar(calendar: HistoryCalendar, from: Instant?, to: Instant?, filteredCount: Int,
-                                     onRange: (Instant?, Instant?) -> Unit, today: LocalDate = LocalDate.now()) {
+                                     onRange: (Instant?, Instant?) -> Unit, today: LocalDate = LocalClock.current.instant().atZone(appStrings.zone).toLocalDate()) {
     val strings = appStrings
     val zone = strings.zone
     var expanded by rememberSaveable { mutableStateOf(false) }
