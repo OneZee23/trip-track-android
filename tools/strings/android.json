@@ -1305,5 +1305,39 @@
       "kk": "TripTrack қолданба жабық немесе пайдаланылмай тұрған кезде де сапарларды автоматты түрде бастап, жазу үшін нақты орналасқан жер деректерін жинайды. Сапарлар оларды жарияласаңыз немесе Бұлттық синхрондауды қоссаңыз ғана серверге жіберіледі.",
       "pt": "O TripTrack coleta sua localização precisa para iniciar e gravar trajetos automaticamente, mesmo quando o app está fechado ou não está em uso. Os trajetos só são enviados se você os publicar ou ativar a Sincronização na nuvem."
     }
+  },
+  "android_map_attribution": {
+    "values": {
+      "en": "Map credits",
+      "ru": "Источники карты",
+      "de": "Kartennachweise",
+      "es": "Créditos del mapa",
+      "fr": "Crédits de la carte",
+      "it": "Attribuzioni della mappa",
+      "pl": "Źródła mapy",
+      "id": "Sumber peta",
+      "tr": "Harita kaynakları",
+      "fil": "Mga pinagmulan ng mapa",
+      "uk": "Джерела карти",
+      "kk": "Карта дереккөздері",
+      "pt": "Créditos do mapa"
+    }
+  },
+  "android_map_link_unavailable": {
+    "values": {
+      "en": "No browser is available to open this link.",
+      "ru": "На телефоне нет браузера для открытия ссылки.",
+      "de": "Zum Öffnen dieses Links ist kein Browser verfügbar.",
+      "es": "No hay un navegador disponible para abrir este enlace.",
+      "fr": "Aucun navigateur ne permet d’ouvrir ce lien.",
+      "it": "Nessun browser disponibile per aprire questo link.",
+      "pl": "Brak przeglądarki do otwarcia tego łącza.",
+      "id": "Tidak ada browser untuk membuka tautan ini.",
+      "tr": "Bu bağlantıyı açacak bir tarayıcı yok.",
+      "fil": "Walang browser na makakapagbukas ng link na ito.",
+      "uk": "На телефоні немає браузера для відкриття посилання.",
+      "kk": "Бұл сілтемені ашатын браузер жоқ.",
+      "pt": "Não há navegador disponível para abrir este link."
+    }
   }
 }

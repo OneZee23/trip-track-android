@@ -207,6 +207,8 @@
     <string name="android_health_restricted" formatted="false">Pinaghihigpitan ang paggana ng TripTrack sa background.</string>
     <string name="android_health_title" formatted="false">Maaasahang pagrekord</string>
     <string name="android_level_label">LVL %1$d</string>
+    <string name="android_map_attribution" formatted="false">Mga pinagmulan ng mapa</string>
+    <string name="android_map_link_unavailable" formatted="false">Walang browser na makakapagbukas ng link na ito.</string>
     <string name="android_permission_background_hint" formatted="false">Sa susunod na screen, buksan ang Mga Pahintulot → Lokasyon at piliin ang “Payagan sa lahat ng oras” para magsimula ang biyahe kapag sumakay ka sa kotse.</string>
     <string name="android_precise_location_body" formatted="false">Kailangan ng eksaktong lokasyon para iguhit ang ruta at sukatin ang layo. Buksan ang Mga Setting → Mga Pahintulot → Lokasyon at i-on ang “Gumamit ng eksaktong lokasyon”.</string>
     <string name="android_selected_item">• %1$s</string>

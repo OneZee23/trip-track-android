@@ -267,6 +267,8 @@
     <string name="android_health_restricted" formatted="false">Фоновая работа TripTrack ограничена.</string>
     <string name="android_health_title" formatted="false">Надёжность записи</string>
     <string name="android_level_label">LVL %1$d</string>
+    <string name="android_map_attribution" formatted="false">Источники карты</string>
+    <string name="android_map_link_unavailable" formatted="false">На телефоне нет браузера для открытия ссылки.</string>
     <string name="android_permission_background_hint" formatted="false">На следующем экране откройте Разрешения → Местоположение и выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.</string>
     <string name="android_precise_location_body" formatted="false">Для записи маршрута и расстояния нужна точная геолокация. Откройте Настройки → Разрешения → Местоположение и включите «Точное местоположение».</string>
     <string name="android_selected_item">• %1$s</string>

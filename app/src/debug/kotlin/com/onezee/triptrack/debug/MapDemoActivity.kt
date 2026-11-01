@@ -40,6 +40,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.onezee.triptrack.designsystem.R
+import com.onezee.triptrack.designsystem.strings.AppLanguage
+import com.onezee.triptrack.designsystem.theme.TripTrackTheme
 import com.onezee.triptrack.logic.RevealBuilder
 import com.onezee.triptrack.logic.RevealedLayer
 import com.onezee.triptrack.map.LiveReveal
@@ -81,7 +83,14 @@ class MapDemoActivity : ComponentActivity() {
             route = intent.getBooleanExtra("route", true),
             reveal = intent.getBooleanExtra("reveal", false),
         )
-        setContent { MapDemoScreen(options) }
+        setContent {
+            TripTrackTheme(
+                isDark = options.style == AtlasMapAppearance.Style.night,
+                language = AppLanguage.detect(resources.configuration.locales.toLanguageTags().split(',')),
+            ) {
+                MapDemoScreen(options)
+            }
+        }
     }
 }
 

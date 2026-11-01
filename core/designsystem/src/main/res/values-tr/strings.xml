@@ -207,6 +207,8 @@
     <string name="android_health_restricted" formatted="false">TripTrack’in arka plan etkinliği kısıtlı.</string>
     <string name="android_health_title" formatted="false">Kayıt güvenilirliği</string>
     <string name="android_level_label">LVL %1$d</string>
+    <string name="android_map_attribution" formatted="false">Harita kaynakları</string>
+    <string name="android_map_link_unavailable" formatted="false">Bu bağlantıyı açacak bir tarayıcı yok.</string>
     <string name="android_permission_background_hint" formatted="false">Sonraki ekranda İzinler → Konum bölümünü açıp “Her zaman izin ver” seçin; arabaya bindiğinizde yolculuklar başlayabilsin.</string>
     <string name="android_precise_location_body" formatted="false">Rotayı çizmek ve mesafeyi ölçmek için tam konum gerekir. Ayarlar → İzinler → Konum bölümünden “Tam konumu kullan” seçeneğini açın.</string>
     <string name="android_selected_item">• %1$s</string>

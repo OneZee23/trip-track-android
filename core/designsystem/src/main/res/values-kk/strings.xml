@@ -207,6 +207,8 @@
     <string name="android_health_restricted" formatted="false">TripTrack қолданбасының фондық жұмысы шектелген.</string>
     <string name="android_health_title" formatted="false">Жазу сенімділігі</string>
     <string name="android_level_label">LVL %1$d</string>
+    <string name="android_map_attribution" formatted="false">Карта дереккөздері</string>
+    <string name="android_map_link_unavailable" formatted="false">Бұл сілтемені ашатын браузер жоқ.</string>
     <string name="android_permission_background_hint" formatted="false">Келесі экранда Рұқсаттар → Орналасқан жер бөлімін ашып, «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.</string>
     <string name="android_precise_location_body" formatted="false">Бағытты сызу және қашықтықты өлшеу үшін нақты геолокация қажет. Баптаулар → Рұқсаттар → Орналасқан жер бөліміне өтіп, «Нақты орналасқан жерді пайдалану» параметрін қосыңыз.</string>
     <string name="android_selected_item">• %1$s</string>

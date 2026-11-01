@@ -47,6 +47,7 @@ android {
         buildConfig = true
         compose = true
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -62,6 +63,8 @@ dependencies {
     // The map's public API speaks the domain types: GeoPoint, GeoBounds, RevealedLayer.
     api(project(":core:model"))
     api(project(":core:logic"))
+    // The attribution uses the same house sheet and Inter as every other screen.
+    implementation(project(":core:designsystem"))
     implementation(libs.maplibre.opengl)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.foundation)
@@ -69,6 +72,8 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
+    // The label view is checked with real Inter resources, without starting MapLibre or GLES.
+    testImplementation(libs.robolectric)
 }
 
 // Fails the build when the MapLibre in the version catalog is not the one the C++ interface was
@@ -115,4 +120,7 @@ tasks.named("preBuild") { dependsOn(verifyMapLibreAbi) }
 // The pin test reads the catalog and the copied headers from the source tree.
 tasks.withType<Test>().configureEach {
     systemProperty("triptrack.rootDir", rootDir.absolutePath)
+    providers.systemProperty("robolectric.dependency.dir").orNull?.let {
+        systemProperty("robolectric.dependency.dir", it)
+    }
 }

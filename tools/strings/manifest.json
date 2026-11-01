@@ -40,7 +40,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "697985a49fb1225e67499468f52610ba8da259dc691c7406d4ba3cf307ba98d8"
+    "tools/strings/android.json": "f15d42639fa46d6d0f9a73b37c2d4da51f836cb2c78f4c8bae3630d799d47dea"
   },
   "languages": [
     "en",
@@ -137,67 +137,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1872,
+      "strings": 1874,
       "plurals": 30,
       "english_fallbacks": 24
     }
@@ -16982,6 +16982,28 @@
         "text": {
           "1": "d"
         }
+      }
+    },
+    {
+      "name": "android_map_attribution",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_map_link_unavailable",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
       }
     },
     {

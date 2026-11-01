@@ -207,6 +207,8 @@
     <string name="android_health_restricted" formatted="false">TripTrack’s background activity is restricted.</string>
     <string name="android_health_title" formatted="false">Recording reliability</string>
     <string name="android_level_label">LVL %1$d</string>
+    <string name="android_map_attribution" formatted="false">Map credits</string>
+    <string name="android_map_link_unavailable" formatted="false">No browser is available to open this link.</string>
     <string name="android_permission_background_hint" formatted="false">On the next screen open Permissions → Location and choose “Allow all the time” so trips can start when you get in the car.</string>
     <string name="android_precise_location_body" formatted="false">Recording needs precise location to draw your route and measure distance. Open Settings → Permissions → Location and turn on “Use precise location”.</string>
     <string name="android_selected_item">• %1$s</string>
