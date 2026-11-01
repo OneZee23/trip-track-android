@@ -3,6 +3,7 @@ package com.onezee.triptrack.location.auto
 import android.content.Context
 import android.content.SharedPreferences
 import com.onezee.triptrack.model.AutoRecordMode
+import com.onezee.triptrack.model.AutoRecordTrigger
 import com.onezee.triptrack.model.SavedBluetoothDevice
 import java.time.Instant
 import java.util.UUID
@@ -15,14 +16,16 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 /**
- * iOS: SettingsManager's auto-record half (`autoRecordMode`, `autoStopTimeout`,
+ * iOS: SettingsManager's auto-record half (`autoRecordMode`, `autoRecordTrigger`, `autoStopTimeout`,
  * `savedBluetoothDevices`) under the same keys. Local to the phone, never synced, as on iOS.
  *
  * A saved stereo's `uuid` is its Bluetooth address on Android: the name is for people, and two
  * stereos of one car brand are often called the same.
  */
+// iOS: SettingsManager.swift, AutoRecordTrigger.swift.
 interface AutoRecordSettings {
     var mode: AutoRecordMode
+    var trigger: AutoRecordTrigger
     /** Minutes between the stop question and the automatic stop. */
     var autoStopTimeout: Int
     var savedDevices: List<SavedBluetoothDevice>
@@ -48,6 +51,7 @@ interface AutoRecordSettings {
         override var mode: AutoRecordMode = AutoRecordMode.off,
         override var autoStopTimeout: Int = 3,
         override var savedDevices: List<SavedBluetoothDevice> = emptyList(),
+        override var trigger: AutoRecordTrigger = AutoRecordTrigger.motionOrStereo,
     ) : AutoRecordSettings
 }
 
@@ -88,6 +92,12 @@ class PreferencesAutoRecordSettings(
             preferences.edit().putInt(TIMEOUT_KEY, value).apply()
         }
 
+    override var trigger: AutoRecordTrigger
+        get() = AutoRecordTrigger.parse(preferences.getString(TRIGGER_KEY, null))
+        set(value) {
+            preferences.edit().putString(TRIGGER_KEY, value.rawValue).apply()
+        }
+
     override var savedDevices: List<SavedBluetoothDevice>
         get() = preferences.getString(DEVICES_KEY, null)
             ?.let { runCatching { json.decodeFromString(devices, it) }.getOrNull() }.orEmpty()
@@ -120,9 +130,10 @@ class PreferencesAutoRecordSettings(
     companion object {
         const val FILE_NAME = "triptrack.autorecord"
         const val MODE_KEY = "autoRecordMode"
+        const val TRIGGER_KEY = "autoRecordTrigger"
         const val TIMEOUT_KEY = "autoStopTimeout"
         const val DEVICES_KEY = "savedBluetoothDevices"
-        private val KEYS = setOf(MODE_KEY, TIMEOUT_KEY, DEVICES_KEY)
+        private val KEYS = setOf(MODE_KEY, TRIGGER_KEY, TIMEOUT_KEY, DEVICES_KEY)
         private val json = Json { ignoreUnknownKeys = true }
     }
 }

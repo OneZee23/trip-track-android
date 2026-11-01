@@ -65,6 +65,9 @@ class RecordingService : Service() {
 
     private suspend fun run() {
         graph.awaitStarted()
+        // iOS: AutoTripService.swift, significant-location wake. A sticky service can return
+        // without the stereo's original connect broadcast reaching this process.
+        if (!graph.recorder.state.value.isRecording) graph.autoTrip.onWake()
         if (!graph.recorder.state.value.isRecording && !graph.recorder.state.value.isFinishing) return finish()
         var gpsOn = false
         coroutineScope {

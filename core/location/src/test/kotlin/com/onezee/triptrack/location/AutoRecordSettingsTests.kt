@@ -5,6 +5,7 @@ package com.onezee.triptrack.location
 import android.content.Context
 import com.onezee.triptrack.location.auto.PreferencesAutoRecordSettings
 import com.onezee.triptrack.model.AutoRecordMode
+import com.onezee.triptrack.model.AutoRecordTrigger
 import com.onezee.triptrack.model.SavedBluetoothDevice
 import java.util.UUID
 import kotlin.test.*
@@ -20,6 +21,22 @@ class AutoRecordSettingsTests {
     private val context: Context get() = RuntimeEnvironment.getApplication()
     private val current get() = context.getSharedPreferences("canonical", Context.MODE_PRIVATE)
     private val legacy get() = context.getSharedPreferences("legacy", Context.MODE_PRIVATE)
+
+    // iOS: AutoRecordTriggerTests.swift, SettingsManager.swift (phone-only storage).
+    @Test fun triggerUsesTheIosKeyAndSurvivesANewOwner() {
+        val screen = PreferencesAutoRecordSettings(current)
+        assertEquals(AutoRecordTrigger.motionOrStereo, screen.trigger)
+        screen.trigger = AutoRecordTrigger.stereoOnly
+        assertEquals("stereoOnly", current.getString("autoRecordTrigger", null))
+        assertEquals(AutoRecordTrigger.stereoOnly, PreferencesAutoRecordSettings(current).trigger)
+        screen.mode = AutoRecordMode.off
+        screen.savedDevices = emptyList()
+        assertEquals(AutoRecordTrigger.stereoOnly, PreferencesAutoRecordSettings(current).trigger)
+        for (raw in listOf(null, "unknown", "")) {
+            current.edit().putString("autoRecordTrigger", raw).commit()
+            assertEquals(AutoRecordTrigger.motionOrStereo, PreferencesAutoRecordSettings(current).trigger)
+        }
+    }
 
     @Test fun recordingOnlyChoicesMigrateAndNeverComeBackAfterRemoval() {
         val old = PreferencesAutoRecordSettings(legacy)

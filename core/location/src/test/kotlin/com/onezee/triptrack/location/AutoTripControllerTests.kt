@@ -9,6 +9,7 @@ import com.onezee.triptrack.location.recording.StartRefusal
 import com.onezee.triptrack.location.recording.StartResult
 import com.onezee.triptrack.logic.TrackTestKit
 import com.onezee.triptrack.model.AutoRecordMode
+import com.onezee.triptrack.model.AutoRecordTrigger
 import com.onezee.triptrack.model.SavedBluetoothDevice
 import com.onezee.triptrack.model.TripConfirmation
 import kotlin.test.assertEquals
@@ -34,6 +35,8 @@ class AutoTripControllerTests : RecorderTestCase() {
     private val prompts = Prompts()
     private var serviceStarts = 0
     private var serviceAllowed = true
+    private var useOutputSnapshot = false
+    private var currentOutput: SavedBluetoothDevice? = null
     private var gate = CompletableDeferred<Unit>()
     private val waits = mutableListOf<Long>()
     // The injected wait already controls the clock; enter it before asserting the armed delay.
@@ -49,6 +52,10 @@ class AutoTripControllerTests : RecorderTestCase() {
             scope = scope,
             clock = { now },
             wait = { millis -> waits += millis; gate.await() },
+            linkedStereo = {
+                if (useOutputSnapshot) currentOutput
+                else memory.connectedStereo?.let { autoSettings.savedDevice(it, null) }
+            },
         )
         recorder.listener = controller
     }
@@ -270,8 +277,98 @@ class AutoTripControllerTests : RecorderTestCase() {
 
     @Test
     fun androidAutoIsACarToo() = test {
+        autoSettings.savedDevices = listOf(SavedBluetoothDevice(AutoTripController.ANDROID_AUTO, "Android Auto"))
         controller.onCarConnection(true)
         assertTrue(recorder.state.value.isRecording)
+        drive(straight(0..240))
+        now = TrackTestKit.at(250.0)
+        controller.onCarConnection(false)
+        assertFalse(recorder.state.value.isRecording)
+    }
+
+    // iOS: AutoTripTriggerPolicyTests.swift, AutoTripService.swift (all motion doors).
+    @Test fun stereoOnlyMotionNeitherStartsNorSplitsAStaleTrip() = test {
+        autoSettings.trigger = AutoRecordTrigger.stereoOnly
+        controller.onAutomotiveDetected(null)
+        controller.onWake(isAutomotive = true)
+        assertFalse(recorder.state.value.isRecording)
+        assertNull(memory.lastTripTriggerTime)
+        recorder.start()
+        val first = recorder.state.value.tripId
+        drive(straight(0..240))
+        now = TrackTestKit.at(1_450.0)
+        controller.onAutomotiveDetected(null)
+        controller.onWake(isAutomotive = true)
+        assertEquals(first, recorder.state.value.tripId)
+        assertTrue(recorder.state.value.isRecording)
+        assertEquals(0, serviceStarts)
+    }
+
+    @Test fun rejectedMotionDoesNotCancelTheStereoStopTimer() = test {
+        autoSettings.trigger = AutoRecordTrigger.stereoOnly
+        controller.onStereoConnected(stereo.uuid, stereo.name)
+        drive(straight(0..60))
+        now = TrackTestKit.at(70.0)
+        controller.onStereoDisconnected(stereo.uuid, stereo.name)
+        val timer = controller.stopTimer
+        controller.onAutomotiveDetected(null)
+        assertEquals(timer, controller.stopTimer)
+        assertFalse(timer!!.isCancelled)
+    }
+
+    @Test fun stereoOnlyWakeReadsTheLinkedOutputWithoutAnAutomotiveSignal() = test {
+        autoSettings.trigger = AutoRecordTrigger.stereoOnly
+        val car = vehicles.addVehicle("Polo", "🚗")
+        currentOutput = stereo.copy(vehicleId = car)
+        autoSettings.savedDevices = listOf(currentOutput!!)
+        useOutputSnapshot = true
+        assertNull(memory.connectedStereo, "the process missed the connect broadcast")
+        controller.onWake(isAutomotive = false)
+        assertTrue(recorder.state.value.isRecording)
+        assertEquals(car, db.tripDao().trip(recorder.state.value.tripId!!)!!.vehicleId)
+        assertEquals(stereo.uuid, memory.connectedStereo)
+        drive(straight(0..240))
+        now = TrackTestKit.at(250.0)
+        controller.onStereoDisconnected(stereo.uuid, stereo.name)
+        assertFalse(recorder.state.value.isRecording)
+    }
+
+    @Test fun stalePersistedStereoDoesNotCountAsAConnectedOutput() = test {
+        autoSettings.trigger = AutoRecordTrigger.stereoOnly
+        memory.connectedStereo = stereo.uuid
+        useOutputSnapshot = true
+        controller.onWake(isAutomotive = true)
+        controller.onAutomotiveDetected(null)
+        assertFalse(recorder.state.value.isRecording)
+    }
+
+    @Test fun oldTriggerStillNeedsAutomotiveForAWake() = test {
+        useOutputSnapshot = true
+        currentOutput = stereo
+        controller.onWake(isAutomotive = false)
+        assertFalse(recorder.state.value.isRecording)
+        controller.onWake(isAutomotive = true)
+        assertTrue(recorder.state.value.isRecording)
+    }
+
+    @Test fun unlinkedAndroidAutoDoesNotStartOrStopATrip() = test {
+        controller.onCarConnection(true)
+        assertFalse(recorder.state.value.isRecording)
+        recorder.start()
+        drive(straight(0..240))
+        now = TrackTestKit.at(250.0)
+        controller.onCarConnection(false)
+        assertTrue(recorder.state.value.isRecording)
+        assertTrue(prompts.stopPrompts.isEmpty())
+    }
+
+    @Test fun linkedAndroidAutoStartsAndStopsInStereoOnlyMode() = test {
+        autoSettings.trigger = AutoRecordTrigger.stereoOnly
+        val car = vehicles.addVehicle("Polo", "🚗")
+        autoSettings.savedDevices = listOf(SavedBluetoothDevice(AutoTripController.ANDROID_AUTO, "Android Auto", car))
+        controller.onCarConnection(true)
+        assertTrue(recorder.state.value.isRecording)
+        assertEquals(car, db.tripDao().trip(recorder.state.value.tripId!!)!!.vehicleId)
         drive(straight(0..240))
         now = TrackTestKit.at(250.0)
         controller.onCarConnection(false)

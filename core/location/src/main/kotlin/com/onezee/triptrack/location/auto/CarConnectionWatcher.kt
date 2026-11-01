@@ -1,3 +1,4 @@
+// iOS: AudioRouteDetector.swift
 package com.onezee.triptrack.location.auto
 
 import android.annotation.SuppressLint
@@ -9,7 +10,7 @@ import android.net.Uri
 import android.util.Log
 
 /**
- * iOS: CarPlay as a trigger. Android Auto announces itself through the protocol of the Android for
+ * iOS: AudioRouteDetector.swift (.carAudio). Android Auto announces itself through the protocol of the Android for
  * Cars library's `CarConnection`: a content provider that answers the connection type, and a
  * broadcast when it changes. This reads that protocol directly; the library would bring Guava, media
  * and lifecycle along for one query.
@@ -59,7 +60,7 @@ class CarConnectionWatcher(
 
     @Synchronized
     private fun publish() {
-        val connected = connectionType() != CONNECTION_TYPE_NOT_CONNECTED
+        val connected = isConnected(connectionType())
         if (connected == lastConnected) return
         val first = lastConnected == null
         lastConnected = connected
@@ -72,6 +73,9 @@ class CarConnectionWatcher(
         const val ACTION_CAR_CONNECTION_UPDATED = "androidx.car.app.connection.action.CAR_CONNECTION_UPDATED"
         const val CAR_CONNECTION_STATE = "CarConnectionState"
         const val CONNECTION_TYPE_NOT_CONNECTED = 0
+        const val CONNECTION_TYPE_NATIVE = 1
+        const val CONNECTION_TYPE_PROJECTION = 2
+        fun isConnected(type: Int): Boolean = type == CONNECTION_TYPE_NATIVE || type == CONNECTION_TYPE_PROJECTION
         val CONNECTION_URI: Uri = Uri.Builder().scheme("content").authority("androidx.car.app.connection").build()
         private const val TAG = "CarConnectionWatcher"
     }

@@ -1,6 +1,7 @@
 package com.onezee.triptrack.logic
 
 import com.onezee.triptrack.model.AutoRecordMode
+import com.onezee.triptrack.model.AutoRecordTrigger
 import com.onezee.triptrack.model.AutoTripPolicy
 import com.onezee.triptrack.model.AutoTripPolicy.BluetoothDisconnectDecision
 
@@ -20,6 +21,16 @@ val AutoTripPolicy.junkTripWalkingSpeedKmh: Double get() = 15.0
 val AutoTripPolicy.junkTripWalkingMinDuration: Double get() = 180.0
 val AutoTripPolicy.backgroundLaunchTaskTimeout: Double get() = 25.0
 val AutoTripPolicy.audioRouteSettleDelay: Double get() = 1.0
+
+// iOS: AutoTripPolicy.swift. Motion also fires in taxis; only a linked stereo proves this is our car.
+fun AutoTripPolicy.motionSignalStartsTrip(
+    trigger: AutoRecordTrigger,
+    isAutomotive: Boolean,
+    linkedStereoConnected: Boolean,
+): Boolean = when (trigger) {
+    AutoRecordTrigger.motionOrStereo -> isAutomotive
+    AutoRecordTrigger.stereoOnly -> linkedStereoConnected
+}
 
 fun AutoTripPolicy.onBluetoothDisconnect(
     mode: AutoRecordMode,

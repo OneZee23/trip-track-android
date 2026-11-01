@@ -1,3 +1,4 @@
+// iOS: AutoTripService.swift
 package com.onezee.triptrack.location.auto
 
 import com.onezee.triptrack.location.recording.RecorderListener
@@ -11,6 +12,7 @@ import com.onezee.triptrack.logic.autoStopDelaySeconds
 import com.onezee.triptrack.logic.bluetoothDisconnectFastStopIdleThreshold
 import com.onezee.triptrack.logic.eventDeduplicationWindow
 import com.onezee.triptrack.logic.inactivityTimeout
+import com.onezee.triptrack.logic.motionSignalStartsTrip
 import com.onezee.triptrack.logic.newDrivingSessionGap
 import com.onezee.triptrack.logic.onBluetoothDisconnect
 import com.onezee.triptrack.logic.staleTripTimeout
@@ -20,6 +22,7 @@ import com.onezee.triptrack.model.AutoRecordMode
 import com.onezee.triptrack.model.AutoTripPolicy
 import com.onezee.triptrack.model.AutoTripPolicy.BluetoothDisconnectDecision
 import com.onezee.triptrack.model.TripConfirmation
+import com.onezee.triptrack.model.SavedBluetoothDevice
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
@@ -76,6 +79,11 @@ class AutoTripController(
     private val clock: () -> Instant = Instant::now,
     /** The auto-stop timer's wait; tests replace it to fire the timer without waiting minutes. */
     private val wait: suspend (millis: Long) -> Unit = { delay(it) },
+    // A sleeping process can miss the connect event. Production reads the current outputs,
+    // rather than trusting a Bluetooth address left in preferences by an earlier process.
+    private val linkedStereo: () -> SavedBluetoothDevice? = {
+        memory.connectedStereo?.let { settings.savedDevice(it, null) }
+    },
 ) : RecorderListener {
     private val tracker = RecordingMovementTracker()
     private val lastEvents = mutableMapOf<Pair<Boolean, String>, Instant>()
@@ -92,6 +100,22 @@ class AutoTripController(
 
     /** IN_VEHICLE entered. [estimatedStart] is when the drive began, from the transition itself. */
     suspend fun onAutomotiveDetected(estimatedStart: Instant?) {
+        onMotionSignal(isAutomotive = true, estimatedStart = estimatedStart)
+    }
+
+    /** iOS: significant-location wake and handleBackgroundLaunch, after launch recovery. */
+    suspend fun onWake(isAutomotive: Boolean = false) {
+        onMotionSignal(isAutomotive, estimatedStart = null)
+    }
+
+    private suspend fun onMotionSignal(isAutomotive: Boolean, estimatedStart: Instant?) {
+        val stereo = linkedStereo()
+        if (settings.mode == AutoRecordMode.off || !AutoTripPolicy.motionSignalStartsTrip(
+                settings.trigger, isAutomotive, linkedStereoConnected = stereo != null,
+            )) return
+        // A wake may discover a different car after a missed connect event; its disconnect
+        // must be allowed to end this trip instead of matching the old persisted address.
+        memory.connectedStereo = stereo?.uuid
         val now = clock()
         // A long gap since the car last stopped: a new driving session, remind again.
         memory.lastAutomotiveEndTime?.let {
@@ -99,7 +123,7 @@ class AutoTripController(
         }
         // The car moves again: any pending inactivity stop is void.
         if (recorder.state.value.isRecording) cancelAutoStopTimer()
-        handleAutomotiveDetected(estimatedStart)
+        handleAutomotiveDetected(estimatedStart, stereo)
     }
 
     /** IN_VEHICLE left. It flickers at red lights, so it never stops anything; it only dates the session. */
@@ -107,7 +131,7 @@ class AutoTripController(
         memory.lastAutomotiveEndTime = clock()
     }
 
-    private suspend fun handleAutomotiveDetected(estimatedStart: Instant?) {
+    private suspend fun handleAutomotiveDetected(estimatedStart: Instant?, stereo: SavedBluetoothDevice?) {
         if (settings.mode == AutoRecordMode.off) return
         if (recorder.state.value.isRecording) {
             // A trip parked past the stale window whose stop never fired: this is a new session,
@@ -129,7 +153,7 @@ class AutoTripController(
             }
         }
         if (duplicate) return
-        memory.connectedStereo?.let { address -> settings.savedDevice(address, null)?.vehicleId?.let { selectVehicle(it) } }
+        stereo?.vehicleId?.let { selectVehicle(it) }
         if (recorder.state.value.isRecording) return
         triggerTripStart(estimatedStart)
     }
@@ -173,14 +197,12 @@ class AutoTripController(
 
     // MARK: Android Auto
 
-    /** Android Auto projection or a car running Android: a car, whatever the stereo is called. */
+    /** iOS: AudioRouteDetector.swift, .carAudio. Only a linked output is our stereo. */
     suspend fun onCarConnection(connected: Boolean) {
         if (connected) {
-            if (!shouldProcess(connected = true, ANDROID_AUTO)) return
-            handleAutomotiveDetected(null)
+            onStereoConnected(ANDROID_AUTO, null)
         } else {
-            if (!shouldProcess(connected = false, ANDROID_AUTO)) return
-            disconnected()
+            onStereoDisconnected(ANDROID_AUTO, null)
         }
     }
 

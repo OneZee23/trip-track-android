@@ -1,3 +1,4 @@
+// iOS: AutoTripService.swift
 package com.onezee.triptrack.location
 
 import android.Manifest
@@ -21,6 +22,7 @@ import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.location.auto.ActivityTransitions
 import com.onezee.triptrack.location.auto.AutoRecordSettings
 import com.onezee.triptrack.location.auto.AutoTripController
+import com.onezee.triptrack.location.auto.CarStereoConnections
 import com.onezee.triptrack.location.auto.CarConnectionWatcher
 import com.onezee.triptrack.location.auto.PreferencesAutoRecordSettings
 import com.onezee.triptrack.location.auto.PreferencesAutoTripMemory
@@ -127,11 +129,13 @@ class LocationGraph(
         recordingStore, trips, settings, rawFixLog, PreferencesRecorderSessionStore(context), finisher,
         canUseLocation = ::hasLocationPermission,
     ).also { recorderRef = it }
+    val carStereos = CarStereoConnections(context) { strings().androidAuto() }
     val autoTrip = AutoTripController(
         recorder, autoRecord, PreferencesAutoTripMemory(context), notifications,
         selectVehicle = ::selectVehicle,
         ensureRecordingService = { RecordingService.start(context) },
         scope = scope,
+        linkedStereo = { carStereos.linkedStereo(autoRecord) },
     )
     private val draftQueue = PreferencesDraftDecisionQueue(context)
     val drafts = DraftDecisions(
@@ -164,6 +168,7 @@ class LocationGraph(
             drafts.apply()
             postProcessing.processUnprocessedTrips()
             rearmAutoRecord()
+            autoTrip.onWake()
             namer.retryUntitled({ id -> trips.fetchEntity(id)?.startDate }) { delay(1_500) }
         }
     }
