@@ -119,7 +119,7 @@ class FogMesh(val fine: FogMeshLod, val mid: FogMeshLod, val far: FogMeshLod) {
                 var ax = MapPoints.x(line[0].longitude)
                 var ay = MapPoints.y(line[0].latitude)
                 for (i in 1 until line.size) {
-                    val bx = MapPoints.x(line[i].longitude)
+                    val bx = MapPoints.nearestWorldX(MapPoints.x(line[i].longitude), ax)
                     val by = MapPoints.y(line[i].latitude)
                     // The chunk is picked by the segment's MIDPOINT, so a segment lying on a chunk
                     // border does not jump between neighbours with the rounding of its start.

@@ -7,6 +7,7 @@ import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.exp
+import kotlin.math.floor
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sin
@@ -31,6 +32,10 @@ object MapPoints {
     }
 
     fun longitude(x: Double): Double = x / WORLD * 360.0 - 180.0
+
+    // iOS: FogMesh.swift (projected segment endpoints). MapLibre repeats the projected world;
+    // a short crossing of ±180° must not become a corridor across the entire planet.
+    fun nearestWorldX(x: Double, reference: Double): Double = x + floor((reference - x) / WORLD + 0.5) * WORLD
 
     fun latitude(y: Double): Double {
         val n = PI - 2.0 * PI * y / WORLD

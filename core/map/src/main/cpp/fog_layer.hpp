@@ -64,7 +64,7 @@ private:
 
     GLint uM_ = -1, uTranslation_ = -1, uViewport_ = -1, uHalfWidth_ = -1, uFeather_ = -1;
     GLint uCoverage_ = -1, uColour_ = -1, uAlpha_ = -1, uPxPerDp_ = -1, uFbOrigin_ = -1, uFbSize_ = -1;
-    GLint uSide_ = -1, uGm_ = -1, uGinv_ = -1, uGorigin_ = -1, uCellOrigin_ = -1, uReveal_ = -1;
+    GLint uSide_ = -1, uGm_ = -1, uGinv_ = -1, uGorigin_ = -1, uCellOrigin_ = -1, uReveal_ = -1, uWorld_ = -1;
 
     // GL_EXT_disjoint_timer_query, for the GPU time per frame the emulator cannot show.
     using GenQueries = void (*)(GLsizei, GLuint*);

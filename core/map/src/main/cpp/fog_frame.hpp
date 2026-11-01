@@ -22,6 +22,23 @@ constexpr double kWorld = 268435456.0;
 // MapLibre's spherical Web Mercator: the scale its own map and scale bar use.
 constexpr double kEarthCircumference = 40075016.68557849;
 
+// MapLibre repeats tiles horizontally at every zoom. A custom layer gets one call for the whole
+// viewport, so it must repeat its own geometry, including when more than two worlds fit on screen.
+// iOS: FogFrameEncoder.swift (visible chunks); Android supplies MapLibre's wrapped world copies.
+struct WorldCopies {
+    int first;
+    int last;
+};
+
+inline WorldCopies visibleWorldCopies(double minX, double maxX, double viewMinX, double viewMaxX, double pad) {
+    return {static_cast<int>(std::ceil((viewMinX - pad - maxX) / kWorld)),
+            static_cast<int>(std::floor((viewMaxX + pad - minX) / kWorld))};
+}
+
+inline double nearestWorldX(double x, double reference) {
+    return x + std::floor((reference - x) / kWorld + 0.5) * kWorld;
+}
+
 struct MapPoint {
     double x;
     double y;

@@ -150,6 +150,7 @@ uniform vec4 u_ginv;
 uniform vec2 u_gorigin;
 uniform vec2 u_cellOrigin;
 uniform vec4 u_reveal;
+uniform vec2 u_world;
 out vec4 o_colour;
 
 // Coverage is addressed in normalised coordinates, so the same code reads the full-size texture
@@ -189,7 +190,10 @@ void main() {
     float coverage = u_side > 0.0 ? cellCoverage(p) : texture(u_coverage, local / u_fbSize).r;
     float a = u_alpha * (1.0 - coverage);
     if (u_reveal.z > 0.0) {
-        float d = distance(p, u_reveal.xy) / u_reveal.z;
+        vec2 delta = p - u_reveal.xy;
+        // The nearest repeated circle, even with a rotated map or several worlds on screen.
+        delta -= u_world * floor(dot(delta, u_world) / dot(u_world, u_world) + 0.5);
+        float d = length(delta) / u_reveal.z;
         a *= clamp((d - u_reveal.w) / max(1.0 - u_reveal.w, 1e-3), 0.0, 1.0);
     }
     o_colour = vec4(u_colour * a, a);
@@ -237,6 +241,7 @@ void FogHost::initialize(const mln::style::CustomLayerInitParameters&) {
     uGorigin_ = glGetUniformLocation(compositeProgram_, "u_gorigin");
     uCellOrigin_ = glGetUniformLocation(compositeProgram_, "u_cellOrigin");
     uReveal_ = glGetUniformLocation(compositeProgram_, "u_reveal");
+    uWorld_ = glGetUniformLocation(compositeProgram_, "u_world");
     glGenVertexArrays(1, &segmentVao_);
     glGenVertexArrays(1, &emptyVao_);
     glGenFramebuffers(1, &fbo_);
@@ -321,20 +326,22 @@ void FogHost::render(const mln::style::CustomLayerRenderParameters& p) {
         for (const Chunk& chunk : data->chunks) {
             // Culling with room for the corridor: a chunk whose segments lie past the edge still
             // paints into the frame with its halo.
-            if (chunk.maxX < frame.minX - pad || chunk.minX > frame.maxX + pad || chunk.maxY < frame.minY - pad ||
+            if (chunk.maxY < frame.minY - pad ||
                 chunk.minY > frame.maxY + pad) {
                 continue;
             }
-            // The chunk's offset reaches the screen in DOUBLE and only then goes to float: that is the
-            // whole point of a chunk having its own origin.
-            double tx = 0, ty = 0;
-            frame.project(chunk.ox - frame.ref.x, chunk.oy - frame.ref.y, tx, ty);
-            glUniform2f(uTranslation_, static_cast<float>(tx), static_cast<float>(ty));
-            glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 16,
-                                  reinterpret_cast<const void*>(static_cast<intptr_t>(chunk.first) * 16));
-            glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, chunk.count);
-            chunks += 1;
-            segments += chunk.count;
+            const auto copies = visibleWorldCopies(chunk.minX, chunk.maxX, frame.minX, frame.maxX, pad);
+            for (int copy = copies.first; copy <= copies.last; ++copy) {
+                // Keep the shared VBO: each copy changes only the double-precision origin.
+                double tx = 0, ty = 0;
+                frame.project(chunk.ox + copy * kWorld - frame.ref.x, chunk.oy - frame.ref.y, tx, ty);
+                glUniform2f(uTranslation_, static_cast<float>(tx), static_cast<float>(ty));
+                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 16,
+                                      reinterpret_cast<const void*>(static_cast<intptr_t>(chunk.first) * 16));
+                glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, chunk.count);
+                chunks += 1;
+                segments += chunk.count;
+            }
         }
     }
     glVertexAttribDivisor(0, 0);
@@ -376,7 +383,7 @@ void FogHost::render(const mln::style::CustomLayerRenderParameters& p) {
     if (reveal.radiusMetres > 0) {
         const MapPoint at = mapPoint(reveal.latitude, reveal.longitude);
         double cx = 0, cy = 0;
-        frame.project(at.x - frame.ref.x, at.y - frame.ref.y, cx, cy);
+        frame.project(nearestWorldX(at.x, frame.ref.x) - frame.ref.x, at.y - frame.ref.y, cx, cy);
         const double metresPerPoint = metresPerMapPoint(latitudeOf((frame.minY + frame.maxY) / 2)) / frame.pointsPerMapPoint;
         const double radius = std::max(reveal.radiusMetres / metresPerPoint, 1.0);
         glUniform4f(uReveal_, static_cast<float>(cx), static_cast<float>(cy), static_cast<float>(radius),
@@ -384,6 +391,7 @@ void FogHost::render(const mln::style::CustomLayerRenderParameters& p) {
     } else {
         glUniform4f(uReveal_, 0.0f, 0.0f, 0.0f, 0.0f);
     }
+    glUniform2f(uWorld_, static_cast<float>(frame.a * kWorld), static_cast<float>(frame.b * kWorld));
     glDrawArrays(GL_TRIANGLES, 0, 3);
     if (diagnostics) endTimer();
 
