@@ -1,0 +1,11 @@
+TripTrack is a road-trip diary. Record a drive and return to its route, photos and numbers later.
+
+Record manually or enable automatic recording. With your permission, recording continues in the background when the app is closed or not in use. See distance, duration, speed and elevation, pause a recording and resume when you are ready.
+
+Keep photos and notes with a trip. Add checkpoints along the way, review the route on the map and replay the drive. Export a route as GPX or trip data as CSV.
+
+Your Atlas brings recorded roads together on one map. Add vehicles to the Garage and keep their trips and mileage together. Levels and badges mark the distance you have travelled.
+
+Recording works without an internet connection. Loading maps and using cloud features need a connection. You can use the diary without an account. Cloud Sync is off by default and can be enabled in settings.
+
+TripTrack is free and has no ads.

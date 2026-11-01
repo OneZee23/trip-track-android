@@ -1,0 +1,11 @@
+TripTrack, karayolu yolculuklarınızın günlüğüdür. Bir yolculuğu kaydedin; rotasına, fotoğraflarına ve verilerine daha sonra dönün.
+
+Kaydı kendiniz başlatın veya otomatik kaydı açın. İzninizle, uygulama kapalıyken ya da kullanılmıyorken kayıt arka planda devam eder. Mesafeyi, süreyi, hızı ve yüksekliği görün. Kaydı duraklatıp devam ettirebilirsiniz.
+
+Fotoğraf, not ve işaretler ekleyin. Rotayı haritada inceleyin, yolculuğu yeniden oynatın ve rotayı GPX ya da yolculuk verilerini CSV olarak dışa aktarın.
+
+Atlas, kaydedilen yolları tek haritada toplar. Araçları Garaj'a ekleyerek yolculuklarını ve kilometrelerini bir arada tutun. Seviyeler ve başarımlar katettiğiniz yola eşlik eder.
+
+Kayıt internet olmadan çalışır. Haritaları yüklemek ve bulut özelliklerini kullanmak bağlantı gerektirir. Günlüğü hesap açmadan kullanabilirsiniz. Bulut eşitlemesi varsayılan olarak kapalıdır ve ayarlardan açılır.
+
+TripTrack ücretsizdir ve reklam içermez.

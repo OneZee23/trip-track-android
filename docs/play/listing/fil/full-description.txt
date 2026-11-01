@@ -1,0 +1,11 @@
+Ang TripTrack ay talaarawan ng iyong mga biyahe sa daan. Irekord ang biyahe at balikan ang ruta, mga larawan at detalye nito.
+
+Simulan ang pagrekord o i-on ang awtomatikong pagrekord. Kapag pinayagan mo, tuloy ang pagrekord sa background kahit sarado o hindi ginagamit ang app. Tingnan ang distansya, tagal, bilis at taas. Maaari mong i-pause at ipagpatuloy ang pagrekord.
+
+Magdagdag ng mga larawan, tala at marka. Tingnan ang ruta sa mapa, i-replay ang biyahe at i-export ang ruta bilang GPX o ang datos ng biyahe bilang CSV.
+
+Pinagsasama ng Atlas ang mga nairekord na daan sa isang mapa. Magdagdag ng mga sasakyan sa Garahe para magkakasama ang mga biyahe at kilometrahe ng bawat isa. Mga level at tagumpay ang tanda ng distansyang nalakbay mo.
+
+Gumagana ang pagrekord nang walang internet. Kailangan ng koneksyon para sa mga mapa at cloud feature. Magagamit ang talaarawan nang walang account. Naka-off ang Cloud sync sa simula at maaari itong i-on sa settings.
+
+Libre ang TripTrack at walang ad.

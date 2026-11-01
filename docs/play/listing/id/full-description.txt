@@ -1,0 +1,11 @@
+TripTrack adalah catatan perjalanan di jalan. Rekam perjalanan dan lihat kembali rute, foto, serta datanya nanti.
+
+Mulai merekam sendiri atau aktifkan perekaman otomatis. Dengan izin Anda, perekaman berlanjut di latar belakang saat aplikasi ditutup atau tidak digunakan. Lihat jarak, durasi, kecepatan, dan ketinggian. Jeda perekaman lalu lanjutkan saat siap.
+
+Tambahkan foto, catatan, dan penanda. Lihat rute di peta, putar ulang perjalanan, dan ekspor rute sebagai GPX atau data perjalanan sebagai CSV.
+
+Atlas menyatukan jalan yang direkam pada satu peta. Tambahkan kendaraan ke Garasi untuk mengelompokkan perjalanan dan jarak tempuhnya. Level dan pencapaian menandai jarak yang telah Anda lalui.
+
+Perekaman berfungsi tanpa internet. Memuat peta dan menggunakan fitur awan memerlukan koneksi. Catatan perjalanan dapat digunakan tanpa akun. Sinkronisasi awan nonaktif secara default dan bisa diaktifkan di pengaturan.
+
+TripTrack gratis dan tanpa iklan.

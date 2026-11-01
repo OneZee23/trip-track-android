@@ -1,0 +1,11 @@
+TripTrack est votre carnet de route. Enregistrez un trajet pour retrouver ensuite son itinéraire, ses photos et ses chiffres.
+
+Lancez un enregistrement ou activez l'enregistrement automatique. Avec votre autorisation, il continue en arrière-plan lorsque l'application est fermée ou inutilisée. Consultez la distance, la durée, la vitesse et l'altitude. Mettez l'enregistrement en pause, puis reprenez-le.
+
+Ajoutez des photos, des notes et des repères. Consultez le parcours sur la carte, revivez le trajet et exportez l'itinéraire en GPX ou les données du trajet en CSV.
+
+L'Atlas rassemble vos routes enregistrées sur une carte. Ajoutez vos véhicules au Garage pour suivre leurs trajets et leur kilométrage. Les niveaux et les succès accompagnent la distance parcourue.
+
+L'enregistrement fonctionne sans connexion. Les cartes et les fonctions cloud nécessitent internet. Le carnet s'utilise sans compte. La Synchronisation cloud est désactivée par défaut et s'active dans les réglages.
+
+TripTrack est gratuit et sans publicité.

@@ -1,0 +1,11 @@
+TripTrack to dziennik podróży po drogach. Zapisz przejazd i wróć później do jego trasy, zdjęć i danych.
+
+Rozpocznij nagrywanie lub włącz nagrywanie automatyczne. Za Twoją zgodą działa ono w tle, gdy aplikacja jest zamknięta lub nieużywana. Sprawdzaj dystans, czas, prędkość i wysokość. Możesz wstrzymać i wznowić nagrywanie.
+
+Dodawaj zdjęcia, notatki i znaczniki. Oglądaj trasę na mapie, odtwarzaj przejazd i eksportuj trasę do GPX lub dane przejazdu do CSV.
+
+Atlas zbiera nagrane drogi na jednej mapie. Dodaj pojazdy do Garażu, aby uporządkować ich przejazdy i przebieg. Poziomy i osiągnięcia towarzyszą pokonanej drodze.
+
+Nagrywanie działa bez internetu. Mapy i funkcje chmury wymagają połączenia. Z dziennika można korzystać bez konta. Synchronizacja w chmurze jest domyślnie wyłączona i można ją włączyć w ustawieniach.
+
+TripTrack jest darmowy i nie zawiera reklam.

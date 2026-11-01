@@ -1,0 +1,11 @@
+TripTrack ist dein Fahrtenbuch für unterwegs. Halte eine Fahrt fest und sieh dir später die Route, Fotos und Fahrtdaten an.
+
+Starte die Aufzeichnung selbst oder aktiviere die automatische Aufnahme. Mit deiner Erlaubnis läuft sie im Hintergrund weiter, auch wenn die App geschlossen ist oder nicht verwendet wird. Behalte Strecke, Dauer, Geschwindigkeit und Höhe im Blick. Du kannst die Aufnahme pausieren und fortsetzen.
+
+Füge Fotos, Notizen und Markierungen hinzu. Sieh dir die Route auf der Karte an, spiele die Fahrt erneut ab und exportiere die Route als GPX oder die Fahrtdaten als CSV.
+
+Der Atlas vereint deine aufgezeichneten Straßen auf einer Karte. In der Garage ordnest du Fahrten und Kilometer deinen Fahrzeugen zu. Level und Erfolge begleiten die gefahrene Strecke.
+
+Die Aufzeichnung funktioniert ohne Internet. Karten und Cloud-Funktionen benötigen eine Verbindung. Du kannst das Fahrtenbuch ohne Konto nutzen. Cloud-Sync ist standardmäßig ausgeschaltet und lässt sich in den Einstellungen aktivieren.
+
+TripTrack ist kostenlos und ohne Werbung.

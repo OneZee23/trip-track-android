@@ -1,0 +1,11 @@
+TripTrack es un diario de tus viajes por carretera. Guarda un trayecto y vuelve después a su ruta, fotos y datos.
+
+Inicia la grabación o activa la grabación automática. Con tu permiso, continúa en segundo plano cuando la app está cerrada o no se está usando. Consulta distancia, duración, velocidad y altitud. Puedes pausar y reanudar la grabación.
+
+Añade fotos, notas y marcas. Revisa la ruta en el mapa, reproduce el trayecto y exporta la ruta en GPX o los datos del viaje en CSV.
+
+El Atlas reúne las carreteras grabadas en un mapa. Añade vehículos al Garaje para organizar sus viajes y kilometraje. Los niveles y los logros acompañan la distancia recorrida.
+
+La grabación funciona sin conexión. Cargar mapas y usar las funciones de la nube requiere internet. Puedes usar el diario sin cuenta. La Sincronización en la nube está desactivada por defecto y se activa en ajustes.
+
+TripTrack es gratis y no tiene anuncios.
