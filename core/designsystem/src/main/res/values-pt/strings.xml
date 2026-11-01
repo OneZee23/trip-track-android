@@ -241,6 +241,8 @@
     <string name="android_map_link_unavailable" formatted="false">Não há navegador disponível para abrir este link.</string>
     <string name="android_permission_background_hint" formatted="false">Na próxima tela, abra Permissões → Localização e escolha “Permitir o tempo todo” para iniciar viagens ao entrar no carro.</string>
     <string name="android_precise_location_body" formatted="false">A gravação precisa da localização exata para traçar a rota e medir a distância. Abra Configurações → Permissões → Localização e ative “Usar localização exata”.</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Não foi possível entrar com o Google. Verifique a conexão e sua conta Google neste celular e tente de novo.</string>
     <string name="android_sign_in_not_configured" formatted="false">O login Google não está configurado nesta versão. Adicione GOOGLE_WEB_CLIENT_ID a local.properties (docs/sign-in.md) e compile de novo.</string>

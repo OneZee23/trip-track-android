@@ -40,7 +40,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "f15d42639fa46d6d0f9a73b37c2d4da51f836cb2c78f4c8bae3630d799d47dea"
+    "tools/strings/android.json": "6b586f8e7f2773ad1767fe33a1487f316286e60816cbcd55471a7511ff6d8a8d"
   },
   "languages": [
     "en",
@@ -137,67 +137,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 0
     },
     "de": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1874,
+      "strings": 1876,
       "plurals": 30,
       "english_fallbacks": 24
     }
@@ -17026,6 +17026,35 @@
       "formatted": false,
       "signatures": {
         "text": {}
+      }
+    },
+    {
+      "name": "android_recording_level_up",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_recording_xp",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "xp": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
       }
     },
     {

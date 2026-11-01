@@ -66,7 +66,7 @@ class RecordingTexts(private val strings: AppStrings, private val unit: Distance
         when (reason) {
             StartRefusal.locationDenied -> Strings.string.notifStartFailedNoGeo
             StartRefusal.recoveryPending -> Strings.string.notifStartFailedRecovery
-            StartRefusal.alreadyRecording, StartRefusal.unknown -> Strings.string.notifStartFailedManual
+            StartRefusal.alreadyRecording, StartRefusal.unknown, StartRefusal.noFix -> Strings.string.notifStartFailedManual
         },
     )
 

@@ -9,6 +9,7 @@ import com.onezee.triptrack.logic.RecordingMath
 import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.logic.decide
 import com.onezee.triptrack.logic.withRecordingBreaks
+import com.onezee.triptrack.logic.confirmsSameOutcome
 import com.onezee.triptrack.model.FixGate
 import com.onezee.triptrack.model.TrackPoint
 import com.onezee.triptrack.model.Trip
@@ -48,10 +49,19 @@ class TripRecorder(
     private val clock: () -> Instant = Instant::now,
     private val placeManager: PlaceManager? = null,
     private val nameCheckpoint: suspend (TripCheckpoint, UUID) -> Unit = { _, _ -> },
+    private val recordVisit: suspend (GeoPoint) -> Boolean = { false },
 ) {
     private val mutex = Mutex()
     private val _state = MutableStateFlow(RecorderState())
     val state: StateFlow<RecorderState> = _state.asStateFlow()
+
+    // iOS: TrackManager.confirmedPoints. Kept by the engine so leaving the tab loses no points.
+    private val _track = MutableStateFlow<List<TrackPoint>>(emptyList())
+    val track: StateFlow<List<TrackPoint>> = _track.asStateFlow()
+    private val _completion = MutableStateFlow<StopOutcome?>(null)
+    val completion: StateFlow<StopOutcome?> = _completion.asStateFlow()
+
+    fun dismissCompletion(outcome: StopOutcome) { _completion.compareAndSet(outcome, null) }
 
     // iOS: recordedLocationPublisher. Only points admitted to the saved route draw the live trail.
     private val _recordedPoints = MutableSharedFlow<TrackPoint>(extraBufferCapacity = 64)
@@ -81,6 +91,7 @@ class TripRecorder(
         val result = mutex.withLock {
             val current = _state.value
             if (current.isRecording) return@withLock StartResult.Refused(StartRefusal.alreadyRecording)
+            if (current.isFinishing) return@withLock StartResult.Refused(StartRefusal.unknown)
             if (!canUseLocation()) return@withLock StartResult.Refused(StartRefusal.locationDenied)
             // The recovery question is open: an auto-start would race the orphan's adoption.
             if (current.recovery != null) return@withLock StartResult.Refused(StartRefusal.recoveryPending)
@@ -108,7 +119,7 @@ class TripRecorder(
     }
 
     private fun begin(trip: Trip, restored: RecorderSession?) {
-        val recordingMath = RecordingMath(trip)
+        val recordingMath = RecordingMath(trip.copy(trackPoints = emptyList()))
         val now = clock()
         if (restored?.isPaused == true) recordingMath.setPaused(true, restored.pauseStartedAt ?: now)
         math = recordingMath
@@ -117,6 +128,8 @@ class TripRecorder(
         lastSave = now
         liveSpeed.reset(now)
         val paused = restored?.isPaused == true
+        _track.value = trip.trackPoints
+        val lastFix = _state.value.location
         _state.value = RecorderState(
             tripId = trip.id,
             isRecording = true,
@@ -128,7 +141,11 @@ class TripRecorder(
             distance = trip.distance,
             maxSpeed = trip.maxSpeed,
             pausedSeconds = restored?.pausedSeconds ?: 0.0,
-            pauseStartedAt = if (paused) restored?.pauseStartedAt ?: now else null,
+            pauseStartedAt = if (paused) restored.pauseStartedAt ?: now else null,
+            location = lastFix,
+            gpsAccuracy = lastFix?.horizontalAccuracy ?: 0.0,
+            gpsStale = false,
+            checkpointCount = trip.checkpoints.size,
         )
         saveSession()
     }
@@ -161,12 +178,19 @@ class TripRecorder(
                 speed = liveSpeed.speed,
                 gpsAccuracy = fix.horizontalAccuracy,
                 gpsStale = false,
+                location = fix,
                 distance = recording?.trip?.distance ?: _state.value.distance,
                 maxSpeed = recording?.trip?.maxSpeed ?: _state.value.maxSpeed,
             )
             currentCoordinate = GeoPoint(fix.latitude, fix.longitude)
             if (point != null) lastCoordinate = point.coordinate
-            point?.let { _recordedPoints.tryEmit(it) }
+            point?.let {
+                _track.value = _track.value + it
+                _recordedPoints.tryEmit(it)
+                if (!_state.value.isDraft && recordVisit(it.coordinate)) {
+                    _state.value = _state.value.copy(revealCoordinate = it.coordinate)
+                }
+            }
             _state.value
         }
         accepted?.let { listener.onAcceptedFix(it) }
@@ -180,6 +204,7 @@ class TripRecorder(
         val checkpoint = TripCheckpoint(timestamp = now, latitude = coordinate.latitude, longitude = coordinate.longitude,
             distanceFromStart = trip.distance, elapsedFromStart = secondsBetween(trip.startDate, now), name = name)
         val saved = trips.addCheckpoint(checkpoint, trip.id) ?: return@withLock null
+        _state.value = _state.value.copy(checkpointCount = _state.value.checkpointCount + 1)
         nameCheckpoint(saved, trip.id)
         placeManager?.registerCheckpoint(saved, trip.id, recording = true)
         saved
@@ -238,47 +263,103 @@ class TripRecorder(
      * final numbers overwrite the live ones through the same distance door as every other count.
      */
     suspend fun stop(suggestedEndDate: Instant? = null): StopOutcome {
+        val trip = mutex.withLock { stopLocked(suggestedEndDate) } ?: return StopOutcome.NotRecording
+        return finish(trip)
+    }
+
+    // iOS: TrackingView.VehiclePickerSheet. Restamp the WHOLE drive; selecting a car clears transfer first.
+    suspend fun assignVehicle(vehicleId: UUID?, transfer: Boolean = false) = mutex.withLock {
+        val id = math?.trip?.id ?: return@withLock
+        val stamped = if (transfer) null else trips.recordableVehicleId(vehicleId)
+        trips.updateTransfer(id, transfer)
+        if (!transfer) trips.updateVehicle(id, stamped)
+        _state.value = _state.value.copy(vehicleId = stamped, isTransfer = transfer)
+    }
+
+    /** iOS: finishRecoveredTrip. Stop at the orphan's last fix before a new provider fix can arrive. */
+    suspend fun finishRecoverable(): StopOutcome {
         val trip = mutex.withLock {
-            val recording = math ?: return StopOutcome.NotRecording
-            // Out of the recording state before the slow part, so a second stop bails here.
-            math = null
-            _state.value = RecorderState(gpsAccuracy = _state.value.gpsAccuracy, isFinishing = true)
-            session.save(null)
-            try {
-                flush(recording)
-                rawFixLog.end()
-                val tripId = recording.trip.id
-                val points = store.trackPoints(tripId)
-                val start = recording.trip.startDate
-                val end = RecordingEnd.endDate(points, start, suggestedEndDate, clock())
-                val live = recording.trip
-                val stats = RecordingEnd.finalStats(points, live.recordingBreaks, live.distance, live.maxSpeed)
-                val elapsed = secondsBetween(start, end)
-                val average = if (points.size > 1) (if (elapsed > 0) stats.distance / elapsed else 0.0) else live.averageSpeed
-                store.finish(tripId, end, stats.distance, stats.maxSpeed, average, RecordingEnd.previewPolyline(points))
-                trips.fetchTripDetail(tripId)?.let { it.withRecordingBreaks(it.recordingBreaks) }
-            } catch (failure: Exception) {
-                // The row keeps no end, so the next launch recovers it as an orphan.
-                _state.value = _state.value.copy(isFinishing = false)
-                throw failure
-            }
+            if (math != null) return StopOutcome.NotRecording
+            val orphan = _state.value.recovery?.orphan ?: return StopOutcome.NotRecording
+            val detail = trips.fetchTripDetail(orphan.id) ?: return StopOutcome.NotRecording
+            rawFixLog.resume(orphan.id)
+            begin(detail, session.load()?.takeIf { it.tripId == orphan.id })
+            stopLocked(orphan.lastPointAt ?: orphan.startDate)
+        } ?: return StopOutcome.NotRecording
+        return finish(trip)
+    }
+
+    /** The comparison and detachment share the GPS lock: no fix or clock boundary can slip between. */
+    suspend fun stopConfirming(preview: com.onezee.triptrack.model.RecordingFinishPreview): FinishConfirmation {
+        val trip = mutex.withLock {
+            val current = previewLocked(null) ?: return FinishConfirmation.Finished(StopOutcome.NotRecording)
+            if (!preview.confirmsSameOutcome(current)) return FinishConfirmation.Changed(current)
+            stopLocked(current.endDate)
+        } ?: return FinishConfirmation.Finished(StopOutcome.NotRecording)
+        return FinishConfirmation.Finished(finish(trip))
+    }
+
+    private suspend fun stopLocked(suggestedEndDate: Instant?): Trip? {
+        val recording = math ?: return null
+        // Out of the recording state before the slow part, so a second stop bails here.
+        math = null
+        _state.value = RecorderState(gpsAccuracy = _state.value.gpsAccuracy, location = _state.value.location, isFinishing = true)
+        session.save(null)
+        try {
+            flush(recording)
+            rawFixLog.end()
+            val tripId = recording.trip.id
+            val points = store.trackPoints(tripId)
+            val start = recording.trip.startDate
+            val end = RecordingEnd.endDate(points, start, suggestedEndDate, clock())
+            val live = recording.trip
+            val stats = RecordingEnd.finalStats(points, live.recordingBreaks, live.distance, live.maxSpeed)
+            val elapsed = secondsBetween(start, end)
+            val average = if (points.size > 1) (if (elapsed > 0) stats.distance / elapsed else 0.0) else live.averageSpeed
+            store.finish(tripId, end, stats.distance, stats.maxSpeed, average, RecordingEnd.previewPolyline(points))
+            return trips.fetchTripDetail(tripId)?.let { it.withRecordingBreaks(it.recordingBreaks) }
+        } catch (failure: Exception) {
+            // The row keeps no end, so the next launch recovers it as an orphan.
+            _state.value = _state.value.copy(isFinishing = false)
+            throw failure
         }
+    }
+
+    private suspend fun finish(trip: Trip): StopOutcome {
         listener.recordingDidEnd()
         try {
-            return finisher.finish(trip)
+            return finisher.finish(trip).also { _completion.value = it }
         } finally {
+            _track.value = emptyList()
             _state.value = _state.value.copy(isFinishing = false)
         }
     }
 
+    // iOS: MapViewModel.applyDraftDecisions. The open result reacts to the notification too.
+    internal fun confirmCompletedDraft(trip: Trip, rewards: com.onezee.triptrack.location.world.TripRewardsResult) {
+        val current = _completion.value
+        if (current is StopOutcome.AwaitingConfirmation && current.trip.id == trip.id) {
+            _completion.compareAndSet(current, StopOutcome.Saved(trip, rewards))
+        }
+    }
+
+    internal fun discardCompletedDraft(id: UUID) {
+        val current = _completion.value
+        if (current is StopOutcome.AwaitingConfirmation && current.trip.id == id) _completion.compareAndSet(current, null)
+    }
+
     /** iOS: TripManager.recordingFinishPreview. Only when a confirmation opens; it reads the whole track. */
     suspend fun finishPreview(suggestedEndDate: Instant? = null): com.onezee.triptrack.model.RecordingFinishPreview? = mutex.withLock {
-        val recording = math ?: return@withLock null
-        flush(recording)
-        val points = store.trackPoints(recording.trip.id)
+        previewLocked(suggestedEndDate)
+    }
+
+    private suspend fun previewLocked(suggestedEndDate: Instant?): com.onezee.triptrack.model.RecordingFinishPreview? {
+        val recording = math ?: return null
+        // The question is read-only. Include the pending batch without saving or draining it.
+        val points = store.trackPoints(recording.trip.id) + recording.trip.trackPoints
         val end = RecordingEnd.endDate(points, recording.trip.startDate, suggestedEndDate, clock())
         val stats = RecordingEnd.finalStats(points, recording.trip.recordingBreaks, recording.trip.distance, recording.trip.maxSpeed)
-        com.onezee.triptrack.model.RecordingFinishPreview(
+        return com.onezee.triptrack.model.RecordingFinishPreview(
             recording.trip.id, end, stats.distance, secondsBetween(recording.trip.startDate, end), stats.maxSpeed,
         )
     }
@@ -316,7 +397,8 @@ class TripRecorder(
             ).withRecordingBreaks(orphan.recordingBreaks)
             // The journal on disk outlived the process; resume appends instead of truncating.
             rawFixLog.resume(orphan.id)
-            begin(trip, session.load()?.takeIf { it.tripId == orphan.id })
+            begin(trip.copy(trackPoints = store.trackPoints(orphan.id), checkpoints = trips.fetchTripDetail(orphan.id)?.checkpoints.orEmpty()),
+                session.load()?.takeIf { it.tripId == orphan.id })
             orphan.id
         } ?: return false
         listener.recordingDidStart(adopted)

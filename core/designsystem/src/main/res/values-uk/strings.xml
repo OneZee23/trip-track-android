@@ -271,6 +271,8 @@
     <string name="android_map_link_unavailable" formatted="false">На телефоні немає браузера для відкриття посилання.</string>
     <string name="android_permission_background_hint" formatted="false">На наступному екрані відкрийте Дозволи → Місцезнаходження та виберіть «Дозволяти завжди», щоб поїздки починалися, коли ви сідаєте в машину.</string>
     <string name="android_precise_location_body" formatted="false">Для запису маршруту й відстані потрібна точна геолокація. Відкрийте Налаштування → Дозволи → Місцезнаходження та ввімкніть «Точне місцезнаходження».</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Не вдалося увійти через Google. Перевірте інтернет і обліковий запис Google на телефоні та спробуйте ще раз.</string>
     <string name="android_sign_in_not_configured" formatted="false">У цій збірці не налаштовано вхід через Google. Додайте GOOGLE_WEB_CLIENT_ID у local.properties (docs/sign-in.md) і зберіть застосунок знову.</string>

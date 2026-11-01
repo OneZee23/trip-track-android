@@ -134,6 +134,7 @@ class LocationGraph(
         canUseLocation = ::hasLocationPermission,
         placeManager = places,
         nameCheckpoint = checkpointNamer::name,
+        recordVisit = { point -> territory.recordVisit(GeohashEncoder.encode(point.latitude, point.longitude, 6)) },
     ).also { recorderRef = it }
     val carStereos = CarStereoConnections(context) { strings().androidAuto() }
     val autoTrip = AutoTripController(
@@ -148,6 +149,8 @@ class LocationGraph(
         draftQueue, trips, world, deletion, notifications, sync,
         activeTripId = { recorder.state.value.tripId },
         rebuildTerritory = { territory.rebuildFromTrips(GeohashOf { lat, lon -> GeohashEncoder.encode(lat, lon, 6) }) },
+        onConfirmed = recorder::confirmCompletedDraft,
+        onDiscarded = recorder::discardCompletedDraft,
     )
     private val carConnection = CarConnectionWatcher(context) { connected -> scope.launch { autoTrip.onCarConnection(connected) } }
     private val started = CompletableDeferred<Unit>()
@@ -220,8 +223,7 @@ class LocationGraph(
     /** «Finish and save» on the recovery question: adopt, then the normal stop. */
     suspend fun finishRecovered(): StopOutcome {
         awaitStarted()
-        if (!recorder.adoptRecoverable()) return StopOutcome.NotRecording
-        return recorder.stop()
+        return recorder.finishRecoverable()
     }
 
     /** The app came to the screen: a recording without its service gets it back, a stale one may end. */

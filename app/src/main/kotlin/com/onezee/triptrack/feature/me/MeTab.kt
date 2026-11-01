@@ -24,7 +24,7 @@ import java.util.UUID
 import kotlinx.coroutines.*
 
 @Composable
-fun MeTab(graph: AppGraph, resumeTick: Int = 0) {
+fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onGarageBack: () -> Unit = {}) {
     val feature = graph.me
     val profile = feature.profile
     val state by profile.state.collectAsState()
@@ -33,7 +33,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0) {
     val identityFailed by feature.identity.failed.collectAsState()
     val auth by graph.auth.state.collectAsState()
     val settings by graph.settingsManager.state.collectAsState()
-    val navigator = rememberSaveable(saver = MeNavigator.saver(feature.navigator)) { feature.navigator }
+    // iOS: TrackingView.showGarage. Its own stack returns to recording, independent of the Я tab.
+    val initialNavigator = remember { if (garageOnly) MeNavigator() else feature.navigator }
+    val navigator = rememberSaveable(saver = MeNavigator.saver(initialNavigator)) { initialNavigator }
+    androidx.activity.compose.BackHandler(garageOnly && navigator.path.isEmpty()) { onGarageBack() }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
     var profileEditor by rememberSaveable { mutableStateOf<ProfileTextField?>(null) }
     var photosOpen by rememberSaveable { mutableStateOf(false) }
@@ -66,7 +69,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0) {
     CompositionLocalProvider(LocalMeAverageSpeed provides settings.averageSpeed, LocalMePhotoClient provides graph.apiClient) {
     Box(Modifier.fillMaxSize()) {
         MeNavHost(graph.tripsFeature, navigator, root = {
-            MeContent(state.copy(failed = state.failed || identityFailed, hero = state.hero.copy(roadTime = feature.roadTimeOverride ?: state.hero.roadTime)), settings.distanceUnit,
+            if (garageOnly) GarageScreen(garage, settings.distanceUnit, onGarageBack, { editing = "" },
+                onVehicle = { navigator.push(MeRoute.Passport(it)) }, onSelect = { graph.settingsManager.selectVehicle(it) }, onDelete = { deleting = it },
+                onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } })
+            else MeContent(state.copy(failed = state.failed || identityFailed, hero = state.hero.copy(roadTime = feature.roadTimeOverride ?: state.hero.roadTime)), settings.distanceUnit,
                 onSettings = { settingsOpen = true }, onGarage = { navigator.push(MeRoute.Garage) },
                 onVehicle = { navigator.push(MeRoute.Passport(it)) }, onAddVehicle = { editing = "" },
                 onAchievements = { navigator.push(MeRoute.Achievements) }, onClubs = { navigator.push(MeRoute.Clubs) },

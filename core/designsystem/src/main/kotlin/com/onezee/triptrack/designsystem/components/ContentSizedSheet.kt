@@ -96,12 +96,15 @@ fun ContentSizedSheet(
     detent: SheetDetent = SheetDetent.content,
     minimumHeight: Dp = 0.dp,
     contentClearsNavigationBar: Boolean = false,
+    /** iOS interactiveDismissDisabled: recovery and saved-trip results require an explicit answer. */
+    dismissible: Boolean = true,
     content: @Composable SheetScope.() -> Unit,
 ) {
     val density = LocalDensity.current
     val reduceMotion = LocalReduceMotion.current
     val scope = rememberCoroutineScope()
     val currentOnDismiss by rememberUpdatedState(onDismissRequest)
+    val canDismiss by rememberUpdatedState(dismissible)
     // 0 = closed (off screen), 1 = open. The sheet's own offset is derived from its height.
     val presence = remember { Animatable(0f) }
     var sheetHeight by remember { mutableFloatStateOf(0f) }
@@ -110,7 +113,7 @@ fun ContentSizedSheet(
 
     val dismiss: () -> Unit = remember {
         {
-            if (closing.close()) {
+            if (canDismiss && closing.close()) {
                 scope.launch {
                     try {
                         presence.animateTo(0f, if (reduceMotion) tween(0) else tween(220, easing = EaseIn))
@@ -129,7 +132,7 @@ fun ContentSizedSheet(
     Dialog(
         onDismissRequest = { dismiss() },
         properties = DialogProperties(
-            dismissOnBackPress = true,
+            dismissOnBackPress = dismissible,
             dismissOnClickOutside = false,
             usePlatformDefaultWidth = false,
             decorFitsSystemWindows = false,
@@ -163,6 +166,7 @@ fun ContentSizedSheet(
                         translationY = (1f - presence.value) * size.height + drag.coerceAtLeast(0f)
                     }
                     .draggable(
+                        enabled = dismissible,
                         state = rememberDraggableState { delta -> drag = (drag + delta).coerceAtLeast(0f) },
                         orientation = Orientation.Vertical,
                         onDragStopped = { velocity ->

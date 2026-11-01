@@ -26,6 +26,11 @@ data class RecorderState(
     /** Accuracy of the last accepted fix; zero means no fix has been accepted yet («Finding GPS»). */
     val gpsAccuracy: Double = 0.0,
     val gpsStale: Boolean = true,
+    /** iOS: MapViewModel.currentLocation. Accepted provider fix, never an unvalidated raw position. */
+    val location: com.onezee.triptrack.logic.LocationFix? = null,
+    val checkpointCount: Int = 0,
+    /** iOS: MapViewModel.revealFog. One moving hole; only a confirmed, stored point may open it. */
+    val revealCoordinate: com.onezee.triptrack.model.GeoPoint? = null,
     val pausedSeconds: Double = 0.0,
     val pauseStartedAt: Instant? = null,
     /** A recording the process died in, waiting for «Continue» or «Finish and save». */
@@ -50,7 +55,7 @@ data class RecorderState(
  * iOS: MapViewModel.StartRefusal. A refused start is a value somebody can show. `unknown` is also
  * Android's «the system did not let the foreground service start».
  */
-enum class StartRefusal { alreadyRecording, locationDenied, recoveryPending, unknown }
+enum class StartRefusal { alreadyRecording, locationDenied, recoveryPending, unknown, noFix }
 
 sealed interface StartResult {
     data class Started(val tripId: UUID) : StartResult
@@ -63,6 +68,12 @@ sealed interface StopOutcome {
     data class Discarded(val tripId: UUID, val reason: TripJunkClassifier.Reason?) : StopOutcome
     data class AwaitingConfirmation(val trip: Trip) : StopOutcome
     data class Saved(val trip: Trip, val rewards: TripRewardsResult) : StopOutcome
+}
+
+// iOS: MapViewModel.stopRecording(confirming:). A changed outcome needs a new explicit answer.
+sealed interface FinishConfirmation {
+    data class Changed(val preview: com.onezee.triptrack.model.RecordingFinishPreview) : FinishConfirmation
+    data class Finished(val outcome: StopOutcome) : FinishConfirmation
 }
 
 /** Who asked for the pause: the log needs it, the logic does not (iOS: `PauseSource`). */

@@ -271,6 +271,8 @@
     <string name="android_map_link_unavailable" formatted="false">На телефоне нет браузера для открытия ссылки.</string>
     <string name="android_permission_background_hint" formatted="false">На следующем экране откройте Разрешения → Местоположение и выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.</string>
     <string name="android_precise_location_body" formatted="false">Для записи маршрута и расстояния нужна точная геолокация. Откройте Настройки → Разрешения → Местоположение и включите «Точное местоположение».</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Не получилось войти через Google. Проверьте интернет и аккаунт Google на телефоне и попробуйте ещё раз.</string>
     <string name="android_sign_in_not_configured" formatted="false">В этой сборке не настроен вход через Google. Добавьте GOOGLE_WEB_CLIENT_ID в local.properties (docs/sign-in.md) и пересоберите приложение.</string>

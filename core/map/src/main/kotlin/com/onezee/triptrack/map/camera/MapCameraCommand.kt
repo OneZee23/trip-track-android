@@ -46,6 +46,10 @@ sealed interface MapCameraCommand {
         override val animated: Boolean = true,
         /** iOS: RouteMapView.applyCamera, 0.45 s before following by non-animated centres. */
         val durationMillis: Int = 600,
+        /** iOS: MKUserTrackingMode.followWithHeading. Null keeps the current map heading. */
+        val bearing: Double? = null,
+        /** iOS: MapViewRepresentable.layoutMargins. Keep a followed car above the idle HUD. */
+        val viewportInsets: MapInsets? = null,
     ) : MapCameraCommand
 
     /** iOS: MapCameraCommand.Padding. How much chrome covers the map, counted from the screen's EDGES. */

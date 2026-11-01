@@ -35,7 +35,7 @@ object PhotoImport {
     suspend fun import(context: Context, uris: List<Uri>, tripId: UUID, repository: TripRepository): Int = withContext(Dispatchers.IO) {
         uris.count { uri ->
             try {
-                importOne(context, uri, tripId, repository)
+                importOne(context, uri, tripId, repository) != null
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
@@ -44,8 +44,12 @@ object PhotoImport {
         }
     }
 
-    private suspend fun importOne(context: Context, uri: Uri, tripId: UUID, repository: TripRepository): Boolean {
-        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return false
+    /** iOS: TripCompleteSummaryView.savedPhotoIds. Keep identity for deduplication and removal. */
+    suspend fun importSelected(context: Context, uri: Uri, tripId: UUID, repository: TripRepository): com.onezee.triptrack.model.TripPhoto? =
+        withContext(Dispatchers.IO) { importOne(context, uri, tripId, repository) }
+
+    private suspend fun importOne(context: Context, uri: Uri, tripId: UUID, repository: TripRepository): com.onezee.triptrack.model.TripPhoto? {
+        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return null
         val exif = runCatching { ExifInterface(ByteArrayInputStream(bytes)) }.getOrNull()
         val location = exif?.latLong
         val captured = exif?.let { capturedAt(it) }
@@ -53,7 +57,7 @@ object PhotoImport {
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
         var sample = 1
         while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= MAX_EDGE) sample *= 2
-        val decoded = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample }) ?: return false
+        val decoded = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample }) ?: return null
         val scale = minOf(1f, MAX_EDGE.toFloat() / maxOf(decoded.width, decoded.height))
         val matrix = Matrix().apply {
             postScale(scale, scale)
@@ -64,7 +68,7 @@ object PhotoImport {
             upright.compress(Bitmap.CompressFormat.JPEG, TripPhotoFiles.JPEG_QUALITY, out)
             out.toByteArray()
         }
-        return repository.addPhoto(tripId, jpeg, caption = null, capturedAt = captured, latitude = location?.get(0), longitude = location?.get(1)) != null
+        return repository.addPhoto(tripId, jpeg, caption = null, capturedAt = captured, latitude = location?.get(0), longitude = location?.get(1))
     }
 
     // iOS: PhotoMetadata.capturedAt. TIFF DateTime is an edit time; an unzoned shot uses the phone's zone.

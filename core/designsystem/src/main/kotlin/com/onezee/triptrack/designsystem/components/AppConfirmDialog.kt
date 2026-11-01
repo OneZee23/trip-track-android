@@ -292,7 +292,7 @@ internal val TrimmedLineSpacing = LineHeightStyle(alignment = LineHeightStyle.Al
  * window's default white.
  */
 @Composable
-internal fun PlainModalWindow() {
+fun PlainModalWindow() {
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window
     val darkWindow = LocalWindowIsDark.current ?: LocalIsDarkTheme.current
     SideEffect {

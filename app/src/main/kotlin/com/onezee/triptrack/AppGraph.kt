@@ -166,6 +166,8 @@ class AppGraph(
         reveal = revealedLayer,
     )
 
+    val recording by lazy { com.onezee.triptrack.recording.RecordingPresenter(location, trips, location.scope) }
+
     // MARK: - Session
 
     val tokenStore = TokenStore(KeystoreTokenVault(context, apiBaseUrl))

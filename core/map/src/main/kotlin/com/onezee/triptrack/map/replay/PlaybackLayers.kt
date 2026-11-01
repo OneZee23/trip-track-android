@@ -21,13 +21,20 @@ import org.maplibre.geojson.FeatureCollection
 // iOS: MapCarMarker.swift / MapCarAnnotationView. One moving source, stable layers and cached paint.
 internal class PlaybackLayers(private val resources: Resources, private val density: Float) {
     private var paint: Int? = null
+    private var mood: MapCarMood? = null
+    private var position: com.onezee.triptrack.model.GeoPoint? = null
 
     fun addTo(style: Style, playback: MapPlayback?) {
         paint = null
+        mood = null
+        position = null
         style.addSource(GeoJsonSource(SOURCE))
         style.addLayer(SymbolLayer(CAR, SOURCE).withProperties(
             iconAllowOverlap(true), iconIgnorePlacement(true), iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
         ))
+        style.addImage(PAUSE_IMAGE, pausePill())
+        style.addLayer(SymbolLayer(PAUSE, SOURCE).withProperties(iconImage(PAUSE_IMAGE), iconAllowOverlap(true), iconIgnorePlacement(true),
+            iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_VIEWPORT), iconOffset(arrayOf(12f, 12f))))
         update(style, playback)
     }
 
@@ -35,28 +42,29 @@ internal class PlaybackLayers(private val resources: Resources, private val dens
         val source = style.getSourceAs<GeoJsonSource>(SOURCE) ?: return
         if (playback == null) {
             source.setGeoJson(FeatureCollection.fromFeatures(emptyArray()))
+            position = null
             return
         }
-        if (paint != playback.colorArgb) {
+        if (paint != playback.colorArgb || mood != playback.mood) {
             paint = playback.colorArgb
-            style.addImage(IMAGE, car(playback.colorArgb))
-            style.addImage(DOT, dot(playback.colorArgb))
+            mood = playback.mood
+            val color = MapCarPaint.color(playback.colorArgb, playback.mood)
+            style.addImage(IMAGE, car(color))
+            style.addImage(DOT, dot(color))
         }
         style.getLayerAs<SymbolLayer>(CAR)?.setProperties(
             iconImage(if (playback.collapsed) DOT else IMAGE), iconRotate(playback.course.toFloat()),
+            iconOpacity(playback.mood.alpha),
         )
-        source.setGeoJson(RouteLayers.point(playback.position))
-    }
-
-    private fun paintColor(argb: Int): Int {
-        val hsv = FloatArray(3)
-        Color.colorToHSV(argb, hsv)
-        hsv[2] = hsv[2].coerceIn(0.22f, 0.86f)
-        return Color.HSVToColor(hsv)
+        style.getLayerAs<SymbolLayer>(PAUSE)?.setProperties(visibility(if (playback.mood == MapCarMood.paused && !playback.collapsed) Property.VISIBLE else Property.NONE))
+        if (position != playback.position) {
+            position = playback.position
+            source.setGeoJson(RouteLayers.point(playback.position))
+        }
     }
 
     private fun car(argb: Int): Bitmap {
-        val color = paintColor(argb)
+        val color = argb
         val shade = Color.rgb((Color.red(color) * .78).toInt(), (Color.green(color) * .78).toInt(), (Color.blue(color) * .78).toInt())
         val size = (44 * density).toInt()
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
@@ -75,6 +83,17 @@ internal class PlaybackLayers(private val resources: Resources, private val dens
         return bitmap
     }
 
+    private fun pausePill(): Bitmap {
+        val bitmap = Bitmap.createBitmap((20 * density).toInt(), (14 * density).toInt(), Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val brush = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
+        canvas.drawRoundRect(RectF(0f, 0f, 20 * density, 14 * density), 7 * density, 7 * density, brush)
+        brush.color = 0xFF1C1A17.toInt()
+        canvas.drawRect(7 * density, 4 * density, 9 * density, 10 * density, brush)
+        canvas.drawRect(11 * density, 4 * density, 13 * density, 10 * density, brush)
+        return bitmap
+    }
+
     private fun dot(argb: Int): Bitmap {
         val size = (13 * density).toInt()
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
@@ -82,7 +101,7 @@ internal class PlaybackLayers(private val resources: Resources, private val dens
         val brush = Paint(Paint.ANTI_ALIAS_FLAG)
         brush.color = Color.WHITE
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, brush)
-        brush.color = paintColor(argb)
+        brush.color = argb
         canvas.drawCircle(size / 2f, size / 2f, size / 2f - 2 * density, brush)
         return bitmap
     }
@@ -92,5 +111,7 @@ internal class PlaybackLayers(private val resources: Resources, private val dens
         private const val CAR = "triptrack-playback-car"
         private const val IMAGE = "triptrack-playback-image"
         private const val DOT = "triptrack-playback-dot"
+        private const val PAUSE = "triptrack-playback-pause"
+        private const val PAUSE_IMAGE = "triptrack-playback-pause-image"
     }
 }

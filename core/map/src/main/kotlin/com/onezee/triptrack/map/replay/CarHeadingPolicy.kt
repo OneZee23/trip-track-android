@@ -8,11 +8,22 @@ import kotlin.math.pow
 
 // iOS: CarHeadingPolicy.swift. Geometry ahead is stable even when frame-to-frame movement is subpixel.
 object CarHeadingPolicy {
+    const val minCourseSpeed = 1.4
+    const val coneThreshold = 20.0
+    const val coneMaxHalfAngle = 60.0
     const val lookahead = 12.0
     const val minLookaheadSpan = 1.0
     const val deadZone = 2.0
     const val framePull = 0.2
     const val maxTurnRate = 180.0
+
+    fun liveCourse(course: Double?, courseAccuracy: Double, rawSpeed: Double): Double? =
+        course?.takeIf { it >= 0 && courseAccuracy >= 0 && rawSpeed >= minCourseSpeed }?.let(::normalized)
+
+    fun coneHalfAngle(courseAccuracy: Double, rawSpeed: Double): Double? =
+        courseAccuracy.takeIf { it > coneThreshold && rawSpeed >= minCourseSpeed }?.coerceAtMost(coneMaxHalfAngle)
+
+    fun screenAngle(course: Double, cameraHeading: Double): Double = normalized(course - cameraHeading)
 
     fun courseAlongRoute(position: GeoPoint, passed: Int, coords: List<GeoPoint>, lookahead: Double = this.lookahead): Double? {
         if (coords.size < 2) return null

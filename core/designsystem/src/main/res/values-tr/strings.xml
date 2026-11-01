@@ -211,6 +211,8 @@
     <string name="android_map_link_unavailable" formatted="false">Bu bağlantıyı açacak bir tarayıcı yok.</string>
     <string name="android_permission_background_hint" formatted="false">Sonraki ekranda İzinler → Konum bölümünü açıp “Her zaman izin ver” seçin; arabaya bindiğinizde yolculuklar başlayabilsin.</string>
     <string name="android_precise_location_body" formatted="false">Rotayı çizmek ve mesafeyi ölçmek için tam konum gerekir. Ayarlar → İzinler → Konum bölümünden “Tam konumu kullan” seçeneğini açın.</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Google ile giriş yapılamadı. Bağlantınızı ve bu telefondaki Google hesabınızı kontrol edip tekrar deneyin.</string>
     <string name="android_sign_in_not_configured" formatted="false">Bu derlemede Google girişi ayarlanmamış. local.properties dosyasına GOOGLE_WEB_CLIENT_ID ekleyin (docs/sign-in.md) ve yeniden derleyin.</string>

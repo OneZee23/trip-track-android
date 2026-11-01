@@ -72,6 +72,10 @@ class MapHostState {
     var camera: MapCamera? by mutableStateOf(null)
         internal set
 
+    /** iOS: didChange userTrackingMode. Only a person's gesture cancels camera following. */
+    var gestureRevision: Int by mutableStateOf(0)
+        internal set
+
     /** The mesh the fog draws now; null until the first one is built. */
     var fogMesh: FogMeshInfo? by mutableStateOf(null)
         internal set

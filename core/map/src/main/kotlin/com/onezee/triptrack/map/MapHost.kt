@@ -69,6 +69,9 @@ fun MapHost(
     cameraChromeInsets: MapInsets = chromeInsets,
     /** iOS: RegionLabelAnnotation. Installed once; visibility follows every map frame. */
     regionLabels: List<RegionLabelAnnotation> = emptyList(),
+    /** iOS: MapViewRepresentable locks pan, zoom and rotation during recording. */
+    gesturesEnabled: Boolean = true,
+    liveHead: List<com.onezee.triptrack.model.GeoPoint> = emptyList(),
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -133,6 +136,8 @@ fun MapHost(
         controller.setMarkers(markers)
         controller.setRegionLabels(regionLabels)
         controller.setShowsUserLocation(showsUserLocation)
+        controller.setGesturesEnabled(gesturesEnabled)
+        controller.setLiveHead(liveHead)
     }
 
     AndroidView(factory = { mapView }, modifier = modifier)

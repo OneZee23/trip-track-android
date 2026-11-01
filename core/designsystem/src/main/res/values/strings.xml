@@ -211,6 +211,8 @@
     <string name="android_map_link_unavailable" formatted="false">No browser is available to open this link.</string>
     <string name="android_permission_background_hint" formatted="false">On the next screen open Permissions → Location and choose “Allow all the time” so trips can start when you get in the car.</string>
     <string name="android_precise_location_body" formatted="false">Recording needs precise location to draw your route and measure distance. Open Settings → Permissions → Location and turn on “Use precise location”.</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Couldn’t sign in with Google. Check your connection and your Google account on this phone, then try again.</string>
     <string name="android_sign_in_not_configured" formatted="false">Google sign-in is not set up in this build. Add GOOGLE_WEB_CLIENT_ID to local.properties (docs/sign-in.md) and rebuild.</string>

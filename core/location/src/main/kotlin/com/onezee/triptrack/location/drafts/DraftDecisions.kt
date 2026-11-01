@@ -12,8 +12,10 @@ import com.onezee.triptrack.data.sync.SyncRequestSink
 import com.onezee.triptrack.location.recording.TripDeletion
 import com.onezee.triptrack.location.recording.TripNotices
 import com.onezee.triptrack.location.world.TripWorldEntry
+import com.onezee.triptrack.location.world.TripRewardsResult
 import com.onezee.triptrack.logic.withRecordingBreaks
 import com.onezee.triptrack.model.TripConfirmation
+import com.onezee.triptrack.model.Trip
 import java.util.UUID
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -116,6 +118,8 @@ class DraftDecisions(
     private val sync: SyncRequestSink,
     private val activeTripId: () -> UUID?,
     private val rebuildTerritory: suspend () -> Unit = {},
+    private val onConfirmed: (Trip, TripRewardsResult) -> Unit = { _, _ -> },
+    private val onDiscarded: (UUID) -> Unit = {},
 ) {
     private val mutex = Mutex()
 
@@ -128,7 +132,7 @@ class DraftDecisions(
             try {
                 val applied = when (decision) {
                     DraftDecision.confirm -> confirm(id)
-                    DraftDecision.discard -> deletion.discardDraft(id)
+                    DraftDecision.discard -> deletion.discardDraft(id).also { if (it) onDiscarded(id) }
                 }
                 if (applied) resolved += id
             } catch (cancelled: kotlinx.coroutines.CancellationException) {
@@ -146,7 +150,8 @@ class DraftDecisions(
         // False: not a draft or already confirmed; entering the world twice is not allowed.
         if (!trips.setConfirmation(TripConfirmation.confirmed, id)) return false
         val trip = trips.fetchTripDetail(id)?.let { it.withRecordingBreaks(it.recordingBreaks) } ?: return false
-        world.rewards(trip)
+        val rewards = world.rewards(trip)
+        onConfirmed(trip, rewards)
         // The draft's photos never reached the queue: the sync gate turned them away.
         trip.photos.forEach { sync.enqueue(SyncRequest(SyncEntityType.photo, it.id, SyncAction.upload)) }
         world.placesAndReveal(trip)

@@ -36,6 +36,8 @@ import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
 import com.onezee.triptrack.feature.FeedTab
 import com.onezee.triptrack.feature.atlas.ui.AtlasTab
 import com.onezee.triptrack.feature.places.ui.PlacesTab
+import com.onezee.triptrack.recording.RecordingRoute
+import com.onezee.triptrack.recording.RecordingPresentations
 import com.onezee.triptrack.ui.LocalTripPhotoImages
 
 /**
@@ -63,8 +65,10 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
 
     val trips = graph.tripsFeature
     val drafts by trips.drafts.state.collectAsState()
-    // The unit and the network are read again whenever the app comes back to the screen.
-    val unit = remember(resumeTick) { trips.distanceUnit() }
+    val settings by graph.settingsManager.state.collectAsState()
+    val storedUnit = remember(resumeTick) { trips.distanceUnit() }
+    val unit = if (settings.loaded) settings.distanceUnit else storedUnit
+    // Connectivity is read again whenever the app comes back to the screen.
     val offline = remember(resumeTick) { trips.offline() }
 
     CompositionLocalProvider(
@@ -89,6 +93,7 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
                 }
             }
             SocialMessages(graph.social)
+            RecordingPresentations(graph)
             AnimatedVisibility(
                 visible = selected != AppTab.record && !visibility.isHiddenByScreen,
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -136,7 +141,7 @@ private fun TabScreen(tab: AppTab, graph: AppGraph, feedScrollToTop: Int, resume
     when (tab) {
         AppTab.home -> FeedTab(graph.tripsFeature, feedScrollToTop, offline, onOpenRecord = { onSelect(AppTab.record) }, onOpenProfileTab = { onSelect(AppTab.profile) })
         AppTab.maps -> AtlasTab(graph.world, resumeTick)
-        AppTab.record -> RecordTab(graph, resumeTick, onClose = { onSelect(AppTab.home) })
+        AppTab.record -> RecordingRoute(graph, resumeTick, onClose = { onSelect(AppTab.home) })
         AppTab.places -> PlacesTab(graph.world, onOpenRecord = { onSelect(AppTab.record) })
         AppTab.profile -> com.onezee.triptrack.feature.me.MeTab(graph, resumeTick)
     }

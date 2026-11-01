@@ -123,6 +123,12 @@ class SettingsManager(
     fun setTheme(theme: String) { require(theme in setOf("dark", "light", "system")); saveRow({ it.copy(themeMode = theme) }) { it.copy(theme = theme) } }
     fun setLanguage(language: String) { require(language in LANGUAGES); saveRow({ it.copy(language = language) }) { it.copy(language = language) } }
     fun selectVehicle(id: UUID?) = saveRow({ it.copy(selectedVehicleId = id) }) { it.copy(selectedVehicleId = id) }
+    // iOS: VehiclePickerSheet persists before dismissal. A start must not race the previous selection.
+    suspend fun selectRecordingVehicle(id: UUID?): Boolean = edits.withLock {
+        try { saveRowNow({ it.copy(selectedVehicleId = id) }) { it.copy(selectedVehicleId = id) } }
+        catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { mutableState.update { it.copy(failed = true) }; false }
+    }
     fun setAverageSpeed(mode: AvgSpeedMode) {
         preferences.set("com.triptrack.settings.avgSpeedMode", mode.rawValue)
         mutableState.update { it.copy(averageSpeed = mode) }
@@ -171,17 +177,21 @@ class SettingsManager(
     fun dismissSheet() { mutableState.update { it.copy(sheets = it.sheets.dropLast(1)) } }
     fun closeSheets() { mutableState.update { it.copy(sheets = emptyList()) } }
     private fun saveRow(transform: (UserSettingsEntity) -> UserSettingsEntity, present: (SettingsState) -> SettingsState) = edit {
+        saveRowNow(transform, present)
+    }
+    private suspend fun saveRowNow(transform: (UserSettingsEntity) -> UserSettingsEntity, present: (SettingsState) -> SettingsState): Boolean {
         val row = settingsStore.save { stored ->
             transform(stored.copy(
                 distanceUnit = preferences.string(DistanceUnit.storageKey)?.let(DistanceUnit::fromRawValue)?.rawValue ?: state.value.distanceUnit.rawValue,
                 volumeUnit = preferences.string("volumeUnit")?.let(VolumeUnit::fromRawValue)?.rawValue ?: state.value.volumeUnit.rawValue,
             ))
-        } ?: return@edit
+        } ?: return false
         mutableState.update { present(it).copy(failed = false,
             distanceUnit = row.distanceUnit?.let(DistanceUnit::fromRawValue) ?: it.distanceUnit,
             volumeUnit = row.volumeUnit?.let(VolumeUnit::fromRawValue) ?: it.volumeUnit) }
         syncTask?.cancel()
         syncTask = viewModelScope.launch { delay(5_000); syncRequests.enqueue(SyncRequest(SyncEntityType.settings, row.id, SyncAction.upload)) }
+        return true
     }
     private fun edit(block: suspend () -> Unit) { viewModelScope.launch {
         edits.withLock {

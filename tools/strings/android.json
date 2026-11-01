@@ -1339,5 +1339,39 @@
       "kk": "Бұл сілтемені ашатын браузер жоқ.",
       "pt": "Não há navegador disponível para abrir este link."
     }
+  },
+  "android_recording_xp": {
+    "values": {
+      "en": "+{xp} XP",
+      "ru": "+{xp} XP",
+      "de": "+{xp} XP",
+      "es": "+{xp} XP",
+      "fr": "+{xp} XP",
+      "it": "+{xp} XP",
+      "pl": "+{xp} XP",
+      "id": "+{xp} XP",
+      "tr": "+{xp} XP",
+      "fil": "+{xp} XP",
+      "uk": "+{xp} XP",
+      "kk": "+{xp} XP",
+      "pt": "+{xp} XP"
+    }
+  },
+  "android_recording_level_up": {
+    "values": {
+      "en": "LEVEL UP!",
+      "ru": "LEVEL UP!",
+      "de": "LEVEL UP!",
+      "es": "LEVEL UP!",
+      "fr": "LEVEL UP!",
+      "it": "LEVEL UP!",
+      "pl": "LEVEL UP!",
+      "id": "LEVEL UP!",
+      "tr": "LEVEL UP!",
+      "fil": "LEVEL UP!",
+      "uk": "LEVEL UP!",
+      "kk": "LEVEL UP!",
+      "pt": "LEVEL UP!"
+    }
   }
 }

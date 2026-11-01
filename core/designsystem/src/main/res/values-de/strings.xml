@@ -211,6 +211,8 @@
     <string name="android_map_link_unavailable" formatted="false">Zum Öffnen dieses Links ist kein Browser verfügbar.</string>
     <string name="android_permission_background_hint" formatted="false">Öffne auf der nächsten Seite Berechtigungen → Standort und wähle „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.</string>
     <string name="android_precise_location_body" formatted="false">Für Route und Entfernung wird der genaue Standort benötigt. Öffne Einstellungen → Berechtigungen → Standort und aktiviere „Genauen Standort verwenden“.</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Anmeldung mit Google fehlgeschlagen. Prüfe die Verbindung und dein Google-Konto auf diesem Gerät und versuche es erneut.</string>
     <string name="android_sign_in_not_configured" formatted="false">Google-Anmeldung ist in diesem Build nicht eingerichtet. Ergänze GOOGLE_WEB_CLIENT_ID in local.properties (docs/sign-in.md) und baue die App neu.</string>

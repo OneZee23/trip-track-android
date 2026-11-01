@@ -211,6 +211,8 @@
     <string name="android_map_link_unavailable" formatted="false">Бұл сілтемені ашатын браузер жоқ.</string>
     <string name="android_permission_background_hint" formatted="false">Келесі экранда Рұқсаттар → Орналасқан жер бөлімін ашып, «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.</string>
     <string name="android_precise_location_body" formatted="false">Бағытты сызу және қашықтықты өлшеу үшін нақты геолокация қажет. Баптаулар → Рұқсаттар → Орналасқан жер бөліміне өтіп, «Нақты орналасқан жерді пайдалану» параметрін қосыңыз.</string>
+    <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Google арқылы кіру мүмкін болмады. Интернетті және телефондағы Google есептік жазбасын тексеріп, қайталап көріңіз.</string>
     <string name="android_sign_in_not_configured" formatted="false">Бұл жинақта Google арқылы кіру бапталмаған. local.properties файлына GOOGLE_WEB_CLIENT_ID қосып (docs/sign-in.md), қайта жинаңыз.</string>

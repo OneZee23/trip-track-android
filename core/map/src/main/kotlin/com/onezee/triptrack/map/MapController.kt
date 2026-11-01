@@ -30,6 +30,9 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
 import org.maplibre.android.camera.CameraUpdateFactory
+import org.maplibre.android.camera.CameraPosition
+import com.onezee.triptrack.map.tracking.GlowingHeadLayers
+import com.onezee.triptrack.map.tracking.CarStateLayers
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.location.LocationComponentActivationOptions
@@ -59,6 +62,10 @@ internal class MapController(
     private val veinLayers = VeinLayers()
     private val markerLayers = MarkerLayers(density)
     private val playbackLayers = PlaybackLayers(mapView.resources, density)
+    private val headLayers = GlowingHeadLayers()
+    private val carStateLayers = CarStateLayers()
+    private var liveHead: List<GeoPoint> = emptyList()
+    private var gesturesEnabled = true
     private val regionLabelViews = RegionLabelViews(mapView, density)
     private var playback: MapPlayback? = null
     private var fogLayer: FogLayer? = null
@@ -99,7 +106,10 @@ internal class MapController(
             defaults = Margins.of(ready)
             applyMargins()
             ready.addOnCameraIdleListener { publishCamera() }
-            ready.addOnCameraMoveListener { updateRegionLabels() }
+            ready.addOnCameraMoveStartedListener { reason ->
+                if (reason == MapLibreMap.OnCameraMoveStartedListener.REASON_API_GESTURE) state.gestureRevision++
+            }
+            ready.addOnCameraMoveListener { updateRegionLabels(); updateCarScale() }
             // Also covers location updates while the camera rests. The callback runs on the UI
             // thread, as MapView's own compass/annotation updates do.
             mapView.addOnDidFinishRenderingFrameListener { _, _, _ -> updateRegionLabels() }
@@ -124,7 +134,11 @@ internal class MapController(
         veinLayers.addTo(loaded, vein)
         routeLayers.addTo(loaded, routes)
         markerLayers.addTo(loaded, markers)
+        headLayers.addTo(loaded, liveHead)
+        carStateLayers.addTo(loaded, playback)
         playbackLayers.addTo(loaded, playback)
+        updateCarScale()
+        applyGestures()
         applyUserLocation()
     }
 
@@ -162,7 +176,36 @@ internal class MapController(
     fun setPlayback(value: MapPlayback?) {
         if (value == playback) return
         playback = value
-        style?.let { playbackLayers.update(it, value) }
+        style?.let { playbackLayers.update(it, value); carStateLayers.update(it, value) }
+        updateCarScale()
+    }
+
+    private fun updateCarScale() {
+        val ready = map ?: return
+        val loaded = style ?: return
+        val centre = ready.cameraPosition.target ?: return
+        carStateLayers.setScale(loaded, MapPoints.metresPerPoint(centre.latitude, ready.cameraPosition.zoom))
+    }
+
+    fun setLiveHead(value: List<GeoPoint>) {
+        if (value == liveHead) return
+        liveHead = value
+        style?.let { headLayers.update(it, value) }
+    }
+
+    fun setGesturesEnabled(value: Boolean) {
+        if (gesturesEnabled == value) return
+        gesturesEnabled = value
+        applyGestures()
+    }
+
+    private fun applyGestures() {
+        map?.uiSettings?.let {
+            it.isScrollGesturesEnabled = gesturesEnabled
+            it.isZoomGesturesEnabled = gesturesEnabled
+            it.isRotateGesturesEnabled = gesturesEnabled
+            it.isDoubleTapGesturesEnabled = gesturesEnabled
+        }
     }
 
     fun setVein(value: MapVein?) {
@@ -374,7 +417,12 @@ internal class MapController(
             is MapCameraCommand.FitRoute ->
                 frame(ready, CameraFraming.routeRect(command.bounds), cameraSafeArea + command.insets, command.animated)
             is MapCameraCommand.Move -> {
-                val update = CameraUpdateFactory.newLatLngZoom(LatLng(command.centre.latitude, command.centre.longitude), command.zoom)
+                val position = CameraPosition.Builder(ready.cameraPosition)
+                    .target(LatLng(command.centre.latitude, command.centre.longitude)).zoom(command.zoom)
+                    .bearing(command.bearing ?: ready.cameraPosition.bearing).tilt(0.0)
+                command.viewportInsets?.let { insets -> position.padding(
+                    insets.left * density, insets.top * density, insets.right * density, insets.bottom * density) }
+                val update = CameraUpdateFactory.newCameraPosition(position.build())
                 if (command.animated) ready.animateCamera(update, command.durationMillis) else ready.moveCamera(update)
             }
         }

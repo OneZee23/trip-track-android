@@ -133,6 +133,8 @@ abstract class RecorderTestCase {
         drafts = DraftDecisions(
             PreferencesDraftDecisionQueue(context), repo, world, deletion, notices, sink,
             activeTripId = { current.state.value.tripId },
+            onConfirmed = current::confirmCompletedDraft,
+            onDiscarded = current::discardCompletedDraft,
         )
     }
 

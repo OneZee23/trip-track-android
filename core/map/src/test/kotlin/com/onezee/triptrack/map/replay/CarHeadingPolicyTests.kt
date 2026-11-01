@@ -6,6 +6,18 @@ import org.junit.Test
 
 // iOS: CarHeadingPolicyTests.swift, replay heading/smoothing cases; MapCarMarkerTests.swift collapse cases.
 class CarHeadingPolicyTests {
+    @Test fun testParkedCarHoldsItsHeading() { assertNull(CarHeadingPolicy.liveCourse(270.0,5.0,.3)); assertEquals(42.0,CarHeadingPolicy.smoothed(42.0,null,frame),.0001) }
+    @Test fun testUnknownCourseIsNotNorth() { assertNull(CarHeadingPolicy.liveCourse(-1.0,5.0,20.0)); assertNull(CarHeadingPolicy.liveCourse(null,5.0,20.0)) }
+    @Test fun testCourseWithoutAccuracyIsRefused() { assertNull(CarHeadingPolicy.liveCourse(90.0,-1.0,20.0)) }
+    @Test fun testDrivingCoursePassesThrough() { assertEquals(90.0,CarHeadingPolicy.liveCourse(90.0,5.0,20.0)) }
+    @Test fun testSpeedGateSitsWhereItIsDeclared() { assertNull(CarHeadingPolicy.liveCourse(10.0,5.0,.83)); assertEquals(10.0,CarHeadingPolicy.liveCourse(10.0,5.0,1.4)) }
+    @Test fun testConfidentCourseDrawsNoCone() { assertNull(CarHeadingPolicy.coneHalfAngle(5.0,20.0)); assertNull(CarHeadingPolicy.coneHalfAngle(CarHeadingPolicy.coneThreshold,20.0)) }
+    @Test fun testConeRepeatsWhatTheFixSaid() { assertEquals(35.0,CarHeadingPolicy.coneHalfAngle(35.0,20.0)) }
+    @Test fun testConeIsCapped() { assertEquals(CarHeadingPolicy.coneMaxHalfAngle,CarHeadingPolicy.coneHalfAngle(180.0,20.0)) }
+    @Test fun testParkedCarHasNoCone() { assertNull(CarHeadingPolicy.coneHalfAngle(45.0,CarHeadingPolicy.minCourseSpeed-.01)) }
+    @Test fun testUnknownAccuracyGivesNoCone() { assertNull(CarHeadingPolicy.coneHalfAngle(-1.0,20.0)) }
+    @Test fun testScreenAngleSubtractsTheCamera() { assertEquals(60.0,CarHeadingPolicy.screenAngle(90.0,30.0),.0001); assertEquals(340.0,CarHeadingPolicy.screenAngle(10.0,30.0),.0001) }
+    @Test fun testFollowWithHeadingPointsTheCarUp() { assertEquals(0.0,CarHeadingPolicy.screenAngle(217.0,217.0),.0001) }
     private val frame = 1.0 / 60
     @Test fun testCrossingNorthGoesTheShortWayUp() { assertEquals(2.0,CarHeadingPolicy.shortestDelta(359.0,1.0),.0001) }
     @Test fun testCrossingNorthGoesTheShortWayDown() { assertEquals(-2.0,CarHeadingPolicy.shortestDelta(1.0,359.0),.0001) }

@@ -11,6 +11,7 @@ import com.onezee.triptrack.location.recording.StartRefusal
 import com.onezee.triptrack.location.recording.StartResult
 import com.onezee.triptrack.location.recording.StopOutcome
 import com.onezee.triptrack.logic.TrackTestKit
+import com.onezee.triptrack.logic.isDraft
 import com.onezee.triptrack.model.TripConfirmation
 import java.io.File
 import java.util.UUID
@@ -212,5 +213,36 @@ class RecoveryAndDraftTests : RecorderTestCase() {
         PreferencesDraftDecisionQueue(context).enqueue(id, DraftDecision.discard)
         assertEquals(emptyList<UUID>(), drafts.apply())
         assertNotNull(db.tripDao().trip(id))
+    }
+
+    // iOS: MapViewModel.applyDraftDecisions. «Mine» replaces the open question with its rewards.
+    @Test
+    fun confirmingTheDisplayedDraftUpdatesItsSummaryWithoutAwardingTwice() = test {
+        val id = assertIs<StartResult.Started>(recorder.start(confirmation = TripConfirmation.draft)).tripId
+        drive(straight(0..240))
+        assertIs<StopOutcome.AwaitingConfirmation>(recorder.stop())
+        PreferencesDraftDecisionQueue(context).enqueue(id, DraftDecision.confirm)
+        assertEquals(listOf(id), drafts.apply())
+        val saved = assertIs<StopOutcome.Saved>(recorder.completion.value)
+        assertEquals(id, saved.trip.id)
+        assertFalse(saved.trip.isDraft)
+        assertTrue(saved.rewards.xpEarned > 0)
+        PreferencesDraftDecisionQueue(context).enqueue(id, DraftDecision.confirm)
+        assertTrue(drafts.apply().isEmpty())
+        assertEquals(saved, recorder.completion.value)
+    }
+
+    @Test
+    fun discardingTheDisplayedDraftRemovesItsSummaryAndPreservesANewRecording() = test {
+        val id = assertIs<StartResult.Started>(recorder.start(confirmation = TripConfirmation.draft)).tripId
+        drive(straight(0..240))
+        assertIs<StopOutcome.AwaitingConfirmation>(recorder.stop())
+        val active = assertIs<StartResult.Started>(recorder.start()).tripId
+        PreferencesDraftDecisionQueue(context).enqueue(id, DraftDecision.discard)
+        assertEquals(listOf(id), drafts.apply())
+        assertNull(recorder.completion.value)
+        assertEquals(active, recorder.state.value.tripId)
+        assertTrue(recorder.state.value.isRecording)
+        assertNull(repo.fetchTripDetail(id))
     }
 }

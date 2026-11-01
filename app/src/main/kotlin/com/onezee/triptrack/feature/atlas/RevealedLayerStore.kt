@@ -24,6 +24,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * iOS: RevealedLayerStore.swift. The opened world in storage: a geohash-5 tile per row, cells
@@ -46,6 +48,9 @@ class RevealedLayerStore(
     private val regionId: (GeoPoint) -> String? = { RegionAtlas.shared.region(containing = it)?.id },
     private val clock: () -> Instant = Instant::now,
 ) : RevealIngest {
+    // iOS: MapViewModel.attachDiscoveries. The finish result uses this delta, never a second track count.
+    private val mutableLastIngest = MutableStateFlow<Pair<UUID, IngestDelta>?>(null)
+    val lastIngest = mutableLastIngest.asStateFlow()
     /** iOS ReconcileRequest: what a reconcile pass reads. No time window, see the iOS file. */
     sealed interface ReconcileRequest {
         data object Full : ReconcileRequest
@@ -87,7 +92,7 @@ class RevealedLayerStore(
     }
 
     override suspend fun ingest(tripId: UUID) {
-        ingestDelta(tripId)
+        mutableLastIngest.value = tripId to ingestDelta(tripId)
     }
 
     /**
