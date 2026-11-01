@@ -89,6 +89,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
     var linkShare by remember { mutableStateOf<TripLinkShare?>(null) }
     var gridMode by rememberSaveable { mutableStateOf(false) }
     var toast by remember { mutableStateOf<ToastItem?>(null) }
+    var gallery by remember { mutableStateOf<PublicPhotoSelection?>(null) }
     val isOwn = vm.isOwnProfile
     val name = vm.displayName(strings.publicProfileDriver())
 
@@ -104,11 +105,11 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
     fun requireAccount(action: SignInAction, block: () -> Unit) {
         if (social.signedIn) block() else if (social.auth != null) signInFor = action else toast = ToastItem(ToastType.info, action.headline(strings))
     }
-    fun openTrip(trip: SocialFeedTrip) {
+    fun openTrip(trip: SocialFeedTrip, focus: TripFocus = TripFocus.Top) {
         haptics.tap()
         // One's own trip opens the local copy (the owner's controls), anyone else's from the payload.
-        navigator.push(if (trip.author.id == social.accountId) TripsDestination.TripDetail(trip.id, preview = trip.asTrip())
-            else TripsDestination.TripDetail(trip.id, preview = trip.asTrip(), social = trip))
+        navigator.push(if (trip.author.id == social.accountId) TripsDestination.TripDetail(trip.id, preview = trip.asTrip(), focus = focus)
+            else TripsDestination.TripDetail(trip.id, preview = trip.asTrip(), social = trip, focus = focus))
     }
     fun shareTrip(trip: SocialFeedTrip) { scope.launch { linkShare = TripLinkShare(trip, vm.shareLink(trip.id)) } }
     val profile = state.profile
@@ -144,12 +145,14 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("public_profile")) {
         Column(Modifier.fillMaxSize()) {
             if (!hasCover) Box(Modifier.statusBarsPadding()) { SocialNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) } }
-            LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            com.onezee.triptrack.ui.PullToRefresh(refreshing = state.isLoading && profile != null, onRefresh = { vm.refresh() }, modifier = Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 if (isOwn) item(key = "preview") { PreviewBanner(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp)) }
                 when {
                     profile != null -> {
                         item(key = "hero") {
-                            PublicHero(profile, state.garage.firstOrNull { it.id == profile.activeVehicle?.id }, name, isOwn,
+                            PublicHero(profile, state.garage.firstOrNull { it.id == profile.activeVehicle?.id }
+                                ?: profile.activeVehicle?.let { PublicVehicle(it.id, it.name, it.avatarEmoji, avatarStyle = it.avatarStyle, level = it.level, odometerKm = it.odometerKm) }, name, isOwn,
                                 followBusy = state.isTogglingFollow, now = now,
                                 onFollow = {
                                     if (!isOwn) {
@@ -164,13 +167,14 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                                 onVehicle = { id -> navigator.push(TripsDestination.PublicCar(dest.id, id, name, state.garage.firstOrNull { it.id == id })) },
                                 onLevel = { navigator.push(TripsDestination.PublicLevels(dest.id, name, profile.profileLevel, profile.profileXp)) },
                                 onStats = { navigator.push(TripsDestination.PublicStats(dest.id, name)) },
+                                onPhoto = { pages, index -> gallery = PublicPhotoSelection(pages, index) },
                                 coverOverlay = { if (hasCover && !scrolled) Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 16.dp, vertical = 4.dp)) {
                                     NavCircleButton(AppGlyph.chevronLeft, strings.back(), { navigator.pop() }, Modifier.testTag("social_back")); Spacer(Modifier.weight(1f)); MoreButton(onCover = true)
                                 } })
                         }
                         val journal = state.journal
                         if (journal != null && journal.history.pinned.isNotEmpty()) items(journal.history.pinned, key = { "pin_${it.id}" }) { trip ->
-                            ProfileTripCard(TripSummary.from(trip), onTap = { journal.originals[trip.id]?.let(::openTrip) }, level = profile.profileLevel,
+                            ProfileTripCard(TripSummary.from(trip), onTap = { journal.originals[trip.id]?.let { openTrip(it) } }, level = profile.profileLevel,
                                 isPinned = true, mapHeight = 118.dp, modifier = Modifier.padding(horizontal = 16.dp))
                         }
                         item(key = "sections") {
@@ -186,7 +190,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                                 onJourney = { navigator.push(TripsDestination.SocialJourney(it)) })
                         }
                         recentTrips(state, profile, gridMode, now, onGrid = { gridMode = it },
-                            onOpen = ::openTrip, onComments = ::openTrip,
+                            onOpen = { openTrip(it) }, onComments = { openTrip(it, TripFocus.Comments) },
                             onReact = { trip, emoji -> requireAccount(SignInAction.react) { vm.toggleReaction(trip.id, emoji) } },
                             onPicker = { trip -> requireAccount(SignInAction.react) { pickerFor = trip } },
                             onShare = ::shareTrip,
@@ -199,6 +203,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                 }
             }
         }
+        }
         if (hasCover && scrolled) Column(Modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
             SocialNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) }
         }
@@ -207,6 +212,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
         ToastHost(toast, onDismiss = { toast = null })
     }
 
+    gallery?.let { PublicPhotoViewer(it, onDismiss = { gallery = null }) }
     AppConfirm(
         isPresented = blockAsked,
         onDismissRequest = { blockAsked = false },
@@ -257,7 +263,7 @@ private fun PreviewBanner(modifier: Modifier = Modifier) {
 private fun PublicHero(
     profile: SocialProfile, vehicle: PublicVehicle?, name: String, isOwn: Boolean, followBusy: Boolean, now: java.time.Instant,
     onFollow: () -> Unit, onFollowers: () -> Unit, onFollowing: () -> Unit, onCopyName: () -> Unit, onVehicle: (UUID) -> Unit,
-    onLevel: () -> Unit, onStats: () -> Unit, coverOverlay: @Composable BoxScope.() -> Unit,
+    onLevel: () -> Unit, onStats: () -> Unit, onPhoto: (List<PublicPhotoPage>, Int) -> Unit, coverOverlay: @Composable BoxScope.() -> Unit,
 ) {
     val strings = appStrings
     val paid = profile.showsPaidCosmetics
@@ -304,7 +310,7 @@ private fun PublicHero(
     }
     val bio = profile.bio?.trim()?.takeIf { it.isNotEmpty() }
     val stats = @Composable {
-        if (profile.openBlocks.counters) Row(Modifier.fillMaxWidth().clickable(enabled = !privacy, role = Role.Button, onClick = onStats).testTag("profile_stats_strip")) {
+        if (profile.openBlocks.counters) Row(Modifier.fillMaxWidth().clickable(enabled = !privacy && profile.openBlocks.stats, role = Role.Button, onClick = onStats).testTag("profile_stats_strip")) {
             StatColumn(if (privacy) "••••" else "${profile.stats.tripCount}", strings.trips(), ink, secondary)
             Spacer(Modifier.weight(1f))
             StatColumn(if (privacy) "••••" else Measure.distanceValueKm(profile.stats.totalKm, LocalDistanceUnit.current, strings.language.code), strings.statsKmTotal(LocalDistanceUnit.current), ink, secondary)
@@ -318,7 +324,9 @@ private fun PublicHero(
             Box {
                 val pager = rememberPagerState { photos.size }
                 HorizontalPager(pager, Modifier.fillMaxWidth().height(232.dp)) { index ->
-                    PhotoImage(PhotoSource.Remote(photos[index].originalUrl ?: photos[index].thumbnailUrl!!), 1440, Modifier.fillMaxSize())
+                    PressableCard(onClick = { onPhoto(photos.map { PublicPhotoPage(it.id, it.originalUrl ?: it.thumbnailUrl!!) }, index) }, modifier = Modifier.testTag("profile_cover_photo")) {
+                        PhotoImage(PhotoSource.Remote(photos[index].originalUrl ?: photos[index].thumbnailUrl!!), 1440, Modifier.fillMaxSize())
+                    }
                 }
                 coverOverlay()
             }

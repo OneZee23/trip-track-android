@@ -41,6 +41,10 @@ class SocialFeature(
     val clock: () -> Instant = Instant::now,
     /** The viewer's avatar, for the comment composer (iOS SettingsManager.avatarEmoji). */
     val ownAvatar: () -> String = { "🚗" },
+    val ownAuthor: () -> com.onezee.triptrack.model.SocialAuthor? = {
+        accountIdSource()?.let { com.onezee.triptrack.model.SocialAuthor(it, auth?.state?.value?.userName, ownAvatar(), 1) }
+    },
+    val commentArchive: com.onezee.triptrack.feature.feed.CommentArchive,
     /** iOS SettingsManager.showPlusBadge: one's own badge obeys the privacy switch. */
     val showsOwnBadge: () -> Boolean = { true },
     /** iOS AuthService.syncProfileToServer, run before one's own public preview loads. */
@@ -78,8 +82,11 @@ class SocialFeature(
      * and a trip are entry points and replace the stack; a journey is pushed, because it also
      * comes from cards inside an already open profile.
      */
+    private var linkJob: kotlinx.coroutines.Job? = null
+
     fun open(link: DeepLink) {
-        scope.launch {
+        linkJob?.cancel()
+        linkJob = scope.launch {
             val feed = trips.feedNavigator
             when (link) {
                 is DeepLink.Profile -> { selectTab(AppTab.home); feed.popToRoot(); feed.push(TripsDestination.PublicProfile(link.id)) }
@@ -131,12 +138,17 @@ class SocialFeature(
 
     /** A hard sign-out or another account: nothing of the last account's social state survives. */
     fun clear() {
+        linkJob?.cancel()
         inbox.clear()
         invites.clear()
         trips.feed.clearSocial()
     }
 
-    fun close() = scope.cancel()
+    fun close() { inbox.close(); scope.cancel() }
+
+    fun comments(id: UUID) = com.onezee.triptrack.feature.feed.TripCommentsViewModel(
+        id, trips.social, commentArchive, me = ownAuthor, worker = worker,
+        countChanged = ::commentCountChanged, clock = clock)
 
     // MARK: - Screens
 

@@ -141,7 +141,7 @@ fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, n
     val vm = entryViewModel("trip:${dest.id}") { feature.tripDetail(dest.id, dest.preview, dest.social) }
     LaunchedEffect(vm) { vm.load() }
     val state by vm.state.collectAsState()
-    TripDetailContent(state, vm, feature, navigator, dest.social, (dest.focus as? com.onezee.triptrack.model.TripFocus.Checkpoint)?.id)
+    TripDetailContent(state, vm, feature, navigator, dest.social, (dest.focus as? com.onezee.triptrack.model.TripFocus.Checkpoint)?.id, dest.focus)
 }
 
 @Composable
@@ -152,6 +152,7 @@ private fun TripDetailContent(
     navigator: DestinationNavigator<TripsDestination>,
     social: com.onezee.triptrack.model.SocialFeedTrip?,
     focusCheckpointId: UUID?,
+    focus: com.onezee.triptrack.model.TripFocus,
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -162,6 +163,7 @@ private fun TripDetailContent(
     val images = LocalTripPhotoImages.current
     val trip = state.trip
     val signedIn = feature.signedIn()
+    val socialFeature = com.onezee.triptrack.feature.social.LocalSocial.current
 
     HideAppTabBar()
 
@@ -175,6 +177,7 @@ private fun TripDetailContent(
 
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     var showActions by remember { mutableStateOf(false) }
+    var shareAfterPublish by remember { mutableStateOf(false) }
     var showComposer by remember { mutableStateOf(false) }
     var selectedCheckpoint by remember { mutableStateOf<CheckpointState?>(null) }
     var selectedSegment by remember { mutableStateOf<SegmentState?>(null) }
@@ -324,6 +327,9 @@ private fun TripDetailContent(
                     now = feature.clock(),
                     state = state,
                     foreignVehicle = social?.vehicle,
+                    onForeignVehicle = social?.vehicle?.id?.let { id -> social.author.let { author ->
+                        { navigator.push(TripsDestination.PublicCar(author.id, id, author.displayName)) }
+                    } },
                     vehicle = vehicle,
                     vehicleKnown = vehicleKnown,
                     journey = journey,
@@ -344,6 +350,14 @@ private fun TripDetailContent(
                     onDeletePhoto = { photoToDelete = it },
                     onAddPhotos = { pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                 )
+                if (socialFeature != null && !state.isLoading) {
+                    if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
+                        onPublishForShare = { shareAfterPublish = true; vm.requestPublish() },
+                        autoShare = shareAfterPublish && !trip.isPrivate && trip.isOnServer,
+                        onShared = { shareAfterPublish = false })
+                    if (state.isOwn || !trip.isPrivate) com.onezee.triptrack.feature.social.ui.TripDiscussion(
+                        trip.id, state.isOwn, trip.isOnServer, social?.commentCountRaw ?: 0, socialFeature, navigator, focus)
+                }
             }
             Box(Modifier.fillMaxWidth().height(safeTop + 28.dp).edgeScrims(top = true))
             DetailTopBar(
@@ -351,7 +365,7 @@ private fun TripDetailContent(
                 title = trip.detailTitle(strings),
                 onBack = { navigator.pop() },
                 backTag = if (state.isLoading) "detail_loading_back" else "detail_back",
-                pill = social?.author?.takeIf { !state.isOwn }?.let { author -> { AuthorPill(author) } },
+                pill = social?.author?.takeIf { !state.isOwn }?.let { author -> { AuthorPill(author, onClick = { navigator.push(TripsDestination.PublicProfile(author.id, author)) }) } },
                 actions = if (state.isOwn && !state.isLoading) ({
                     Box {
                         MapChromeButton(AppGlyph.ellipsis, strings.moreActions(), { haptics.tap(); showActions = true }, Modifier.testTag("detail_actions"), progress)
@@ -433,7 +447,7 @@ private fun TripDetailContent(
         )
     }
     if (state.publishRequested) {
-        PublishTripSheet(cloudSyncEnabled = feature.cloudSyncEnabled(), onPublish = { vm.publish() }, onDismissRequest = { vm.cancelPublish() })
+        PublishTripSheet(cloudSyncEnabled = feature.cloudSyncEnabled(), onPublish = { vm.publish() }, onDismissRequest = { shareAfterPublish = false; vm.cancelPublish() })
     }
     AppConfirm(
         item = state.confirmation,
@@ -529,6 +543,7 @@ private fun InfoPanel(
     now: java.time.Instant,
     state: TripDetailState,
     foreignVehicle: com.onezee.triptrack.model.SocialFeedVehicle?,
+    onForeignVehicle: (() -> Unit)?,
     vehicle: Vehicle?,
     vehicleKnown: Boolean,
     journey: Journey?,
@@ -560,7 +575,7 @@ private fun InfoPanel(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             TripTitleBlock(trip)
-            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown, foreignVehicle = foreignVehicle)
+            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown, foreignVehicle = foreignVehicle, onForeignVehicle = onForeignVehicle)
             if (journey != null) {
                 JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) }, modifier = Modifier.testTag("detail_journey_row"), now = now)
             }

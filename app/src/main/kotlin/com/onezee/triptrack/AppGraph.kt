@@ -240,6 +240,12 @@ class AppGraph(
             preferences = preferences,
             sharePage = { path -> websitePage(path) },
             ownAvatar = { me.identity.identity.value.avatarEmoji },
+            ownAuthor = { auth.state.value.signedInAccountId?.let { id ->
+                val identity = me.identity.identity.value
+                com.onezee.triptrack.model.SocialAuthor(id, identity.name, identity.avatarEmoji, identity.level)
+            } },
+            commentArchive = com.onezee.triptrack.feature.feed.SyncCommentArchive(
+                com.onezee.triptrack.sync.DiscussionArchive(apiClient, java.io.File(context.noBackupFilesDir, "TripDiscussions"))),
             syncOwnProfile = { me.identity.syncJournal() },
             notificationPreferences = { me.notificationPreferences() },
         ).also { it.selectTab = tabStore::select }

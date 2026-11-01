@@ -115,7 +115,14 @@ private fun androidx.compose.foundation.layout.BoxScope.SocialMessages(social: c
     androidx.compose.runtime.LaunchedEffect(social) {
         social.messages.collect { message ->
             toast = com.onezee.triptrack.designsystem.components.ToastItem(com.onezee.triptrack.designsystem.components.ToastType.error,
-                if (message == com.onezee.triptrack.feature.social.SocialMessage.tripUnavailable) strings.tripLoadFailed() else strings.publicDataLoadFailed())
+                when (message) {
+                    com.onezee.triptrack.feature.social.SocialMessage.tripUnavailable -> strings.tripLoadFailed()
+                    com.onezee.triptrack.feature.social.SocialMessage.actionFailed -> strings.proFailed()
+                    com.onezee.triptrack.feature.social.SocialMessage.respondFailed -> strings.companionRespondFailed()
+                    com.onezee.triptrack.feature.social.SocialMessage.linkCopied -> strings.profileLinkCopied()
+                    com.onezee.triptrack.feature.social.SocialMessage.nameCopied -> strings.profileNameCopied()
+                    com.onezee.triptrack.feature.social.SocialMessage.loadFailed -> strings.publicDataLoadFailed()
+                })
         }
     }
     com.onezee.triptrack.designsystem.components.ToastHost(toast, onDismiss = { toast = null })

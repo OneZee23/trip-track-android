@@ -44,11 +44,11 @@ import com.onezee.triptrack.ui.navigation.entryViewModel
  * Only «back» stands over the map: the name is the sheet's first row.
  */
 @Composable
-fun PublicMapScreen(dest: TripsDestination.PublicMap, social: SocialFeature, navigator: DestinationNavigator<TripsDestination>) {
+fun PublicMapScreen(dest: TripsDestination.PublicMap, social: SocialFeature, navigator: DestinationNavigator<TripsDestination>, model: PublicMapViewModel? = null) {
     val strings = appStrings
     val atlas = AtlasTheme.colors
     val haptics = rememberHaptics()
-    val vm = entryViewModel("map:${dest.id}:${dest.vehicleId}") { PublicMapViewModel(dest.id, dest.vehicleId, social.api, social.worker) }
+    val vm = model ?: entryViewModel("map:${dest.id}:${dest.vehicleId}") { PublicMapViewModel(dest.id, dest.vehicleId, social.api, social.worker) }
     val state by vm.state.collectAsState()
     val failed by vm.failed.collectAsState()
     val opening by vm.openingTripId.collectAsState()
@@ -74,7 +74,7 @@ fun PublicMapScreen(dest: TripsDestination.PublicMap, social: SocialFeature, nav
     Box(Modifier.fillMaxSize().background(atlas.background).testTag("public_map")) {
         val routes = remember(state.exploration) { RouteIndex.build(state.exploration.trips) }
         AtlasMapLayer(state, mapState, MapInsets(bottom = with(density) { sheetHeight.toDp().value.toDouble() }), mapState.camera?.latitudeSpan ?: 0.0, strings,
-            onMarker = {}, onTap = { tap ->
+            onMarker = { marker -> tripIdOf(marker)?.let { vm.selectRoad(listOf(it)) } }, onTap = { tap ->
                 when (val meaning = AtlasMapTap.resolve(tap, mapState.camera?.latitudeSpan ?: 0.0, routes)) {
                     is AtlasMapTap.Road -> { haptics.tap(); vm.selectRoad(meaning.tripIds) }
                     is AtlasMapTap.Ground -> vm.tapMap(meaning.point, meaning.zoomToRegion)

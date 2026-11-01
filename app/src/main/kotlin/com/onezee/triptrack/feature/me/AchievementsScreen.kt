@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,16 +48,32 @@ internal fun BadgeTile(badge: AchievementRow, side: Dp = 40.dp) {
 }
 
 @Composable
-internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit, onBadge: (String) -> Unit) {
+internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit, onBadge: (String) -> Unit) =
+    AchievementsScreen(badges, onBack, onBadge, null)
+
+@Composable
+internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit, onBadge: (String) -> Unit, ownerName: String?) {
     val strings = appStrings
+    var filter by remember { mutableIntStateOf(0) }
+    val hidden = remember { BadgeDefinitions.all.filter { it.isHidden }.mapTo(HashSet()) { it.id } }
+    val displayed = when (filter) { 1 -> badges.filter { it.unlocked }; 2 -> badges.filter { it.id in hidden }; else -> badges }
+    val total = badges.count { it.id !in hidden || it.unlocked }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("achievements_screen")) {
         MeNavBar(strings.achievementsSection(), onBack)
-        Text(strings.achievementsOpenedOf(badges.count { it.unlocked }, badges.size), Modifier.padding(16.dp), style = AppType.meta, color = AppTheme.colors.textSecondary)
+        if (!ownerName.isNullOrBlank()) Text(ownerName, Modifier.padding(horizontal = 16.dp), style = AppType.caption, color = AppTheme.colors.textSecondary)
+        Text(strings.achievementsOpenedOf(badges.count { it.unlocked }, total), Modifier.padding(16.dp), style = AppType.meta, color = AppTheme.colors.textSecondary)
+        if (ownerName != null) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(strings.achievementsFilterAll(), strings.achievementsFilterUnlocked(), strings.achievementsFilterSecret()).forEachIndexed { index, title ->
+                PressableCard(onClick = { filter = index }, modifier = Modifier.testTag("achievements_filter_$index")) {
+                    Text(title, Modifier.background(if (filter == index) AppTheme.accentBg else AppTheme.colors.cardAlt, CapsuleShape).padding(horizontal = 12.dp, vertical = 10.dp), style = AppType.chip, color = if (filter == index) AppTheme.accent else AppTheme.colors.textSecondary)
+                }
+            }
+        }
         LazyVerticalGrid(GridCells.Adaptive(100.dp), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(badges.sortedWith(compareByDescending<AchievementRow> { it.unlocked }.thenByDescending { it.rarity.rawValue }), key = { it.id }) { badge ->
-                Column(Modifier.fillMaxWidth().surfaceCard(16.dp).clickable(role = Role.Button) { onBadge(badge.id) }.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    BadgeArt(badge)
-                    Text(MeArtwork.badgeTitles[badge.id]?.let { strings.tr(it) }.orEmpty(), style = interScaled(12f, InterWeight.medium), color = AppTheme.colors.text)
+            items(displayed.sortedWith(compareByDescending<AchievementRow> { it.unlocked }.thenBy { it.id in hidden && !it.unlocked }.thenByDescending { it.rarity.rawValue }), key = { it.id }) { badge ->
+                Column(Modifier.fillMaxWidth().testTag("achievement_${badge.id}").surfaceCard(16.dp).clickable(role = Role.Button) { onBadge(badge.id) }.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (badge.id in hidden && !badge.unlocked) Box(Modifier.size(80.dp), contentAlignment = Alignment.Center) { Glyph(AppGlyph.lockFill, null, tint = AppTheme.colors.textTertiary, size = 28.dp) } else BadgeArt(badge)
+                    Text(if (badge.id in hidden && !badge.unlocked) "???" else MeArtwork.badgeTitles[badge.id]?.let { strings.tr(it) }.orEmpty(), style = interScaled(12f, InterWeight.medium), color = AppTheme.colors.text)
                 }
             }
         }

@@ -43,8 +43,8 @@ sealed interface DeepLink {
             if (parts.size < 2) return null
             return when (parts[0]) {
                 "u" -> uuid(parts[1])?.let(::Profile)
-                "s" -> parts[1].takeIf(shareCode::matches)?.let(::SharedTrip)
-                "j" -> parts[1].takeIf(shareCode::matches)?.let(::SharedJourney)
+                "s" -> parts[1].takeIf { parts.size == 2 && shareCode.matches(it) }?.let(::SharedTrip)
+                "j" -> parts[1].takeIf { parts.size == 2 && shareCode.matches(it) }?.let(::SharedJourney)
                 else -> null
             }
         }

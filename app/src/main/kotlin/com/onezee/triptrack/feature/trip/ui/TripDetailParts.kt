@@ -147,6 +147,7 @@ fun TripChipsRow(
     vehicleKnown: Boolean,
     modifier: Modifier = Modifier,
     foreignVehicle: SocialFeedVehicle? = null,
+    onForeignVehicle: (() -> Unit)? = null,
 ) {
     val strings = appStrings
     Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -170,10 +171,8 @@ fun TripChipsRow(
                 }
             }
         }
-        // Someone else's car is a name and an avatar the server rendered, not a row in our garage.
-        // iOS opens its public page; until that screen exists here the chip is a plain label.
         if (!isOwn && foreignVehicle != null) {
-            DetailChip(Modifier.testTag("detail_foreign_vehicle")) {
+            DetailChip(Modifier.then(if (onForeignVehicle != null) Modifier.clickable(onClick = onForeignVehicle) else Modifier).testTag("detail_foreign_vehicle")) {
                 if (foreignVehicle.avatarEmoji.startsWith(PIXEL_AVATAR_PREFIX)) {
                     Image(ImageBitmap.imageResource(R.drawable.pixel_car), contentDescription = null, modifier = Modifier.size(14.dp),
                         contentScale = ContentScale.Fit, filterQuality = FilterQuality.None)
@@ -459,10 +458,11 @@ private const val PIXEL_AVATAR_PREFIX = "pixel_"
  * «LVL n». iOS opens their profile; that screen is not ported yet, so here it is a label.
  */
 @Composable
-fun AuthorPill(author: SocialAuthor, modifier: Modifier = Modifier) {
+fun AuthorPill(author: SocialAuthor, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
     val strings = appStrings
     Row(
         modifier
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .background(Color.Black.copy(alpha = 0.42f), CircleShape)
             .padding(start = 5.dp, end = 12.dp, top = 5.dp, bottom = 5.dp)
             .semantics(mergeDescendants = true) {}

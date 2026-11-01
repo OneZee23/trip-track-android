@@ -10,6 +10,7 @@ import com.onezee.triptrack.feature.social.RemoteTrips
 import com.onezee.triptrack.feature.social.SocialApi
 import com.onezee.triptrack.model.RoadCard
 import com.onezee.triptrack.model.Trip
+import com.onezee.triptrack.logic.invalidatePreviewCache
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
@@ -73,7 +74,10 @@ class StatsViewModel(
                 is StatsSource.Remote -> withContext(worker) { RemoteTrips.load(source.api, source.accountId) }.let { Triple(it.trips, emptyList(), it.failed) }
             }
             if (current != generation) return@launch
-            val aggregates = withContext(worker) { MeAggregates.compute(trips, roads, includeFarthestPoint = true, now = now(), zone = zone) }
+            val aggregates = withContext(worker) {
+                trips.forEach { Trip.invalidatePreviewCache(it.id) }
+                MeAggregates.compute(trips, roads, includeFarthestPoint = true, now = now(), zone = zone)
+            }
             if (current != generation) return@launch
             mutable.update { it.copy(aggregates = aggregates, failed = failed,
                 anchor = aggregates.lastTripDate?.let { date -> YearMonth.from(date.atZone(zone)) } ?: it.anchor) }

@@ -77,6 +77,7 @@ class PublicMapViewModel(
         return viewModelScope.launch {
             val (result, exploration, layer) = withContext(worker) {
                 val result = RemoteTrips.load(api, accountId, vehicleId)
+                result.trips.forEach { Trip.invalidatePreviewCache(it.id) }
                 val atlas = atlasProvider()
                 // The layer FIRST: its opened kilometres per region are what the region row prints.
                 val layer = AtlasPreviewLayer.build(result.trips, atlas)

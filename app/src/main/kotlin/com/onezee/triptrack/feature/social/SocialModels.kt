@@ -183,3 +183,6 @@ object RemoteTrips {
         return TripSourceResult(collected, true)
     }
 }
+
+// iOS: TripDetailView.canOfferShare. Private companion access does not make a trip shareable.
+fun canOfferShare(isOwn: Boolean, isPrivate: Boolean): Boolean = isOwn || !isPrivate

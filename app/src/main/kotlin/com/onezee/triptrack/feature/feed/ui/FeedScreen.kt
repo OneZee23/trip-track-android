@@ -227,6 +227,7 @@ fun FeedScreen(
                         isOwn = ::isOwn,
                         hasPrivateTrip = signedIn && state.hasAnyPrivateTrip,
                         onOpen = ::open,
+                        onComments = { card -> navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id), focus = com.onezee.triptrack.model.TripFocus.Comments)) },
                         onOpenJourney = { navigator.push(TripsDestination.SocialJourney(it)) },
                         onReact = { card, emoji ->
                             if (signedIn) vm.toggleReaction(card.trip.id, emoji, pageMode)
@@ -393,6 +394,7 @@ private fun FeedPage(
     isOwn: (SocialCardState) -> Boolean,
     hasPrivateTrip: Boolean,
     onOpen: (SocialCardState) -> Unit,
+    onComments: (SocialCardState) -> Unit,
     onOpenJourney: (UUID) -> Unit,
     onReact: (SocialCardState, String) -> Unit,
     onOpenPicker: (SocialCardState) -> Unit,
@@ -449,7 +451,7 @@ private fun FeedPage(
                         isOwn = own,
                         now = now,
                         onTapCard = { onOpen(card) },
-                        onTapComments = { onOpen(card) },
+                        onTapComments = { onComments(card) },
                         onReact = { emoji -> if (!own) onReact(card, emoji) },
                         onOpenPicker = { if (!own) onOpenPicker(card) },
                         onOpenJourney = onOpenJourney,

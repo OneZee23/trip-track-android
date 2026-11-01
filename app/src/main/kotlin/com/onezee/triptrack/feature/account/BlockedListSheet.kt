@@ -74,6 +74,8 @@ fun BlockedListSheet(users: BlockedUsers, onDismissRequest: () -> Unit) {
     var list by remember { mutableStateOf<List<BlockedUser>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var failed by remember { mutableStateOf(false) }
+    var toast by remember { mutableStateOf<com.onezee.triptrack.designsystem.components.ToastItem?>(null) }
+    val strings = appStrings
     var pending by remember { mutableStateOf<UUID?>(null) }
     val scope = rememberCoroutineScope()
     val haptics = rememberHaptics()
@@ -98,11 +100,12 @@ fun BlockedListSheet(users: BlockedUsers, onDismissRequest: () -> Unit) {
                         list = list.filterNot { it.id == user.id }
                         haptics.success()
                     } catch (cancelled: CancellationException) { throw cancelled }
-                    catch (_: Exception) { /* The row stays: nothing changed on the server. */ }
+                    catch (_: Exception) { toast = com.onezee.triptrack.designsystem.components.ToastItem(com.onezee.triptrack.designsystem.components.ToastType.error, strings.proFailed()) }
                     finally { pending = null }
                 }
             },
         )
+        com.onezee.triptrack.designsystem.components.ToastHost(toast, onDismiss = { toast = null })
     }
 }
 

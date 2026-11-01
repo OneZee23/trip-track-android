@@ -36,6 +36,7 @@ data class PublicProfileState(
     val isLoading: Boolean = false,
     val isTogglingFollow: Boolean = false,
     val isBlocked: Boolean = false,
+    val isTogglingBlock: Boolean = false,
     val garage: List<PublicVehicle> = emptyList(),
     val journeys: List<PublicJourneyDto> = emptyList(),
     /** Every badge of the account (`/users/:id/badges`); null until it came, and the card stays a preview. */
@@ -64,6 +65,7 @@ class PublicProfileViewModel(
     private var loadJob: Job? = null
     private var journalJob: Job? = null
     private var garageGeneration = 0
+    private var generation = 0
 
     val isOwnProfile: Boolean get() = social.accountId == accountId
 
@@ -74,6 +76,7 @@ class PublicProfileViewModel(
     /** Cancels the previous load: only the latest request commits. */
     fun refresh(): Job {
         loadJob?.cancel()
+        generation++
         return viewModelScope.launch {
             if (isOwnProfile) runCatching { social.syncOwnProfile() }
             loadProfile()
@@ -83,15 +86,17 @@ class PublicProfileViewModel(
     }
 
     private suspend fun loadProfile() {
+        val current = generation
         mutable.update { it.copy(isLoading = true, loadFailed = false) }
         try {
             val profile = withContext(worker) { api.profile(accountId) }
             // The author fallback only matters for a server that still sends six-field trips.
+            if (current != generation) return
             val fallback = SocialAuthor(accountId, profile.displayName, profile.avatarEmoji, profile.profileLevel)
             val pinned = profile.pinnedTrips.orEmpty().map { it.feedTrip(fallback) }
             val cards = profile.recentTrips.map { it.feedTrip(fallback) }
             mutable.update { it.copy(profile = profile, unavailable = null, pinnedCards = pinned, tripCards = cards,
-                pager = ProfileTripsPager.reset(cards, profile.stats.publicTripCount)) }
+                pager = ProfileTripsPager.reset(cards, profile.stats.publicTripCount), allBadgeIds = null) }
             prepareJournal()
             val legacy = profile.recentTrips.filter { it.author == null }
             if (legacy.isNotEmpty()) viewModelScope.launch { hydrateLegacy(legacy) }
@@ -107,7 +112,8 @@ class PublicProfileViewModel(
 
     /** Every badge (0.9.1). A failure, an older server included, leaves the preview as it was. */
     private suspend fun loadBadges() {
-        try { val ids = withContext(worker) { api.badges(accountId) }; mutable.update { it.copy(allBadgeIds = ids) } }
+        val current = generation
+        try { val ids = withContext(worker) { api.badges(accountId) }; if (current != generation) return; mutable.update { it.copy(allBadgeIds = ids) } }
         catch (cancelled: CancellationException) { throw cancelled }
         catch (_: Exception) {}
     }
@@ -117,9 +123,11 @@ class PublicProfileViewModel(
      * that cannot be re-read keeps what it has. Replaced BY ID: a refresh may rebuild the list.
      */
     private suspend fun hydrateLegacy(legacy: List<SocialProfileRecentTrip>) {
+        val current = generation
         for (trip in legacy) {
             try {
                 val item = withContext(worker) { api.trip(trip.id, includeTrack = false).item }
+                if (current != generation) return
                 mutable.update { it.copy(tripCards = it.tripCards.map { card -> if (card.id == item.id) item else card }) }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) {}
@@ -145,11 +153,13 @@ class PublicProfileViewModel(
      * and the journal folds legs by every journey.
      */
     fun loadJourneys(): Job? {
+        val current = generation
         if (state.value.journeys.isNotEmpty()) return null
         return viewModelScope.launch {
             val journeys = try { withContext(worker) { api.journeys(accountId, null, 50).journeys } }
                 catch (cancelled: CancellationException) { throw cancelled }
                 catch (_: Exception) { emptyList() }
+            if (current != generation) return@launch
             mutable.update { it.copy(journeys = journeys) }
             prepareJournal()
         }
@@ -157,6 +167,7 @@ class PublicProfileViewModel(
 
     /** The next page once a card near the end shows; [count] counts the list the card is in. */
     fun loadMoreIfNeeded(appearedIndex: Int, count: Int): Job? {
+        val current = generation
         val pager = state.value.pager
         val cursor = pager.cursor ?: return null
         if (!pager.shouldLoad(appearedIndex, count)) return null
@@ -165,7 +176,7 @@ class PublicProfileViewModel(
             try {
                 val page = withContext(worker) { api.profileTrips(accountId, cursor, ProfileTripsPager.PAGE_SIZE) }
                 // The profile was refreshed while the page travelled: its cursor belongs to the old list.
-                if (state.value.pager.cursor != cursor) return@launch
+                if (current != generation || state.value.pager.cursor != cursor) return@launch
                 mutable.update { old -> old.pager.apply(page, old.tripCards).let { (pager, cards) -> old.copy(pager = pager, tripCards = cards) } }
                 prepareJournal()
             } catch (cancelled: CancellationException) { throw cancelled }
@@ -197,13 +208,17 @@ class PublicProfileViewModel(
     /** Optimistic; on a refusal the server's truth is read again. */
     fun toggleFollow(): Job? {
         val current = state.value.profile ?: return null
-        if (isOwnProfile || state.value.isTogglingFollow) return null
+        if (!social.signedIn || isOwnProfile || state.value.isTogglingFollow) return null
         val was = current.isFollowing ?: false
-        mutable.update { it.copy(isTogglingFollow = true, profile = current.copy(isFollowing = !was, followerCount = current.followerCount + if (was) -1 else 1)) }
+        mutable.update { it.copy(isTogglingFollow = true, profile = current.copy(isFollowing = !was, followerCount = maxOf(0, current.followerCount + if (was) -1 else 1))) }
         return viewModelScope.launch {
             try { withContext(worker) { api.follow(accountId, follow = !was) } }
             catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { loadJob?.cancel(); loadProfile() }
+            catch (_: Exception) {
+                mutable.update { it.copy(profile = current) }
+                social.say(SocialMessage.actionFailed)
+                loadJob?.cancel(); loadProfile()
+            }
             finally { mutable.update { it.copy(isTogglingFollow = false) } }
         }
     }
@@ -222,15 +237,17 @@ class PublicProfileViewModel(
     }
 
     /** Optimistic. Blocking also ends the follow both ways, which the server already did. */
-    fun toggleBlock(): Job {
+    fun toggleBlock(): Job? {
+        if (!social.signedIn || isOwnProfile || state.value.isTogglingBlock) return null
         val was = state.value.isBlocked
-        mutable.update { it.copy(isBlocked = !was) }
+        mutable.update { it.copy(isBlocked = !was, isTogglingBlock = true) }
         return viewModelScope.launch {
             try {
                 withContext(worker) { api.block(accountId, block = !was) }
                 if (!was) mutable.update { s -> s.copy(profile = s.profile?.copy(isFollowing = false)) }
             } catch (cancelled: CancellationException) { mutable.update { it.copy(isBlocked = was) }; throw cancelled }
             catch (_: Exception) { mutable.update { it.copy(isBlocked = was) }; social.say(SocialMessage.actionFailed) }
+            finally { mutable.update { it.copy(isTogglingBlock = false) } }
         }
     }
 
@@ -265,7 +282,9 @@ class PublicProfileViewModel(
 
     /** The session changed under the screen: the previous account's answer must not stay. */
     fun sessionChanged() {
-        mutable.update { it.copy(profile = null, tripCards = emptyList(), pinnedCards = emptyList(), journal = null) }
+        journalJob?.cancel()
+        garageGeneration++
+        mutable.value = PublicProfileState()
         refresh()
     }
 }

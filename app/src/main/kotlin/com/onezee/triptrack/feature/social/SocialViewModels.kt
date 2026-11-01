@@ -9,6 +9,7 @@ import com.onezee.triptrack.logic.GeohashEncoder
 import com.onezee.triptrack.logic.RegionAtlas
 import com.onezee.triptrack.logic.build
 import com.onezee.triptrack.logic.previewCoordinates
+import com.onezee.triptrack.logic.invalidatePreviewCache
 import com.onezee.triptrack.logic.visitedCityCount
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.network.ApiError
@@ -54,6 +55,7 @@ class FollowListViewModel(
     private val mutable = MutableStateFlow(FollowListState(mode))
     val state: StateFlow<FollowListState> = mutable.asStateFlow()
     private var started = false
+    private var generation = 0
 
     fun start() {
         if (started) return
@@ -75,15 +77,16 @@ class FollowListViewModel(
     }
 
     fun load(): Job {
+        val current = ++generation
         val mode = state.value.mode
         mutable.update { it.copy(isLoading = true) }
         return viewModelScope.launch {
             try {
                 val response = withContext(worker) { api.people(accountId, mode) }
-                if (mode == state.value.mode) mutable.update { it.copy(users = response.users, loadFailed = false) }
+                if (current == generation && mode == state.value.mode) mutable.update { it.copy(users = response.users, loadFailed = false) }
             } catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { if (mode == state.value.mode) mutable.update { it.copy(loadFailed = true) } }
-            finally { if (mode == state.value.mode) mutable.update { it.copy(isLoading = false) } }
+            catch (_: Exception) { if (current == generation && mode == state.value.mode) mutable.update { it.copy(loadFailed = true) } }
+            finally { if (current == generation && mode == state.value.mode) mutable.update { it.copy(isLoading = false) } }
         }
     }
 }
@@ -124,6 +127,7 @@ data class PublicVehicleState(
     val gone: Boolean = false,
     val failed: Boolean = false,
     val biography: VehicleBiography? = null,
+    val catalogVariant: com.onezee.triptrack.model.CarCatalog.Variant? = null,
 )
 
 /**
@@ -155,18 +159,22 @@ class PublicVehicleViewModel(
         val biography = async { withContext(worker) { biography() } }
         val fetched = vehicle.await()
         val bio = biography.await()
-        fetched.onSuccess { v -> mutable.update { it.copy(vehicle = v) } }
+        fetched.onSuccess { v ->
+            val variant = withContext(worker) { com.onezee.triptrack.logic.CarCatalog().resolve(v.catalogModelId, v.catalogGenerationId, v.catalogVariantId) }
+            mutable.update { it.copy(vehicle = v, gone = false, catalogVariant = variant) }
+        }
             .onFailure { error ->
                 if (error.serverCode == "USER_NOT_FOUND" || error is ApiError.VehicleNotFound) mutable.update { it.copy(vehicle = null, gone = true, failed = false) }
                 else if (state.value.vehicle == null) mutable.update { it.copy(failed = true) }
             }
-        if (bio != null) mutable.update { it.copy(biography = bio) }
+        if (bio != null && !state.value.gone) mutable.update { it.copy(biography = bio) }
         else if (fetched.getOrNull()?.mapVisible == true) mutable.update { it.copy(failed = true) }
     }
 
     private suspend fun biography(): VehicleBiography? {
         val result = RemoteTrips.load(api, accountId, vehicleId)
         if (result.failed) return null
+        result.trips.forEach { Trip.invalidatePreviewCache(it.id) }
         val mine = result.trips.map { it.copy(vehicleId = vehicleId) }
         if (mine.isEmpty()) return VehicleBiography(emptyList(), MeAggregates(), 0, 0, emptyList())
         val hashes = mine.flatMap { it.previewCoordinates }.mapTo(HashSet()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }

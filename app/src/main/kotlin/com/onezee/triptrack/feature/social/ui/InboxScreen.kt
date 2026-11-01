@@ -93,18 +93,18 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
     // Merged, not replaced: a toggle made in this session survives a refresh in flight.
     LaunchedEffect(state.items) { followed = followed + state.items.filter { it.isFollowing == true }.mapNotNull { it.actor?.id } }
     // Peek-and-close: what was on screen is reported before the debounce had its turn.
-    DisposableEffect(Unit) { onDispose { scope.launch { inbox.flushSeen() } } }
+    DisposableEffect(Unit) { onDispose { inbox.flushOnDismiss() } }
     HideAppTabBar()
 
     fun answered(item: NotificationItem): CompanionStatus? = item.tripId?.let { trip -> social.invites.respondedStatus(trip, item.id) }.also { answers.size }
-    fun openTrip(id: UUID, focus: SocialFeedTrip? = null) { navigator.push(TripsDestination.TripDetail(id, social = focus)) }
+    fun openTrip(id: UUID, card: SocialFeedTrip? = null, focus: TripFocus = TripFocus.Top) { navigator.push(TripsDestination.TripDetail(id, social = card, focus = focus)) }
     fun tap(item: NotificationItem) {
         scope.launch { inbox.markRead(item) }
         when (item.typedKind) {
             NotificationKind.reaction, NotificationKind.comment, NotificationKind.companionAccepted, NotificationKind.achievement -> {
                 val trip = item.tripId
                 // An achievement's actor IS the recipient: with no trip it opens nothing rather than one's own profile.
-                if (trip != null) openTrip(trip)
+                if (trip != null) openTrip(trip, focus = if (item.typedKind == NotificationKind.comment) item.commentId?.let { TripFocus.Comment(it) } ?: TripFocus.Comments else TripFocus.Top)
                 else if (item.typedKind != NotificationKind.achievement) item.actor?.let { navigator.push(TripsDestination.PublicProfile(it.id, it)) }
             }
             NotificationKind.companionInvite -> {
@@ -126,7 +126,10 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
             catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) {
                 // The server and the button already agree: a no-op, not a failure.
-                if (error.serverCode != "ALREADY_FOLLOWING" && error.serverCode != "NOT_FOLLOWING") followed = if (follow) followed - user else followed + user
+                if (error.serverCode != "ALREADY_FOLLOWING" && error.serverCode != "NOT_FOLLOWING") {
+                    followed = if (follow) followed - user else followed + user
+                    toast = ToastItem(ToastType.error, strings.proFailed())
+                }
             }
         }
     }
@@ -144,11 +147,14 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
     }
     fun respond(item: NotificationItem, accept: Boolean) {
         val trip = item.tripId ?: return
+        if (trip in resolving) return
+        resolving = resolving + trip
         haptics.action()
         scope.launch {
             try { social.invites.respond(trip, item.id, accept) }
             catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { toast = ToastItem(ToastType.error, strings.companionRespondFailed()) }
+            finally { resolving = resolving - trip }
         }
     }
 
@@ -170,6 +176,7 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
             }
             when {
                 state.isLoading && state.items.isEmpty() -> SkeletonRows(6, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                state.loadFailed && state.items.isEmpty() -> SocialMessageState(strings.publicDataLoadFailed(), retry = { scope.launch { inbox.refresh() } }, tag = "inbox_error")
                 state.items.isEmpty() -> Column(Modifier.fillMaxSize().padding(32.dp).testTag("inbox_empty"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically)) {
                     SocialGlyphIcon(SocialGlyph.bell, null, tint = colors.textTertiary, size = 40.dp)
                     Text(strings.notificationsInboxNothingYet(), style = inter(16f, InterWeight.semibold), color = colors.textSecondary)
@@ -201,6 +208,12 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
                                         DecisionRow(item, preview, strings, now, onRetry = { previews.remove(item.id); ensurePreview(item) }, onRespond = { respond(item, it) })
                                     } else InfoRow(item, strings, now, actionLine(item, strings, answered(item), previews[item.id]),
                                         followedBack = item.actor?.id?.let { it in followed }, resolving = item.tripId in resolving,
+                                        canTap = when (item.typedKind) {
+                                            NotificationKind.companionInvite -> answered(item) == CompanionStatus.accepted && item.tripId != null
+                                            NotificationKind.achievement -> item.tripId != null
+                                            NotificationKind.follow, null -> item.actor != null
+                                            else -> item.tripId != null || item.actor != null
+                                        },
                                         onFollow = { follow -> item.actor?.let { setFollow(it.id, follow) } }, onTap = { haptics.tap(); tap(item) })
                                 }
                             }
@@ -232,11 +245,11 @@ private fun rememberSaveableFilter(): MutableState<InboxFilter> = androidx.compo
 
 /** iOS infoRow: avatar with the kind on its corner, WHO, WHAT, WHEN; unread rows on a whisper of accent. */
 @Composable
-private fun InfoRow(item: NotificationItem, strings: AppStrings, now: Instant, action: String, followedBack: Boolean?, resolving: Boolean,
+private fun InfoRow(item: NotificationItem, strings: AppStrings, now: Instant, action: String, followedBack: Boolean?, resolving: Boolean, canTap: Boolean,
                     onFollow: (Boolean) -> Unit, onTap: () -> Unit) {
     val colors = AppTheme.colors
     val accent = AppTheme.accent
-    PressableCard(onClick = onTap, modifier = Modifier.fillMaxWidth().testTag("inbox_row")) {
+    val content = @Composable {
         Row(Modifier.fillMaxWidth().surfaceCard(16.dp).background(if (item.isRead) Color.Transparent else accent.copy(alpha = .05f), RoundedCornerShape(16.dp))
             .drawBehind { if (!item.isRead) drawRoundRect(accent, Offset(0f, 14.dp.toPx()), Size(3.5.dp.toPx(), size.height - 28.dp.toPx()), CornerRadius(2.dp.toPx())) }
             .padding(11.dp), horizontalArrangement = Arrangement.spacedBy(11.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -257,6 +270,8 @@ private fun InfoRow(item: NotificationItem, strings: AppStrings, now: Instant, a
             if (resolving) com.onezee.triptrack.feature.account.Spinner(colors.textSecondary, Modifier.testTag("companion_invite_trip_loading"))
         }
     }
+    if (canTap) PressableCard(onClick = onTap, modifier = Modifier.fillMaxWidth().testTag("inbox_row")) { content() }
+    else Box(Modifier.fillMaxWidth().testTag("inbox_row")) { content() }
 }
 
 /** iOS decisionRow: the actor, the trip's shape from the invite preview, Decline and Accept. Nothing to open yet. */

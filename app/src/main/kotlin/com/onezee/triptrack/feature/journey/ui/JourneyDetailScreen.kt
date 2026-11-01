@@ -2,6 +2,7 @@ package com.onezee.triptrack.feature.journey.ui
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -163,19 +164,23 @@ private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeatu
     LaunchedEffect(state.deleted) { if (state.deleted) navigator.pop() }
 
     val journey = state.journey
+    val socialFeature = com.onezee.triptrack.feature.social.LocalSocial.current
     val end = journey?.endDate ?: state.trips.lastOrNull()?.endDate ?: journey?.startDate
     val dateRange = if (journey != null && end != null) JourneyFormat.dateRange(journey.startDate, end, strings) else ""
     val title = JourneyFormat.title(journey?.title, state.startName, state.farthestName, dateRange)
 
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("journey_detail")) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
-            if (social != null && state.author != null) AuthorRow(state, dateRange)
+            if (social != null && state.author != null) AuthorRow(state, dateRange) { state.author?.let { navigator.push(TripsDestination.PublicProfile(it.id)) } }
             JourneyHero(state, title, dateRange)
             Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
                 if (!state.isSocial && state.loaded && state.trips.isEmpty()) {
                     EmptyCard { haptics.tap(); scope.launch { editing = withContext(feature.worker) { feature.journey(vm.journeyId) }; editOpenings++ } }
                 } else if (state.loaded) {
                     Totals(state)
+                    if (journey != null && !journey.isPrivate && socialFeature != null) {
+                        com.onezee.triptrack.feature.social.ui.SocialShareAction(socialFeature, journey.id, true, title)
+                    }
                     JourneyDaysList(
                         days = state.days,
                         localNames = state.localNames,
@@ -238,12 +243,12 @@ private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeatu
 
 /** iOS: authorRow. Whose journey, its dates and length, above the hero (someone else's only). */
 @Composable
-private fun AuthorRow(state: JourneyDetailState, dateRange: String) {
+private fun AuthorRow(state: JourneyDetailState, dateRange: String, onClick: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
     val author = state.author ?: return
     val top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = top + 68.dp, bottom = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp),
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 16.dp, end = 16.dp, top = top + 68.dp, bottom = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(34.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) {
             Text(author.avatarEmoji ?: "🚗", style = inter(18f))

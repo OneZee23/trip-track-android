@@ -170,7 +170,7 @@ fun ReportSheet(target: ReportTarget, social: SocialFeature, onDismiss: () -> Un
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(strings.reportAdditionalDetailsOptional().uppercased(strings.language), style = inter(11f, InterWeight.semibold), letterSpacing = points(.5f), color = colors.textTertiary)
-                BasicTextField(notes, { notes = it.take(500) }, Modifier.fillMaxWidth().height(80.dp).surfaceCard(12.dp).padding(10.dp).testTag("report_notes"),
+                BasicTextField(notes, { notes = it.swiftPrefix(500) }, Modifier.fillMaxWidth().height(80.dp).surfaceCard(12.dp).padding(10.dp).testTag("report_notes"),
                     textStyle = inter(15f).copy(color = colors.text), cursorBrush = SolidColor(AppTheme.accent))
             }
             SheetButton(strings.reportSubmit(), if (reason == null) colors.textTertiary.copy(alpha = .3f) else AppTheme.red, Modifier.testTag("report_submit"),
@@ -180,7 +180,7 @@ fun ReportSheet(target: ReportTarget, social: SocialFeature, onDismiss: () -> Un
                 sending = true; failed = false
                 scope.launch {
                     try {
-                        social.api.report(target, chosen, notes.trim().takeIf { it.isNotEmpty() }?.take(500))
+                        social.api.report(target, chosen, notes.trim().takeIf { it.isNotEmpty() }?.swiftPrefix(500))
                         sent = true; haptics.success()
                     } catch (cancelled: CancellationException) { throw cancelled }
                     catch (_: Exception) { failed = true }
@@ -323,13 +323,16 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
     val state by vm.state.collectAsState()
     var actions by remember { mutableStateOf(false) }
     var report by remember { mutableStateOf<ReportTarget?>(null) }
+    var gallery by remember { mutableStateOf<PublicPhotoSelection?>(null) }
+    var signIn by remember { mutableStateOf(false) }
+    val uri = androidx.compose.ui.platform.LocalUriHandler.current
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_vehicle")) {
         SocialNavBar(state.vehicle?.name ?: strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name) {
-            if (social.signedIn) Box {
+            Box {
                 NavCircleButton(AppGlyph.ellipsis, strings.moreActions(), { actions = true }, Modifier.testTag("public_vehicle_more"))
                 ActionPopover(actions, { actions = false }, listOf(ActionPopoverItem(strings.reportProfileAction(), AppGlyph.flag, isDestructive = true, testTag = "public_vehicle_report") {
-                    report = ReportTarget.Vehicle(dest.vehicleId)
+                    if (social.signedIn) report = ReportTarget.Vehicle(dest.vehicleId) else signIn = true
                 }))
             }
         }
@@ -337,16 +340,32 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
         when {
             car != null -> Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Column(Modifier.fillMaxWidth().surfaceCard(24.dp).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    val photo = car.mainPhoto?.takeIf { it.isNotEmpty() }
-                    if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1440, Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(16.dp)))
-                    else VehicleStage(car.asVehicle())
+                    val mainShot = car.photos.orEmpty().firstOrNull { it.isMain } ?: car.photos.orEmpty().firstOrNull()
+                    val photo = mainShot?.url ?: mainShot?.thumbUrl ?: car.mainPhoto?.takeIf { it.isNotEmpty() }
+                    val pages = car.photos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }
+                    val mainIndex = pages.indexOfFirst { it.id == mainShot?.id }.coerceAtLeast(0)
+                    if (pages.isNotEmpty()) PressableCard(onClick = { gallery = PublicPhotoSelection(pages, mainIndex) }, modifier = Modifier.testTag("public_vehicle_cover")) {
+                        if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1440, Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(16.dp)))
+                        else VehicleStage(car.asVehicle(), isPlus = true)
+                    } else VehicleStage(car.asVehicle(), isPlus = true)
                     Text(car.name, style = interScaled(19f, InterWeight.bold), color = colors.text)
                     val line = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
                     if (line.isNotEmpty()) Text(line, Modifier.padding(top = 7.dp), style = AppType.meta, color = colors.textSecondary)
+                    state.catalogVariant?.let { variant ->
+                        val specs = listOfNotNull(variant.powerHp?.let { strings.garagePower(UnitNumber.upToTenth(it, strings.language.code)) },
+                            variant.zeroToHundredS?.let { strings.garageAcceleration(UnitNumber.upToTenth(it, strings.language.code)) },
+                            variant.topSpeedKmh?.let { Measure.speed(it / 3.6, unit, strings.language.code, strings) })
+                        if (specs.isNotEmpty()) Text(specs.joinToString(" · "), Modifier.padding(top = 8.dp), style = AppType.caption, color = colors.textSecondary)
+                    }
+                    val tags = VehicleModTags.effective(car.modTags.orEmpty(), isPlus = true)
+                    if (tags.isNotEmpty()) Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        tags.forEach { Text(it, Modifier.background(AppTheme.accentBg, CapsuleShape).padding(horizontal = 8.dp, vertical = 4.dp), style = AppType.caption, color = AppTheme.accent) }
+                        ProBadge(height = 14.dp)
+                    }
                     if (car.soldAt != null) Text(strings.publicVehicleSold(), Modifier.padding(top = 6.dp), style = AppType.caption, color = AppTheme.accent)
                     if (!car.plate.isNullOrBlank()) Text(car.plate!!, Modifier.padding(top = 8.dp).background(colors.cardAlt, RoundedCornerShape(5.dp)).padding(horizontal = 8.dp, vertical = 5.dp), style = AppType.chip, color = colors.text)
                     Text("LVL ${car.level}", Modifier.padding(top = 12.dp).background(colors.goldBg, CircleShape).padding(horizontal = 12.dp, vertical = 8.dp), style = interScaled(11f, InterWeight.semibold), color = AppTheme.gold)
-                    state.biography?.let { bio ->
+                    state.biography?.takeIf { car.mapVisible == true && it.trips.isNotEmpty() }?.let { bio ->
                         Spacer(Modifier.height(18.dp))
                         Row(Modifier.fillMaxWidth()) {
                             val days = bio.trips.map { it.startDate.atZone(strings.zone).toLocalDate() }.toSet().size
@@ -358,7 +377,10 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
                             }
                         }
                     }
-                    car.createdAt?.let { Text(strings.inGarageSince(strings.monthYear(it)), Modifier.fillMaxWidth().padding(top = 12.dp), style = AppType.caption, color = colors.textTertiary) }
+                    car.createdAt?.let { Text(strings.inGarageSince(com.onezee.triptrack.feature.stats.StatsPeriodFormat.monthYearGenitive(it, strings.language, strings.zone)), Modifier.fillMaxWidth().padding(top = 12.dp), style = AppType.caption, color = colors.textTertiary) }
+                }
+                car.drive2Url?.let(com.onezee.triptrack.logic.Drive2Link::normalized)?.let { link ->
+                    MeSection(strings.garageDrive2Title()) { MeRow(strings.garageDrive2Title(), onClick = { uri.openUri(link) }) }
                 }
                 GarageMileageCard(car.odometerKm, state.biography?.aggregates?.totalKm ?: 0.0,
                     vehicleYearDistances(state.biography?.trips.orEmpty(), car.id, strings.zone), unit, editable = false) {}
@@ -372,19 +394,25 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
                 val tripPhotos = car.tripPhotos.orEmpty().mapNotNull { (it.thumbUrl ?: it.url)?.let { url -> it.id to url } }
                 if (tripPhotos.isNotEmpty()) MeSection(strings.garageTripPhotos()) {
                     Row(Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        tripPhotos.take(4).forEach { (_, url) -> PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp))) }
+                        tripPhotos.take(4).forEachIndexed { index, (_, url) -> PressableCard(onClick = { gallery = PublicPhotoSelection(car.tripPhotos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }, index, reportable = false) }, modifier = Modifier.testTag("public_vehicle_trip_photo")) {
+                            PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)))
+                        } }
                     }
                 }
                 car.about?.takeIf { it.isNotBlank() }?.let { about -> MeSection(strings.publicAboutBy(dest.name ?: strings.publicProfileDriver())) { MeRow(about) } }
-                val photos = car.photos.orEmpty().mapNotNull { (it.thumbUrl ?: it.url)?.let { url -> it.id to url } }
+                val main = car.photos.orEmpty().firstOrNull { it.isMain } ?: car.photos.orEmpty().firstOrNull()
+                val allPhotos = car.photos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }
+                val photos = car.photos.orEmpty().filterNot { it.id == main?.id }.mapNotNull { (it.thumbUrl ?: it.url)?.let { url -> it.id to url } }
                 if (car.photosVisible != false && photos.isNotEmpty()) MeSection(strings.vehiclePhotos()) {
                     Row(Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        photos.take(4).forEach { (_, url) -> PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp))) }
+                        photos.take(4).forEachIndexed { index, (_, url) -> PressableCard(onClick = { gallery = PublicPhotoSelection(allPhotos, allPhotos.indexOfFirst { it.id == photos[index].first }.coerceAtLeast(0)) }, modifier = Modifier.testTag("public_vehicle_photo")) {
+                            PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)))
+                        } }
                     }
                 }
                 state.biography?.aggregates?.takeIf { it.tripCount > 0 }?.let { agg ->
                     MeSection(strings.statsRecords()) {
-                        MeRow(strings.recordLongest(), Measure.distanceKm(agg.longestTripKm, unit, strings.language.code, strings))
+                        MeRow(strings.recordLongest(), Measure.distanceKm(agg.longestTripKm, unit, strings.language.code, strings), subtitle = agg.longestTripTitle ?: agg.longestTripRegion)
                     }
                     Text(strings.publicRecordsNote(), style = inter(11f), color = colors.textTertiary)
                 }
@@ -394,7 +422,11 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
             else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { com.onezee.triptrack.feature.atlas.ui.CarLoading() }
         }
     }
+    gallery?.let { selection -> PublicPhotoViewer(selection, onDismiss = { gallery = null }, onReport = { id ->
+        if (social.signedIn) report = ReportTarget.VehiclePhoto(id) else signIn = true
+    }) }
     report?.let { ReportSheet(it, social, onDismiss = { report = null }) }
+    if (signIn) social.auth?.let { com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, it, onDismissRequest = { signIn = false }) }
 }
 
 /** iOS: PublicJourneysView. Every journey of the account, 20 per page, as history cards. */
@@ -427,18 +459,15 @@ fun PublicJourneysScreen(dest: TripsDestination.PublicJourneys, social: SocialFe
  */
 @Composable
 fun PublicAchievementsScreen(dest: TripsDestination.PublicAchievements, navigator: DestinationNavigator<TripsDestination>) {
-    val unlocked = dest.badgeIds.toSet()
+    val unlocked = PublicBadgeCatalogue.build(dest.badgeIds).unlockedIds
     val rows = remember(unlocked) {
-        BadgeDefinitions.all.filter { !it.isHidden || it.id in unlocked }.map { AchievementRow(it.id, it.category, it.rarity, it.id in unlocked, if (it.id in unlocked) 1 else 0) }
+        BadgeDefinitions.all.map { AchievementRow(it.id, it.category, it.rarity, it.id in unlocked, if (it.id in unlocked) 1 else 0) }
     }
     var opened by remember { mutableStateOf<String?>(null) }
     HideAppTabBar()
     val badge = opened
-    if (badge == null) AchievementsScreen(rows, onBack = { navigator.pop() }, onBadge = { opened = it })
-    else {
-        androidx.activity.compose.BackHandler { opened = null }
-        BadgeDetailScreen(rows.firstOrNull { it.id == badge }, onBack = { opened = null }, unit = LocalDistanceUnit.current)
-    }
+    AchievementsScreen(rows, onBack = { navigator.pop() }, onBadge = { opened = it }, ownerName = dest.name ?: "")
+    badge?.let { id -> rows.firstOrNull { it.id == id }?.let { PublicBadgeOverlay(it) { opened = null } } }
 }
 
 /** iOS: LevelsView(other:). Their level and rank; the experience bar only when the server sent it. */
@@ -447,3 +476,6 @@ fun PublicLevelsScreen(dest: TripsDestination.PublicLevels, navigator: Destinati
     HideAppTabBar()
     LevelsScreen(ProfileIdentity(level = dest.level, xp = dest.xp ?: 0), onBack = { navigator.pop() }, ownerName = dest.name, showsProgress = dest.xp != null)
 }
+
+// iOS: ReportSheet.notes.prefix(500), measured in extended grapheme clusters.
+internal fun String.swiftPrefix(limit: Int): String = Regex("\\X").findAll(this).take(limit).joinToString("") { it.value }
