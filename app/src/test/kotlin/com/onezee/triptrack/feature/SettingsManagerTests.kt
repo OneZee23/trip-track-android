@@ -66,6 +66,21 @@ class SettingsManagerTests : WorldTest() {
         advanceTimeBy(1); runCurrent(); assertEquals(1, requests.size)
         assertEquals(SyncAction.upload, requests.single().action)
     }
+    // iOS: VehiclePickerSheet.swift. Dismissal permits start only after the choice is durable.
+    @Test fun recordingVehicleSelectionIsDurableWhenItReturnsAndPreservesUnits() = runTest(dispatcher) {
+        val vm = manager(); runCurrent()
+        vm.setDistanceUnit(DistanceUnit.miles); runCurrent()
+        val vehicleId = UUID.randomUUID()
+        assertTrue(vm.selectRecordingVehicle(vehicleId))
+        assertEquals(vehicleId, db.settingsDao().settings()?.selectedVehicleId)
+        assertEquals(vehicleId, vm.state.value.selectedVehicleId)
+        assertEquals("miles", db.settingsDao().settings()?.distanceUnit)
+        assertTrue(vm.selectRecordingVehicle(null))
+        assertNull(db.settingsDao().settings()?.selectedVehicleId)
+        assertNull(vm.state.value.selectedVehicleId)
+        advanceTimeBy(5000); runCurrent()
+        assertEquals(1, requests.size)
+    }
     @Test fun remoteMilesReachDefaults() = runTest(dispatcher) {
         val vm = manager(); runCurrent()
         val row = db.settingsDao().settings()!!
