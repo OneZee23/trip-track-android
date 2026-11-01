@@ -26,6 +26,9 @@ import androidx.core.content.res.ResourcesCompat
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
+import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
+import com.onezee.triptrack.logic.RegionAtlas
+import com.onezee.triptrack.logic.RegionLabelModel
 import com.onezee.triptrack.feature.atlas.AtlasSelection
 import com.onezee.triptrack.feature.atlas.AtlasState
 import com.onezee.triptrack.map.MapFog
@@ -173,6 +176,14 @@ fun AtlasMapLayer(
     val context = LocalContext.current
     val density = LocalDensity.current.density
     val palette = state.fog.look.palette
+    val unit = LocalDistanceUnit.current
+    val labels = remember(state.revealed, unit, strings) {
+        val visited = state.revealed.regionKm.filterValues { it > 0 }.keys
+        // The first loading frame must not parse the atlas on the UI thread. A nonempty layer is
+        // published only after MyMapViewModel has loaded the same atlas on its worker.
+        if (visited.isEmpty()) emptyList() else RegionLabelModel.regionLabels(
+            RegionAtlas.shared.regions, state.revealed, visited, unit, strings.language.code, strings)
+    }
     val showsPlaces = MapZoomLevel.placesVisible(latitudeSpan)
     val calloutPin = state.selectedPlace
     val callout = remember(calloutPin, strings) { calloutPin?.let { placeCallout(context, density, it, strings) } }
@@ -224,6 +235,7 @@ fun AtlasMapLayer(
         styleUri = MapStyles.OPEN_FREE_MAP_LIBERTY,
         onMapTap = onTap,
         showsUserLocation = state.locationPermission == com.onezee.triptrack.feature.atlas.AtlasLocationPermission.allowed,
+        regionLabels = labels,
     )
 }
 
