@@ -10,6 +10,21 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,26 +50,133 @@ import kotlinx.coroutines.withContext
 @Composable
 internal fun AutoRecordSettingsContent(graph: AppGraph, state: SettingsState, onBack: () -> Unit, vehicleId: UUID? = null, onStereo: (() -> Unit)? = null) {
     val manager = graph.settingsManager
+    val context = LocalContext.current
+    AutoRecordSettingsScreen(state, onBack, manager::setAutoRecordTrigger,
+        onMode = { manager.setAutoRecord(it) },
+        onTimeout = { manager.setAutoRecord(state.autoRecordMode, it) },
+        onUnlink = { manager.removeStereo(it) },
+        onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId,
+        onSettings = { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:${context.packageName}"))) })
+}
+
+// iOS: AutoRecordSettingsView.swift. State and callbacks also drive the screenshot fixtures.
+@Composable
+internal fun AutoRecordSettingsScreen(
+    state: SettingsState,
+    onBack: () -> Unit,
+    onTrigger: (AutoRecordTrigger) -> Unit,
+    onMode: (AutoRecordMode) -> Unit,
+    onTimeout: (Int) -> Unit,
+    onUnlink: (String) -> Unit,
+    onStereo: () -> Unit,
+    vehicleId: UUID? = null,
+    onSettings: (() -> Unit)? = null,
+) {
     val strings = appStrings
-    var modes by remember { mutableStateOf(false) }
-    SettingsDetail(strings.autoRecord(), onBack) {
-        MeRow(strings.autoRecordMode(), autoRecordLabel(state.autoRecordMode, strings), tag = "auto_record_mode", onClick = { modes = true })
-        MeRow(strings.autoRecordDescription())
-        MeRow(strings.autoStopTimeout(), strings.autoStopMinutes(state.autoStopTimeout))
-        Row(Modifier.fillMaxWidth().padding(14.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            MeAction("−", { manager.setAutoRecord(state.autoRecordMode, (state.autoStopTimeout - 1).coerceAtLeast(1)) }, Modifier.weight(1f), state.autoStopTimeout > 1)
-            MeAction("+", { manager.setAutoRecord(state.autoRecordMode, (state.autoStopTimeout + 1).coerceAtMost(10)) }, Modifier.weight(1f), state.autoStopTimeout < 10)
+    val colors = AppTheme.colors
+    val description = if (state.autoRecordTrigger == AutoRecordTrigger.stereoOnly)
+        strings.autoRecordStereoOnlyDescription() else strings.autoRecordDescription()
+    Column(Modifier.fillMaxSize().background(colors.bg)) {
+        MeNavBar(strings.autoRecord(), onBack)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)
+            .padding(top = 8.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+            Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {
+                MeToggle(strings.autoRecord(), state.autoRecordMode != AutoRecordMode.off,
+                    { onMode(if (it) AutoRecordMode.remind else AutoRecordMode.off) }, tag = "auto_record_toggle")
+                Box(Modifier.padding(horizontal = 14.dp).fillMaxWidth().height(1.dp).background(colors.border))
+                Text(description, Modifier.padding(14.dp), style = inter(13f), color = colors.textSecondary)
+            }
+            if (state.autoRecordMode != AutoRecordMode.off) {
+                AutoRecordSectionLabel(strings.stereoSection())
+                Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {
+                    state.stereos.filter { vehicleId == null || it.vehicleId == vehicleId }.forEach { stereo ->
+                        Row(Modifier.fillMaxWidth().padding(start = 14.dp, end = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text(stereo.name, Modifier.weight(1f), style = inter(14f, InterWeight.medium), color = colors.text, maxLines = 1)
+                            Text(strings.linked(), Modifier.padding(horizontal = 8.dp), style = inter(11f, InterWeight.bold), color = AppTheme.green)
+                            Box(Modifier.size(40.dp).clickable(role = Role.Button) { onUnlink(stereo.uuid) }
+                                .semantics { contentDescription = strings.delete() }.testTag("auto_record_unlink_${stereo.uuid}"), contentAlignment = Alignment.Center) {
+                                Glyph(AppGlyph.xmarkCircleFill, null, tint = colors.textTertiary, size = 17.dp)
+                            }
+                        }
+                        Box(Modifier.padding(start = 14.dp).fillMaxWidth().height(1.dp).background(colors.cardAlt))
+                    }
+                    MeRow(strings.linkStereo(), tag = "auto_record_stereo", glyph = AppGlyph.plus, onClick = onStereo)
+                }
+                AutoRecordSectionLabel(strings.autoRecordTriggerSection())
+                Row(Modifier.fillMaxWidth().selectableGroup().background(colors.cardAlt, RoundedCornerShape(12.dp)).padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    AutoRecordSegment(strings.autoRecordTriggerMotion(), state.autoRecordTrigger == AutoRecordTrigger.motionOrStereo,
+                        true, "auto_record_trigger_motion", Modifier.weight(1f)) { onTrigger(AutoRecordTrigger.motionOrStereo) }
+                    // Unlinking must leave the selected mode visibly selected; the caption explains why it cannot start.
+                    AutoRecordSegment(strings.autoRecordTriggerStereo(), state.autoRecordTrigger == AutoRecordTrigger.stereoOnly,
+                        state.stereos.isNotEmpty() || state.autoRecordTrigger == AutoRecordTrigger.stereoOnly,
+                        "auto_record_trigger_stereo", Modifier.weight(1f)) { onTrigger(AutoRecordTrigger.stereoOnly) }
+                }
+                val caption = when (state.autoRecordTrigger) {
+                    AutoRecordTrigger.motionOrStereo -> if (state.stereos.isEmpty()) strings.autoRecordTriggerNeedsStereo() else strings.autoRecordTriggerMotionCaption()
+                    AutoRecordTrigger.stereoOnly -> if (state.stereos.isEmpty()) strings.autoRecordTriggerStereoMissing() else strings.autoRecordTriggerStereoCaption()
+                }
+                AutoRecordCaption(caption)
+                AutoRecordSectionLabel(strings.autoRecordMode())
+                Row(Modifier.fillMaxWidth().selectableGroup().background(colors.cardAlt, RoundedCornerShape(12.dp)).padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    AutoRecordSegment(strings.autoRecordRemind(), state.autoRecordMode == AutoRecordMode.remind,
+                        true, "auto_record_mode_remind", Modifier.weight(1f)) { onMode(AutoRecordMode.remind) }
+                    AutoRecordSegment(strings.autoRecordAuto(), state.autoRecordMode == AutoRecordMode.auto,
+                        true, "auto_record_mode_auto", Modifier.weight(1f)) { onMode(AutoRecordMode.auto) }
+                }
+                AutoRecordCaption(if (state.autoRecordMode == AutoRecordMode.auto) strings.autoModeDescription() else strings.remindModeDescription())
+                AutoRecordSectionLabel(strings.autoStopTimeout())
+                Row(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(strings.autoStopRowLabel(), Modifier.weight(1f), style = inter(14f, InterWeight.medium), color = colors.text)
+                    AutoRecordStep(false, state.autoStopTimeout > 1, strings.autoStopMinutes((state.autoStopTimeout - 1).coerceAtLeast(1))) { onTimeout((state.autoStopTimeout - 1).coerceAtLeast(1)) }
+                    Text(strings.autoStopMinutes(state.autoStopTimeout), Modifier.width(54.dp), style = inter(15f, InterWeight.bold).copy(fontFeatureSettings = "tnum"), color = colors.text, textAlign = TextAlign.Center)
+                    AutoRecordStep(true, state.autoStopTimeout < 10, strings.autoStopMinutes((state.autoStopTimeout + 1).coerceAtMost(10))) { onTimeout((state.autoStopTimeout + 1).coerceAtMost(10)) }
+                }
+                AutoRecordCaption(strings.autoStopDescription())
+                if (onSettings != null) MeRow(strings.openSettings(), onClick = onSettings)
+            }
         }
-        MeRow(strings.autoStopDescription())
-        state.stereos.filter { vehicleId == null || it.vehicleId == vehicleId }.forEach { stereo ->
-            MeRow(stereo.name, strings.linked(), onClick = { manager.removeStereo(stereo.uuid) })
-        }
-        MeRow(strings.linkStereo(), tag = "auto_record_stereo", onClick = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) })
-        val context = LocalContext.current
-        MeRow(strings.openSettings(), onClick = { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:${context.packageName}"))) })
     }
-    if (modes) SettingsOptionPicker(strings.autoRecordMode(), AutoRecordMode.entries, state.autoRecordMode, strings.autoRecordDescription(),
-        label = { autoRecordLabel(it, strings) }, onSelect = { manager.setAutoRecord(it) }, onDismissRequest = { modes = false }, testTagPrefix = "auto_record_mode")
+}
+
+@Composable
+private fun AutoRecordSectionLabel(text: String) {
+    Text(text, Modifier.padding(top = 6.dp, start = 2.dp), style = inter(12f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+}
+
+@Composable
+private fun AutoRecordCaption(text: String) {
+    Text(text, Modifier.padding(horizontal = 2.dp), style = inter(12f), color = AppTheme.colors.textTertiary)
+}
+
+@Composable
+private fun AutoRecordSegment(title: String, selected: Boolean, enabled: Boolean, tag: String, modifier: Modifier, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Box(modifier.alpha(if (enabled) 1f else .45f).testTag(tag)
+        .then(if (selected) Modifier.surfaceCard(9.dp) else Modifier)
+        .selectable(selected, enabled = enabled, role = Role.RadioButton) { haptics.selection(); onClick() }
+        .padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) {
+        Text(title, style = inter(14f, if (selected) InterWeight.bold else InterWeight.medium),
+            color = if (selected) colors.text else colors.textSecondary, maxLines = 1,
+            autoSize = TextAutoSize.StepBased(minFontSize = inter(10.5f).fontSize, maxFontSize = inter(14f).fontSize))
+    }
+}
+
+@Composable
+private fun AutoRecordStep(plus: Boolean, enabled: Boolean, label: String, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Box(Modifier.size(32.dp).background(colors.cardAlt, CircleShape).clickable(enabled = enabled, role = Role.Button) { haptics.tap(); onClick() }
+        .semantics { contentDescription = label }, contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(15.dp)) {
+            val ink = if (enabled) colors.text else colors.textTertiary
+            drawLine(ink, Offset(0f, size.height / 2), Offset(size.width, size.height / 2), 2.dp.toPx())
+            if (plus) drawLine(ink, Offset(size.width / 2, 0f), Offset(size.width / 2, size.height), 2.dp.toPx())
+        }
+    }
 }
 
 @Composable
@@ -84,18 +206,35 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
             catch (_: SecurityException) { emptyList() }
         } else emptyList()
     }
+    val outputs by produceState<List<SavedBluetoothDevice>>(emptyList(), graph) {
+        graph.location.carStereos.changes.collect {
+            value = withContext(Dispatchers.IO) { graph.location.carStereos.outputs() }
+        }
+    }
+    val linkable = (outputs + devices).distinctBy { it.uuid.uppercase(java.util.Locale.ROOT) }
     SettingsDetail(strings.linkStereo(), onBack) {
         garage.vehicles.filter { it.vehicle.soldAt == null }.forEach { item ->
             MeRow(item.vehicle.name, if (selected == item.vehicle.id) "✓" else "", onClick = { selected = item.vehicle.id })
         }
         if (!allowed) MeAction(strings.continueButton(), { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) })
-        else {
-            if (devices.isEmpty()) MeRow(strings.noDevicesFound(), subtitle = strings.scanHint())
-            devices.forEach { device -> MeRow(device.name, if (state.stereos.any { it.uuid == device.uuid && it.vehicleId == selected }) strings.linked() else "",
-                enabled = selected != null, tag = "stereo_${device.name}", onClick = { selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() } }) }
-            MeRow(strings.openSettings(), onClick = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ })
+        if (linkable.isEmpty()) MeRow(strings.noDevicesFound(), subtitle = strings.scanHint())
+        linkable.forEach { device ->
+            StereoOutputRow(device, state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected },
+                enabled = selected != null) {
+                selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() }
+            }
         }
+        MeRow(strings.openSettings(), onClick = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ })
     }
+}
+
+// iOS: BluetoothScanSheet.swift, audioOutputSection. A Bluetooth output may be headphones.
+@Composable
+internal fun StereoOutputRow(device: SavedBluetoothDevice, linked: Boolean, enabled: Boolean, onClick: () -> Unit) {
+    val strings = appStrings
+    MeRow(device.name, if (linked) strings.linked() else "",
+        subtitle = if (device.uuid == com.onezee.triptrack.location.auto.AutoTripController.ANDROID_AUTO) strings.androidAuto() else strings.bluetoothAudio(),
+        enabled = enabled, tag = "stereo_${device.name}", onClick = onClick)
 }
 
 @Composable

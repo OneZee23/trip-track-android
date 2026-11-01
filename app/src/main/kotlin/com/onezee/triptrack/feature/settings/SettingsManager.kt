@@ -47,6 +47,7 @@ data class SettingsState(
     val theme: String = "dark",
     val language: String = "ru",
     val autoRecordMode: AutoRecordMode = AutoRecordMode.off,
+    val autoRecordTrigger: AutoRecordTrigger = AutoRecordTrigger.motionOrStereo,
     val autoStopTimeout: Int = 3,
     val stereos: List<SavedBluetoothDevice> = emptyList(),
     val cloudSyncEnabled: Boolean = false,
@@ -106,7 +107,7 @@ class SettingsManager(
         val home = preferences.string("home.settings")?.let { raw -> runCatching { Json.decodeFromString<HomeSettings>(raw) }.getOrNull() }
         mutableState.update { it.copy(loaded = true, localUserId = row.id, distanceUnit = distance, volumeUnit = volume,
             theme = row.themeMode ?: "dark", language = row.language ?: "ru", selectedVehicleId = row.selectedVehicleId,
-            autoRecordMode = autoRecord.mode, autoStopTimeout = autoRecord.autoStopTimeout,
+            autoRecordMode = autoRecord.mode, autoRecordTrigger = autoRecord.trigger, autoStopTimeout = autoRecord.autoStopTimeout,
             stereos = autoRecord.savedDevices, cloudSyncEnabled = preferences.string(CLOUD_KEY)?.toBooleanStrictOrNull() ?: false,
             showOnPublicMap = preferences.string(PUBLIC_MAP_KEY)?.toBooleanStrictOrNull() ?: false,
             averageSpeed = preferences.string("com.triptrack.settings.avgSpeedMode")?.let { raw -> AvgSpeedMode.entries.firstOrNull { it.rawValue == raw } } ?: AvgSpeedMode.overall,
@@ -143,6 +144,10 @@ class SettingsManager(
         effects.autoRecordChanged(autoRecord.mode, autoRecord.autoStopTimeout, autoRecord.savedDevices)
     }
     fun addStereo(device: SavedBluetoothDevice) = changeStereos { addDevice(device) }
+    fun setAutoRecordTrigger(trigger: AutoRecordTrigger) = edit {
+        autoRecord.trigger = trigger
+        refreshAutoRecord()
+    }
     fun removeStereo(uuid: String) = changeStereos { removeDevice(uuid) }
     fun removeStereos(vehicleId: UUID) = changeStereos { removeDevices(vehicleId) }
     fun vehicleForStereo(name: String, vehicles: List<Vehicle>): UUID? = state.value.stereos.firstOrNull { it.name == name }?.vehicleId
@@ -153,7 +158,8 @@ class SettingsManager(
         effects.autoRecordChanged(autoRecord.mode, autoRecord.autoStopTimeout, autoRecord.savedDevices)
     }
     private fun refreshAutoRecord() {
-        mutableState.update { it.copy(autoRecordMode = autoRecord.mode, autoStopTimeout = autoRecord.autoStopTimeout, stereos = autoRecord.savedDevices) }
+        mutableState.update { it.copy(autoRecordMode = autoRecord.mode, autoRecordTrigger = autoRecord.trigger,
+            autoStopTimeout = autoRecord.autoStopTimeout, stereos = autoRecord.savedDevices) }
     }
     fun setHome(home: HomeState) = edit {
         val before = state.value.home.activeZone

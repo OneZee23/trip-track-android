@@ -31,6 +31,18 @@ class SettingsManagerTests : WorldTest() {
     private val autoRecord = com.onezee.triptrack.location.auto.AutoRecordSettings.InMemory()
     private fun manager(country: String = "RU") = own(SettingsManager(RoomSettingsStore(db) { t0 }, preferences, sink, effects, dispatcher, autoRecord,
         deviceLocale = Locale.forLanguageTag("en-" + country)))
+    // iOS: AutoRecordTriggerTests.swift, SettingsManager.swift. Never enters the sync row.
+    @Test fun autoRecordTriggerStaysPhoneLocalAndReloadsFromItsOwner() = runTest(dispatcher) {
+        val vm = manager(); runCurrent()
+        val before = db.settingsDao().settings()
+        vm.setAutoRecordTrigger(AutoRecordTrigger.stereoOnly); runCurrent()
+        assertEquals(AutoRecordTrigger.stereoOnly, autoRecord.trigger)
+        assertEquals(AutoRecordTrigger.stereoOnly, vm.state.value.autoRecordTrigger)
+        assertEquals(before, db.settingsDao().settings())
+        assertTrue(requests.isEmpty())
+        vm.reload(); runCurrent()
+        assertEquals(AutoRecordTrigger.stereoOnly, vm.state.value.autoRecordTrigger)
+    }
     @Test fun choosingMilesAndGallonsLandInEntityAndDefaults() = runTest(dispatcher) {
         val vm = manager(); runCurrent(); vm.setDistanceUnit(DistanceUnit.miles); vm.setVolumeUnit(VolumeUnit.gallons); runCurrent()
         assertEquals("miles", db.settingsDao().settings()?.distanceUnit)
