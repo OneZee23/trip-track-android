@@ -94,7 +94,8 @@ class TestSocialApi : TripSocialApi {
     override suspend fun deleteComment(id: UUID) = delete(id)
     override suspend fun trip(id: UUID) = remoteTrip(id)
     override suspend fun photos(id: UUID): List<SocialTripPhoto> = emptyList()
-    override suspend fun journey(id: UUID): SocialJourneyResponse = error("No fixture")
+    var journeyPage: suspend (UUID) -> SocialJourneyResponse = { error("No fixture") }
+    override suspend fun journey(id: UUID): SocialJourneyResponse = journeyPage(id)
     fun card(id: UUID = UUID.randomUUID(), author: UUID = UUID.randomUUID(), day: Instant = Instant.EPOCH,
         reaction: String? = null, journey: SocialFeedTripJourney? = null) = SocialFeedTrip(id, SocialAuthor(author, profileLevel = 1),
         startDate = day, distance = 1000.0, duration = 60, photoCount = 0, reactionCount = if (reaction == null) 0 else 1,
