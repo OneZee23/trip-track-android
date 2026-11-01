@@ -4,13 +4,18 @@ import android.annotation.SuppressLint
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import com.onezee.triptrack.logic.MapRect
+import com.onezee.triptrack.logic.RegionLabelAnnotation
+import com.onezee.triptrack.map.attribution.HouseAttributionManager
+import com.onezee.triptrack.map.attribution.MapAttribution
 import com.onezee.triptrack.map.camera.CameraFraming
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.camera.MapSize
 import com.onezee.triptrack.map.fog.FogLayer
+import com.onezee.triptrack.map.fog.FogPalette
 import com.onezee.triptrack.map.fog.FogRules
 import com.onezee.triptrack.map.fog.FogStats
+import com.onezee.triptrack.map.label.RegionLabelViews
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.marker.MarkerLayers
 import com.onezee.triptrack.map.replay.MapPlayback
@@ -54,6 +59,7 @@ internal class MapController(
     private val veinLayers = VeinLayers()
     private val markerLayers = MarkerLayers(density)
     private val playbackLayers = PlaybackLayers(mapView.resources, density)
+    private val regionLabelViews = RegionLabelViews(mapView, density)
     private var playback: MapPlayback? = null
     private var fogLayer: FogLayer? = null
     private var fogTried = false
@@ -66,6 +72,7 @@ internal class MapController(
 
     /** A tap that hit no marker; null leaves the tap to MapLibre. */
     var onMapTap: ((MapTap) -> Unit)? = null
+    var onAttribution: ((List<MapAttribution>) -> Unit)? = null
     private var showsUserLocation = false
 
     /** System bars plus the screen's chrome, in dp: what MapKit would call the safe area. */
@@ -88,9 +95,14 @@ internal class MapController(
             // and the carve window iOS needed under Apple's attribution has nothing to do here.
             ready.uiSettings.isLogoEnabled = true
             ready.uiSettings.isAttributionEnabled = true
+            ready.uiSettings.setAttributionDialogManager(HouseAttributionManager(mapView.context, ready) { onAttribution?.invoke(it) })
             defaults = Margins.of(ready)
             applyMargins()
             ready.addOnCameraIdleListener { publishCamera() }
+            ready.addOnCameraMoveListener { updateRegionLabels() }
+            // Also covers location updates while the camera rests. The callback runs on the UI
+            // thread, as MapView's own compass/annotation updates do.
+            mapView.addOnDidFinishRenderingFrameListener { _, _, _ -> updateRegionLabels() }
             ready.addOnMapClickListener { at ->
                 val hit = markerLayers.hit(ready, ready.projection.toScreenLocation(at))
                 if (hit != null) {
@@ -128,6 +140,7 @@ internal class MapController(
             return
         }
         fog = value
+        regionLabelViews.setPalette(value?.look?.palette ?: FogPalette.MIST)
         val layer = if (value != null) ensureFog() else fogLayer
         layer ?: return
         if (value == null) {
@@ -162,12 +175,23 @@ internal class MapController(
         if (value == markers) return
         markers = value
         style?.let { markerLayers.update(it, value) }
+        updateRegionLabels()
+    }
+
+    fun setRegionLabels(value: List<RegionLabelAnnotation>) {
+        regionLabelViews.setLabels(value)
+        updateRegionLabels()
+    }
+
+    private fun updateRegionLabels() {
+        map?.let { regionLabelViews.update(it, safeArea.top, showsUserLocation, markers) }
     }
 
     fun setSafeArea(value: MapInsets) {
         if (value == safeArea) return
         safeArea = value
         applyMargins()
+        updateRegionLabels()
     }
 
     fun setCameraSafeArea(value: MapInsets) { cameraSafeArea = value }
@@ -194,6 +218,7 @@ internal class MapController(
         if (value == showsUserLocation) return
         showsUserLocation = value
         applyUserLocation()
+        updateRegionLabels()
     }
 
     /**

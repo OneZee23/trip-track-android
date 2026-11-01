@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -16,6 +19,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.onezee.triptrack.logic.RegionLabelAnnotation
+import com.onezee.triptrack.map.attribution.MapAttribution
+import com.onezee.triptrack.map.attribution.MapAttributionSheet
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.replay.MapPlayback
@@ -61,6 +67,8 @@ fun MapHost(
     playback: MapPlayback? = null,
     /** iOS: fitInsets and layoutMargins are independent; the trip fits once around its chrome. */
     cameraChromeInsets: MapInsets = chromeInsets,
+    /** iOS: RegionLabelAnnotation. Installed once; visibility follows every map frame. */
+    regionLabels: List<RegionLabelAnnotation> = emptyList(),
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -70,6 +78,7 @@ fun MapHost(
         MapView(context, MapLibreMapOptions.createFromAttributes(context).textureMode(textureMode)).also { it.onCreate(null) }
     }
     val controller = remember(mapView) { MapController(mapView, state, density, styleUri) }
+    var attributions by remember(mapView) { mutableStateOf<List<MapAttribution>?>(null) }
 
     DisposableEffect(lifecycle, controller) {
         val observer = LifecycleEventObserver { _, event -> controller.moveTo(event.targetState) }
@@ -114,6 +123,7 @@ fun MapHost(
     SideEffect {
         controller.onMarkerTap = onMarkerTap
         controller.onMapTap = onMapTap
+        controller.onAttribution = { attributions = it }
         controller.setSafeArea(systemArea + chromeInsets)
         controller.setCameraSafeArea(systemArea + cameraChromeInsets)
         controller.setFog(fog)
@@ -121,8 +131,10 @@ fun MapHost(
         controller.setRoutes(routes)
         controller.setPlayback(playback)
         controller.setMarkers(markers)
+        controller.setRegionLabels(regionLabels)
         controller.setShowsUserLocation(showsUserLocation)
     }
 
     AndroidView(factory = { mapView }, modifier = modifier)
+    attributions?.let { MapAttributionSheet(it, onDismissRequest = { attributions = null }) }
 }
