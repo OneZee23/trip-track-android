@@ -16,7 +16,7 @@ object CommentContentRules {
         text.codePoints().forEach { code ->
             if (code !in 0x200B..0x200F && code !in 0x202A..0x202E && code !in 0x2060..0x206F && code != 0xFEFF && code != 0x180E) stripped.appendCodePoint(code)
         }
-        return stripped.toString().split(Regex("(?U)\\s+")).filter { it.isNotEmpty() }.joinToString(" ")
+        return stripped.toString().split(UnicodeWhitespace.runs).filter { it.isNotEmpty() }.joinToString(" ")
     }
     fun containsObjectionable(text: String): Boolean {
         val normalized = Normalizer.normalize(text.lowercase(Locale.US), Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")

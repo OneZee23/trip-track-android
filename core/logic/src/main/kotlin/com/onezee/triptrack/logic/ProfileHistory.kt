@@ -23,7 +23,7 @@ object TripHistoryFilter {
         zone: ZoneId = ZoneId.systemDefault(),
         localizedRegion: (String?) -> String? = { it },
     ): List<Trip> {
-        val words = query.split(Regex("(?U)\\s+")).filter { it.isNotEmpty() }
+        val words = query.split(UnicodeWhitespace.runs).filter { it.isNotEmpty() }
         if (from == null && words.isEmpty()) return trips
         val start = from?.atZone(zone)?.toLocalDate()
         val end = (to ?: from)?.atZone(zone)?.toLocalDate()

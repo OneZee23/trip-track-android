@@ -20,7 +20,7 @@ class CarCatalog(document: Document? = null, private val currentYear: () -> Int 
     }
 
     fun search(query: String): List<ModelHit> {
-        val tokens = fold(query).split(Regex("(?U)\\s+")).filter(String::isNotEmpty)
+        val tokens = fold(query).split(UnicodeWhitespace.runs).filter(String::isNotEmpty)
         val current = currentYear()
         val year = tokens.firstOrNull { it.length == 4 && it.toIntOrNull() in 1990..current }?.toInt()
         val words = tokens.filter { it != year?.toString() }
