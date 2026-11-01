@@ -3,6 +3,12 @@ package com.onezee.triptrack.location
 import android.content.Context
 import androidx.room.Room
 import com.onezee.triptrack.data.DataEnvironment
+import com.onezee.triptrack.data.PlaceManager
+import com.onezee.triptrack.data.PreferencesPendingPlaceHistory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import com.onezee.triptrack.data.RoomPlaceStore
 import com.onezee.triptrack.data.RoomRecordingStore
 import com.onezee.triptrack.data.RoomRoadStore
@@ -81,6 +87,7 @@ abstract class RecorderTestCase {
 
     @Before
     fun openStack() {
+        context.getSharedPreferences("place-history", Context.MODE_PRIVATE).edit().clear().commit()
         db = Room.inMemoryDatabaseBuilder(context, TripTrackDatabase::class.java).allowMainThreadQueries().build()
         filesRoot = Files.createTempDirectory("triptrack-recording").toFile()
         repo = RoomTripRepository(db, environment, DirectoryTripPhotoFiles(File(filesRoot, "TripPhotos")), sink)
@@ -95,19 +102,25 @@ abstract class RecorderTestCase {
 
     @After
     fun closeStack() {
+        blocking { placeManager.settle() }
+        placeScope.cancel()
         db.close()
         filesRoot.deleteRecursively()
         context.getSharedPreferences(PreferencesDraftDecisionQueue.FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit()
     }
 
     /** What the next process builds over the same disk. */
+    protected lateinit var placeManager: PlaceManager
+    private val placeScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     protected fun relaunch() {
         val rewards = TripRewards(
             repo, store, settings, vehicles, badges,
             zone = { ZoneOffset.UTC }, weekFields = { WeekFields.of(Locale.ROOT) }, clock = { now },
         )
+        placeManager = PlaceManager(repo, places, PreferencesPendingPlaceHistory(context.getSharedPreferences("place-history", Context.MODE_PRIVATE)), placeScope)
         world = TripWorldEntry(
-            repo, rewards, places, sync = sink, localUserId = { localUserId },
+            repo, rewards, placeManager, sync = sink, localUserId = { localUserId },
             roads = StoreRoadCollector(RoomRoadStore(db)) { now }, clock = { now },
         )
         postProcessing = TrackPostProcessing(repo, store, sink)
@@ -115,7 +128,7 @@ abstract class RecorderTestCase {
         lateinit var current: TripRecorder
         deletion = TripDeletion(repo, rawFixLog, sink, notices) { current.state.value.isRecording }
         val finisher = TripFinisher(world, postProcessing, namer, deletion, notices, clock = { now })
-        current = TripRecorder(store, repo, settings, rawFixLog, session, finisher, { locationAllowed }, clock = { now })
+        current = TripRecorder(store, repo, settings, rawFixLog, session, finisher, { locationAllowed }, clock = { now }, placeManager = placeManager)
         recorder = current
         drafts = DraftDecisions(
             PreferencesDraftDecisionQueue(context), repo, world, deletion, notices, sink,

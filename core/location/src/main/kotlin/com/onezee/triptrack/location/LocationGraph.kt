@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.onezee.triptrack.data.DataEnvironment
 import com.onezee.triptrack.data.GeohashOf
-import com.onezee.triptrack.data.PlaceStore
+import com.onezee.triptrack.data.PlaceManager
 import com.onezee.triptrack.data.RoomRecordingStore
 import com.onezee.triptrack.data.RoomRoadStore
 import com.onezee.triptrack.data.SettingsStore
@@ -43,6 +43,8 @@ import com.onezee.triptrack.location.recording.TripRecorder
 import com.onezee.triptrack.location.service.RecordingNotifications
 import com.onezee.triptrack.location.service.RecordingService
 import com.onezee.triptrack.location.service.RecordingTexts
+import com.onezee.triptrack.location.world.CheckpointNamer
+import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.location.world.AndroidReverseGeocoder
 import com.onezee.triptrack.location.world.PreferencesBadgeLedgerStore
 import com.onezee.triptrack.location.world.RevealIngest
@@ -85,7 +87,7 @@ class LocationGraph(
     val trips: TripRepository,
     private val settings: SettingsStore,
     vehicles: VehicleStore,
-    places: PlaceStore,
+    places: PlaceManager,
     private val territory: TerritoryStore,
     private val sync: SyncRequestSink,
     private val environment: DataEnvironment,
@@ -122,12 +124,16 @@ class LocationGraph(
     val world = TripWorldEntry(trips, rewards, places, sync, { environment.localUserId() }, StoreRoadCollector(RoomRoadStore(db)), reveal)
     val postProcessing = TrackPostProcessing(trips, recordingStore, sync)
     val namer = TripNamer(trips, recordingStore, AndroidReverseGeocoder(context), sync, isOffline, autoTitle)
+    private val checkpointWords by lazy { AppLanguage.entries.map { strings().withLanguage(it).checkpointWord() } }
+    val checkpointNamer = CheckpointNamer(trips, places, AndroidReverseGeocoder(context), { checkpointWords }, scope)
     private var recorderRef: TripRecorder? = null
     val deletion = TripDeletion(trips, rawFixLog, sync, notifications) { recorderRef?.state?.value?.isRecording == true }
     private val finisher = TripFinisher(world, postProcessing, namer, deletion, notifications)
     val recorder = TripRecorder(
         recordingStore, trips, settings, rawFixLog, PreferencesRecorderSessionStore(context), finisher,
         canUseLocation = ::hasLocationPermission,
+        placeManager = places,
+        nameCheckpoint = checkpointNamer::name,
     ).also { recorderRef = it }
     val carStereos = CarStereoConnections(context) { strings().androidAuto() }
     val autoTrip = AutoTripController(

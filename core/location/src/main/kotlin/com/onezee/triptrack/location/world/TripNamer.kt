@@ -21,8 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 
-/** iOS: the three CLPlacemark fields the titles read. */
-data class Placemark(val locality: String?, val subAdministrativeArea: String?, val administrativeArea: String?)
+/** iOS: CLPlacemark fields used by trip titles and checkpoint names. */
+data class Placemark(val locality: String?, val subAdministrativeArea: String?, val administrativeArea: String?,
+    val subLocality: String? = null, val name: String? = null)
 
 /** iOS: CLGeocoder.reverseGeocodeLocation. Null on any failure, as the completion's empty array. */
 fun interface ReverseGeocoder {
@@ -52,7 +53,7 @@ class AndroidReverseGeocoder(private val context: Context, private val locale: (
                 runCatching { geocoder.getFromLocation(at.latitude, at.longitude, 1)?.firstOrNull() }.getOrNull()
             }
         }
-        return address?.let { Placemark(it.locality, it.subAdminArea, it.adminArea) }
+        return address?.let { Placemark(it.locality, it.subAdminArea, it.adminArea, it.subLocality, it.featureName) }
     }
 }
 

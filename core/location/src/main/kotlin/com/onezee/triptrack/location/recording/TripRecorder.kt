@@ -1,16 +1,20 @@
 package com.onezee.triptrack.location.recording
 
+import com.onezee.triptrack.data.PlaceManager
 import com.onezee.triptrack.data.RecordingStore
 import com.onezee.triptrack.data.SettingsStore
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.logic.LocationFix
 import com.onezee.triptrack.logic.RecordingMath
+import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.logic.decide
 import com.onezee.triptrack.logic.withRecordingBreaks
 import com.onezee.triptrack.model.FixGate
 import com.onezee.triptrack.model.TrackPoint
 import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.TripConfirmation
+import com.onezee.triptrack.model.TripCheckpoint
+import com.onezee.triptrack.model.GeoPoint
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,6 +46,8 @@ class TripRecorder(
     /** False while location access is denied: no recording can start (iOS: `locationDenied`). */
     private val canUseLocation: () -> Boolean,
     private val clock: () -> Instant = Instant::now,
+    private val placeManager: PlaceManager? = null,
+    private val nameCheckpoint: suspend (TripCheckpoint, UUID) -> Unit = { _, _ -> },
 ) {
     private val mutex = Mutex()
     private val _state = MutableStateFlow(RecorderState())
@@ -55,6 +61,8 @@ class TripRecorder(
 
     private var math: RecordingMath? = null
     private val liveSpeed = LiveSpeed()
+    private var lastCoordinate: GeoPoint? = null
+    private var currentCoordinate: GeoPoint? = null
     private var unsavedPoints = 0
     private var lastSave: Instant = Instant.EPOCH
 
@@ -104,6 +112,7 @@ class TripRecorder(
         val now = clock()
         if (restored?.isPaused == true) recordingMath.setPaused(true, restored.pauseStartedAt ?: now)
         math = recordingMath
+        lastCoordinate = trip.trackPoints.lastOrNull()?.coordinate
         unsavedPoints = 0
         lastSave = now
         liveSpeed.reset(now)
@@ -155,10 +164,25 @@ class TripRecorder(
                 distance = recording?.trip?.distance ?: _state.value.distance,
                 maxSpeed = recording?.trip?.maxSpeed ?: _state.value.maxSpeed,
             )
+            currentCoordinate = GeoPoint(fix.latitude, fix.longitude)
+            if (point != null) lastCoordinate = point.coordinate
             point?.let { _recordedPoints.tryEmit(it) }
             _state.value
         }
         accepted?.let { listener.onAcceptedFix(it) }
+    }
+
+    /** iOS: TripManager.markCheckpoint. The odometer and last accepted coordinate, never a raw tap fix. */
+    suspend fun markCheckpoint(name: String? = null): TripCheckpoint? = mutex.withLock {
+        val trip = math?.trip ?: return@withLock null
+        val coordinate = lastCoordinate ?: currentCoordinate ?: return@withLock null
+        val now = clock()
+        val checkpoint = TripCheckpoint(timestamp = now, latitude = coordinate.latitude, longitude = coordinate.longitude,
+            distanceFromStart = trip.distance, elapsedFromStart = secondsBetween(trip.startDate, now), name = name)
+        val saved = trips.addCheckpoint(checkpoint, trip.id) ?: return@withLock null
+        nameCheckpoint(saved, trip.id)
+        placeManager?.registerCheckpoint(saved, trip.id, recording = true)
+        saved
     }
 
     /** The half-second tick of the screen and the notification: speed decay and «GPS lost». */

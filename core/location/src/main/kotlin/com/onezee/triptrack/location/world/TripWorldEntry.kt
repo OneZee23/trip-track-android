@@ -1,19 +1,15 @@
 package com.onezee.triptrack.location.world
 
-import com.onezee.triptrack.data.PlaceStore
+import com.onezee.triptrack.data.PlaceManager
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.data.sync.SyncAction
 import com.onezee.triptrack.data.sync.SyncEntityType
 import com.onezee.triptrack.data.sync.SyncRequest
 import com.onezee.triptrack.data.sync.SyncRequestSink
-import com.onezee.triptrack.logic.PlaceMatcher
-import com.onezee.triptrack.logic.decodePolyline
 import com.onezee.triptrack.logic.isDraft
 import com.onezee.triptrack.logic.isJunk
-import com.onezee.triptrack.logic.withRecordingBreaks
 import com.onezee.triptrack.model.RoadCompletionInfo
 import com.onezee.triptrack.model.Trip
-import com.onezee.triptrack.model.TripCheckpoint
 import java.time.Instant
 import java.util.UUID
 
@@ -36,15 +32,6 @@ fun interface RevealIngest {
     }
 }
 
-/** iOS: PlaceManager.registerCheckpoint. A checkpoint becomes a place; drafts' checkpoints wait for «Mine». */
-fun interface CheckpointPlaces {
-    suspend fun registerCheckpoint(checkpoint: TripCheckpoint, tripId: UUID)
-
-    companion object {
-        val None = CheckpointPlaces { _, _ -> }
-    }
-}
-
 /**
  * iOS: TripWorldEntry.swift. One door into the world: rewards and badges, the car's odometer,
  * roads, the sync queue, places and the fog. The finish of a confirmed trip and «Mine» on a draft a
@@ -53,12 +40,11 @@ fun interface CheckpointPlaces {
 class TripWorldEntry(
     private val trips: TripRepository,
     private val rewards: TripRewards,
-    private val places: PlaceStore,
+    private val places: PlaceManager,
     private val sync: SyncRequestSink,
     private val localUserId: () -> UUID?,
     private val roads: RoadCollector = RoadCollector.None,
     private val reveal: RevealIngest = RevealIngest.None,
-    private val checkpointPlaces: CheckpointPlaces = CheckpointPlaces.None,
     private val clock: () -> Instant = Instant::now,
 ) {
     enum class Route {
@@ -98,36 +84,10 @@ class TripWorldEntry(
      */
     suspend fun placesAndReveal(trip: Trip) {
         for (checkpoint in trip.checkpoints) {
-            if (checkpoint.placeId == null) checkpointPlaces.registerCheckpoint(checkpoint, trip.id)
+            if (checkpoint.placeId == null) places.registerCheckpoint(checkpoint, trip.id)
         }
-        processPlaces(trip.id)
+        places.process(trip.id)
         reveal.ingest(trip.id)
     }
 
-    /**
-     * iOS: PlaceManager.process(tripId:). Only a completed, confirmed trip is matched, and only
-     * against places its preview comes near; an existing pass of a place it no longer reaches is
-     * replaced by nothing.
-     */
-    private suspend fun processPlaces(tripId: UUID) {
-        val ref = trips.tripPreviews(needingPlaceMatch = false).firstOrNull { it.id == tripId } ?: return
-        val known = places.fetchPlaces()
-        if (known.isNotEmpty()) {
-            val cells = PlaceMatcher.cells(ref.previewPolyline?.let { Trip.decodePolyline(it) }.orEmpty())
-            val candidates = known.filter { PlaceMatcher.isCandidate(it, cells) }
-            if (candidates.isNotEmpty()) {
-                val trip = trips.fetchTripDetail(tripId)?.let { it.withRecordingBreaks(it.recordingBreaks) }
-                if (trip != null && trip.trackPoints.size > 1) {
-                    val existing = places.passesOfTrip(tripId)
-                    for (place in candidates) {
-                        val passes = PlaceMatcher.passes(place, tripId, trip.trackPoints, trip.startDate)
-                        if (passes.isNotEmpty() || existing.any { it.placeId == place.id }) {
-                            places.replacePasses(place.id, tripId, passes)
-                        }
-                    }
-                }
-            }
-        }
-        trips.markPlacesMatched(listOf(tripId))
-    }
 }
