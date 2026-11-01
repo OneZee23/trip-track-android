@@ -1,6 +1,7 @@
 # Google Play Data safety
 
-Use the no-Sentry answers for this checkout. There is no Sentry dependency or initialization.
+Use the with-Sentry answers for release builds configured with `TRIPTRACK_SENTRY_DSN`.
+An empty DSN disables Sentry; debug always has an empty DSN.
 Recheck the final merged release and all active Play tracks before submitting: the form covers
 every distributed version, not just the new upload. Optional collection still counts.
 
@@ -33,6 +34,7 @@ publication step, not an existing endpoint. See [console setup](console-setup.md
 | Enable Cloud Sync and confirm | Private confirmed trips, route points, times, speed/altitude/accuracy, previews, titles/notes, photo metadata/files, checkpoints/segments, journeys, vehicles and settings through the sync queue | Off by default; sign-in and explicit enable required |
 | Publish a trip or journey | Public trip/leg payloads and attached photos; public journey metadata. These go through the same queue even with Cloud Sync off | Publishing is a separate voluntary upload. UI is being completed in w4-social; this gate already exists |
 | Turn on “Help improve TripTrack” | `/usage/snapshot`: consent-period random UUID, UTC consent/delivery/milestone days, existing-library flag and bounded counters for starts/saves/failures/Atlas opens/save-speed buckets. `/usage/erase` sends its deletion token | Off by default, independent of sign-in and Cloud Sync; release networking only |
+| Start a release with a configured Sentry DSN | Sentry receives crashes (JVM and native), ANRs, sessions and 10% sampled lifecycle performance traces; SDK installation ID, signed-in account UUID, device/OS/app metadata and scrubbed context | Independent of sign-in, counters consent and Cloud Sync |
 | Export GPX/CSV or support logs | Files are handed to the app the user chooses through the system share sheet | User initiated; no automatic developer upload |
 | Any TripTrack API request | Infrastructure sees the connecting network address; published policy retains server access logs up to 14 days | A network request is sufficient, including guest requests |
 
@@ -45,7 +47,7 @@ Evidence: `core/network` (`ApiClient`, `AuthDTOs`, `SyncDTOs`, `UsageDTOs`, `Pho
 The usage pipeline can send consent metadata and zero counters now; recording/Atlas event
 producers are still listed as unfinished in `docs/divergences.md`. Do not claim it is absent.
 
-## Data-type answers without Sentry
+## Data-type answers with Sentry
 
 “Required” below means an online path sends it without a separate collection switch; it does
 not mean the offline diary requires an account. Choose non-ephemeral for persisted content,
@@ -58,14 +60,14 @@ provider error/security logs may persist them.
 | Location / Approximate location | Yes | Yes, for map-area requests | Required for online maps; synced region names are optional | App functionality |
 | Personal info / Name | Yes | No under the user-directed publication exception | Optional, sign-in/profile | Account management; App functionality |
 | Personal info / Email address | Yes | No | Optional, sign-in | Account management |
-| Personal info / User IDs | Yes | No under user-directed public profile actions | Optional, sign-in | Account management; App functionality; Fraud prevention, security and compliance |
+| Personal info / User IDs | Yes, including account UUID on signed-in diagnostics | No under user-directed publication / Sentry service-provider exceptions | Optional, sign-in | Account management; App functionality; Analytics; Fraud prevention, security and compliance |
 | Photos and videos / Photos | Yes | No under user-directed publication / service-provider exceptions | Optional | App functionality |
 | App activity / Other user-generated content | Yes | No under the same exceptions | Optional | App functionality; Account management |
-| App activity / App interactions | Yes | No | Optional, usage-counters consent | Analytics |
-| App info and performance / Diagnostics | Yes, save-failure and timing buckets | No | Optional, usage-counters consent | Analytics |
-| App info and performance / Other app performance data | Yes, save-speed buckets | No | Optional, usage-counters consent | Analytics |
-| Device or other IDs | Yes, installation UUID, consent-period token and request identifiers/network address | Yes, conservatively for independent map infrastructure | Required for online request metadata; account/analytics identifiers are optional | App functionality; Account management; Analytics; Fraud prevention, security and compliance |
-| App info and performance / Crash logs | No | No | Not applicable | None |
+| App activity / App interactions | Yes, usage counters and Sentry session starts/stops | No under the Sentry service-provider exception | Required for diagnostics; counters are optional | Analytics |
+| App info and performance / Diagnostics | Yes, Sentry technical context and save-failure/timing buckets | No under the Sentry service-provider exception | Required for diagnostics; counters are optional | Analytics |
+| App info and performance / Other app performance data | Yes, Sentry 10% traces and save-speed buckets | No under the Sentry service-provider exception | Required for diagnostics; counters are optional | Analytics |
+| Device or other IDs | Yes, installation UUID, Sentry installation ID, consent-period token and request identifiers/network address | Yes, conservatively for independent map infrastructure | Required for online request metadata and Sentry diagnostics; account/counter identifiers are optional | App functionality; Account management; Analytics; Fraud prevention, security and compliance |
+| App info and performance / Crash logs | Yes, JVM/native crashes and ANRs | No under the Sentry service-provider exception | Required, including guest mode | Analytics |
 
 These map-related “Shared: Yes” answers deliberately avoid assuming the public tile operator
 is a contracted processor acting only on our instructions. Tile bounds are a conservative
@@ -125,28 +127,24 @@ remain indefinitely. Analytics opt-out clears local counters, queues server eras
 counter records/deletion markers expire after 90 days. These are the published service terms;
 client code cannot verify deployed backup/log jobs.
 
-## If Sentry is added before upload
+## Sentry diagnostics
 
-Keep the preceding content/location answers. For an integration matching iPhone
-`SentryService.swift` (crashes/hangs, session records, 10% traces, account UUID when signed in,
-SDK installation ID and scrubbed device/OS/performance metadata), change these answers:
+Release-only Sentry uses `SentryService` and the shared `PIISensitiveKeys`/`PIIScrubber`.
+Default PII/IP enrichment is off. Recursive redaction covers sensitive keys in tags, extras,
+SDK contexts and breadcrumb data. Request cookies/bodies and credential headers are removed;
+URLs retain only host and masked path, without query or fragment. No Sentry HTTP client or
+Gradle instrumentation is installed: no network breadcrumbs, failed-request capture, HTTP/file
+spans or file tracing. Screenshots, view hierarchy, replay, log shipping, profiles, raw ANR dumps
+and raw tombstone attachments are disabled. JVM/native stack frames and device/OS/app metadata
+remain diagnostic data. A native crash report is still collected; it is not a replay or photo/file upload.
 
-| Data type | Collected | Shared | Required/optional | Purpose |
-|---|---|---|---|---|
-| Crash logs | Yes | No if Sentry acts as our service provider | Required, including guest mode | Analytics |
-| Diagnostics | Yes | No under that processor exception | Required | Analytics |
-| Other app performance data | Yes | No under that processor exception | Required | Analytics |
-| App interactions | Yes, session starts/stops | No under that processor exception | Required | Analytics |
-| Device or other IDs | Yes, additionally Sentry installation ID | No for the Sentry transfer under that processor exception; retain map-sharing answer | Required | Analytics, plus existing purposes |
-| User IDs | Yes, additionally account UUID on signed-in diagnostic events | No under that processor exception | Optional because sign-in is optional | Analytics, plus existing purposes |
-
-All are non-ephemeral. Upload-time selection depends on the actual SDK configuration and a scrubbed
-sample event, not merely the presence of the dependency. Check PII/IP collection, identifiers,
-URLs/breadcrumbs, attachments, replay, screenshots, profiles and tracing before using these
-answers. Any broader integration requires broader answers. Confirm region, processor agreement
-and actual retention, and publish the matching diagnostics paragraph in both policy languages.
-Sentry's [Android data collection reference](https://docs.sentry.io/platforms/android/data-management/data-collected/)
-is the SDK checklist, not evidence that this Android app already sends diagnostics.
+Sentry records are non-ephemeral. The sharing exception above assumes Sentry processes them
+under TripTrack's service-provider agreement; confirm that agreement, actual project region and
+retention in the owner account before submission. This checkout cannot establish account settings.
+Inspect a scrubbed JVM and native event from the signed minified candidate, including guest and
+signed-in sessions, and publish the diagnostics copy in both policy languages.
+See [Sentry data collection](https://docs.sentry.io/platforms/android/data-management/data-collected/)
+and [release checks](../release.md). All active Play tracks must match the submitted answers.
 
 ## Differences from iPhone privacy labels
 
@@ -157,8 +155,8 @@ identity, and credentials use Android Keystore instead of Keychain. Android maps
 and OpenFreeMap; place naming uses Android Geocoder.
 
 The iPhone labels document is stale: it says no crash/performance/product-interaction collection,
-but the published policy describes Sentry and optional counters. Android currently has counters
-but no Sentry. Follow this code-derived matrix, not those unchecked boxes. The published policy
+but the published policy describes Sentry and optional counters. Android has optional counters
+and release-only Sentry diagnostics. Follow this code-derived matrix, not those unchecked boxes. The published policy
 also says local trips survive account deletion; both current iPhone `AuthService.swift` and
 Android wipe them by default. The Android policy draft corrects that statement. Runtime activity,
 Bluetooth and notification permissions are Android-specific; they do not by themselves imply

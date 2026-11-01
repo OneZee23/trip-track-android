@@ -5,11 +5,10 @@ Publication target: the existing English `docs/privacy-policy.html` and Russian
 for this task. These paragraphs apply to Android and take precedence over iOS-only references
 in the shared policy. The orchestrator publishes them and updates the policy date.
 
-Use the no-Sentry diagnostics paragraph for this checkout. If Sentry is later integrated,
-replace that paragraph with the conditional version below after checking actual settings and
-retention. Do not publish both versions as if both describe the same build. Also correct the
-old shared-policy statement that account deletion preserves local trips: both current clients'
-code wipes them by default.
+Use the Sentry diagnostics copy below for the configured release. Before publication, the owner
+confirms the Sentry service-provider agreement, project region and retention in the Sentry account.
+The checkout does not establish those account settings. Also correct the old shared-policy
+statement about local trips surviving account deletion: both clients wipe them by default.
 
 ## English publication copy
 
@@ -96,9 +95,22 @@ period groups the counters and is stored as a hash on the server. Disabling the 
 local counters and queues server erasure; inactive records and deletion markers expire after
 90 days. Uninstalling alone cannot send an erasure request.
 
-This Android build does not include Sentry or send automatic crash, app-hang, session or trace
-reports to it. The iOS diagnostics paragraph does not describe this Android build. Support logs
-are shared only when you choose to export/send them.
+Release builds configured for diagnostics send JVM/native crash and app-hang reports, session
+start/stop records and a 10% sample of lifecycle performance traces to Sentry, our diagnostics
+processor. This also applies in guest mode and independently of Cloud Sync and optional usage
+counters. Reports contain the signed-in account UUID, a random SDK installation identifier,
+device/OS/app information and scrubbed technical context. Default personal-information and IP
+enrichment are disabled. Sensitive field values, including names, email, tokens, home coordinates
+and photo URLs, are redacted. Request bodies/cookies, credential headers, URL identifiers and
+query strings are removed. Network breadcrumbs, failed-request capture and HTTP/file tracing
+are disabled. We do not attach screenshots, view hierarchies, session replays, user files or
+performance profiles. Native stack frames remain part of crash diagnostics.
+
+Sentry processes reports in the region configured for our project and removes them when our
+configured retention period expires. The purpose is finding and fixing defects, under the
+legitimate-interest basis described in this policy. To object, contact privacy@trip-track.app.
+Builds without a diagnostics DSN, including debug builds, do not start Sentry. Support logs are
+shared separately only when you choose to export/send them.
 
 ### Retention and deletion on Android
 
@@ -209,9 +221,22 @@ GPS-данных и других EXIF-метаданных; отдельные �
 локальные счётчики и ставит удаление серверных данных в очередь. Неактивные записи и отметки
 удаления истекают через 90 дней. Простое удаление приложения не отправляет запрос на удаление.
 
-Эта сборка Android не содержит Sentry и не отправляет ему автоматические отчёты о падениях,
-зависаниях, сессиях или трассировках производительности. Абзац Политики о диагностике iOS
-не описывает эту сборку Android. Журналы поддержки передаются только по Вашему действию
+Релизные сборки с настроенной диагностикой отправляют в Sentry, нашему обработчику диагностики,
+отчёты о падениях JVM/нативного кода и зависаниях, записи начала и конца сессий и выборку 10%
+трассировок производительности жизненного цикла приложения. Это действует и в гостевом режиме,
+независимо от синхронизации в облаке и добровольных счётчиков. События содержат UUID аккаунта
+после входа, случайный идентификатор установки SDK, данные устройства, ОС и приложения
+и очищенный технический контекст. Автоматическое добавление персональных данных и IP отключено.
+Значения чувствительных полей, включая имена, почту, токены, координаты дома и ссылки на фото,
+маскируются. Тела запросов, cookies, заголовки авторизации, идентификаторы в URL и параметры
+запросов удаляются. Сетевые breadcrumbs, захват ошибочных HTTP-ответов и трассировка HTTP
+и файлов отключены. Снимки экрана, иерархии интерфейса, повторы сессий, пользовательские файлы
+и профили производительности не прикладываются. Стеки нативного кода остаются в отчётах.
+
+Sentry обрабатывает отчёты в регионе нашего проекта и удаляет по окончании настроенного
+срока хранения. Цель обработки: находить и исправлять ошибки на основании законного интереса,
+указанного в Политике. Для возражения напишите privacy@trip-track.app. Сборки без DSN диагностики,
+включая debug, не запускают Sentry. Журналы поддержки передаются отдельно по Вашему действию
 экспорта или отправки.
 
 ### Хранение и удаление на Android
@@ -234,17 +259,3 @@ GPS-данных и других EXIF-метаданных; отдельные �
 Запросить удаление аккаунта или копию данных также можно по адресу privacy@trip-track.app;
 мы проверяем принадлежность аккаунта и отвечаем в течение 30 дней. Страница запроса удаления,
 на которую ссылается магазин, позволяет сделать это без повторной установки приложения.
-
-## Conditional replacement if Sentry ships
-
-Owner/editor instruction, not text to publish with the no-Sentry paragraph: use only after the
-Android integration matches these facts. Confirm the actual EU ingest region, processor terms,
-retention and event scrubbing; otherwise rewrite from the shipped configuration.
-
-English:
-
-> TripTrack for Android sends crash and app-hang reports, session start/stop records and a 10% sample of performance traces to Sentry, our diagnostics processor, including in guest mode and independently of Cloud Sync. Events include your account UUID when signed in, a randomly generated SDK installation identifier, device/OS information and redacted technical context. We remove names, email addresses, tokens, coordinates and home settings, request/response bodies and identifiers/query strings in URLs before sending. We do not attach screenshots, view hierarchies, session replays, files or performance profiles. Events are processed in Sentry's European region and removed when our configured retention period expires. The purpose is finding and fixing defects, under the legitimate-interest basis described in this policy. To object, contact privacy@trip-track.app.
-
-Русский:
-
-> TripTrack для Android отправляет в Sentry, нашему обработчику диагностики, отчёты о падениях и зависаниях, записи начала и конца сессий и выборку 10% трассировок производительности, в том числе в гостевом режиме и независимо от синхронизации в облаке. События содержат UUID аккаунта после входа, случайный идентификатор установки SDK, данные устройства и ОС и очищенный технический контекст. Перед отправкой мы удаляем имена, почту, токены, координаты и настройки дома, тела запросов и ответов, идентификаторы и параметры в URL. Снимки экрана, иерархии интерфейса, повторы сессий, файлы и профили производительности не прикладываются. События обрабатываются в европейском регионе Sentry и удаляются по окончании настроенного у нас срока хранения. Цель обработки: находить и исправлять ошибки на основании законного интереса, указанного в Политике. Для возражения напишите privacy@trip-track.app.
