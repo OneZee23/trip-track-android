@@ -24,6 +24,12 @@ publication step, not an existing endpoint. See [console setup](console-setup.md
 
 ## What leaves the phone
 
+The merged app does not request `ACCESS_WIFI_STATE`. MapLibre's connectivity check uses
+`ConnectivityManager` with `ACCESS_NETWORK_STATE`; the pinned SDK has no Wi-Fi API references.
+No SSID, BSSID or access-point scan is read or sent by this map integration. Removing the
+permission does not change the map-request disclosures below: tile coordinates and HTTP/network
+metadata still leave the phone. See [permission evidence](permissions.md).
+
 | Trigger | Data and destination | Cloud Sync dependency |
 |---|---|---|
 | Load a map, including a map in a trip | OpenFreeMap receives requested tile coordinates/zoom, network address and HTTP/device metadata. Tiles can reveal the viewed area, including a recorded route or home area | None; guest mode also loads maps |

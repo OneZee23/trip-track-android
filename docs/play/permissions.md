@@ -1,6 +1,6 @@
 # Permissions and Play declarations
 
-Release manifest checked on 31 October 2026, target SDK 36, min SDK 29:
+Release manifest checked on 1 November 2026, target SDK 36, min SDK 29:
 
 ```sh
 JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home \
@@ -10,7 +10,7 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home \
 Read `app/build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml`
 and `app/build/intermediates/manifest_merge_blame_file/release/processReleaseMainManifest/manifest-merger-blame-release-report.txt`.
 Build passed. Rebuild after the other branches are merged; SDK/library changes can add permissions.
-The complete `uses-permission` set contains 17 entries:
+The complete `uses-permission` set contains 16 entries:
 
 | Permission | Source and visible reason | Runtime / Play declaration |
 |---|---|---|
@@ -29,11 +29,16 @@ The complete `uses-permission` set contains 17 entries:
 | `android.permission.WAKE_LOCK` | WorkManager 2.12.0: finish scheduled sync work without the CPU sleeping mid-operation | Normal; no separate declaration |
 | `android.permission.USE_BIOMETRIC` | Transitive AndroidX Biometric 1.1.0 through credential libraries; TripTrack itself presents no biometric enrolment/unlock feature | Normal; no separate declaration. No biometric templates are exposed to TripTrack |
 | `android.permission.USE_FINGERPRINT` | Same Biometric library, legacy compatibility | Normal; no separate declaration; no app-authored fingerprint collection |
-| `android.permission.ACCESS_WIFI_STATE` | MapLibre Native OpenGL 13.7.1 | Normal network-state access for the map library; no Wi-Fi scan UI or nearby access-point upload in app code; no separate declaration |
 | `com.onezee.triptrack.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | AndroidX Core 1.18.0: protect internal dynamic broadcasts | App-defined signature permission, not a user request; no declaration |
 
 MapLibre itself declares `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`,
 `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` and an optional Wi-Fi hardware feature.
+`core/map` removes `ACCESS_WIFI_STATE` with `tools:node="remove"`; it is absent from the merged
+debug and release manifests. MapLibre 13.7.1's
+[ConnectivityReceiver](https://github.com/maplibre/maplibre-native/blob/android-v13.7.1/platform/android/MapLibreAndroid/src/main/java/org/maplibre/android/net/ConnectivityReceiver.java)
+uses `ConnectivityManager.getActiveNetworkInfo()`, which needs `ACCESS_NETWORK_STATE`.
+The pinned SDK's `classes.jar` contains no `WifiManager`, `android/net/wifi` or `ACCESS_WIFI_STATE`
+references. Tile requests still need internet access; no Wi-Fi scan or SSID/BSSID access is added.
 The final manifest coalesces duplicates. Optional GPS/Bluetooth/Wi-Fi hardware features and the
 `androidx.car.app.connection` provider query are not permissions. Service/receiver guards such as
 `BIND_JOB_SERVICE`, `DUMP` and the Google sign-in revocation permission restrict callers; TripTrack
