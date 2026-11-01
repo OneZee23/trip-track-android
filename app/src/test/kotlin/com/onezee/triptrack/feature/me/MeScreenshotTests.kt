@@ -37,6 +37,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import com.onezee.triptrack.ui.LocalAppVersion
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -53,7 +54,8 @@ class MeScreenshotTests(private val dark: Boolean) {
     private fun shot(name: String, content: @Composable () -> Unit) {
         compose.setContent {
             TripTrackTheme(isDark = dark, language = AppLanguage.ru, reduceMotion = true) {
-                CompositionLocalProvider(LocalInspectionMode provides true) { Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) { content() } }
+                // The version the baselines were recorded with: a release bump must not repaint them.
+                CompositionLocalProvider(LocalInspectionMode provides true, LocalAppVersion provides "0.9.2-dev") { Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) { content() } }
             }
         }
         compose.waitForIdle()

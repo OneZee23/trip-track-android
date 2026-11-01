@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
-import com.onezee.triptrack.BuildConfig
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.strings.AppStrings
@@ -24,6 +23,7 @@ import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
+import com.onezee.triptrack.ui.LocalAppVersion
 
 @Composable
 internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
@@ -77,7 +77,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
             SettingsSheet.stereo -> StereoPicker(graph, onBack = manager::dismissSheet)
             SettingsSheet.logs -> DebugLogsContent(graph, manager::dismissSheet)
             SettingsSheet.about -> SettingsDetail(strings.about(), manager::dismissSheet) {
-                MeRow(strings.tr(com.onezee.triptrack.designsystem.R.string.app_name), BuildConfig.VERSION_NAME)
+                MeRow(strings.tr(com.onezee.triptrack.designsystem.R.string.app_name), LocalAppVersion.current)
                 MeRow(strings.privacyPolicy(), onClick = { open("https://trip-track.app/privacy") })
                 MeRow(strings.termsOfService(), onClick = { open("https://trip-track.app/terms") })
                 MeRow(strings.osmAttribution(), onClick = { open("https://www.openstreetmap.org/copyright") })
@@ -137,7 +137,7 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
                 MeDivider()
                 MeRow(strings.settingsSendLogs(), subtitle = strings.settingsSendLogsSub(), glyph = AppGlyph.flag, tag = "settings_logs", onClick = { onOpen(SettingsSheet.logs) })
             }
-            MeRow(strings.about(), BuildConfig.VERSION_NAME, tag = "settings_about", onClick = { onOpen(SettingsSheet.about) })
+            MeRow(strings.about(), LocalAppVersion.current, tag = "settings_about", onClick = { onOpen(SettingsSheet.about) })
             if (state.failed) MeRow(strings.publicDataLoadFailed())
         }
     }
