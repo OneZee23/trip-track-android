@@ -413,6 +413,8 @@ This is an explicit clear. The fixture `{"isPublic":true}` in the same file mean
 
 No avatarFrame, showPlusBadge, bio, pins, privacy-zone center, Bluetooth binding, purchase entitlement or notification permission in this row. `selectedVehicleId` is settings state, whereas `activeVehicleId` is the public account's selected car. iOS omits nil selectedVehicleId/lastTripDate; do not infer an explicit clear from those omitted keys. Progress merge preserves lifetime maxima; cosmetic selection and dirty local fields have their own reconciliation rules.
 
+Auto-record preferences stay on the phone: `autoRecordMode`, `autoStopTimeout`, `savedBluetoothDevices` and (iOS 0.9.3) `autoRecordTrigger`. The trigger stores `motionOrStereo` or `stereoOnly`; missing, empty and unknown values use `motionOrStereo`. None of these keys enters a settings upload or pull.
+
 Tests: `SettingsSyncPayloadTests`, `SettingsUnitWireTests`, `RemoteSettingsMergeTests`, `ProfileProgressSyncTests`, `ProfileSyncLatchTests`, `ProfileJournalWireTests`, `VisibilityWireTests`, `ProfileBackfillTests`, `ProfilePhotoStoreTests`.
 
 ## Social feed and public profiles

@@ -23,6 +23,9 @@ python3 tools/parity/parity.py report
 стандартную библиотеку Python. Команды `changed` печатают результат, `report` пишет
 [parity.md](parity.md). `report --output <path>` меняет файл отчёта.
 
+Для отдельного iOS-эталона передавай тот же `--ios` также в `strings/generate.py`, его `--check` и итоговый `parity.py report`: обычный checkout может быть старее.
+Если sandbox запрещает Robolectric создать `~/.robolectric-download-lock`, добавь к Gradle `-Drobolectric.dependency.dir="$HOME/.m2/repository/org/robolectric/android-all-instrumented/15-robolectric-13954326-i7"` (SDK 35 из `tools/strings/README.md`).
+
 `changed` показывает все изменённые пути, включая удаления и оба имени при переименовании.
 `A..B` сравнивает два commit, `A...B` сравнивает общий предок с B. Соответствия берутся из
 текущих Android-комментариев. Нужные commit должны уже быть в локальной истории; скрипт
