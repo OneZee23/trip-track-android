@@ -204,3 +204,74 @@ Android-скриншоты. Внутри приложения слова по-п
 сборки и выходит в день публикации. iOS-скрипт здесь не запускается, он создаёт iOS-теги.
 Даты выхода iOS и Android могут различаться из-за проверки магазинов и закрытого теста.
 Публикацию и push выполняет оркестратор или владелец.
+
+## App Links
+
+Сайт должен отдавать JSON по HTTPS без авторизации и редиректов, с HTTP 200 и
+`Content-Type: application/json`, на обоих хостах:
+
+- `https://trip-track.app/.well-known/assetlinks.json`
+- `https://www.trip-track.app/.well-known/assetlinks.json`
+
+Оба хоста объявлены в manifest. Android 10/11 требуют подтверждения всех хостов.
+См. [ассоциации Android](https://developer.android.com/training/app-links/configure-assetlinks).
+
+```json
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.onezee.triptrack",
+      "sha256_cert_fingerprints": ["PLAY_APP_SIGNING_CERTIFICATE_SHA256"]
+    }
+  }
+]
+```
+
+Владелец заменяет placeholder на SHA-256 из Play Console, App signing / App signing key
+certificate. Нужен сертификат, которым Play подписывает установленный APK. Upload key
+для этого файла не подходит. Отпечатка нет в исходниках; выдумывать его нельзя.
+При ротации ключа перечисли все сертификаты установок, которые ещё поддерживаются.
+
+Debug-пакет: `com.onezee.triptrack.dev`. Для него сайт может добавить второй объект
+с этим `package_name` и SHA-256 конкретного debug-сертификата. Публиковать такую
+ассоциацию для всех локальных ключей не требуется. Проверяй release и debug отдельно,
+чтобы установленные одновременно варианты не конкурировали за ссылки.
+
+Manifest принимает `/u/<account UUID>`, `/s/<share code>`, `/j/<share code>`.
+UUID поездки и share code различаются. Для `/s/` и `/j/` приложение читает HTML сайта,
+находит `triptrack://trip/<UUID>` или `triptrack://journey/<UUID>` и запрашивает доступ
+у API. Сайт должен сохранять эту ссылку в HTML. Истёкший код и отказ API показывают
+ошибку. Сайт в этой задаче не меняется.
+
+На устройстве с Android 12+ и установленной Play-сборкой:
+
+```sh
+adb shell pm set-app-links --package com.onezee.triptrack 0 all
+adb shell pm verify-app-links --re-verify com.onezee.triptrack
+# Дай системному проверяющему несколько минут.
+adb shell pm get-app-links --user cur com.onezee.triptrack
+```
+
+Оба хоста должны получить `verified`. Ручное `approved` не проверяет файл.
+См. [проверку App Links](https://developer.android.com/training/app-links/verify-applinks).
+
+Подставь действующие UUID и share codes публичного тестового аккаунта:
+
+```sh
+adb shell am force-stop com.onezee.triptrack
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'https://trip-track.app/u/ACCOUNT_UUID'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'https://trip-track.app/s/TRIP_SHARE_CODE'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'https://trip-track.app/j/JOURNEY_SHARE_CODE'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'triptrack://profile/ACCOUNT_UUID'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'triptrack://trip/TRIP_UUID'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'triptrack://journey/JOURNEY_UUID'
+adb shell am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d 'triptrack://recording'
+```
+
+Повтори HTTPS-команды для `www.trip-track.app`, на холодном старте и при открытом
+профиле/поездке. Проверь Back, гостя, закрытый профиль, удалённую поездку и истёкший
+код. Не добавляй `-n` или `-p` к HTTPS-командам: явный выбор пакета обходит системный
+выбор приложения. Для debug замени пакет в командах сброса и проверки на
+`com.onezee.triptrack.dev`.
