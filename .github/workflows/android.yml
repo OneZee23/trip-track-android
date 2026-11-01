@@ -27,6 +27,7 @@ jobs:
           python3 -m unittest discover -s tools/strings -p 'test_*.py' -v
           python3 -m unittest discover -s tools/parity -p 'test_*.py' -v
           python3 -m unittest discover -s tools/play -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/release -p 'test_*.py' -v
           python3 tools/play/check_listing.py
       - uses: actions/setup-java@v5
         with:
@@ -45,4 +46,6 @@ jobs:
       - name: Test, lint and build APKs
         # The baselines are recorded on macOS; Ubuntu renders the same tests without image comparison.
         # The root lintDebug selector includes every Android core module as well as app.
-        run: ./gradlew --no-daemon -Proborazzi.test.verify=false test lintDebug :app:assembleDebug :app:assembleRelease
+        run: ./gradlew --no-daemon -Proborazzi.test.verify=false test lintDebug :app:assembleDebug :app:assembleRelease :app:bundleRelease :app:verifyReleaseSentryWiring
+      - name: Check release native page alignment
+        run: tools/release/check_16kb.sh app/build/outputs/apk/release/app-release-unsigned.apk

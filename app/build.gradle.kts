@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.util.UUID
 
 plugins {
     alias(libs.plugins.android.application)
@@ -28,6 +29,33 @@ val googleWebClientId = localValue("GOOGLE_WEB_CLIENT_ID").also {
 // Debug builds may talk to a local or staging backend; release builds always use production.
 val debugApiBaseUrl = localValue("TRIPTRACK_API_BASE_URL").ifEmpty { "https://api.trip-track.app" }.trimEnd('/')
 
+fun releaseValue(name: String): String? =
+    providers.gradleProperty(name).orNull ?: providers.environmentVariable(name).orNull
+
+fun buildConfigString(value: String): String = "\"" + value
+    .replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\""
+
+val sentryDsn = releaseValue("TRIPTRACK_SENTRY_DSN")?.trim().orEmpty()
+val signingValues = listOf("STORE_FILE", "STORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD")
+    .associateWith { releaseValue("TRIPTRACK_UPLOAD_$it") }
+val hasUploadKey = signingValues.values.all { !it.isNullOrBlank() }
+require(signingValues.values.all { it.isNullOrBlank() } || hasUploadKey) {
+    "Set all four TRIPTRACK_UPLOAD_* signing values, or none for an unsigned release."
+}
+// Emergency device-test fallback: -PTRIPTRACK_MINIFY=false (resource shrinking follows it).
+val minifyRelease = providers.gradleProperty("TRIPTRACK_MINIFY").map(String::toBooleanStrict).orElse(true)
+
+// iOS: manual dSYM upload workflow. The UUID travels with the APK and its mapping, without an upload plugin.
+abstract class SentryReleaseMetadata : DefaultTask() {
+    @get:OutputDirectory abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction fun generate() {
+        outputDirectory.get().asFile.apply { mkdirs() }
+            .resolve("sentry-debug-meta.properties")
+            .writeText("io.sentry.ProguardUuids=${UUID.randomUUID()}\n")
+    }
+}
+
 android {
     namespace = "com.onezee.triptrack"
     compileSdk {
@@ -43,14 +71,28 @@ android {
         versionName = requireNotNull(appVersion.getProperty("versionName"))
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
+    signingConfigs {
+        if (hasUploadKey) create("upload") {
+            storeFile = file(requireNotNull(signingValues["STORE_FILE"]))
+            storePassword = signingValues["STORE_PASSWORD"]
+            keyAlias = signingValues["KEY_ALIAS"]
+            keyPassword = signingValues["KEY_PASSWORD"]
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
             buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
+            buildConfigField("String", "SENTRY_DSN", "\"\"")
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = minifyRelease.get()
+            isShrinkResources = minifyRelease.get()
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (hasUploadKey) signingConfig = signingConfigs.getByName("upload")
             buildConfigField("String", "API_BASE_URL", "\"https://api.trip-track.app\"")
+            buildConfigField("String", "SENTRY_DSN", buildConfigString(sentryDsn))
+            ndk.debugSymbolLevel = "FULL"
         }
     }
     buildFeatures {
@@ -74,11 +116,34 @@ android {
     }
 }
 
+androidComponents.onVariants(androidComponents.selector().withBuildType("release")) { variant ->
+    val metadata = tasks.register<SentryReleaseMetadata>("generateSentryReleaseMetadata") {
+        outputDirectory.set(layout.buildDirectory.dir("generated/sentry/release/assets"))
+        // Each invocation gets its own mapping identity; archive APK/AAB/mapping/metadata together.
+        outputs.upToDateWhen { false }
+    }
+    variant.sources.assets?.addGeneratedSourceDirectory(metadata, SentryReleaseMetadata::outputDirectory)
+}
+
+tasks.register<Exec>("verifyReleaseSentryWiring") {
+    group = "verification"
+    dependsOn("assembleRelease")
+    environment("TRIPTRACK_EXPECTED_SENTRY_DSN", sentryDsn)
+    commandLine("python3", rootProject.file("tools/release/check_sentry_wiring.py"),
+        layout.buildDirectory.file("outputs/apk/release/app-release${if (hasUploadKey) "" else "-unsigned"}.apk").get().asFile,
+        "--apkanalyzer", androidComponents.sdkComponents.sdkDirectory.get().asFile.resolve("cmdline-tools/latest/bin/apkanalyzer"))
+}
+
 kotlin {
     jvmToolchain(17)
 }
 
 dependencies {
+    implementation(libs.sentry.android) {
+        // Replay captures pixels; it has no place in the diary's diagnostics surface.
+        exclude(group = "io.sentry", module = "sentry-android-replay")
+    }
+    implementation(libs.sentry.android.ndk)
     implementation(project(":core:location"))
     implementation(project(":core:designsystem"))
     implementation(libs.room.runtime)
@@ -120,6 +185,9 @@ val roborazziRecord = providers.gradleProperty("roborazzi.test.record").map { it
 val roborazziVerify = providers.gradleProperty("roborazzi.test.verify").map { it == "true" }.orElse(true)
 
 tasks.withType<Test>().configureEach {
+    val expectedSentryDsn = if (name.contains("Release")) sentryDsn else ""
+    systemProperty("triptrack.expectedSentryDsn", expectedSentryDsn)
+    inputs.property("expectedSentryDsn", expectedSentryDsn)
     providers.systemProperty("robolectric.dependency.dir").orNull?.let {
         systemProperty("robolectric.dependency.dir", it)
     }
