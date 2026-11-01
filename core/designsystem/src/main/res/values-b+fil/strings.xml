@@ -1246,7 +1246,7 @@
     <string name="onboardingAllow" formatted="false">Payagan</string>
     <string name="onboardingAlreadyGranted" formatted="false">Naibigay na ang access</string>
     <string name="onboardingBackgroundAllow" formatted="false">Payagan sa lahat ng oras</string>
-    <string name="onboardingBackgroundSub" formatted="false">Tumutulong ang lokasyon na “Sa lahat ng oras” na matukoy ang mga biyahe kapag sarado ang app. Natutukoy ng pisikal na aktibidad ang paggalaw nang hindi tuloy-tuloy ang GPS. Maaari mong payagan o tanggihan ang bawat kahilingan.</string>
+    <string name="onboardingBackgroundSub" formatted="false">Kinokolekta ng TripTrack ang tumpak na lokasyon para awtomatikong simulan at irekord ang mga biyahe, kahit sarado o hindi ginagamit ang app. Ina-upload lang ang mga biyahe kapag inilathala mo ang mga ito o in-on ang Cloud sync.\n\nTumutulong ang pisikal na aktibidad na matukoy ang pagbiyahe sa sasakyan. Maaari mong payagan o tanggihan ang bawat kahilingan.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Pag-record sa background</string>
     <string name="onboardingContinue" formatted="false">Magpatuloy</string>
     <string name="onboardingLocation" formatted="false">Payagan ang lokasyon</string>
@@ -1275,7 +1275,7 @@
     <string name="pauseShort" formatted="false">NAKA-PAUSE</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">Natutukoy ng TripTrack ang koneksyon sa Bluetooth ng kotse mo para awtomatikong simulan at tapusin ang pag-record ng biyahe.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">Ginagamit ng TripTrack ang lokal na network para kumonekta sa development o beta server habang nagte-test.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">Ginagamit ng TripTrack ang lokasyon mo sa background para ipagpatuloy ang pag-record ng ruta habang wala sa screen ang app o naka-lock ang screen.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">Kinokolekta ng TripTrack ang tumpak na lokasyon para awtomatikong simulan at irekord ang mga biyahe, kahit sarado o hindi ginagamit ang app. Ina-upload lang ang mga biyahe kapag inilathala mo ang mga ito o in-on ang Cloud sync.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">Ginagamit ng TripTrack ang lokasyon mo para i-record ang ruta ng biyahe sa mapa, kuwentahin ang distansya at bilis, at i-save ang biyahe sa talaarawan mo.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">Ginagamit ng TripTrack ang datos ng galaw para matukoy ang simula ng biyahe at kusang simulan ang pag-record.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">Sine-save ng TripTrack ang larawan ng biyahe sa Photos para maibahagi mo ito bilang story o post.</string>

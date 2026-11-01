@@ -410,22 +410,22 @@
     "replace": true
   },
   "onboardingBackgroundSub": {
+    "replace": true,
     "values": {
-      "en": "Location access “All the time” helps detect drives when the app isn’t open. Physical activity detects movement without continuously running GPS. You can allow or deny each request.",
-      "ru": "Геолокация «в любом режиме» помогает замечать начало поездки, когда приложение закрыто. «Физическая активность» определяет движение без постоянной работы GPS. Каждый запрос можно разрешить или отклонить.",
-      "de": "Standortzugriff „Immer“ hilft, Fahrten bei geschlossener App zu erkennen. „Körperliche Aktivität“ erkennt Bewegung ohne ständigen GPS-Betrieb. Du kannst jede Anfrage erlauben oder ablehnen.",
-      "es": "El acceso a la ubicación «Siempre» ayuda a detectar viajes con la app cerrada. «Actividad física» detecta el movimiento sin usar el GPS continuamente. Puedes aceptar o rechazar cada solicitud.",
-      "fr": "L’accès à la position « Toujours » aide à détecter les trajets quand l’application est fermée. L’activité physique détecte le mouvement sans utiliser le GPS en continu. Vous pouvez accepter ou refuser chaque demande.",
-      "it": "L’accesso alla posizione «Sempre» aiuta a rilevare i viaggi con l’app chiusa. «Attività fisica» rileva il movimento senza usare il GPS di continuo. Puoi consentire o negare ogni richiesta.",
-      "pl": "Dostęp do lokalizacji „Cały czas” pomaga wykrywać przejazdy przy zamkniętej aplikacji. „Aktywność fizyczna” wykrywa ruch bez ciągłego używania GPS. Każdą prośbę możesz zaakceptować lub odrzucić.",
-      "id": "Akses lokasi “Sepanjang waktu” membantu mendeteksi perjalanan saat aplikasi ditutup. Aktivitas fisik mendeteksi gerakan tanpa terus menjalankan GPS. Anda bisa mengizinkan atau menolak setiap permintaan.",
-      "tr": "“Her zaman” konum izni, uygulama kapalıyken sürüşleri algılamaya yardımcı olur. Fiziksel aktivite, GPS’i sürekli çalıştırmadan hareketi algılar. Her isteğe izin verebilir veya reddedebilirsiniz.",
-      "fil": "Tumutulong ang lokasyon na “Sa lahat ng oras” na matukoy ang mga biyahe kapag sarado ang app. Natutukoy ng pisikal na aktibidad ang paggalaw nang hindi tuloy-tuloy ang GPS. Maaari mong payagan o tanggihan ang bawat kahilingan.",
-      "uk": "Геолокація «Завжди» допомагає помічати початок поїздки, коли застосунок закрито. «Фізична активність» визначає рух без постійної роботи GPS. Кожен запит можна дозволити або відхилити.",
-      "kk": "«Әрдайым» геолокация рұқсаты қолданба жабық кезде сапарларды анықтауға көмектеседі. Физикалық белсенділік GPS-ті үздіксіз қоспай қозғалысты анықтайды. Әр сұрауға рұқсат беруге не бас тартуға болады.",
-      "pt": "O acesso à localização “O tempo todo” ajuda a detectar viagens com o app fechado. A atividade física detecta movimento sem usar o GPS continuamente. Você pode permitir ou negar cada pedido."
-    },
-    "replace": true
+      "en": "TripTrack collects precise location to start and record trips automatically, even when the app is closed or not in use. Trips are uploaded only if you publish them or enable Cloud Sync.\n\nPhysical activity helps detect driving. You can allow or deny each request.",
+      "ru": "TripTrack собирает данные о точном местоположении для автоматического начала и записи поездок, даже когда приложение закрыто или не используется. Поездки отправляются на сервер, только если вы публикуете их или включаете синхронизацию в облаке.\n\nФизическая активность помогает определять движение в машине. Каждый запрос можно разрешить или отклонить.",
+      "de": "TripTrack erfasst deinen genauen Standort, um Fahrten automatisch zu starten und aufzuzeichnen, auch wenn die App geschlossen ist oder nicht verwendet wird. Fahrten werden nur hochgeladen, wenn du sie veröffentlichst oder Cloud-Sync aktivierst.\n\nKörperliche Aktivität hilft, Fahrten zu erkennen. Du kannst jede Anfrage erlauben oder ablehnen.",
+      "es": "TripTrack recopila tu ubicación precisa para iniciar y grabar trayectos automáticamente, incluso cuando la app está cerrada o no se está usando. Los trayectos solo se suben si los publicas o activas la Sincronización en la nube.\n\nLa actividad física ayuda a detectar que vas en un vehículo. Puedes permitir o rechazar cada solicitud.",
+      "fr": "TripTrack collecte votre position précise pour démarrer et enregistrer automatiquement vos trajets, même lorsque l'application est fermée ou inutilisée. Les trajets sont envoyés au serveur uniquement si vous les publiez ou activez la Synchronisation cloud.\n\nL'activité physique aide à détecter les déplacements en véhicule. Vous pouvez accepter ou refuser chaque demande.",
+      "it": "TripTrack raccoglie la tua posizione precisa per avviare e registrare automaticamente i tragitti, anche quando l'app è chiusa o non viene usata. I tragitti vengono caricati solo se li pubblichi o attivi la Sincronizzazione cloud.\n\nL'attività fisica aiuta a rilevare gli spostamenti in veicolo. Puoi consentire o rifiutare ogni richiesta.",
+      "pl": "TripTrack zbiera dane o dokładnej lokalizacji, aby automatycznie rozpoczynać i nagrywać przejazdy, nawet gdy aplikacja jest zamknięta lub nieużywana. Przejazdy są wysyłane tylko wtedy, gdy je opublikujesz lub włączysz Synchronizację w chmurze.\n\nAktywność fizyczna pomaga wykrywać jazdę. Możesz zezwolić na każdy dostęp lub go odmówić.",
+      "id": "TripTrack mengumpulkan lokasi akurat untuk memulai dan merekam perjalanan secara otomatis, meskipun aplikasi ditutup atau tidak digunakan. Perjalanan hanya diunggah jika Anda memublikasikannya atau mengaktifkan Sinkronisasi awan.\n\nAktivitas fisik membantu mendeteksi perjalanan dengan kendaraan. Anda dapat mengizinkan atau menolak setiap permintaan.",
+      "tr": "TripTrack, uygulama kapalıyken veya kullanılmıyorken bile yolculukları otomatik başlatıp kaydetmek için kesin konumunuzu toplar. Yolculuklar yalnızca yayımladığınızda veya Bulut eşitlemesini açtığınızda sunucuya yüklenir.\n\nFiziksel aktivite, araçla hareketi algılamaya yardımcı olur. Her isteğe izin verebilir veya reddedebilirsiniz.",
+      "fil": "Kinokolekta ng TripTrack ang tumpak na lokasyon para awtomatikong simulan at irekord ang mga biyahe, kahit sarado o hindi ginagamit ang app. Ina-upload lang ang mga biyahe kapag inilathala mo ang mga ito o in-on ang Cloud sync.\n\nTumutulong ang pisikal na aktibidad na matukoy ang pagbiyahe sa sasakyan. Maaari mong payagan o tanggihan ang bawat kahilingan.",
+      "uk": "TripTrack збирає дані про точне місцеположення для автоматичного початку та запису поїздок, навіть коли застосунок закритий або не використовується. Поїздки надсилаються на сервер, лише якщо ви публікуєте їх або вмикаєте Хмарну синхронізацію.\n\nФізична активність допомагає визначати рух у машині. Кожен запит можна дозволити або відхилити.",
+      "kk": "TripTrack қолданба жабық немесе пайдаланылмай тұрған кезде де сапарларды автоматты түрде бастап, жазу үшін нақты орналасқан жер деректерін жинайды. Сапарлар оларды жарияласаңыз немесе Бұлттық синхрондауды қоссаңыз ғана серверге жіберіледі.\n\nДене белсенділігі көлікпен қозғалысты анықтауға көмектеседі. Әр сұрауға рұқсат беруге немесе бас тартуға болады.",
+      "pt": "O TripTrack coleta sua localização precisa para iniciar e gravar trajetos automaticamente, mesmo quando o app está fechado ou não está em uso. Os trajetos só são enviados se você os publicar ou ativar a Sincronização na nuvem.\n\nA atividade física ajuda a detectar o deslocamento em um veículo. Você pode permitir ou negar cada solicitação."
+    }
   },
   "onboardingBackgroundAllow": {
     "values": {
@@ -1286,6 +1286,24 @@
       "uk": "Запис почнеться, лише коли телефон під’єднається до прив’язаної магнітоли або Android Auto",
       "kk": "Жазба телефон байланыстырылған магнитолаға немесе Android Auto жүйесіне қосылғанда ғана басталады",
       "pt": "A gravação só começa quando o telefone se conecta a um rádio vinculado ou ao Android Auto"
+    }
+  },
+  "permission_NSLocationAlwaysAndWhenInUseUsageDescription": {
+    "replace": true,
+    "values": {
+      "en": "TripTrack collects precise location to start and record trips automatically, even when the app is closed or not in use. Trips are uploaded only if you publish them or enable Cloud Sync.",
+      "ru": "TripTrack собирает данные о точном местоположении для автоматического начала и записи поездок, даже когда приложение закрыто или не используется. Поездки отправляются на сервер, только если вы публикуете их или включаете синхронизацию в облаке.",
+      "de": "TripTrack erfasst deinen genauen Standort, um Fahrten automatisch zu starten und aufzuzeichnen, auch wenn die App geschlossen ist oder nicht verwendet wird. Fahrten werden nur hochgeladen, wenn du sie veröffentlichst oder Cloud-Sync aktivierst.",
+      "es": "TripTrack recopila tu ubicación precisa para iniciar y grabar trayectos automáticamente, incluso cuando la app está cerrada o no se está usando. Los trayectos solo se suben si los publicas o activas la Sincronización en la nube.",
+      "fr": "TripTrack collecte votre position précise pour démarrer et enregistrer automatiquement vos trajets, même lorsque l'application est fermée ou inutilisée. Les trajets sont envoyés au serveur uniquement si vous les publiez ou activez la Synchronisation cloud.",
+      "it": "TripTrack raccoglie la tua posizione precisa per avviare e registrare automaticamente i tragitti, anche quando l'app è chiusa o non viene usata. I tragitti vengono caricati solo se li pubblichi o attivi la Sincronizzazione cloud.",
+      "pl": "TripTrack zbiera dane o dokładnej lokalizacji, aby automatycznie rozpoczynać i nagrywać przejazdy, nawet gdy aplikacja jest zamknięta lub nieużywana. Przejazdy są wysyłane tylko wtedy, gdy je opublikujesz lub włączysz Synchronizację w chmurze.",
+      "id": "TripTrack mengumpulkan lokasi akurat untuk memulai dan merekam perjalanan secara otomatis, meskipun aplikasi ditutup atau tidak digunakan. Perjalanan hanya diunggah jika Anda memublikasikannya atau mengaktifkan Sinkronisasi awan.",
+      "tr": "TripTrack, uygulama kapalıyken veya kullanılmıyorken bile yolculukları otomatik başlatıp kaydetmek için kesin konumunuzu toplar. Yolculuklar yalnızca yayımladığınızda veya Bulut eşitlemesini açtığınızda sunucuya yüklenir.",
+      "fil": "Kinokolekta ng TripTrack ang tumpak na lokasyon para awtomatikong simulan at irekord ang mga biyahe, kahit sarado o hindi ginagamit ang app. Ina-upload lang ang mga biyahe kapag inilathala mo ang mga ito o in-on ang Cloud sync.",
+      "uk": "TripTrack збирає дані про точне місцеположення для автоматичного початку та запису поїздок, навіть коли застосунок закритий або не використовується. Поїздки надсилаються на сервер, лише якщо ви публікуєте їх або вмикаєте Хмарну синхронізацію.",
+      "kk": "TripTrack қолданба жабық немесе пайдаланылмай тұрған кезде де сапарларды автоматты түрде бастап, жазу үшін нақты орналасқан жер деректерін жинайды. Сапарлар оларды жарияласаңыз немесе Бұлттық синхрондауды қоссаңыз ғана серверге жіберіледі.",
+      "pt": "O TripTrack coleta sua localização precisa para iniciar e gravar trajetos automaticamente, mesmo quando o app está fechado ou não está em uso. Os trajetos só são enviados se você os publicar ou ativar a Sincronização na nuvem."
     }
   }
 }

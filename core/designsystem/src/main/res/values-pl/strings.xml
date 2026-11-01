@@ -1306,7 +1306,7 @@
     <string name="onboardingAllow" formatted="false">Zezwól</string>
     <string name="onboardingAlreadyGranted" formatted="false">Dostęp już jest</string>
     <string name="onboardingBackgroundAllow" formatted="false">Zezwalaj cały czas</string>
-    <string name="onboardingBackgroundSub" formatted="false">Dostęp do lokalizacji „Cały czas” pomaga wykrywać przejazdy przy zamkniętej aplikacji. „Aktywność fizyczna” wykrywa ruch bez ciągłego używania GPS. Każdą prośbę możesz zaakceptować lub odrzucić.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack zbiera dane o dokładnej lokalizacji, aby automatycznie rozpoczynać i nagrywać przejazdy, nawet gdy aplikacja jest zamknięta lub nieużywana. Przejazdy są wysyłane tylko wtedy, gdy je opublikujesz lub włączysz Synchronizację w chmurze.\n\nAktywność fizyczna pomaga wykrywać jazdę. Możesz zezwolić na każdy dostęp lub go odmówić.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Nagrywanie w tle</string>
     <string name="onboardingContinue" formatted="false">Dalej</string>
     <string name="onboardingLocation" formatted="false">Dostęp do lokalizacji</string>
@@ -1335,7 +1335,7 @@
     <string name="pauseShort" formatted="false">PAUZA</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack rozpoznaje połączenie Bluetooth z samochodem, aby automatycznie zaczynać i kończyć nagrywanie trasy.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack korzysta z sieci lokalnej, aby połączyć się z serwerem deweloperskim lub beta podczas testów.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack korzysta z lokalizacji w tle, aby nagrywać trasę dalej, gdy aplikacja nie jest na wierzchu lub ekran jest zablokowany.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack zbiera dane o dokładnej lokalizacji, aby automatycznie rozpoczynać i nagrywać przejazdy, nawet gdy aplikacja jest zamknięta lub nieużywana. Przejazdy są wysyłane tylko wtedy, gdy je opublikujesz lub włączysz Synchronizację w chmurze.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack korzysta z Twojej lokalizacji, aby zapisywać przebieg trasy na mapie, liczyć dystans i prędkość oraz zapisywać trasę w dzienniku.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack korzysta z danych o ruchu, aby wykryć początek jazdy i automatycznie włączyć nagrywanie.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack zapisuje obrazek trasy w Zdjęciach, żebyś mógł udostępnić go jako relację albo post.</string>

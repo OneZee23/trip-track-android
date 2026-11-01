@@ -1246,7 +1246,7 @@
     <string name="onboardingAllow" formatted="false">Рұқсат беру</string>
     <string name="onboardingAlreadyGranted" formatted="false">Рұқсат берілген</string>
     <string name="onboardingBackgroundAllow" formatted="false">Әрдайым рұқсат ету</string>
-    <string name="onboardingBackgroundSub" formatted="false">«Әрдайым» геолокация рұқсаты қолданба жабық кезде сапарларды анықтауға көмектеседі. Физикалық белсенділік GPS-ті үздіксіз қоспай қозғалысты анықтайды. Әр сұрауға рұқсат беруге не бас тартуға болады.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack қолданба жабық немесе пайдаланылмай тұрған кезде де сапарларды автоматты түрде бастап, жазу үшін нақты орналасқан жер деректерін жинайды. Сапарлар оларды жарияласаңыз немесе Бұлттық синхрондауды қоссаңыз ғана серверге жіберіледі.\n\nДене белсенділігі көлікпен қозғалысты анықтауға көмектеседі. Әр сұрауға рұқсат беруге немесе бас тартуға болады.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Фондық жазу</string>
     <string name="onboardingContinue" formatted="false">Әрі қарай</string>
     <string name="onboardingLocation" formatted="false">Геолокацияға рұқсат беріңіз</string>
@@ -1275,7 +1275,7 @@
     <string name="pauseShort" formatted="false">КІДІРІС</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack сапар жазуын автоматты бастау және аяқтау үшін көліктің Bluetooth байланысын анықтайды.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack тестілеу кезінде әзірлеу немесе бета серверіне қосылу үшін жергілікті желіні пайдаланады.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack қолданба жиналғанда немесе экран құлыптаулы кезде де бағытты жазуды жалғастыру үшін геолокацияны фондық режимде пайдаланады.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack қолданба жабық немесе пайдаланылмай тұрған кезде де сапарларды автоматты түрде бастап, жазу үшін нақты орналасқан жер деректерін жинайды. Сапарлар оларды жарияласаңыз немесе Бұлттық синхрондауды қоссаңыз ғана серверге жіберіледі.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack сапар бағытын картаға жазу, қашықтық пен жылдамдықты есептеу және сапарды күнделікке сақтау үшін геолокацияны пайдаланады.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack сапардың басталғанын анықтап, жазуды автоматты қосу үшін қозғалыс деректерін пайдаланады.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack сапар суретін Фотоға сақтайды, сонда оны сторис немесе жазба ретінде бөлісе аласыз.</string>

@@ -1306,7 +1306,7 @@
     <string name="onboardingAllow" formatted="false">Разрешить</string>
     <string name="onboardingAlreadyGranted" formatted="false">Доступ уже есть</string>
     <string name="onboardingBackgroundAllow" formatted="false">Разрешить в любом режиме</string>
-    <string name="onboardingBackgroundSub" formatted="false">Геолокация «в любом режиме» помогает замечать начало поездки, когда приложение закрыто. «Физическая активность» определяет движение без постоянной работы GPS. Каждый запрос можно разрешить или отклонить.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack собирает данные о точном местоположении для автоматического начала и записи поездок, даже когда приложение закрыто или не используется. Поездки отправляются на сервер, только если вы публикуете их или включаете синхронизацию в облаке.\n\nФизическая активность помогает определять движение в машине. Каждый запрос можно разрешить или отклонить.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Запись в фоне</string>
     <string name="onboardingContinue" formatted="false">Дальше</string>
     <string name="onboardingLocation" formatted="false">Разрешите геолокацию</string>
@@ -1335,7 +1335,7 @@
     <string name="pauseShort" formatted="false">ПАУЗА</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack определяет подключение к Bluetooth-устройству автомобиля, чтобы автоматически начать и завершить запись поездки.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack использует локальную сеть для подключения к dev- или бета-серверу при тестировании сборок.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack использует геолокацию в фоновом режиме, чтобы продолжать запись маршрута, пока приложение свёрнуто или экран заблокирован.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack собирает данные о точном местоположении для автоматического начала и записи поездок, даже когда приложение закрыто или не используется. Поездки отправляются на сервер, только если вы публикуете их или включаете синхронизацию в облаке.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack использует геолокацию для записи маршрута поездки на карте, расчёта расстояния и скорости, и сохранения поездки в дневник путешествий.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack использует данные движения, чтобы автоматически определить начало поездки и включить запись.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack сохраняет картинку поездки в Фото, чтобы вы могли опубликовать её в сторис.</string>

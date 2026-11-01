@@ -1276,7 +1276,7 @@
     <string name="onboardingAllow" formatted="false">Consenti</string>
     <string name="onboardingAlreadyGranted" formatted="false">Accesso già concesso</string>
     <string name="onboardingBackgroundAllow" formatted="false">Consenti sempre</string>
-    <string name="onboardingBackgroundSub" formatted="false">L’accesso alla posizione «Sempre» aiuta a rilevare i viaggi con l’app chiusa. «Attività fisica» rileva il movimento senza usare il GPS di continuo. Puoi consentire o negare ogni richiesta.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack raccoglie la tua posizione precisa per avviare e registrare automaticamente i tragitti, anche quando l\'app è chiusa o non viene usata. I tragitti vengono caricati solo se li pubblichi o attivi la Sincronizzazione cloud.\n\nL\'attività fisica aiuta a rilevare gli spostamenti in veicolo. Puoi consentire o rifiutare ogni richiesta.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Registrazione in background</string>
     <string name="onboardingContinue" formatted="false">Avanti</string>
     <string name="onboardingLocation" formatted="false">Consenti la posizione</string>
@@ -1305,7 +1305,7 @@
     <string name="pauseShort" formatted="false">PAUSA</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack riconosce il collegamento Bluetooth con l\'auto per avviare e chiudere la registrazione del viaggio automaticamente.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack usa la rete locale per collegarsi a un server di sviluppo o beta durante i test.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack usa la tua posizione in background per continuare a registrare il percorso mentre l\'app non è in primo piano o lo schermo è bloccato.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack raccoglie la tua posizione precisa per avviare e registrare automaticamente i tragitti, anche quando l\'app è chiusa o non viene usata. I tragitti vengono caricati solo se li pubblichi o attivi la Sincronizzazione cloud.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack usa la tua posizione per registrare il percorso sulla mappa, calcolare distanza e velocità e salvare il viaggio nel tuo diario.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack usa i dati di movimento per capire quando inizi a guidare e avviare la registrazione da solo.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack salva l\'immagine del viaggio in Foto così puoi condividerla come storia o come post.</string>

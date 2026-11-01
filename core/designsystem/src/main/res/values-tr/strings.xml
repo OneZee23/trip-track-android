@@ -1246,7 +1246,7 @@
     <string name="onboardingAllow" formatted="false">İzin ver</string>
     <string name="onboardingAlreadyGranted" formatted="false">İzin zaten verilmiş</string>
     <string name="onboardingBackgroundAllow" formatted="false">Her zaman izin ver</string>
-    <string name="onboardingBackgroundSub" formatted="false">“Her zaman” konum izni, uygulama kapalıyken sürüşleri algılamaya yardımcı olur. Fiziksel aktivite, GPS’i sürekli çalıştırmadan hareketi algılar. Her isteğe izin verebilir veya reddedebilirsiniz.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack, uygulama kapalıyken veya kullanılmıyorken bile yolculukları otomatik başlatıp kaydetmek için kesin konumunuzu toplar. Yolculuklar yalnızca yayımladığınızda veya Bulut eşitlemesini açtığınızda sunucuya yüklenir.\n\nFiziksel aktivite, araçla hareketi algılamaya yardımcı olur. Her isteğe izin verebilir veya reddedebilirsiniz.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Arka planda kayıt</string>
     <string name="onboardingContinue" formatted="false">Devam</string>
     <string name="onboardingLocation" formatted="false">Konuma izin ver</string>
@@ -1275,7 +1275,7 @@
     <string name="pauseShort" formatted="false">DURDU</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack, gezi kaydını otomatik başlatıp bitirmek için arabanın Bluetooth bağlantısını algılar.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack, test sırasında geliştirme ya da beta sunucusuna bağlanmak için yerel ağı kullanır.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack, uygulama arka plandayken ya da ekran kilitliyken rotayı kaydetmeyi sürdürmek için konumunu arka planda kullanır.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack, uygulama kapalıyken veya kullanılmıyorken bile yolculukları otomatik başlatıp kaydetmek için kesin konumunuzu toplar. Yolculuklar yalnızca yayımladığınızda veya Bulut eşitlemesini açtığınızda sunucuya yüklenir.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack, gezi rotanı haritaya kaydetmek, mesafe ve hızı hesaplamak ve geziyi günlüğüne eklemek için konumunu kullanır.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack, gezinin başladığını anlayıp kaydı kendiliğinden başlatmak için hareket verilerini kullanır.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack, hikâye ya da gönderi olarak paylaşabilmen için gezi görselini Fotoğraflar\'a kaydeder.</string>

@@ -1216,7 +1216,7 @@
     <string name="onboardingAllow" formatted="false">Izinkan</string>
     <string name="onboardingAlreadyGranted" formatted="false">Aksesnya sudah diberikan</string>
     <string name="onboardingBackgroundAllow" formatted="false">Izinkan sepanjang waktu</string>
-    <string name="onboardingBackgroundSub" formatted="false">Akses lokasi “Sepanjang waktu” membantu mendeteksi perjalanan saat aplikasi ditutup. Aktivitas fisik mendeteksi gerakan tanpa terus menjalankan GPS. Anda bisa mengizinkan atau menolak setiap permintaan.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack mengumpulkan lokasi akurat untuk memulai dan merekam perjalanan secara otomatis, meskipun aplikasi ditutup atau tidak digunakan. Perjalanan hanya diunggah jika Anda memublikasikannya atau mengaktifkan Sinkronisasi awan.\n\nAktivitas fisik membantu mendeteksi perjalanan dengan kendaraan. Anda dapat mengizinkan atau menolak setiap permintaan.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Perekaman di latar belakang</string>
     <string name="onboardingContinue" formatted="false">Lanjut</string>
     <string name="onboardingLocation" formatted="false">Izinkan akses lokasi</string>
@@ -1245,7 +1245,7 @@
     <string name="pauseShort" formatted="false">JEDA</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack mengenali koneksi Bluetooth ke mobilmu untuk memulai dan mengakhiri perekaman perjalanan secara otomatis.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack memakai jaringan lokal untuk terhubung ke server pengembangan atau beta saat pengujian.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack memakai lokasimu di latar belakang agar rute tetap terekam saat aplikasi tidak di layar atau layar terkunci.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack mengumpulkan lokasi akurat untuk memulai dan merekam perjalanan secara otomatis, meskipun aplikasi ditutup atau tidak digunakan. Perjalanan hanya diunggah jika Anda memublikasikannya atau mengaktifkan Sinkronisasi awan.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack memakai lokasimu untuk merekam rute perjalanan di peta, menghitung jarak dan kecepatan, serta menyimpan perjalanan ke buku harianmu.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack memakai data gerak untuk mengenali awal perjalanan dan menyalakan perekaman secara otomatis.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack menyimpan gambar perjalanan ke Foto supaya kamu bisa membagikannya sebagai story atau unggahan.</string>

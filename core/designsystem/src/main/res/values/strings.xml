@@ -1246,7 +1246,7 @@
     <string name="onboardingAllow" formatted="false">Allow</string>
     <string name="onboardingAlreadyGranted" formatted="false">Access already granted</string>
     <string name="onboardingBackgroundAllow" formatted="false">Allow all the time</string>
-    <string name="onboardingBackgroundSub" formatted="false">Location access “All the time” helps detect drives when the app isn’t open. Physical activity detects movement without continuously running GPS. You can allow or deny each request.</string>
+    <string name="onboardingBackgroundSub" formatted="false">TripTrack collects precise location to start and record trips automatically, even when the app is closed or not in use. Trips are uploaded only if you publish them or enable Cloud Sync.\n\nPhysical activity helps detect driving. You can allow or deny each request.</string>
     <string name="onboardingBackgroundTitle" formatted="false">Recording in the background</string>
     <string name="onboardingContinue" formatted="false">Continue</string>
     <string name="onboardingLocation" formatted="false">Allow location access</string>
@@ -1275,7 +1275,7 @@
     <string name="pauseShort" formatted="false">PAUSED</string>
     <string name="permission_NSBluetoothAlwaysUsageDescription" formatted="false">TripTrack detects when you connect to your car\'s Bluetooth so it can automatically start and end trip recording.</string>
     <string name="permission_NSLocalNetworkUsageDescription" formatted="false">TripTrack uses the local network to discover services on your Wi-Fi when you opt into developer or beta builds.</string>
-    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack uses your location in the background to continue recording your driving route while the app is minimized or the screen is locked.</string>
+    <string name="permission_NSLocationAlwaysAndWhenInUseUsageDescription" formatted="false">TripTrack collects precise location to start and record trips automatically, even when the app is closed or not in use. Trips are uploaded only if you publish them or enable Cloud Sync.</string>
     <string name="permission_NSLocationWhenInUseUsageDescription" formatted="false">TripTrack uses your location to record your driving route on the map, calculate distance and speed, and save the trip to your travel journal.</string>
     <string name="permission_NSMotionUsageDescription" formatted="false">TripTrack uses motion data to detect when you\'re driving and automatically start recording trips.</string>
     <string name="permission_NSPhotoLibraryAddUsageDescription" formatted="false">TripTrack saves your trip story image to Photos so you can share it as a story or post.</string>
