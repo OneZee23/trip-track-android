@@ -50,10 +50,7 @@ internal fun MeNavAddButton(description: String, enabled: Boolean, onClick: () -
         .background(AppTheme.colors.card, CircleShape).plainPressFeedback(interaction)
         .clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
         .semantics { contentDescription = description }.testTag("garage_add"), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.size(22.dp)) {
-            drawLine(ink, Offset(size.width * .5f, size.height * .18f), Offset(size.width * .5f, size.height * .82f), 2.dp.toPx(), StrokeCap.Round)
-            drawLine(ink, Offset(size.width * .18f, size.height * .5f), Offset(size.width * .82f, size.height * .5f), 2.dp.toPx(), StrokeCap.Round)
-        }
+        Glyph(AppGlyph.plus, contentDescription = null, tint = ink, size = 22.dp)
     }
 }
 

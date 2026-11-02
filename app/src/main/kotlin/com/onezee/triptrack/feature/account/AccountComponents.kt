@@ -58,6 +58,8 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.onezee.triptrack.designsystem.components.AppGlyph
+import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.theme.AppTheme
@@ -75,8 +77,24 @@ enum class AccountGlyph {
 /** iOS `Image(systemName:)` for an [AccountGlyph]; decoration, so hidden from TalkBack. */
 @Composable
 fun AccountIcon(glyph: AccountGlyph, tint: Color, modifier: Modifier = Modifier, size: Dp = 22.dp) {
-    Canvas(modifier.size(size)) {
-        scale(this.size.width / 24f, this.size.height / 24f, pivot = Offset.Zero) { drawAccountGlyph(glyph, tint) }
+    val sharedGlyph = when (glyph) {
+        AccountGlyph.globe -> AppGlyph.globe
+        AccountGlyph.lockFill -> AppGlyph.lockFill
+        AccountGlyph.flag -> AppGlyph.flag
+        AccountGlyph.flagFill -> AppGlyph.flagFill
+        AccountGlyph.camera -> AppGlyph.camera
+        AccountGlyph.car -> AppGlyph.car
+        AccountGlyph.clock -> AppGlyph.clock
+        AccountGlyph.arrowClockwise -> AppGlyph.arrowClockwise
+        AccountGlyph.gearFill -> AppGlyph.gearshapeFill
+        else -> null
+    }
+    if (sharedGlyph != null) {
+        Glyph(sharedGlyph, contentDescription = null, modifier = modifier, tint = tint, size = size)
+    } else {
+        Canvas(modifier.size(size)) {
+            scale(this.size.width / 24f, this.size.height / 24f, pivot = Offset.Zero) { drawAccountGlyph(glyph, tint) }
+        }
     }
 }
 

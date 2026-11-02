@@ -19,6 +19,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.dp
+import com.onezee.triptrack.designsystem.components.AppGlyph
+import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.logic.UnitNumber
@@ -43,10 +45,7 @@ fun ReplayCameraToggle(followsCar: Boolean, enabled: Boolean, onClick: () -> Uni
         .semantics { contentDescription = if (followsCar) strings.replayShowWholeRoute() else strings.replayFollowTheCar() }
         .testTag("replay_camera_toggle"), contentAlignment = Alignment.Center) {
         if (followsCar) Glyph(AppGlyph.map, null, tint = colors.text, size = 18.dp)
-        else Canvas(Modifier.size(18.dp)) {
-            drawPath(Path().apply { moveTo(size.width * .9f, size.height * .1f); lineTo(size.width * .1f, size.height * .43f)
-                lineTo(size.width * .48f, size.height * .52f); lineTo(size.width * .57f, size.height * .9f); close() }, colors.text)
-        }
+        else Glyph(AppGlyph.locationFill, null, tint = colors.text, size = 18.dp)
     }
 }
 

@@ -3,7 +3,6 @@ package com.onezee.triptrack.designsystem.navigation
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,15 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -47,6 +38,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import com.onezee.triptrack.designsystem.components.AppGlyph
+import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.theme.AppTheme
@@ -54,7 +47,6 @@ import com.onezee.triptrack.designsystem.theme.AtlasTheme
 import com.onezee.triptrack.designsystem.theme.CapsuleShape
 import com.onezee.triptrack.designsystem.theme.InterWeight
 import com.onezee.triptrack.designsystem.theme.appStrings
-import com.onezee.triptrack.designsystem.theme.continuousRoundedRect
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.iosShadow
 import com.onezee.triptrack.designsystem.theme.points
@@ -252,62 +244,16 @@ private fun RowScope.RecordDisk(label: String, onClick: () -> Unit) {
     }
 }
 
-/** The mock's 24 × 24 outline glyphs, path for path: SF Symbols have another optical weight. */
 @Composable
 internal fun TabGlyph(tab: AppTab, tint: Color, size: Dp) {
-    val path = remember(tab) { tabGlyphPath(tab) }
-    val width = if (tab == AppTab.record) 2f else 1.8f
-    Canvas(Modifier.size(size)) {
-        scale(this.size.width / 24f, this.size.height / 24f, pivot = Offset.Zero) {
-            drawPath(path, tint, style = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round))
-        }
-    }
+    Glyph(tab.appGlyph, contentDescription = null, tint = tint, size = size)
 }
 
-internal fun tabGlyphPath(tab: AppTab): Path = Path().apply {
-    when (tab) {
-        AppTab.home -> {
-            // SwiftUI Path.addRoundedRect defaults to continuous corners.
-            addPath(continuousRoundedRect(Size(16f, 16f), 3.5f), Offset(4f, 4f))
-            moveTo(4f, 12f)
-            lineTo(20f, 12f)
-        }
-        AppTab.maps -> {
-            moveTo(3f, 6.5f)
-            lineTo(9f, 3.5f)
-            lineTo(15f, 6.5f)
-            lineTo(21f, 3.5f)
-            lineTo(21f, 17.5f)
-            lineTo(15f, 20.5f)
-            lineTo(9f, 17.5f)
-            lineTo(3f, 20.5f)
-            close()
-            moveTo(9f, 3.5f)
-            lineTo(9f, 17.5f)
-            moveTo(15f, 6.5f)
-            lineTo(15f, 20.5f)
-        }
-        AppTab.record -> {
-            addOval(Rect(3.5f, 3.5f, 20.5f, 20.5f))
-            addOval(Rect(9.8f, 9.8f, 14.2f, 14.2f))
-            moveTo(3.8f, 10.5f)
-            cubicTo(6.3f, 9.5f, 9f, 9f, 12f, 9f)
-            cubicTo(15f, 9f, 17.7f, 9.5f, 20.2f, 10.5f)
-            moveTo(12f, 14.2f)
-            lineTo(12f, 20.5f)
-        }
-        AppTab.places -> {
-            addOval(Rect(8.5f, 4f, 15.5f, 11f))
-            moveTo(12f, 11f)
-            lineTo(12f, 20f)
-            moveTo(8f, 20.5f)
-            lineTo(16f, 20.5f)
-        }
-        AppTab.profile -> {
-            addOval(Rect(8.2f, 4.2f, 15.8f, 11.8f))
-            moveTo(4.5f, 20.5f)
-            cubicTo(5.9f, 16.8f, 8.7f, 14.9f, 12f, 14.9f)
-            cubicTo(15.3f, 14.9f, 18.1f, 16.8f, 19.5f, 20.5f)
-        }
+private val AppTab.appGlyph: AppGlyph
+    get() = when (this) {
+        AppTab.home -> AppGlyph.tabHome
+        AppTab.maps -> AppGlyph.tabMaps
+        AppTab.record -> AppGlyph.tabRecord
+        AppTab.places -> AppGlyph.tabPlaces
+        AppTab.profile -> AppGlyph.tabProfile
     }
-}
