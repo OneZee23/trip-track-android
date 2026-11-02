@@ -81,7 +81,8 @@ internal fun VehiclePassportSheets(graph: AppGraph, model: VehiclePassportViewMo
                     val map = remember { MapHostState() }
                     val points = state.passport.routes.flatten()
                     LaunchedEffect(points) { if (points.isNotEmpty()) map.execute(MapCameraCommand.FitRoute(GeoBounds(points.minOf { it.latitude }, points.maxOf { it.latitude }, points.minOf { it.longitude }, points.maxOf { it.longitude }), animated = false)) }
-                    MapHost(map, Modifier.weight(1f), routes = MapRoutes(state.passport.routes.map { RouteGeometry.build(it, preview = true) }, RouteAppearance.plain))
+                    MapHost(map, Modifier.weight(1f), routes = MapRoutes(state.passport.routes.map { RouteGeometry.build(it, preview = true) }, RouteAppearance.plain),
+                        systemInsets = WindowInsets(0))
                 }
                 VehicleSheet.trips -> {
                     val trips by produceState<List<Trip>>(emptyList(), vehicle.id) { value = graph.trips.fetchVehicleGarageTrips(vehicle.id) }

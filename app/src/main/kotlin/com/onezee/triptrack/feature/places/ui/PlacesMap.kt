@@ -3,6 +3,7 @@ package com.onezee.triptrack.feature.places.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +53,8 @@ fun PlacesMapLayer(
     selectedId: UUID?,
     mapState: MapHostState,
     chrome: MapInsets,
+    /** MapHost's: the tab's map fills the screen, a place's map ends under its sheet. */
+    systemInsets: WindowInsets,
     strings: AppStrings,
     modifier: Modifier = Modifier,
     onPinTap: (UUID) -> Unit = {},
@@ -100,6 +103,7 @@ fun PlacesMapLayer(
         markers = markers,
         onMarkerTap = { marker -> marker.id.substringAfter(':').let { runCatching { UUID.fromString(it) }.getOrNull() }?.let(onPinTap) },
         chromeInsets = chrome,
+        systemInsets = systemInsets,
         styleUri = style,
     )
 }

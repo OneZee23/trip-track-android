@@ -4,7 +4,6 @@ import android.content.ComponentCallbacks2
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,9 +34,9 @@ import org.maplibre.android.maps.MapView
  * The map: MapLibre with OpenFreeMap tiles, the Atlas fog drawn inside its frame, routes and markers
  * above the fog, and camera commands through [state].
  *
- * The map is drawn edge to edge: [chromeInsets] is what the screen's own chrome covers (a sheet, a
- * header), added to the system bars, which together play the role of MapKit's safe area. Camera fits
- * clear it, and MapLibre's logo, attribution and compass stay outside it.
+ * [chromeInsets] is what the screen's own chrome covers (a sheet, a header), added to the
+ * [systemInsets] the map reaches under; together they play the role of MapKit's safe area. Camera
+ * fits clear it, and MapLibre's logo, attribution and compass stay outside it.
  *
  * No tilt, rotation allowed: the fog's frame is affine only without perspective, as on iOS.
  */
@@ -50,6 +49,14 @@ fun MapHost(
     markers: List<MapMarker> = emptyList(),
     onMarkerTap: (MapMarker) -> Unit = {},
     chromeInsets: MapInsets = MapInsets.Zero,
+    /**
+     * The system bars this map reaches under; a full-screen map takes them all. iOS gives a view only
+     * its own overlap with the unsafe area, so a map inside a card or a sheet passes none: the whole
+     * window's insets on the 139 dp summary hero left the route no height, and the hero showed the
+     * whole region (emulator run, 1 Nov 2026). No default, like Measure's unit: a new map does not
+     * build without naming them.
+     */
+    systemInsets: WindowInsets,
     styleUri: String = MapStyles.OPEN_FREE_MAP_LIBERTY,
     /**
      * Render into a TextureView instead of a SurfaceView. For a map that lives inside moving UI (a
@@ -116,7 +123,7 @@ fun MapHost(
     }
 
     // Insets are absolute left and right, like UIEdgeInsets, whatever the reading direction.
-    val system = WindowInsets.safeDrawing.asPaddingValues()
+    val system = systemInsets.asPaddingValues()
     val systemArea = MapInsets(
         top = system.calculateTopPadding().value.toDouble(),
         left = system.calculateLeftPadding(LayoutDirection.Ltr).value.toDouble(),

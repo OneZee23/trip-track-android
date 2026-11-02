@@ -10,7 +10,9 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -232,6 +234,7 @@ fun AtlasMapLayer(
         markers = markers,
         onMarkerTap = onMarker,
         chromeInsets = chrome,
+        systemInsets = WindowInsets.safeDrawing,
         styleUri = MapStyles.OPEN_FREE_MAP_LIBERTY,
         onMapTap = onTap,
         showsUserLocation = state.locationPermission == com.onezee.triptrack.feature.atlas.AtlasLocationPermission.allowed,

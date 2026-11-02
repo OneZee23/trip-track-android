@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -172,7 +173,7 @@ private fun HomeMapCard(home: HomeState, fallback: GeoPoint?, onPlace: (GeoPoint
                 }
             }
             MapHost(mapState, Modifier.fillMaxSize(), routes = ring, markers = markers, onMapTap = { haptics.tap(); onPlace(it.coordinate) },
-                showsUserLocation = true)
+                showsUserLocation = true, systemInsets = WindowInsets(0))
         }
         // The hint stands only while there is no home: it explains the screen's one action.
         if (home.coordinate == null) {

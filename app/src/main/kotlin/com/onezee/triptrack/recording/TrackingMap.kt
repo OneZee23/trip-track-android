@@ -120,6 +120,7 @@ internal fun TrackingMap(
             gesturesEnabled = !recorder.isRecording,
             chromeInsets = MapInsets(bottom = bottomInset, top = 52.0),
             cameraChromeInsets = MapInsets.Zero,
+            systemInsets = WindowInsets.safeDrawing,
             styleUri = LiveMaps.style(true),
         )
     }

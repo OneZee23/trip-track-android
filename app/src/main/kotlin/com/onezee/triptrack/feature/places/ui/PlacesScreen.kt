@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
@@ -213,6 +214,7 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
             selectedId = panel.selectedPlace ?: panel.selectedHint,
             mapState = mapState,
             chrome = MapInsets(bottom = chromeBottom.coerceAtLeast(0.0)),
+            systemInsets = WindowInsets.safeDrawing,
             strings = strings,
             onPinTap = { haptics.tap(); panel.selectPin(it, state) },
         )

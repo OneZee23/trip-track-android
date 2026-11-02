@@ -6,8 +6,12 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -121,6 +125,8 @@ fun TripLiveMap(
         onMarkerTap = onMarkerTap,
         chromeInsets = chromeInsets,
         cameraChromeInsets = MapInsets.Zero,
+        // The hero stands under the status bar and ends far above the navigation bar.
+        systemInsets = if (fullscreen) WindowInsets.safeDrawing else WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
         styleUri = style,
         // The one map moves between the hero and the fullscreen layer and fades in both.
         textureMode = true,

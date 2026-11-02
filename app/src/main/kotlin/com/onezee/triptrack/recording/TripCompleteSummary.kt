@@ -201,7 +201,7 @@ private fun SummaryHero(trip: Trip, fog: RevealedLayer?, revealed: Boolean, modi
         if (!LocalLiveMaps.current || LocalInspectionMode.current) TrackingMapPlaceholder(coordinates, Modifier.fillMaxSize())
         else MapHost(map, Modifier.fillMaxSize(), fog = fog?.let { MapFog(it, FogLook(FogPalette.NIGHT)) },
             routes = route?.let { MapRoutes(listOf(it), RouteAppearance.overFog(FogPalette.NIGHT)) },
-            gesturesEnabled = false, textureMode = true, styleUri = LiveMaps.style(true))
+            gesturesEnabled = false, textureMode = true, styleUri = LiveMaps.style(true), systemInsets = WindowInsets(0))
         if (revealed) SummaryRevealVeil(coordinates, Modifier.fillMaxSize())
     }
 }

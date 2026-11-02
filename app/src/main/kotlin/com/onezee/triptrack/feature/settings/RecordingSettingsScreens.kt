@@ -256,7 +256,7 @@ internal fun HomeSettingsContent(home: HomeState, unit: DistanceUnit, onBack: ()
         val map = remember { MapHostState() }
         LaunchedEffect(Unit) { map.execute(MapCameraCommand.Move(home.coordinate ?: GeoPoint(0.0, 0.0), if (home.coordinate == null) 2.0 else 14.0, false)) }
         Box(Modifier.weight(1f)) {
-            MapHost(map, Modifier.fillMaxSize())
+            MapHost(map, Modifier.fillMaxSize(), systemInsets = WindowInsets(0))
             Text("⌖", Modifier.align(Alignment.Center), style = inter(38f), color = AppTheme.accent)
         }
         Text(strings.homePlaceHint(), Modifier.padding(16.dp), style = AppType.meta, color = AppTheme.colors.textSecondary)
