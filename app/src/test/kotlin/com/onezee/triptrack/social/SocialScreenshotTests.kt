@@ -54,6 +54,34 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
     }
     @Test fun follows() { showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.followers),dark);shot("followers") }
     @Test fun following() { showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.following),dark);shot("following") }
+    @Test fun followersEmpty() {
+        api.peopleValue={_,_->SocialFollowersResponse(emptyList(),0)}
+        showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.followers),dark);shot("followers_empty")
+    }
+    @Test fun followersFailed() {
+        api.peopleValue={_,_->throw ApiError.Transport("offline")}
+        showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.followers),dark);shot("followers_error")
+    }
+    @Test fun reportSent() {
+        show(dark) { ReportSheet(ReportTarget.User(SocialFixtures.account),services) {} }
+        compose.onNodeWithTag("report_reason_${ReportReason.entries.first().rawValue}").performClick()
+        compose.onNodeWithTag("report_submit").performClick()
+        compose.waitForIdle();compose.onNodeWithTag("report_sent").assertExists()
+        window("report_sent")
+    }
+    @Test fun achievementsEmpty() {
+        showDestination(TripsDestination.PublicAchievements(SocialFixtures.account,"Test Traveller",emptyList()),dark)
+        compose.onNodeWithTag("achievements_filter_1").performClick()
+        compose.onNodeWithTag("achievements_empty").assertExists()
+        shot("achievements_empty")
+    }
+    @Test fun hiddenBadge() {
+        val hidden=com.onezee.triptrack.logic.BadgeDefinitions.all.first { it.isHidden }.id
+        showDestination(TripsDestination.PublicAchievements(SocialFixtures.account,"Test Traveller",emptyList()),dark)
+        compose.onNodeWithTag("achievements_filter_2").performClick()
+        compose.onNodeWithTag("achievement_$hidden").performClick()
+        window("badge_hidden")
+    }
     @Test fun garage() { showDestination(TripsDestination.PublicGarage(SocialFixtures.account,"Test Traveller"),dark);shot("garage") }
     @Test fun garageEmpty() { api.cars=emptyList();showDestination(TripsDestination.PublicGarage(SocialFixtures.account,"Test Traveller"),dark);shot("garage_empty") }
     @Test fun passport() { showDestination(TripsDestination.PublicCar(SocialFixtures.account,SocialFixtures.car.id,"Test Traveller",SocialFixtures.car),dark);shot("passport") }
@@ -136,6 +164,11 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
         api.notificationsValue=listOf(SocialFixtures.notice("companion_invite"))
         showDestination(TripsDestination.Inbox,dark);shot("inbox_invite")
         compose.onAllNodesWithText("LEAKED-TITLE").assertCountEquals(0)
+    }
+    @Test fun inboxReactions() {
+        // The kind badge of a reaction is the drawn icon, a legacy key included (❤️ draws as 👍).
+        api.notificationsValue=listOf(SocialFixtures.notice("reaction").copy(emoji="🔥"),SocialFixtures.notice("reaction").copy(emoji="❤️"),SocialFixtures.notice("comment"))
+        showDestination(TripsDestination.Inbox,dark);shot("inbox_reactions")
     }
     @Test fun inboxEmpty() { api.notificationsValue=emptyList();showDestination(TripsDestination.Inbox,dark);shot("inbox_empty") }
     @Test fun profileClosed() { api.profileError=ApiError.UnknownServer("USER_NOT_FOUND","hidden");profile();shot("profile_closed") }

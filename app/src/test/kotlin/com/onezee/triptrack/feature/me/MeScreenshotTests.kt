@@ -78,6 +78,15 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun garage() = shot("garage") {
         GarageScreen(MeFixtures.garage, DistanceUnit.km, {}, {}, {}, {}, {})
     }
+    @Test fun garageEmpty() = shot("garage_empty") {
+        GarageScreen(GarageState(loaded = true), DistanceUnit.km, {}, {}, {}, {}, {})
+    }
+    @Test fun vehiclePhotosEmpty() = shot("vehicle_photos_empty") {
+        Column { VehiclePhotosEmpty(busy = false) {} }
+    }
+    @Test fun clubs() = shot("clubs") {
+        ClubsContent(com.onezee.triptrack.network.GroupsWaitlistState(total = 128, clubs = emptyMap(), joined = false, joinedClubs = emptyList()), busy = false, failed = false, onBack = {}, onToggle = {})
+    }
     @Test fun passport() = shot("passport") {
         VehiclePassportScreen(MeFixtures.passport, DistanceUnit.km, {}, {}, {}, {})
     }

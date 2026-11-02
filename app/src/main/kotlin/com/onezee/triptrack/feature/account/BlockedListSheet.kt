@@ -131,17 +131,19 @@ fun SheetScope.BlockedListContent(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         when {
-            loading && users.isEmpty() -> Box(Modifier.fillMaxWidth().padding(vertical = 60.dp), contentAlignment = Alignment.Center) {
-                Spinner(colors.textTertiary, size = 22.dp)
-            }
+            loading && users.isEmpty() -> com.onezee.triptrack.feature.social.ui.SkeletonRows(4, Modifier.padding(top = 12.dp))
             // Failed is not empty: an offline fetch must not claim «you haven't blocked anyone».
             failed && users.isEmpty() -> Column(Modifier.fillMaxWidth().padding(vertical = 60.dp).testTag("blocked_error_state"),
                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                com.onezee.triptrack.ui.EmptyStateIllustration(com.onezee.triptrack.R.drawable.empty_offline, size = 148.dp)
                 Text(strings.blockedListLoadFailed(), style = inter(13f), color = colors.textTertiary, textAlign = TextAlign.Center)
                 SmallButton(strings.retry(), Modifier.testTag("blocked_retry_button"), shape = CircleShape, onClick = onRetry)
             }
-            users.isEmpty() -> Text(strings.blockedListYouHavenT(), style = inter(13f), color = colors.textTertiary, textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp))
+            users.isEmpty() -> Column(Modifier.fillMaxWidth().padding(vertical = 60.dp).testTag("blocked_empty_state"),
+                horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                com.onezee.triptrack.ui.EmptyStateIllustration(com.onezee.triptrack.R.drawable.empty_followers, size = 148.dp)
+                Text(strings.blockedListYouHavenT(), style = inter(13f), color = colors.textTertiary, textAlign = TextAlign.Center)
+            }
             else -> users.forEach { user -> BlockedRow(user, pending == user.id, strings) { onUnblock(user) } }
         }
     }

@@ -67,7 +67,8 @@ internal open class FakeSocialApi : SocialApi {
     override suspend fun journeys(id: UUID, cursor: String?, limit: Int) = PublicJourneysResponse(journeysValue)
     override suspend fun publicTrips(id: UUID, cursor: String?, limit: Int?, vehicleId: UUID?) = publicPage(cursor)
     override suspend fun follow(id: UUID, follow: Boolean) {}
-    override suspend fun people(id: UUID, mode: FollowListMode) = SocialFollowersResponse(listOf(SocialFixtures.author), 1)
+    var peopleValue: suspend (UUID, FollowListMode) -> SocialFollowersResponse = { _, _ -> SocialFollowersResponse(listOf(SocialFixtures.author), 1) }
+    override suspend fun people(id: UUID, mode: FollowListMode) = peopleValue(id, mode)
     override suspend fun block(id: UUID, block: Boolean) {}
     override suspend fun report(target: ReportTarget, reason: ReportReason, notes: String?) {}
     override suspend fun shareTrip(tripId: UUID) = error("unused")

@@ -165,6 +165,10 @@ class AccountScreenshotTests(private val dark: Boolean) {
         }
     }
 
+    @Test fun blockedListEmpty() = shot("blocked_list_empty") {
+        SheetFrame { BlockedListContent(users = emptyList(), loading = false, failed = false, pending = null, onRetry = {}, onUnblock = {}) }
+    }
+
     @Test fun blockedListFailed() = shot("blocked_list_failed") {
         SheetFrame { BlockedListContent(users = emptyList(), loading = false, failed = true, pending = null, onRetry = {}, onUnblock = {}) }
     }

@@ -69,7 +69,16 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
                 }
             }
         }
-        LazyVerticalGrid(GridCells.Adaptive(100.dp), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // iOS emptyState: «nothing unlocked yet» under the shelf drawing; second person for your own
+        // collection, third for somebody else's.
+        if (displayed.isEmpty()) Column(Modifier.fillMaxWidth().padding(top = 24.dp).padding(horizontal = 16.dp).testTag("achievements_empty"),
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            com.onezee.triptrack.ui.EmptyStateIllustration(com.onezee.triptrack.R.drawable.empty_achievements, size = 148.dp)
+            Text(strings.achievementsEmpty(), style = inter(13f, InterWeight.bold), color = AppTheme.colors.text)
+            Text(if (ownerName == null) strings.achievementsEmptyHint() else strings.achievementsEmptyOtherHint(), style = inter(11f, InterWeight.semibold),
+                color = AppTheme.colors.textSecondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        }
+        else LazyVerticalGrid(GridCells.Adaptive(100.dp), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(displayed.sortedWith(compareByDescending<AchievementRow> { it.unlocked }.thenBy { it.id in hidden && !it.unlocked }.thenByDescending { it.rarity.rawValue }), key = { it.id }) { badge ->
                 Column(Modifier.fillMaxWidth().testTag("achievement_${badge.id}").surfaceCard(16.dp).clickable(role = Role.Button) { onBadge(badge.id) }.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     if (badge.id in hidden && !badge.unlocked) Box(Modifier.size(80.dp), contentAlignment = Alignment.Center) { Glyph(AppGlyph.lockFill, null, tint = AppTheme.colors.textTertiary, size = 28.dp) } else BadgeArt(badge)

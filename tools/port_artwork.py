@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+"""Copy the owner's drawn artwork from the iOS asset catalog: reactions, illustrations, marks.
+
+Vectors become VectorDrawables path for path: nothing is traced, smoothed or redrawn. A template
+asset (`template-rendering-intent: template`) keeps the colours it was drawn with; the app tints it
+with a SrcIn colour filter, which keeps only the drawing's alpha, exactly what UIKit's template
+rendering does. PNG illustrations are copied byte for byte into drawable-nodpi and drawn with
+FilterQuality.None, the Android form of `.interpolation(.none)`.
+
+Run from anywhere: `python3 tools/port_artwork.py ~/OneZeeProjects/trip-track`. The iOS checkout is
+only read. tools/port_me_assets.py keeps the badges, road scenes, sprites and platforms.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+import argparse
+import re
+import shutil
+import xml.etree.ElementTree as ET
+
+SVG = "{http://www.w3.org/2000/svg}"
+
+# iOS image set -> Android resource. Android resource names are lower snake case.
+VECTORS = {
+    **{f"reaction_{base}_{state}": f"reaction_{base}_{state}"
+       for base in ("fire", "wow", "finish", "pass", "frame", "like") for state in ("outline", "fill")},
+    "TelegramIcon": "telegram_icon",
+    "drive2_icon": "drive2_icon",
+}
+
+# The PNG scenes and marks that have a place on an Android screen (see .codex-out/inventory.md).
+BITMAPS = [
+    "empty_achievements", "empty_followers", "empty_garage", "empty_notifications",
+    "error_generic", "success_sent", "badge_locked", "loading_road",
+    "club_miata", "club_vag", "club_trucking", "club_offroad",
+]
+
+NAMED_COLOURS = {"white": "#FFFFFF", "black": "#000000"}
+
+
+def colour(value: str) -> str | None:
+    value = NAMED_COLOURS.get(value.strip().lower(), value.strip())
+    if value == "none":
+        return None
+    match = re.fullmatch(r"#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})", value)
+    if not match:
+        raise ValueError(f"Unsupported colour {value!r}")
+    digits = match.group(1)
+    if len(digits) == 3:
+        digits = "".join(c * 2 for c in digits)
+    return "#FF" + digits.upper()
+
+
+def translation(transform: str | None) -> tuple[str, str] | None:
+    if not transform:
+        return None
+    match = re.fullmatch(r"\s*translate\(\s*([-\d.]+)[\s,]+([-\d.]+)\s*\)\s*", transform)
+    if not match:
+        raise ValueError(f"Unsupported transform {transform!r}")
+    return match.group(1), match.group(2)
+
+
+def convert(node: ET.Element, inherited: dict, indent: str, out: list[str], source: Path) -> None:
+    # Presentation attributes inherit (the reaction SVGs set fill="none" on the root).
+    style = dict(inherited)
+    for key in ("fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "fill-rule"):
+        if key in node.attrib:
+            style[key] = node.attrib[key]
+    for child in node:
+        kind = child.tag[len(SVG):] if child.tag.startswith(SVG) else child.tag
+        if kind == "g":
+            move = translation(child.attrib.get("transform"))
+            if move:
+                out.append(f'{indent}<group android:translateX="{move[0]}" android:translateY="{move[1]}">')
+                convert(child, style, indent + "    ", out, source)
+                out.append(f"{indent}</group>")
+            else:
+                convert(child, style, indent, out, source)
+        elif kind == "path":
+            attrs = dict(style)
+            for key in ("fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "fill-rule"):
+                if key in child.attrib:
+                    attrs[key] = child.attrib[key]
+            parts = []
+            fill = colour(attrs.get("fill", "black"))
+            if fill:
+                parts.append(f'android:fillColor="{fill}"')
+                if attrs.get("fill-rule") == "evenodd":
+                    parts.append('android:fillType="evenOdd"')
+            stroke = colour(attrs["stroke"]) if "stroke" in attrs else None
+            if stroke:
+                parts.append(f'android:strokeColor="{stroke}"')
+                parts.append(f'android:strokeWidth="{attrs.get("stroke-width", "1")}"')
+                if "stroke-linecap" in attrs:
+                    parts.append(f'android:strokeLineCap="{attrs["stroke-linecap"]}"')
+                if "stroke-linejoin" in attrs:
+                    parts.append(f'android:strokeLineJoin="{attrs["stroke-linejoin"]}"')
+            if not parts:
+                continue
+            parts.append(f'android:pathData="{child.attrib["d"]}"')
+            out.append(f"{indent}<path " + " ".join(parts) + " />")
+        else:
+            raise ValueError(f"Unsupported SVG element {kind} in {source}")
+
+
+def vector(source: Path, target: Path, name: str) -> None:
+    root = ET.parse(source).getroot()
+    _, _, width, height = root.attrib["viewBox"].split()
+    lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        f"<!-- iOS: Assets.xcassets/{name}.imageset/{source.name}. Generated by tools/port_artwork.py. -->",
+        '<vector xmlns:android="http://schemas.android.com/apk/res/android"',
+        f'    android:width="{width}dp" android:height="{height}dp"',
+        f'    android:viewportWidth="{width}" android:viewportHeight="{height}">',
+    ]
+    convert(root, {"fill": root.attrib.get("fill", "black")}, "    ", lines, source)
+    lines.append("</vector>")
+    target.write_text("\n".join(lines) + "\n")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("ios", type=Path)
+    args = parser.parse_args()
+    catalogue = args.ios / "TripTrack/Resources/Assets.xcassets"
+    res = Path(__file__).resolve().parents[1] / "app/src/main/res"
+    drawables, bitmaps = res / "drawable", res / "drawable-nodpi"
+    for image_set, resource in VECTORS.items():
+        svgs = sorted((catalogue / f"{image_set}.imageset").glob("*.svg"))
+        if len(svgs) != 1:
+            raise ValueError(f"Expected one SVG in {image_set}")
+        vector(svgs[0], drawables / f"{resource}.xml", image_set)
+    for name in BITMAPS:
+        pngs = sorted((catalogue / f"{name}.imageset").glob("*.png"))
+        if len(pngs) != 1:
+            raise ValueError(f"Expected one PNG in {name}")
+        shutil.copyfile(pngs[0], bitmaps / f"{name}.png")
+
+
+if __name__ == "__main__":
+    main()

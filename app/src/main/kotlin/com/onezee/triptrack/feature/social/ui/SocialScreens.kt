@@ -46,6 +46,8 @@ import com.onezee.triptrack.feature.settings.MeSection
 import com.onezee.triptrack.feature.social.*
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
+import com.onezee.triptrack.R
+import com.onezee.triptrack.ui.EmptyStateIllustration
 import com.onezee.triptrack.ui.PhotoImage
 import com.onezee.triptrack.ui.PhotoSource
 import com.onezee.triptrack.ui.RelativeTripDate
@@ -92,10 +94,24 @@ fun FollowListScreen(dest: TripsDestination.FollowList, social: SocialFeature, n
             }
             when {
                 state.isLoading && state.users.isEmpty() -> item(key = "skeleton") { SkeletonRows(6, Modifier.padding(top = 12.dp)) }
-                state.loadFailed && state.users.isEmpty() -> item(key = "error") { SocialMessageState(strings.followListCouldnTLoad(), retry = { vm.load() }, tag = "follow_error") }
+                state.loadFailed && state.users.isEmpty() -> item(key = "error") {
+                    // iOS errorState: the error scene, the line, «Повторить» in accent.
+                    Column(Modifier.fillMaxWidth().padding(vertical = 60.dp, horizontal = 24.dp).testTag("follow_error"),
+                        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        EmptyStateIllustration(R.drawable.error_generic, size = 140.dp)
+                        Text(strings.followListCouldnTLoad(), style = inter(14f, InterWeight.semibold), color = colors.textSecondary, textAlign = TextAlign.Center)
+                        Text(strings.retry(), Modifier.padding(top = 4.dp).clickable(role = Role.Button) { haptics.tap(); vm.load() }.testTag("follow_error_retry"),
+                            style = inter(13f, InterWeight.semibold), color = AppTheme.accent)
+                    }
+                }
                 state.users.isEmpty() -> item(key = "empty") {
-                    SocialMessageState(if (state.mode == FollowListMode.followers) strings.followListNoFollowersYet() else strings.followListNotFollowingAnyone(),
-                        glyph = SocialGlyph.personTwo, tag = "follow_empty")
+                    // iOS emptyState: the followers scene over one quiet line.
+                    Column(Modifier.fillMaxWidth().padding(vertical = 60.dp).testTag("follow_empty"),
+                        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        EmptyStateIllustration(R.drawable.empty_followers, size = 148.dp)
+                        Text(if (state.mode == FollowListMode.followers) strings.followListNoFollowersYet() else strings.followListNotFollowingAnyone(),
+                            style = inter(13f), color = colors.textTertiary, textAlign = TextAlign.Center)
+                    }
                 }
                 else -> items(state.users, key = { it.id }) { user ->
                     PersonRow(user, social, onClick = { haptics.tap(); navigator.push(TripsDestination.PublicProfile(user.id, user)) })
@@ -145,8 +161,8 @@ fun ReportSheet(target: ReportTarget, social: SocialFeature, onDismiss: () -> Un
                 SheetCloseCircle(onClick = { sheet.dismiss() })
             }
             if (sent) {
-                Column(Modifier.fillMaxWidth().padding(top = 40.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    Glyph(AppGlyph.checkmarkCircleFill, null, tint = AppTheme.green, size = 64.dp)
+                Column(Modifier.fillMaxWidth().padding(top = 40.dp).testTag("report_sent"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    EmptyStateIllustration(R.drawable.success_sent, size = 132.dp)
                     Text(strings.reportReportSent(), style = inter(18f, InterWeight.bold), color = colors.text)
                     Text(strings.reportThankYouWe(), style = inter(13f), color = colors.textSecondary, textAlign = TextAlign.Center)
                     SheetButton(strings.done(), AppTheme.accent, Modifier.padding(top = 12.dp).testTag("report_done")) { haptics.tap(); sheet.dismiss() }
@@ -325,7 +341,6 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
     var report by remember { mutableStateOf<ReportTarget?>(null) }
     var gallery by remember { mutableStateOf<PublicPhotoSelection?>(null) }
     var signIn by remember { mutableStateOf(false) }
-    val uri = androidx.compose.ui.platform.LocalUriHandler.current
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_vehicle")) {
         SocialNavBar(state.vehicle?.name ?: strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name) {
@@ -379,9 +394,7 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
                     }
                     car.createdAt?.let { Text(strings.inGarageSince(com.onezee.triptrack.feature.stats.StatsPeriodFormat.monthYearGenitive(it, strings.language, strings.zone)), Modifier.fillMaxWidth().padding(top = 12.dp), style = AppType.caption, color = colors.textTertiary) }
                 }
-                car.drive2Url?.let(com.onezee.triptrack.logic.Drive2Link::normalized)?.let { link ->
-                    MeSection(strings.garageDrive2Title()) { MeRow(strings.garageDrive2Title(), onClick = { uri.openUri(link) }) }
-                }
+                com.onezee.triptrack.feature.garage.Drive2LogbookRow(car.drive2Url)
                 GarageMileageCard(car.odometerKm, state.biography?.aggregates?.totalKm ?: 0.0,
                     vehicleYearDistances(state.biography?.trips.orEmpty(), car.id, strings.zone), unit, editable = false) {}
                 val routes = state.biography?.routes.orEmpty()

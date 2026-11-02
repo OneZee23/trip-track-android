@@ -30,6 +30,36 @@ import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import java.util.UUID
 
+/**
+ * iOS: GarageView.emptyState. A drawn empty carport rather than a car: it says «nothing parked yet»,
+ * where a car would say «here is a car». The title and its line, then the screen's one action as a
+ * full-width accent capsule. The block sits a notch above the centre and scrolls when a large font
+ * no longer lets it fit, so «Добавить машину» never leaves the screen first.
+ */
+@Composable
+private fun GarageEmptyState(onAdd: () -> Unit, modifier: Modifier = Modifier) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        Column(
+            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)
+                .padding(horizontal = 32.dp).padding(bottom = 48.dp).testTag("garage_empty"),
+            verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            com.onezee.triptrack.ui.EmptyStateIllustration(com.onezee.triptrack.R.drawable.empty_garage, size = 148.dp)
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(strings.garageEmptyTitle(), style = inter(18f, InterWeight.bold), color = colors.text, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(strings.garageEmptyBody(), style = inter(14f), color = colors.textSecondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            }
+            Text(strings.addVehicleTitle(), Modifier.padding(top = 6.dp).fillMaxWidth().background(AppTheme.accent, CapsuleShape)
+                .clickable(role = Role.Button) { haptics.tap(); onAdd() }.padding(vertical = 15.dp).testTag("garage_empty_add"),
+                style = inter(16f, InterWeight.bold), color = androidx.compose.ui.graphics.Color.White, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        }
+    }
+}
+
 @Composable
 internal fun GarageScreen(state: GarageState, unit: DistanceUnit, onBack: () -> Unit, onAdd: () -> Unit,
                           onVehicle: (UUID) -> Unit, onSelect: (UUID) -> Unit, onDelete: (UUID) -> Unit, onUnsell: (UUID) -> Unit = {}) {
@@ -39,11 +69,7 @@ internal fun GarageScreen(state: GarageState, unit: DistanceUnit, onBack: () -> 
             MeNavAddButton(strings.addVehicleTitle(), state.vehicles.count { it.vehicle.soldAt == null } < 5, onAdd)
         }
         if (state.loaded && state.vehicles.isEmpty()) {
-            Column(Modifier.weight(1f).padding(24.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(strings.garageEmptyTitle(), style = AppType.headerTitle, color = AppTheme.colors.text)
-                Text(strings.garageEmptyBody(), Modifier.padding(vertical = 12.dp), style = AppType.body, color = AppTheme.colors.textSecondary)
-                MeAction(strings.addVehicleTitle(), onAdd)
-            }
+            GarageEmptyState(onAdd, Modifier.weight(1f))
         } else LazyColumn(contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.failed) item { MeRow(strings.garageLoadFailed()) }
             if (state.active != null) {
@@ -159,9 +185,7 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
                 MeDivider()
                 Text(strings.inGarageSince(strings.monthYear(vehicle.createdAt)), Modifier.fillMaxWidth().padding(top = 12.dp), style = AppType.caption, color = AppTheme.colors.textTertiary)
             }
-            if (!vehicle.drive2URL.isNullOrBlank() || strings.language.code in setOf("ru", "uk", "kk")) Column(Modifier.surfaceCard(16.dp)) {
-                MeRow(strings.garageDrive2Title(), if (vehicle.drive2URL.isNullOrBlank()) strings.garageDrive2Connect() else "DRIVE2", onClick = { onSheet(VehicleSheet.drive2) })
-            }
+            Drive2LogbookRow(vehicle.drive2URL, onConnect = if (Drive2Audience.invitesOnPage(strings.language.code)) ({ onSheet(VehicleSheet.drive2) }) else null)
             GarageMileageCard(vehicle.displayOdometerKm, vehicle.odometerKm, state.passport.years, state.dashboardUnit) { onSheet(VehicleSheet.edit) }
             if (vehicle.about.isNotBlank()) MeSection(strings.vehicleAbout()) { MeRow(vehicle.about) }
             MeSection(strings.vehicleWhereWas()) {

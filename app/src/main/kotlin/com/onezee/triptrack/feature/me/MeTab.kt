@@ -2,6 +2,10 @@
 package com.onezee.triptrack.feature.me
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -168,7 +172,6 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
 
 @Composable
 private fun ClubsScreen(graph: AppGraph, onBack: () -> Unit) {
-    val strings = appStrings
     val scope = rememberCoroutineScope()
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     var busy by remember { mutableStateOf(false) }
@@ -180,24 +183,64 @@ private fun ClubsScreen(graph: AppGraph, onBack: () -> Unit) {
         catch (cancelled: CancellationException) { throw cancelled }
         catch (_: Exception) { failed = true }
     }
-    Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding()) {
+    ClubsContent(waitlist, busy, failed, onBack, onToggle = { list ->
+        settings.localUserId?.let { id -> scope.launch {
+            busy = true
+            try { waitlist = graph.apiClient.post(if (list.joined) ApiEndpoint.groupsWaitlistLeave else ApiEndpoint.groupsWaitlistJoin, GroupsWaitlistRequest(id), requiresAuth = false) }
+            catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { failed = true }
+            finally { busy = false }
+        } }
+    })
+}
+
+/**
+ * iOS: GroupsComingSoonView. The marks, the promise, «Уведомить меня» and the real number of people
+ * waiting, centred in what the bar leaves. The example chips and «Посмотреть что будет» need the club
+ * catalogue, which is not ported (docs/divergences.md).
+ */
+@Composable
+internal fun ClubsContent(waitlist: GroupsWaitlistState?, busy: Boolean, failed: Boolean, onBack: () -> Unit, onToggle: (GroupsWaitlistState) -> Unit) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("clubs_screen")) {
         MeNavBar(strings.clubsTitle(), onBack)
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(strings.groupsComingTitle(), style = AppType.title, color = AppTheme.colors.text)
-            Text(strings.clubsSubtitle(), style = AppType.body, color = AppTheme.colors.textSecondary)
-            waitlist?.let { list ->
-                Text(if (list.total > 0) strings.groupsWaitlistCount(list.total) else strings.groupsWaitlistFirst(), style = AppType.meta, color = AppTheme.colors.textSecondary)
-                MeAction(if (list.joined) strings.clubsRowJoined() else strings.groupsNotifyMe(), {
-                    settings.localUserId?.let { id -> scope.launch {
-                        busy = true
-                        try { waitlist = graph.apiClient.post(if (list.joined) ApiEndpoint.groupsWaitlistLeave else ApiEndpoint.groupsWaitlistJoin, GroupsWaitlistRequest(id), requiresAuth = false) }
-                        catch (cancelled: CancellationException) { throw cancelled }
-                        catch (_: Exception) { failed = true }
-                        finally { busy = false }
-                    } }
-                }, enabled = !busy)
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+            Column(
+                Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)
+                    .padding(horizontal = 36.dp).padding(bottom = com.onezee.triptrack.designsystem.navigation.tabBarContentClearance()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                ClubMarkCluster()
+                Text(strings.groupsComingTitle(), Modifier.padding(top = 22.dp), style = inter(21f, InterWeight.heavy), color = colors.text,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(strings.groupsComingBody(), Modifier.padding(top = 8.dp), style = inter(14f), lineHeight = points(14f * 1.21f + 6f),
+                    color = colors.textSecondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                waitlist?.let { list ->
+                    val joined = list.joined
+                    val shape = androidx.compose.foundation.shape.RoundedCornerShape(14.dp)
+                    Row(
+                        Modifier.padding(top = 22.dp)
+                            .iosShadow(shape, if (joined) androidx.compose.ui.graphics.Color.Transparent else AppTheme.accent.copy(alpha = 0.3f), radius = 1.5.dp, y = 1.dp)
+                            .background(if (joined) AppTheme.accentBg else AppTheme.accent, shape)
+                            .clickable(enabled = !busy, role = androidx.compose.ui.semantics.Role.Button) { haptics.success(); onToggle(list) }
+                            .padding(horizontal = 18.dp, vertical = 12.dp)
+                            .testTag("groups_notify_cta"),
+                        horizontalArrangement = Arrangement.spacedBy(7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val ink = if (joined) AppTheme.accent else androidx.compose.ui.graphics.Color.White
+                        if (joined) Glyph(AppGlyph.checkmark, null, tint = ink, size = 17.dp)
+                        else com.onezee.triptrack.feature.social.ui.SocialGlyphIcon(com.onezee.triptrack.feature.social.ui.SocialGlyph.bell, null, tint = ink, size = 17.dp)
+                        Text(if (joined) strings.groupsNotifyDone() else strings.groupsNotifyMe(), style = inter(14f, InterWeight.bold), color = ink)
+                    }
+                    Text(if (list.total > 0) strings.groupsWaitlistCount(list.total) else strings.groupsWaitlistFirst(), Modifier.padding(top = 10.dp),
+                        style = inter(12f), color = colors.textTertiary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+                if (failed) Text(strings.publicDataLoadFailed(), Modifier.padding(top = 10.dp), style = AppType.meta, color = AppTheme.red)
             }
-            if (failed) Text(strings.publicDataLoadFailed(), style = AppType.meta, color = AppTheme.red)
         }
     }
 }

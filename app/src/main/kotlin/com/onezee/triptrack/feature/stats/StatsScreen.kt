@@ -306,7 +306,7 @@ private fun EmptyStats(onRecordTrip: (() -> Unit)?) {
     val strings = appStrings
     val colors = AppTheme.colors
     Column(Modifier.fillMaxWidth().padding(horizontal = 40.dp).padding(top = 120.dp).testTag("stats_empty"), horizontalAlignment = Alignment.CenterHorizontally) {
-        SocialGlyphIcon(SocialGlyph.chart, null, tint = colors.textTertiary, size = 40.dp)
+        com.onezee.triptrack.ui.IdleRing()
         Spacer(Modifier.height(22.dp))
         Text(strings.statsEmptyTitle(), style = inter(19f, InterWeight.bold), color = colors.text)
         Spacer(Modifier.height(8.dp))

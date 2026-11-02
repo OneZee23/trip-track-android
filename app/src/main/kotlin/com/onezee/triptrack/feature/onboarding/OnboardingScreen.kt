@@ -285,7 +285,7 @@ private fun PrimaryButton(title: String, tag: String, isRequesting: Boolean = fa
 @Composable
 private fun ColumnScope.WelcomePage(onContinue: () -> Unit) {
     val strings = appStrings
-    OnboardingHero(R.drawable.onboard_road)
+    OnboardingHero(R.drawable.loading_road)
     Column(Modifier.fillMaxWidth().padding(horizontal = 32.dp).padding(top = 47.dp).semantics(mergeDescendants = true) { heading() }.testTag("onboarding_page_0"),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(strings.onboardingWelcomeTitle1(), style = inter(24f, InterWeight.heavy), color = AppTheme.colors.text, textAlign = TextAlign.Center)

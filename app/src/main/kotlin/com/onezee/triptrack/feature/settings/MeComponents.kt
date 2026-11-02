@@ -65,6 +65,7 @@ internal fun MeSheetHeader(title: String, onClose: () -> Unit) {
 @Composable
 internal fun MeRow(title: String, value: String = "", subtitle: String? = null, tag: String = "",
                    glyph: AppGlyph? = null, destructive: Boolean = false, enabled: Boolean = true,
+                   @androidx.annotation.DrawableRes icon: Int? = null,
                    onClick: (() -> Unit)? = null) {
     val interaction = remember { MutableInteractionSource() }
     Row(Modifier.fillMaxWidth().testTag(tag)
@@ -72,8 +73,11 @@ internal fun MeRow(title: String, value: String = "", subtitle: String? = null, 
             interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick) else Modifier)
         .padding(horizontal = 14.dp, vertical = 13.dp).heightIn(min = 30.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (glyph != null) Box(Modifier.size(30.dp).background(AppTheme.accentBg, RoundedCornerShape(8.dp)), contentAlignment = Alignment.Center) {
-            Glyph(glyph, null, tint = AppTheme.accent, size = 19.dp)
+        if (glyph != null || icon != null) Box(Modifier.size(30.dp).background(AppTheme.accentBg, RoundedCornerShape(8.dp)), contentAlignment = Alignment.Center) {
+            // iOS SettingsLinkRow.assetIcon: a brand mark from the asset catalog, drawn as a 16 pt template.
+            if (icon != null) androidx.compose.foundation.Image(androidx.compose.ui.res.painterResource(icon), null, Modifier.size(16.dp),
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(AppTheme.accent))
+            else if (glyph != null) Glyph(glyph, null, tint = AppTheme.accent, size = 19.dp)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(title, style = interScaled(14.5f, InterWeight.semibold),

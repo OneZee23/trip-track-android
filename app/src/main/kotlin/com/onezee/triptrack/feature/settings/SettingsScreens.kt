@@ -133,7 +133,7 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
             Column(Modifier.surfaceCard(16.dp)) {
                 MeRow(strings.writeAuthor(), subtitle = strings.settingsWriteToAuthorSub(), glyph = AppGlyph.pencil, onClick = onWriteAuthor)
                 MeDivider()
-                MeRow(strings.telegramChannel(), subtitle = strings.settingsTelegramSub(), glyph = AppGlyph.squareAndArrowUp, onClick = onTelegram)
+                MeRow(strings.telegramChannel(), subtitle = strings.settingsTelegramSub(), icon = com.onezee.triptrack.R.drawable.telegram_icon, tag = "settings_telegram", onClick = onTelegram)
                 MeDivider()
                 MeRow(strings.settingsSendLogs(), subtitle = strings.settingsSendLogsSub(), glyph = AppGlyph.flag, tag = "settings_logs", onClick = { onOpen(SettingsSheet.logs) })
             }

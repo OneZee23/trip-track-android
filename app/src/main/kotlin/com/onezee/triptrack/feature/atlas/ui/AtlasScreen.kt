@@ -443,10 +443,7 @@ private fun EmptyAtlas(modifier: Modifier) {
     val atlas = AtlasTheme.colors
     Column(modifier.widthIn(max = 280.dp).padding(bottom = (EMPTY_SHEET_HEIGHT / 2).dp).testTag("atlas_empty"),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // iOS EmptyStateIllustration: pixel art, nearest-neighbour, in a 22 pt continuous square.
-        Image(androidx.compose.ui.graphics.ImageBitmap.imageResource(R.drawable.empty_map), contentDescription = null,
-            modifier = Modifier.size(120.dp).clip(com.onezee.triptrack.designsystem.theme.ContinuousRoundedRectangle(22.dp)),
-            filterQuality = androidx.compose.ui.graphics.FilterQuality.None)
+        com.onezee.triptrack.ui.EmptyStateIllustration(R.drawable.empty_map, size = 120.dp)
         Text(strings.emptyMapTitle(), style = inter(18f, InterWeight.semibold), color = atlas.ink, textAlign = TextAlign.Center)
         Text(strings.emptyMapSubtitle(), style = inter(13f), color = atlas.secondary, textAlign = TextAlign.Center)
     }
