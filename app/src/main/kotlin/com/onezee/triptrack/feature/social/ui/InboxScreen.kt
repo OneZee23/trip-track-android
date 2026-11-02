@@ -41,7 +41,8 @@ import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.RegionDisplay
 import com.onezee.triptrack.ui.RelativeTripDate
-import com.onezee.triptrack.ui.cards.ReactionEmoji
+import com.onezee.triptrack.model.ReactionEmoji
+import com.onezee.triptrack.ui.reactions.ReactionIcon
 import com.onezee.triptrack.ui.navigation.DestinationNavigator
 import com.onezee.triptrack.ui.navigation.rememberLocalViewModel
 import java.time.Instant
@@ -178,7 +179,7 @@ fun InboxScreen(social: SocialFeature, navigator: DestinationNavigator<TripsDest
                 state.isLoading && state.items.isEmpty() -> SkeletonRows(6, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                 state.loadFailed && state.items.isEmpty() -> SocialMessageState(strings.publicDataLoadFailed(), retry = { scope.launch { inbox.refresh() } }, tag = "inbox_error")
                 state.items.isEmpty() -> Column(Modifier.fillMaxSize().padding(32.dp).testTag("inbox_empty"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically)) {
-                    SocialGlyphIcon(SocialGlyph.bell, null, tint = colors.textTertiary, size = 40.dp)
+                    com.onezee.triptrack.ui.EmptyStateIllustration(com.onezee.triptrack.R.drawable.empty_notifications)
                     Text(strings.notificationsInboxNothingYet(), style = inter(16f, InterWeight.semibold), color = colors.textSecondary)
                     Text(strings.notificationsInboxWhenSomeoneReacts(), style = inter(13f), color = colors.textTertiary, textAlign = TextAlign.Center)
                 }
@@ -325,14 +326,15 @@ private fun InboxAvatar(item: NotificationItem) {
             Text(if (system) item.emoji ?: fallback else item.actor?.avatarEmoji ?: item.emoji ?: fallback, style = inter(20f))
         }
         val badge: @Composable () -> Unit = when (item.typedKind) {
-            NotificationKind.reaction -> { { Text(ReactionEmoji.canonical(item.emoji ?: "🔥") ?: "🔥", style = inter(10f)) } }
+            NotificationKind.reaction -> { { ReactionIcon(ReactionEmoji.canonical(item.emoji ?: "🔥"), size = 11.dp, filled = true, tint = AppTheme.accent) } }
             NotificationKind.follow -> { { SocialGlyphIcon(SocialGlyph.personPlus, null, tint = AppTheme.accent, size = 10.dp) } }
             NotificationKind.comment -> { { Glyph(AppGlyph.bubbleRight, null, tint = AppTheme.accent, size = 10.dp) } }
             NotificationKind.companionInvite, NotificationKind.companionAccepted -> { { SocialGlyphIcon(SocialGlyph.personTwo, null, tint = AppTheme.accent, size = 10.dp) } }
             NotificationKind.achievement -> { { SocialGlyphIcon(SocialGlyph.rosette, null, tint = AppTheme.accent, size = 10.dp) } }
             null -> { {} }
         }
-        if (item.typedKind != null) Box(Modifier.align(Alignment.BottomEnd).offset(3.dp, 3.dp).size(18.dp).background(colors.card, CircleShape), contentAlignment = Alignment.Center) { badge() }
+        if (item.typedKind != null) Box(Modifier.align(Alignment.BottomEnd).offset(3.dp, 3.dp).size(18.dp)
+            .iosShadow(CircleShape, Color.Black.copy(alpha = 0.08f), radius = 2.dp, y = 1.dp).background(colors.card, CircleShape), contentAlignment = Alignment.Center) { badge() }
     }
 }
 

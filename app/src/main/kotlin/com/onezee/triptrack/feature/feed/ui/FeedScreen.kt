@@ -11,7 +11,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,18 +52,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -109,7 +101,11 @@ import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.ui.LoadingMoreRow
 import com.onezee.triptrack.ui.PullToRefresh
-import com.onezee.triptrack.ui.cards.ReactionEmoji
+import com.onezee.triptrack.feature.social.LocalSocial
+import com.onezee.triptrack.feature.social.ui.ReactionsListSheet
+import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
+import com.onezee.triptrack.ui.EmptyStateIllustration
+import com.onezee.triptrack.ui.IdleRing
 import com.onezee.triptrack.ui.cards.SkeletonCards
 import com.onezee.triptrack.ui.cards.SocialFeedCard
 import java.time.Instant
@@ -167,6 +163,8 @@ fun FeedScreen(
     var pendingPrivate by remember { mutableStateOf<SocialCardState?>(null) }
     var pendingDelete by remember { mutableStateOf<SocialCardState?>(null) }
     var pickerFor by remember { mutableStateOf<SocialCardState?>(null) }
+    // iOS reactorsPeek: the card whose pill was held, and that pill's emoji.
+    var peek by remember { mutableStateOf<Pair<SocialCardState, String>?>(null) }
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     val ownIds = remember(state.mineRows) {
         state.mineRows.flatMap { row -> when (row) {
@@ -180,7 +178,7 @@ fun FeedScreen(
         navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id)))
     }
 
-    HideAppTabBar(pendingPrivate != null || pendingDelete != null || pickerFor != null)
+    HideAppTabBar(pendingPrivate != null || pendingDelete != null)
 
     Box(modifier.fillMaxSize().background(colors.bg).testTag("screen_feed")) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
@@ -236,6 +234,7 @@ fun FeedScreen(
                         onOpenPicker = { card ->
                             if (signedIn) pickerFor = card else toast = ToastItem(ToastType.info, strings.signInPromptReact())
                         },
+                        onPeekReactors = { card, emoji -> peek = card to emoji },
                         menu = { card ->
                             if (!isOwn(card)) emptyList() else listOf(
                                 ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "feed_card_action_edit") { open(card) },
@@ -250,10 +249,22 @@ fun FeedScreen(
         }
         RecordingBanner(feature, visible = state.currentRecording != null, onTap = onOpenRecord, modifier = Modifier.align(Alignment.BottomCenter))
         pickerFor?.let { card ->
-            ReactionPicker(
-                current = card.myReaction,
+            ReactionPickerOverlay(
+                currentReaction = card.myReaction,
                 onPick = { emoji -> vm.toggleReaction(card.trip.id, emoji, mode) },
                 onDismiss = { pickerFor = null },
+            )
+        }
+        peek?.let { (card, emoji) ->
+            val social = LocalSocial.current
+            ReactionsListSheet(
+                tripId = card.trip.id,
+                initialEmoji = emoji,
+                load = { id -> withContext(feature.worker) { feature.social.reactions(id) } },
+                ownId = feature.accountId(),
+                showsOwnBadge = social?.showsOwnBadge?.invoke() ?: true,
+                onSelectUser = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) },
+                onDismissRequest = { peek = null },
             )
         }
         ToastHost(toast, onDismiss = { toast = null })
@@ -398,6 +409,7 @@ private fun FeedPage(
     onOpenJourney: (UUID) -> Unit,
     onReact: (SocialCardState, String) -> Unit,
     onOpenPicker: (SocialCardState) -> Unit,
+    onPeekReactors: (SocialCardState, String) -> Unit,
     menu: (SocialCardState) -> List<ActionPopoverItem>,
     onPublishOwn: () -> Unit,
 ) {
@@ -456,6 +468,7 @@ private fun FeedPage(
                         onOpenPicker = { if (!own) onOpenPicker(card) },
                         onOpenJourney = onOpenJourney,
                         menuItems = menu(card),
+                        onPeekReactors = { emoji -> onPeekReactors(card, emoji) },
                         modifier = Modifier.animateItem(),
                     )
                 }
@@ -480,25 +493,6 @@ private fun CenteredState(title: String, body: String, tag: String, action: @Com
     }
 }
 
-/** iOS IdleRing: the pixel car on the navy plate inside a terracotta ring. */
-@Composable
-private fun IdleRing(modifier: Modifier = Modifier) {
-    Box(modifier.size(100.dp), contentAlignment = Alignment.Center) {
-        Box(Modifier.size(100.dp).border(2.dp, AppTheme.accent.copy(alpha = 0.25f), CircleShape))
-        Box(
-            Modifier
-                .size(82.dp)
-                .clip(CircleShape)
-                .background(Brush.verticalGradient(listOf(AppTheme.spritePlateTop, AppTheme.spritePlateBottom)))
-                .border(2.5.dp, AppTheme.accent, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            Image(ImageBitmap.imageResource(R.drawable.pixel_car), contentDescription = null, modifier = Modifier.width(52.dp).height(32.dp),
-                contentScale = ContentScale.Fit, filterQuality = FilterQuality.None)
-        }
-    }
-}
-
 /** iOS socialErrorState: the offline illustration, one message whatever the failure, «Попробовать снова». */
 @Composable
 private fun ErrorState(onRetry: () -> Unit) {
@@ -509,9 +503,7 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Image(ImageBitmap.imageResource(R.drawable.empty_offline), contentDescription = null,
-            modifier = Modifier.padding(top = 40.dp).size(148.dp).clip(RoundedCornerShape(22.dp)).semantics { hideFromAccessibility() },
-            filterQuality = FilterQuality.None)
+        EmptyStateIllustration(R.drawable.empty_offline, Modifier.padding(top = 40.dp), size = 148.dp)
         Text(strings.feedCouldnTLoad(), style = inter(19f, InterWeight.heavy), color = colors.text, textAlign = TextAlign.Center)
         Text(strings.feedCheckYourInternet(), style = inter(14f), color = colors.textSecondary, textAlign = TextAlign.Center,
             lineHeight = points(14f * 1.21f + 6f), modifier = Modifier.width(280.dp))
@@ -592,55 +584,3 @@ private fun clock(seconds: Double): String {
     return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%02d:%02d".format(m, s)
 }
 
-/**
- * iOS: ReactionPickerOverlay.swift. Six reactions in a capsule over a dimmed screen; the chosen one
- * sits on its disc. Picking the one already mine takes it back.
- */
-@Composable
-internal fun ReactionPicker(current: String?, onPick: (String) -> Unit, onDismiss: () -> Unit) {
-    val colors = AppTheme.colors
-    val haptics = rememberHaptics()
-    val mine = ReactionEmoji.canonical(current)
-    var appeared by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) { appeared = true }
-    val scale by androidx.compose.animation.core.animateFloatAsState(if (appeared) 1f else 0.85f, spring(dampingRatio = 0.7f, stiffness = 385f), label = "picker")
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.35f))
-            .pointerInput(Unit) { detectTapGestures { onDismiss() } }
-            .testTag("reaction_picker_scrim"),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(
-            Modifier
-                .scale(scale)
-                .alpha(if (appeared) 1f else 0f)
-                .iosShadow(CapsuleShape, Color.Black.copy(alpha = 0.18f), radius = 24.dp, y = 8.dp)
-                .background(colors.glass, CapsuleShape)
-                .border(1.dp, if (AppTheme.isDark) colors.glassBorder else Color.White.copy(alpha = 0.5f), CapsuleShape)
-                .padding(horizontal = 12.dp, vertical = 6.dp)
-                .testTag("reaction_picker"),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            ReactionEmoji.all.forEach { emoji ->
-                val isMine = emoji == mine
-                Box(
-                    Modifier
-                        .size(40.dp)
-                        .scale(if (isMine) 1.08f else 1f)
-                        .background(if (isMine) (if (AppTheme.isDark) AppTheme.accentDim else Color(0xFFFCE4DB)) else Color.Transparent, CircleShape)
-                        .clickable(interactionSource = null, indication = null, role = Role.Button) {
-                            if (isMine) haptics.reactionOff() else haptics.reactionOn()
-                            onPick(if (isMine) current ?: emoji else emoji)
-                            onDismiss()
-                        }
-                        .testTag("reaction_option"),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(emoji, style = inter(22f))
-                }
-            }
-        }
-    }
-}

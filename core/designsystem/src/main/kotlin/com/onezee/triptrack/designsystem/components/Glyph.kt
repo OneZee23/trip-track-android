@@ -80,6 +80,8 @@ enum class AppGlyph {
     chevronDown,
     houseFill,
     trayFull,
+    faceSmiling,
+    faceDashed,
     tabHome,
     tabMaps,
     tabRecord,
@@ -154,6 +156,8 @@ private val AppGlyph.vectorResource: Int
         AppGlyph.chevronDown -> R.drawable.glyph_chevron_down
         AppGlyph.houseFill -> R.drawable.glyph_house_fill
         AppGlyph.trayFull -> R.drawable.glyph_tray_full
+        AppGlyph.faceSmiling -> R.drawable.glyph_face_smiling
+        AppGlyph.faceDashed -> R.drawable.glyph_face_dashed
         AppGlyph.tabHome -> R.drawable.glyph_tab_home
         AppGlyph.tabMaps -> R.drawable.glyph_tab_maps
         AppGlyph.tabRecord -> R.drawable.glyph_tab_record

@@ -10,10 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.*
-import com.onezee.triptrack.feature.feed.ui.ReactionPicker
 import com.onezee.triptrack.feature.social.*
 import com.onezee.triptrack.feature.trip.*
-import com.onezee.triptrack.ui.cards.ReactionTallyPill
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -51,22 +49,29 @@ fun SocialShareAction(social: SocialFeature, id: java.util.UUID, journey: Boolea
     ToastHost(toast, onDismiss = { toast = null })
 }
 
+/**
+ * iOS: TripDetailView.swift, the social block under the details: the «Реакции» section (see
+ * [TripReactionsSection]), then sharing and, on someone else's trip, the report flag. The reaction
+ * picker and the reactors list belong to the screen's root ([onOpenPicker], [onPeekReactors]), never
+ * to the scroll. Reacting needs an account; a guest is asked to sign in.
+ */
 @Composable
-fun TripSocialActions(state: TripDetailState, vm: TripDetailViewModel, social: SocialFeature, onPublishForShare: (() -> Unit)? = null, autoShare: Boolean = false, onShared: () -> Unit = {}) {
+fun TripSocialActions(state: TripDetailState, vm: TripDetailViewModel, social: SocialFeature, onPublishForShare: (() -> Unit)? = null, autoShare: Boolean = false, onShared: () -> Unit = {},
+                      onOpenPicker: () -> Unit = {}, onPeekReactors: (String) -> Unit = {}, onOpenProfile: (com.onezee.triptrack.model.SocialAuthor) -> Unit = {}) {
     val trip = state.trip ?: return
     val strings = appStrings
-    var picker by remember { mutableStateOf(false) }
+    val haptics = rememberHaptics()
     var report by remember { mutableStateOf(false) }
     var signIn by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            state.reactionBreakdown.forEach { tally -> ReactionTallyPill(tally.emoji, tally.count, tally.emoji == state.myReaction, !state.isOwn) {
-                if (social.signedIn) vm.toggleReaction(tally.emoji) else signIn = true
-            } }
-            if (!state.isOwn) PressableCard(onClick = { if (social.signedIn) picker = true else signIn = true }, modifier = Modifier.testTag("trip_react")) {
-                Text("+", Modifier.padding(12.dp), style = AppType.chipActive, color = AppTheme.accent)
-            }
-        }
+        TripReactionsSection(
+            state = state,
+            onReact = { emoji -> haptics.tap(); if (social.signedIn) vm.toggleReaction(emoji) else signIn = true },
+            onOpenPicker = { if (social.signedIn) onOpenPicker() else signIn = true },
+            onPeek = onPeekReactors,
+            onOpenProfile = { onOpenProfile(it.socialAuthor()) },
+            modifier = Modifier.padding(bottom = 6.dp),
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             SocialShareAction(social, trip.id, false, trip.title ?: strings.tripTitle(), beforeShare = onPublishForShare.takeIf { trip.isPrivate }, autoStart = autoShare, onShared = onShared)
             if (!state.isOwn) PressableCard(onClick = { if (social.signedIn) report = true else signIn = true }, modifier = Modifier.testTag("trip_report")) {
@@ -74,7 +79,6 @@ fun TripSocialActions(state: TripDetailState, vm: TripDetailViewModel, social: S
             }
         }
     }
-    if (picker) ReactionPicker(state.myReaction, onPick = { vm.toggleReaction(it) }, onDismiss = { picker = false })
     if (report) ReportSheet(ReportTarget.Trip(trip.id), social) { report = false }
     if (signIn) social.auth?.let { SignInPromptSheet(SignInAction.react, it, onDismissRequest = { signIn = false }) }
 }

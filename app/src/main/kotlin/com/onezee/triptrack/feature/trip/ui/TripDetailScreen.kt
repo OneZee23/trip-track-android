@@ -117,6 +117,8 @@ import com.onezee.triptrack.ui.PhotoSource
 import com.onezee.triptrack.ui.PhotoViewer
 import com.onezee.triptrack.ui.TripExportShare
 import com.onezee.triptrack.ui.ViewerPage
+import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
+import com.onezee.triptrack.feature.social.ui.ReactionsListSheet
 import com.onezee.triptrack.ui.confirmationAction
 import com.onezee.triptrack.ui.confirmationMessage
 import com.onezee.triptrack.ui.confirmationTitle
@@ -178,6 +180,9 @@ private fun TripDetailContent(
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     var showActions by remember { mutableStateOf(false) }
     var shareAfterPublish by remember { mutableStateOf(false) }
+    // iOS showReactionPicker / reactorsPeek: both live at the root, over the whole screen.
+    var reactionPicker by remember { mutableStateOf(false) }
+    var reactorsPeek by remember { mutableStateOf<String?>(null) }
     var showComposer by remember { mutableStateOf(false) }
     var selectedCheckpoint by remember { mutableStateOf<CheckpointState?>(null) }
     var selectedSegment by remember { mutableStateOf<SegmentState?>(null) }
@@ -354,7 +359,10 @@ private fun TripDetailContent(
                     if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
                         onPublishForShare = { shareAfterPublish = true; vm.requestPublish() },
                         autoShare = shareAfterPublish && !trip.isPrivate && trip.isOnServer,
-                        onShared = { shareAfterPublish = false })
+                        onShared = { shareAfterPublish = false },
+                        onOpenPicker = { reactionPicker = true },
+                        onPeekReactors = { reactorsPeek = it },
+                        onOpenProfile = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) })
                     if (state.isOwn || !trip.isPrivate) com.onezee.triptrack.feature.social.ui.TripDiscussion(
                         trip.id, state.isOwn, trip.isOnServer, social?.commentCountRaw ?: 0, socialFeature, navigator, focus)
                 }
@@ -408,10 +416,29 @@ private fun TripDetailContent(
                 onDelete = if (state.isOwn) ({ id -> deletePhoto(feature, vm, state, id, scope, { toast = it }, strings.photoDeleted()) }) else null,
             )
         }
+        if (reactionPicker) {
+            ReactionPickerOverlay(
+                currentReaction = state.myReaction,
+                onPick = { emoji -> haptics.tap(); vm.toggleReaction(emoji) },
+                onDismiss = { reactionPicker = false },
+            )
+        }
         ToastHost(toast, onDismiss = { toast = null })
     }
 
     // Sheets and dialogs live at the screen's root, never inside the scroll.
+    reactorsPeek?.let { emoji ->
+        val tripId = trip?.id ?: return@let
+        ReactionsListSheet(
+            tripId = tripId,
+            initialEmoji = emoji,
+            load = { id -> withContext(feature.worker) { feature.social.reactions(id) } },
+            ownId = feature.accountId(),
+            showsOwnBadge = socialFeature?.showsOwnBadge?.invoke() ?: true,
+            onSelectUser = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) },
+            onDismissRequest = { reactorsPeek = null },
+        )
+    }
     selectedCheckpoint?.let { checkpoint ->
         val trip0 = state.trip ?: return@let
         CheckpointEditorSheet(

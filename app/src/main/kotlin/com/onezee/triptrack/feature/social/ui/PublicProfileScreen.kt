@@ -43,7 +43,7 @@ import com.onezee.triptrack.feature.account.SignInAction
 import com.onezee.triptrack.feature.account.SignInPromptSheet
 import com.onezee.triptrack.feature.feed.SocialCardState
 import com.onezee.triptrack.feature.feed.asTrip
-import com.onezee.triptrack.feature.feed.ui.ReactionPicker
+import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
 import com.onezee.triptrack.feature.garage.VehicleAvatar
 import com.onezee.triptrack.feature.garage.VehicleStage
 import com.onezee.triptrack.feature.social.*
@@ -100,7 +100,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
         social.auth?.state?.map { it.signedInAccountId }?.distinctUntilChanged()?.drop(1)?.collect { vm.sessionChanged() }
     }
     LaunchedEffect(vm) { social.commentCounts.collect { (trip, delta) -> vm.commentCountChanged(trip, delta) } }
-    HideAppTabBar(blockAsked || pickerFor != null)
+    HideAppTabBar(blockAsked)
 
     fun requireAccount(action: SignInAction, block: () -> Unit) {
         if (social.signedIn) block() else if (social.auth != null) signInFor = action else toast = ToastItem(ToastType.info, action.headline(strings))
@@ -208,7 +208,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
             SocialNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) }
         }
         LaunchedEffect(profile?.id, state.garage.isEmpty()) { if (profile != null) { vm.loadGarage(); vm.loadJourneys() } }
-        pickerFor?.let { trip -> ReactionPicker(trip.myReaction, onPick = { vm.toggleReaction(trip.id, it) }, onDismiss = { pickerFor = null }) }
+        pickerFor?.let { trip -> ReactionPickerOverlay(trip.myReaction, onPick = { vm.toggleReaction(trip.id, it) }, onDismiss = { pickerFor = null }) }
         ToastHost(toast, onDismiss = { toast = null })
     }
 

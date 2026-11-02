@@ -47,7 +47,9 @@ class SocialFlowTests : SocialScreenTest() {
         showDestination(TripsDestination.PublicProfile(SocialFixtures.account,SocialFixtures.author))
         compose.onAllNodesWithTag("feed_card_comments").onFirst().performScrollTo().performClick()
         compose.onNodeWithTag("comments_sheet").assertExists()
-        compose.onAllNodesWithTag("comment_author").onFirst().performClick()
+        // The thread's author in the sheet (the last window), not the page's preview row behind it,
+        // which the reactions card now pushes below the fold.
+        compose.onAllNodesWithTag("comment_author").onLast().performClick()
         compose.onNodeWithTag("public_profile").assertExists()
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.onNodeWithTag("comments_sheet").assertExists()

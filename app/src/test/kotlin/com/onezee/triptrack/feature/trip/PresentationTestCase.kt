@@ -88,7 +88,8 @@ class TestSocialApi : TripSocialApi {
     var remoteTrip: suspend (UUID) -> SocialTripResponse = { throw IllegalStateException("No fixture") }
     override suspend fun feed(request: SocialFeedRequest): SocialFeedResponse { requests.add(request); return feedPage(request) }
     override suspend fun react(tripId: UUID, previous: String?, emoji: String) = reaction(tripId, previous, emoji)
-    override suspend fun reactions(tripId: UUID): List<SocialReactionEntry> = emptyList()
+    var reactionEntries: suspend (UUID) -> List<SocialReactionEntry> = { emptyList() }
+    override suspend fun reactions(tripId: UUID): List<SocialReactionEntry> = reactionEntries(tripId)
     override suspend fun comments(request: TripCommentsRequest) = commentsPage(request)
     override suspend fun createComment(request: SocialCommentCreateRequest) = create(request)
     override suspend fun deleteComment(id: UUID) = delete(id)

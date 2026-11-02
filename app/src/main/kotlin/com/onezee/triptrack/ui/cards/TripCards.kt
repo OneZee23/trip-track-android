@@ -57,7 +57,6 @@ import com.onezee.triptrack.designsystem.components.PlusBadgeVisibility
 import com.onezee.triptrack.designsystem.components.PressableCard
 import com.onezee.triptrack.designsystem.components.ProBadge
 import com.onezee.triptrack.designsystem.components.Text
-import com.onezee.triptrack.designsystem.components.cardPressFeedback
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.components.surfaceCard
 import com.onezee.triptrack.designsystem.strings.AppStrings
@@ -83,13 +82,14 @@ import com.onezee.triptrack.logic.speedParts
 import com.onezee.triptrack.model.DriverRank
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Measure
-import com.onezee.triptrack.model.ReactionTally
+import com.onezee.triptrack.model.ReactionEmoji
 import com.onezee.triptrack.model.TripOrigin
 import com.onezee.triptrack.ui.LightRoutePreview
 import com.onezee.triptrack.ui.RegionDisplay
 import com.onezee.triptrack.ui.RelativeTripDate
 import com.onezee.triptrack.ui.SystemColors
 import com.onezee.triptrack.ui.TripAutoTitle
+import com.onezee.triptrack.ui.reactions.ReactionTallyPill
 import java.time.Instant
 
 // ---------------------------------------------------------------------------------------------
@@ -243,31 +243,6 @@ fun ProfileTripCard(
 // ---------------------------------------------------------------------------------------------
 // SocialFeedCardView
 
-/** iOS: ReactionEmoji.swift. The six reactions in palette order, and the legacy keys they absorb. */
-object ReactionEmoji {
-    val all = listOf("🔥", "🤯", "🏁", "🛣️", "🌅", "👍")
-    private val legacy = mapOf("❤️" to "👍", "🏎️" to "🏁", "🗺️" to "🛣️")
-
-    fun canonical(raw: String?): String? {
-        if (raw == null) return null
-        val bare = raw.replace("️", "")
-        all.firstOrNull { it.replace("️", "") == bare }?.let { return it }
-        return legacy.entries.firstOrNull { it.key.replace("️", "") == bare }?.value ?: raw
-    }
-
-    /** Canonical keys summed, most first, ties in palette order. */
-    fun mergedTallies(breakdown: List<ReactionTally>): List<ReactionTally> {
-        val sums = LinkedHashMap<String, Int>()
-        for (tally in breakdown) {
-            val key = canonical(tally.emoji) ?: continue
-            sums[key] = (sums[key] ?: 0) + tally.count
-        }
-        return sums.entries.filter { it.value > 0 }
-            .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { all.indexOf(it.key).let { i -> if (i < 0) Int.MAX_VALUE else i } })
-            .map { ReactionTally(it.key, it.value) }
-    }
-}
-
 /**
  * iOS: SocialFeedCardView.swift. A trip in the social feed: who drove, when and where, the title,
  * the route, three numbers, the journey it belongs to, and the reactions with the discussion.
@@ -285,6 +260,7 @@ fun SocialFeedCard(
     menuItems: List<ActionPopoverItem>,
     modifier: Modifier = Modifier,
     onTapAuthor: (() -> Unit)? = null,
+    onPeekReactors: ((String) -> Unit)? = null,
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -317,7 +293,7 @@ fun SocialFeedCard(
         Box(Modifier.fillMaxWidth().height(1.dp).background(colors.border))
         Row(Modifier.fillMaxWidth().padding(horizontal = 13.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            ReactionArea(card, isOwn, onReact, onOpenPicker)
+            ReactionArea(card, isOwn, onReact, onOpenPicker, onPeekReactors)
             Spacer(Modifier.weight(1f))
             val interaction = remember { MutableInteractionSource() }
             Row(
@@ -400,7 +376,7 @@ private fun SocialAuthorRow(card: SocialCardState, isOwn: Boolean, now: Instant,
 }
 
 @Composable
-private fun ReactionArea(card: SocialCardState, isOwn: Boolean, onReact: (String) -> Unit, onOpenPicker: () -> Unit) {
+private fun ReactionArea(card: SocialCardState, isOwn: Boolean, onReact: (String) -> Unit, onOpenPicker: () -> Unit, onPeekReactors: ((String) -> Unit)?) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
@@ -408,7 +384,8 @@ private fun ReactionArea(card: SocialCardState, isOwn: Boolean, onReact: (String
     if (tallies.isEmpty()) {
         if (isOwn) {
             Row(Modifier.padding(horizontal = 10.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("😶", style = inter(13f), modifier = Modifier.alpha(0.5f))
+                // iOS: SF face.dashed. Own trips cannot be self-reacted: a quiet line, not a button.
+                Glyph(AppGlyph.faceDashed, contentDescription = null, tint = colors.textTertiary, size = 15.dp)
                 Text(strings.socialFeedNoReactionsYet(), style = inter(12f, InterWeight.semibold), color = colors.textTertiary)
             }
         } else {
@@ -422,17 +399,19 @@ private fun ReactionArea(card: SocialCardState, isOwn: Boolean, onReact: (String
                     .testTag("feed_card_react"),
                 horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("🙂", style = inter(13f))
+                Glyph(AppGlyph.faceSmiling, contentDescription = null, tint = colors.textSecondary, size = 15.dp)
                 Text(strings.socialFeedReact(), style = inter(12f, InterWeight.semibold), color = colors.textSecondary)
             }
         }
         return
     }
-    val mine = ReactionEmoji.canonical(card.myReaction)
+    // Tallies arrive canonical; my stored reaction may still be a legacy key, so ownership is
+    // compared through the same lens. Taking one back sends the RAW stored emoji: the store's
+    // same-emoji check is what turns the request into an unreact.
+    val mine = card.myReaction?.let(ReactionEmoji::canonical)
     for (tally in tallies) {
         val isMine = mine == tally.emoji
-        ReactionTallyPill(tally.emoji, tally.count, isMine, enabled = !isOwn) {
-            if (isMine) haptics.reactionOff() else haptics.reactionOn()
+        ReactionTallyPill(tally.emoji, tally.count, isMine, isEnabled = !isOwn, onLongPress = onPeekReactors) {
             onReact(if (isMine) card.myReaction ?: tally.emoji else tally.emoji)
         }
     }
@@ -451,27 +430,6 @@ private fun ReactionArea(card: SocialCardState, isOwn: Boolean, onReact: (String
                 Glyph(AppGlyph.plus, contentDescription = null, tint = colors.textSecondary, size = 14.dp)
             }
         }
-    }
-}
-
-/** iOS: ReactionTallyPill.swift. The owner's pills show but do not react; their hold still peeks. */
-@Composable
-fun ReactionTallyPill(emoji: String, count: Int, isMine: Boolean, enabled: Boolean, onTap: () -> Unit) {
-    val colors = AppTheme.colors
-    val interaction = remember { MutableInteractionSource() }
-    Row(
-        Modifier
-            .cardPressFeedback(interaction, CardPressResponse.tap)
-            .background(if (isMine) AppTheme.orangeDim else colors.cardAlt, CapsuleShape)
-            .border(1.5.dp, if (isMine) AppTheme.accent else Color.Transparent, CapsuleShape)
-            .clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onTap)
-            .padding(horizontal = 10.dp, vertical = 5.dp)
-            .testTag("reaction_pill"),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(emoji, style = inter(13f))
-        Text("$count", style = inter(12f, InterWeight.bold, monospacedDigits = true), color = if (isMine) AppTheme.accent else colors.textSecondary)
     }
 }
 
