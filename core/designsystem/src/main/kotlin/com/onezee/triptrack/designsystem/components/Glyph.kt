@@ -1,8 +1,11 @@
 package com.onezee.triptrack.designsystem.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -165,7 +168,49 @@ private val AppGlyph.vectorResource: Int
         AppGlyph.tabProfile -> R.drawable.glyph_tab_profile
     }
 
-/** iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack. */
+/**
+ * How much larger than its box the artwork of a glyph is drawn: its optical size.
+ *
+ * A call site passes a box, in the unit the screens were laid out in: about 1.2 × the point size
+ * the same place sets its SF Symbol in (15 pt in the popover rows, 18 dp here). A symbol of font
+ * size f fills about f of that box, 0.8 to 1.2 f depending on the shape; the artwork here keeps a
+ * margin inside its 24-unit viewport that differs from glyph to glyph (a chevron fills 75 % of it,
+ * a house 80 %), so at the same box some came out 15 to 35 % smaller and thinner than the symbol
+ * (the 3 November audit, SH-07). The factor is the one that brings each glyph's ink to that of its
+ * symbol at box / 1.2, in 0.05 steps: `ink(symbol, semibold) / (1.2 × ink(artwork) / 24)`, on the
+ * geometric mean of width and height. The symbols were measured for size only, nothing of them
+ * is copied. Strokes grow with the artwork, which is what the «thinner» was.
+ *
+ * `GlyphSizingTests` renders every glyph and checks it against the symbol's ink box; redrawing an
+ * artwork, or giving it a different margin, asks for a new factor there before anywhere else.
+ * Glyphs without a symbol (the tab icons, the faces) keep their box.
+ */
+internal val AppGlyph.opticalScale: Float
+    get() = when (this) {
+        AppGlyph.clock, AppGlyph.globe, AppGlyph.minusCircle, AppGlyph.pause, AppGlyph.pencilLine,
+        AppGlyph.plus -> 1.05f
+        AppGlyph.arrowClockwise, AppGlyph.calendar, AppGlyph.exclamationmarkTriangleFill,
+        AppGlyph.flag, AppGlyph.flagCheckered, AppGlyph.flagFill, AppGlyph.heart, AppGlyph.lockFill,
+        AppGlyph.magnifyingglass, AppGlyph.map -> 1.1f
+        AppGlyph.airplane, AppGlyph.arrowDownRightAndArrowUpLeft,
+        AppGlyph.arrowUpLeftAndArrowDownRight, AppGlyph.bolt, AppGlyph.camera,
+        AppGlyph.characterBubble, AppGlyph.locationFill, AppGlyph.minus, AppGlyph.moonFill,
+        AppGlyph.photo, AppGlyph.squareAndPencil, AppGlyph.xmark -> 1.15f
+        AppGlyph.bubbleRight, AppGlyph.car, AppGlyph.checkmark, AppGlyph.houseFill,
+        AppGlyph.mappinAndEllipse, AppGlyph.pencil, AppGlyph.play, AppGlyph.tablecells, AppGlyph.tray,
+        AppGlyph.trayFull -> 1.2f
+        AppGlyph.arrowTriangleSwap, AppGlyph.cameraFill, AppGlyph.fuelpump, AppGlyph.mountain,
+        AppGlyph.squareAndArrowDown, AppGlyph.suitcase, AppGlyph.suitcaseFill, AppGlyph.trash -> 1.25f
+        AppGlyph.roadLanes -> 1.35f
+        AppGlyph.squareAndArrowUp -> 1.3f
+        else -> 1f
+    }
+
+/**
+ * iOS `Image(systemName:)` for an [AppGlyph]. `null` description: decoration, hidden from TalkBack.
+ * [size] is the glyph's box and what layout sees; the artwork is drawn [opticalScale] times larger
+ * inside it and may pass its edge by a hair, which nothing clips.
+ */
 @Composable
 fun Glyph(
     glyph: AppGlyph,
@@ -179,10 +224,12 @@ fun Glyph(
     } else {
         Modifier
     }
-    Image(
-        painter = painterResource(glyph.vectorResource),
-        contentDescription = null,
-        modifier = modifier.size(size).then(described),
-        colorFilter = ColorFilter.tint(tint),
-    )
+    Box(modifier.size(size).then(described), contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(glyph.vectorResource),
+            contentDescription = null,
+            modifier = Modifier.requiredSize(size * glyph.opticalScale),
+            colorFilter = ColorFilter.tint(tint),
+        )
+    }
 }
