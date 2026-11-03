@@ -75,30 +75,7 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     Column(Modifier.fillMaxSize().testTag("vehicle_edit_form")) {
         MeSheetHeader(if (isNew) strings.addVehicleTitle() else strings.editVehicleTitle(), onClose)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).imePadding().padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                VehicleStage(vehicle)
-                VehicleAvatar.styles(vehicle.type).chunked(4).forEach { row ->
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.forEach { style ->
-                            val color = VehicleAvatar.drawnColor(vehicle.avatarEmoji) ?: "orange"
-                            Box(Modifier.weight(1f).height(64.dp).background(AppTheme.colors.cardAlt, RoundedCornerShape(12.dp))
-                                .border(if (style == vehicle.avatarStyle) 2.dp else 0.dp, if (style == vehicle.avatarStyle) AppTheme.accent else Color.Transparent, RoundedCornerShape(12.dp))
-                                .clickable(role = Role.Button, onClickLabel = avatarStyleLabel(style, strings)) { onAvatar(color, style) }, contentAlignment = Alignment.Center) {
-                                PixelAsset("pixel_${style}_$color", Modifier.size(72.dp, 57.dp))
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(8.dp))
-                }
-                Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    VehicleAvatar.colors.forEach { color ->
-                        Box(Modifier.size(32.dp).background(avatarColor(color), CircleShape)
-                            .border(if (VehicleAvatar.drawnColor(vehicle.avatarEmoji) == color) 3.dp else 1.dp,
-                                if (VehicleAvatar.drawnColor(vehicle.avatarEmoji) == color) AppTheme.accent else AppTheme.colors.borderBright, CircleShape)
-                            .clickable(role = Role.Button, onClickLabel = avatarColorLabel(color, strings)) { onAvatar(color, vehicle.avatarStyle) })
-                    }
-                }
-            }
+            VehicleAvatarCard(vehicle, onAvatar)
             MeSection(strings.vehicleNameSection()) { MeField(strings.vehicleNamePlaceholder(), vehicle.name, onName, tag = "vehicle_name") }
             MeSection(strings.vehicleWhatSection()) {
                 MeRow(strings.vehicleMakeModel(), listOf(vehicle.make, vehicle.model).filter(String::isNotBlank).joinToString(" "), tag = "vehicle_catalog", onClick = onCatalog)
@@ -113,9 +90,7 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
                 MeRow(strings.vehicleDashboardTitle(), vehicle.dashboardUnits.label(strings.language.code, vehicle.type.hasPlate, strings), tag = "vehicle_dashboard", onClick = onDashboard)
             }
             if (vehicle.type != VehicleType.bicycle) {
-                MeSection(strings.vehiclePowertrainTitle()) {
-                    MeRow(strings.vehiclePowertrainTitle(), powertrainLabel(vehicle.powertrain, strings), tag = "vehicle_powertrain_row", onClick = { powertrainPicker = true })
-                }
+                PowertrainCard(vehicle.powertrain, onClick = { powertrainPicker = true })
                 if (vehicle.powertrain != Powertrain.electric) MeSection(strings.fuelSectionLabel()) {
                     val unit = ConsumptionUnit.forDashboard(vehicle.dashboardUnit(appUnit)).valueUnit(strings.language.code, strings)
                     MeField(strings.fuelCity() + " · " + unit, state.energy.text(VehicleEnergyField.city), { onEnergy(VehicleEnergyField.city, it) }, keyboard = KeyboardType.Decimal, tag = "vehicle_city_consumption")
@@ -227,9 +202,4 @@ internal fun avatarColorLabel(color: String, strings: AppStrings): String = stri
     "white" -> Words.string.avatarColor_white; "black" -> Words.string.avatarColor_black; "silver" -> Words.string.avatarColor_silver
     "gray" -> Words.string.avatarColor_gray; "red" -> Words.string.avatarColor_red; "blue" -> Words.string.avatarColor_blue
     "green" -> Words.string.avatarColor_green; else -> Words.string.avatarColor_orange
-})
-
-private fun avatarColor(color: String): Color = Color(when (color) {
-    "white" -> 0xFFD4D9E3; "black" -> 0xFF2A2C33; "silver" -> 0xFFA2A8B4; "gray" -> 0xFF707580
-    "red" -> 0xFFE03B2C; "blue" -> 0xFF3B7DD8; "green" -> 0xFF4CAF50; else -> 0xFFEB571E
 })
