@@ -70,28 +70,26 @@ fun rememberTripShare(
     needsPublish: Boolean,
     onPublish: () -> Unit,
     autoShare: Boolean,
+    onPosterReady: (String?) -> Unit,
     onShared: () -> Unit,
     onFailed: () -> Unit,
 ): TripShare {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
-    var signIn by remember { mutableStateOf(false) }
     fun start() {
         val services = social ?: return
         if (busy) return
-        if (!services.signedIn) { signIn = true; return }
+        if (!services.signedIn) { onPosterReady(null); onShared(); return }
         if (needsPublish) { onPublish(); return }
         busy = true
         scope.launch {
-            try { ShareLinks.share(context, services.api.shareTrip(tripId).shareUrl, title) }
+            try { onPosterReady(services.api.shareTrip(tripId).shareUrl) }
             catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { onFailed() }
+            catch (_: Exception) { onFailed(); onPosterReady(null) }
             finally { busy = false; onShared() }
         }
     }
     LaunchedEffect(autoShare) { if (autoShare) start() }
-    if (signIn) social?.auth?.let { SignInPromptSheet(SignInAction.share, it, onDismissRequest = { signIn = false }) }
     return TripShare(busy, ::start)
 }
 

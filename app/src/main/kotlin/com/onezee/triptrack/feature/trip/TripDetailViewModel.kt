@@ -35,7 +35,7 @@ data class ReactorState(val author: AuthorState, val emoji: String, val createdA
 
 // iOS: TripDetailView.swift
 data class TripDetailState(
-    val trip: TripSummary? = null, val isLoading: Boolean = true, val isOwn: Boolean = true,
+    val trip: TripSummary? = null, val isLoading: Boolean = true, val isOwn: Boolean = true, val noAccess: Boolean = false,
     val isRemoteBacked: Boolean = false, val loadFailed: Boolean = false, val geometryRevision: Long = 0,
     val coordinates: List<GeoPoint> = emptyList(), val speeds: List<Double> = emptyList(),
     val replay: TripReplayInput = TripReplayInput(emptyList(), emptyList(), emptyList()),
@@ -137,6 +137,9 @@ class TripDetailViewModel(
             replaceTrip(item.copy(trackPoints = points), response.item.author.id == accountId(), true).join()
             seedSocial(response.item)
         } catch (cancelled: CancellationException) { throw cancelled }
+        catch (error: com.onezee.triptrack.network.ApiError.TripNotFound) {
+            mutable.update { it.copy(noAccess = true, isLoading = false) }
+        }
         catch (_: Exception) { /* A refused refresh preserves the copy the reader opened. */ }
     }
 
@@ -415,6 +418,26 @@ class TripDetailViewModel(
     }
     /** iOS applyEdits for the description alone: the text the owner wrote, trimmed; one's own trip only. */
     fun updateDescription(text: String): Job? = edit { repository.updateNotes(tripId, text.trim()) }
+    fun updateTripDetails(title: String, description: String, vehicleId: UUID?, isPrivate: Boolean, isTransfer: Boolean): Job? {
+        val current = trip ?: return null
+        if (!state.value.isOwn) return null
+        if (current.isPrivate != isPrivate && accountId() == null && (!isPrivate || current.isOnServer)) {
+            mutable.update { it.copy(message = TripMessage.signInToPublish) }
+            return null
+        }
+        return action {
+            val cleanTitle = title.trim()
+            val storedTitle = if (current.titleIsCustom) current.title.orEmpty() else ""
+            if (cleanTitle != storedTitle) repository.updateTitle(tripId, cleanTitle)
+            if (description.trim() != current.tripDescription.orEmpty()) repository.updateNotes(tripId, description.trim())
+            if (isTransfer != current.isTransfer) repository.updateTransfer(tripId, isTransfer)
+            if (!isTransfer && current.vehicleId != vehicleId) repository.updateVehicle(tripId, vehicleId)
+            withContext(Dispatchers.Main.immediate) { load() }.join()
+            if (current.isPrivate != isPrivate) withContext(Dispatchers.Main.immediate) {
+                if (isPrivate) requestHide() else requestPublish()
+            }
+        }
+    }
     fun renameSegment(id: UUID, name: String?): Job? = edit { repository.updateSegment(id, name) }
     fun deleteSegment(id: UUID): Job? = edit { repository.deleteSegment(id) }
     fun updateCheckpoint(id: UUID, name: String?, coverId: UUID?, photoIds: List<UUID>): Job? = edit { repository.updateCheckpoint(id, name, coverId, photoIds) }

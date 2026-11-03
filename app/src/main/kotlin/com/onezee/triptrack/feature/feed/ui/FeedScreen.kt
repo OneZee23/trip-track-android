@@ -94,6 +94,7 @@ import com.onezee.triptrack.feature.TripsDestination
 import com.onezee.triptrack.feature.TripsFeature
 import com.onezee.triptrack.feature.asPreviewTrip
 import com.onezee.triptrack.feature.feed.FeedMode
+import com.onezee.triptrack.feature.feed.asTrip
 import com.onezee.triptrack.feature.feed.FeedViewModel
 import com.onezee.triptrack.feature.feed.MineRowState
 import com.onezee.triptrack.feature.feed.SocialCardState
@@ -107,10 +108,9 @@ import com.onezee.triptrack.feature.account.SignInPromptSheet
 import com.onezee.triptrack.feature.social.LocalSocial
 import com.onezee.triptrack.feature.social.ReportTarget
 import com.onezee.triptrack.feature.social.ui.ReportSheet
-import com.onezee.triptrack.feature.social.ui.SharedTripLinkSheet
+import com.onezee.triptrack.feature.social.ui.TripPosterSheet
 import com.onezee.triptrack.feature.social.ui.SocialGlyph
 import com.onezee.triptrack.feature.social.ui.SocialGlyphIcon
-import com.onezee.triptrack.feature.social.ui.TripLinkShare
 import com.onezee.triptrack.feature.social.ui.ReactionsListSheet
 import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
 import com.onezee.triptrack.ui.EmptyStateIllustration
@@ -181,7 +181,7 @@ fun FeedScreen(
     // and done once, after a real sign-in. The sheet closing with no session drops it.
     var signInFor by remember { mutableStateOf<SignInAction?>(null) }
     val pending = remember { PendingSocialActions() }
-    var linkShare by remember { mutableStateOf<TripLinkShare?>(null) }
+    var posterShare by remember { mutableStateOf<FeedPosterShare?>(null) }
     var reportFor by remember { mutableStateOf<SocialCardState?>(null) }
     // iOS reactorsPeek: the card whose pill was held, and that pill's emoji.
     var peek by remember { mutableStateOf<Pair<SocialCardState, String>?>(null) }
@@ -198,7 +198,15 @@ fun FeedScreen(
         navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id)))
     }
 
-    /** A card's share: the link is minted (a refused `/social/share` still opens the sheet, link-less) and the compact sheet shown. */
+    fun edit(card: SocialCardState) {
+        navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id), editOnOpen = true))
+    }
+
+    fun openPoster(item: com.onezee.triptrack.model.SocialFeedTrip, url: String?) {
+        posterShare = FeedPosterShare(com.onezee.triptrack.feature.trip.TripSummary.from(item.asTrip()), item.author.displayName ?: strings.publicProfileDriver(), url)
+    }
+
+    /** A card share mints its link and opens the poster studio even if minting is refused. */
     fun share(card: SocialCardState) {
         val api = services?.api ?: return
         val item = vm.socialTrip(card.trip.id) ?: return
@@ -206,7 +214,7 @@ fun FeedScreen(
             val url = try { withContext(feature.worker) { api.shareTrip(card.trip.id).shareUrl } }
                 catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
                 catch (_: Exception) { null }
-            linkShare = TripLinkShare(item, url)
+            openPoster(item, url)
         }
     }
 
@@ -289,9 +297,9 @@ fun FeedScreen(
                         menu = { card ->
                             val own = isOwn(card)
                             buildList {
-                                if (own) add(ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "feed_card_action_edit") { open(card) })
+                                if (own) add(ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "feed_card_action_edit") { edit(card) })
                                 if (services != null) add(ActionPopoverItem(strings.share(), AppGlyph.squareAndArrowUp, testTag = "feed_card_action_share") {
-                                    if (feature.signedIn()) share(card) else requestSignIn(SignInAction.share, PendingSocialAction.Share(card))
+                                    if (feature.signedIn()) share(card) else vm.socialTrip(card.trip.id)?.let { openPoster(it, null) }
                                 })
                                 if (own) {
                                     add(ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "feed_card_action_private") { pendingPrivate = card })
@@ -331,7 +339,7 @@ fun FeedScreen(
         ToastHost(toast, onDismiss = { toast = null })
     }
 
-    linkShare?.let { share -> SharedTripLinkSheet(share.trip, share.url, onDismiss = { linkShare = null }) }
+    posterShare?.let { share -> TripPosterSheet(share.trip, share.author, share.url, onDismiss = { posterShare = null }) }
     if (services != null) reportFor?.let { card -> ReportSheet(ReportTarget.Trip(card.trip.id), services) { reportFor = null } }
     signInFor?.let { action ->
         services?.auth?.let { auth ->
@@ -341,7 +349,6 @@ fun FeedScreen(
                 when (val next = pending.release(feature.signedIn())) {
                     is PendingSocialAction.React -> vm.toggleReaction(next.card.trip.id, next.emoji, next.mode)
                     is PendingSocialAction.Picker -> pickerFor = next.card
-                    is PendingSocialAction.Share -> share(next.card)
                     null -> Unit
                 }
             })
@@ -385,11 +392,16 @@ fun FeedScreen(
     )
 }
 
+private data class FeedPosterShare(
+    val trip: com.onezee.triptrack.feature.trip.TripSummary,
+    val author: String,
+    val url: String?,
+)
+
 /** What a guest tapped before the sign-in sheet (iOS PendingSocialAction): done once, after a real sign-in. */
 internal sealed interface PendingSocialAction {
     class React(val card: SocialCardState, val emoji: String, val mode: FeedMode) : PendingSocialAction
     class Picker(val card: SocialCardState) : PendingSocialAction
-    class Share(val card: SocialCardState) : PendingSocialAction
 }
 
 /**

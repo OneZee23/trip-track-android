@@ -113,6 +113,29 @@ class TripDetailStateTests : PresentationTestCase() {
         assertFalse(vm.state.value.canShare); assertFalse(vm.state.value.showsMoments)
         assertNull(vm.export(TripExportFormat.gpx)); assertEquals(TripMessage.exportFailed, vm.state.value.message)
     }
+    @Test fun editTripWritesEveryStagedFieldThroughTheRepository() = runTest(dispatcher) {
+        val vehicle = vehicleStore.addVehicle("Blue car", "🚙")
+        val t = insert()
+        repository.updateTransfer(t.id, true)
+        val vm = own(TripDetailViewModel(t.id, repository, api, dispatcher, { owner }))
+        vm.load().join()
+        vm.updateTripDetails("Weekend", "A long drive", vehicle, false, false)!!.join()
+        assertTrue(vm.state.value.publishRequested)
+        vm.publish()!!.join()
+        val saved = repository.fetchTripDetail(t.id)!!
+        assertEquals("Weekend", saved.title)
+        assertEquals("A long drive", saved.tripDescription)
+        assertEquals(vehicle, saved.vehicleId)
+        assertFalse(saved.isPrivate)
+    }
+    @Test fun remoteTripNotFoundIsTheClosedTripState() = runTest(dispatcher) {
+        val card = api.card(author = UUID.randomUUID(), day = t0)
+        api.remoteTrip = { throw com.onezee.triptrack.network.ApiError.TripNotFound }
+        val vm = own(TripDetailViewModel(card.id, repository, api, dispatcher, { owner }, social = card))
+        vm.load().join()
+        assertTrue(vm.state.value.noAccess)
+        assertFalse(vm.state.value.loadFailed)
+    }
     @Test fun localPublishRequiresAnAccountBeforeFlippingPrivacy() = runTest(dispatcher) {
         val t = insert()
         val vm = own(TripDetailViewModel(t.id, repository, api, dispatcher, { null }))

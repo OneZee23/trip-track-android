@@ -905,11 +905,11 @@ Swift files: 649. With Android references: 359. Missing: 290.
 | `TripTrack/Views/Social/ReactionsListSheet.swift` | missing |
 | `TripTrack/Views/Social/ReportSheet.swift` | missing |
 | `TripTrack/Views/Social/ShareLinkPresenter.swift` | missing |
-| `TripTrack/Views/Social/SharePosterRenderer.swift` | missing |
-| `TripTrack/Views/Social/SharePosterView.swift` | missing |
+| `TripTrack/Views/Social/SharePosterRenderer.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/social/ui/TripPosterView.kt` |
+| `TripTrack/Views/Social/SharePosterView.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/social/ui/TripPosterView.kt` |
 | `TripTrack/Views/Social/SharedTripLinkSheet.swift` | missing |
 | `TripTrack/Views/Social/SkeletonProfileView.swift` | missing |
-| `TripTrack/Views/Social/StoryShareSheet.swift` | missing |
+| `TripTrack/Views/Social/StoryShareSheet.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/social/ui/TripPosterSheet.kt`<br>`app/src/main/kotlin/com/onezee/triptrack/feature/social/ui/TripPosterView.kt` |
 
 ## TripTrack/Views/Theme
 
@@ -958,7 +958,7 @@ Swift files: 649. With Android references: 359. Missing: 290.
 | `TripTrack/Views/Trips/TripDetailSections.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/trip/TripDetailViewModel.kt` |
 | `TripTrack/Views/Trips/TripDetailTopBar.swift` | missing |
 | `TripTrack/Views/Trips/TripDetailView.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/feed/TripSocialApi.kt`<br>`app/src/main/kotlin/com/onezee/triptrack/feature/trip/TripDetailViewModel.kt`<br>`app/src/main/kotlin/com/onezee/triptrack/feature/trip/TripState.kt`<br>`app/src/test/kotlin/com/onezee/triptrack/feature/trip/TripDetailStateTests.kt` |
-| `TripTrack/Views/Trips/TripEditSheet.swift` | missing |
+| `TripTrack/Views/Trips/TripEditSheet.swift` | `app/src/main/kotlin/com/onezee/triptrack/feature/trip/ui/TripEditSheet.kt` |
 | `TripTrack/Views/Trips/TripEnergyTiles.swift` | missing |
 | `TripTrack/Views/Trips/TripMomentsTimeline.swift` | missing |
 

@@ -150,6 +150,8 @@ class TripsFeature(
 
     suspend fun vehicle(id: UUID): com.onezee.triptrack.model.Vehicle? = vehicles.vehicle(id)
 
+    suspend fun vehicles(): List<com.onezee.triptrack.model.Vehicle> = vehicles.vehicles()
+
     /** The journey whose window holds the trip: «Открыть путешествие» instead of «Объединить». */
     suspend fun journeyContaining(tripId: UUID): Journey? = repository.journeyContaining(tripId)
 
@@ -227,6 +229,7 @@ interface TripPins {
 sealed interface TripsDestination : com.onezee.triptrack.ui.navigation.NavDestination {
     /** A trip, opened with what the list already knows so the first frame has its numbers. */
     data class TripDetail(val id: UUID, val preview: Trip? = null, val social: SocialFeedTrip? = null,
+        val editOnOpen: Boolean = false,
         val focus: com.onezee.triptrack.model.TripFocus = com.onezee.triptrack.model.TripFocus.Top) : TripsDestination {
         override val key: Any get() = "trip:$id"
     }
