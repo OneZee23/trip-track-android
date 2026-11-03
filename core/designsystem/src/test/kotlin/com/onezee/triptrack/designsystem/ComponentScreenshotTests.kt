@@ -35,6 +35,7 @@ import com.onezee.triptrack.designsystem.components.AppConfirmDialog
 import com.onezee.triptrack.designsystem.components.AppDialogAction
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.CardPressResponse
+import com.onezee.triptrack.designsystem.components.CustomNavBar
 import com.onezee.triptrack.designsystem.components.GlassPill
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.NavCircleIcon
@@ -281,6 +282,16 @@ class ComponentScreenshotTests(private val dark: Boolean) {
             NavCircleIcon(AppGlyph.chevronLeft)
             NavCircleIcon(AppGlyph.ellipsis)
             NavCircleIcon(AppGlyph.squareAndArrowUp)
+        }
+    }
+
+    // iOS: CustomNavBar.swift. The bar of a pushed screen, the display title with an owner's name under
+    // it, and the bar in a sheet.
+    @Test fun customNavBar() = capture("custom_nav_bar") {
+        Column(Modifier.width(360.dp)) {
+            CustomNavBar("Полторашка", onBack = {}) { NavCircleIcon(AppGlyph.ellipsis) }
+            CustomNavBar("Статистика", onBack = {}, subtitle = "Александр", largeTitle = true)
+            CustomNavBar("Автозапись", onBack = {}, inSheet = true)
         }
     }
 
