@@ -19,6 +19,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.onezee.triptrack.logic.RegionLabelAnnotation
+import com.onezee.triptrack.map.area.MapArea
 import com.onezee.triptrack.map.attribution.MapAttribution
 import com.onezee.triptrack.map.attribution.MapAttributionSheet
 import com.onezee.triptrack.map.camera.MapInsets
@@ -79,6 +80,8 @@ fun MapHost(
     /** iOS: MapViewRepresentable locks pan, zoom and rotation during recording. */
     gesturesEnabled: Boolean = true,
     liveHead: List<com.onezee.triptrack.model.GeoPoint> = emptyList(),
+    /** iOS: an MKCircle with a fill and an edge; one tinted disc under the fog and the routes (the home picker). */
+    area: MapArea? = null,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -137,6 +140,7 @@ fun MapHost(
         controller.setSafeArea(systemArea + chromeInsets)
         controller.setCameraSafeArea(systemArea + cameraChromeInsets)
         controller.setFog(fog)
+        controller.setArea(area)
         controller.setVein(vein)
         controller.setRoutes(routes)
         controller.setPlayback(playback)
