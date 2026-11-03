@@ -28,6 +28,8 @@ import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
+import com.onezee.triptrack.feature.atlas.ui.WorldGlyph
+import com.onezee.triptrack.feature.atlas.ui.WorldGlyphIcon
 import com.onezee.triptrack.feature.me.RoutePreview
 import com.onezee.triptrack.feature.social.ui.SocialGlyph
 import com.onezee.triptrack.feature.social.ui.SocialGlyphIcon
@@ -316,8 +318,15 @@ private fun EmptyStats(onRecordTrip: (() -> Unit)?) {
         Text(strings.statsEmptyBody(), style = inter(14f), color = colors.textSecondary, textAlign = TextAlign.Center)
         if (onRecordTrip != null) {
             Spacer(Modifier.height(18.dp))
-            Text(strings.recordTripCta(), Modifier.background(AppTheme.accent, RoundedCornerShape(14.dp)).clickable(role = Role.Button, onClick = onRecordTrip)
-                .padding(horizontal = 20.dp, vertical = 13.dp).testTag("stats_empty_cta"), style = inter(15f, InterWeight.bold), color = androidx.compose.ui.graphics.Color.White)
+            // iOS: the route symbol (17 semibold) and the label (15 bold) in white, on the accent with its own shadow.
+            val cta = RoundedCornerShape(14.dp)
+            Row(Modifier.iosShadow(cta, AppTheme.accent.copy(alpha = 0.3f), radius = 3.dp, y = 1.dp).background(AppTheme.accent, cta)
+                .clickable(role = Role.Button, onClick = onRecordTrip).padding(horizontal = 20.dp, vertical = 13.dp).testTag("stats_empty_cta"),
+                horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                // The symbol is point.topleft.down.curvedto.point.bottomright.up; the Atlas draws its sibling for the new roads.
+                WorldGlyphIcon(WorldGlyph.curvePath, null, tint = androidx.compose.ui.graphics.Color.White, size = 17.dp)
+                Text(strings.recordTripCta(), style = inter(15f, InterWeight.bold), color = androidx.compose.ui.graphics.Color.White)
+            }
         }
     }
 }
