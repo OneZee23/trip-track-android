@@ -51,6 +51,7 @@ import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.NavCircleButton
 import com.onezee.triptrack.designsystem.components.PressableCard
 import com.onezee.triptrack.designsystem.components.Text
+import com.onezee.triptrack.designsystem.components.surfaceCard
 import com.onezee.triptrack.designsystem.strings.uppercased
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.CapsuleShape
@@ -103,6 +104,64 @@ fun NameField(value: String, onValueChange: (String) -> Unit, placeholder: Strin
         AnimatedVisibility(count >= 30) {
             Text("$count/$MAX_NAME_LENGTH", style = inter(11f, InterWeight.medium, monospacedDigits = true),
                 color = if (count >= MAX_NAME_LENGTH) AppTheme.red else colors.textTertiary, modifier = Modifier.padding(end = 4.dp))
+        }
+    }
+}
+
+/** iOS: TripEditSheet.notesLimit, the server's own limit for a trip note. */
+const val MAX_NOTES_LENGTH = 500
+
+/**
+ * iOS: the «Описание» field of TripEditSheet, opened by the dashed «Добавьте описание поездки»
+ * prompt. The whole Edit trip sheet (name, car, access) is not ported, so this carries only the one
+ * field the prompt names: «Отмена · Описание · Готово», the field 108 tall, a hard cut at 500 with
+ * the «75 / 500» counter (accent from 40 before the limit), and a text the content filter refuses
+ * is not saved. Nothing leaves the sheet until «Готово».
+ */
+@Composable
+fun TripDescriptionSheet(initial: String, onSave: (String) -> Unit, onDismissRequest: () -> Unit) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    var text by remember { mutableStateOf(initial) }
+    val refused = com.onezee.triptrack.logic.CommentContentRules.containsObjectionable(com.onezee.triptrack.logic.CommentContentRules.sanitize(text))
+    val count = graphemeCount(text)
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = colors.bg) {
+        val sheet = this
+        Column(Modifier.fillMaxWidth().testTag("description_sheet")) {
+            Box(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 6.dp)) {
+                Text(strings.descriptionSection(), Modifier.align(Alignment.Center).padding(horizontal = 84.dp), style = inter(16f, InterWeight.bold), color = colors.text, maxLines = 1)
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(strings.cancel(), style = inter(16f, InterWeight.medium), color = colors.textSecondary,
+                        modifier = Modifier.clickable(interactionSource = null, indication = null, role = Role.Button) { haptics.tap(); sheet.dismiss() }.testTag("description_cancel"))
+                    Spacer(Modifier.weight(1f))
+                    Text(strings.done(), style = inter(16f, InterWeight.bold), color = AppTheme.accent,
+                        modifier = Modifier.clickable(interactionSource = null, indication = null, role = Role.Button) {
+                            if (!refused) { haptics.action(); onSave(text); sheet.dismiss() }
+                        }.testTag("description_done"))
+                }
+            }
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Box(Modifier.fillMaxWidth().surfaceCard().padding(14.dp)) {
+                    BasicTextField(
+                        value = text,
+                        onValueChange = { text = graphemePrefix(it, MAX_NOTES_LENGTH) },
+                        textStyle = inter(16f).copy(color = colors.text),
+                        cursorBrush = SolidColor(AppTheme.accent),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                        modifier = Modifier.fillMaxWidth().height(108.dp).testTag("description_field"),
+                        decorationBox = { field ->
+                            Box(Modifier.fillMaxWidth()) {
+                                if (text.isEmpty()) Text(strings.describeTripPlaceholder(), style = inter(16f), color = colors.textTertiary)
+                                field()
+                            }
+                        },
+                    )
+                    Text("$count / $MAX_NOTES_LENGTH", Modifier.align(Alignment.BottomEnd).padding(end = 2.dp), style = inter(11f, InterWeight.medium, monospacedDigits = true),
+                        color = if (count > MAX_NOTES_LENGTH - 40) AppTheme.accent else colors.textTertiary)
+                }
+                if (refused) Text(strings.contentFilterContainsInappropriateLanguage(), style = inter(12f), color = AppTheme.red, modifier = Modifier.testTag("description_refused"))
+            }
         }
     }
 }

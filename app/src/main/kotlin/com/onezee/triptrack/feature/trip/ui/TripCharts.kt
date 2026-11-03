@@ -288,8 +288,9 @@ fun MovingStopsCard(moving: Double, stopped: Double, modifier: Modifier = Modifi
         modifier.fillMaxWidth().surfaceCard(14.dp).padding(horizontal = 16.dp, vertical = 14.dp).testTag("moving_stops"),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        // iOS: HStack with Spacer(minLength: 8), each label shrinking to 0.8 before it truncates.
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween) {
+        // iOS: HStack with Spacer(minLength: 8), each label shrinking to 0.8 before it truncates. The
+        // row spans the card, or SpaceBetween has no room to push «Без движения» to the inner edge.
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween) {
             Text(strings.movingDot(humanTime(moving, strings)), style = inter(12.5f, InterWeight.semibold), color = AppTheme.accent, maxLines = 1,
                 autoSize = shrinking(12.5f), modifier = Modifier.weight(1f, fill = false))
             Text(strings.stopsDot(humanTime(stopped, strings)), style = inter(12.5f, InterWeight.semibold), color = colors.textSecondary, maxLines = 1,

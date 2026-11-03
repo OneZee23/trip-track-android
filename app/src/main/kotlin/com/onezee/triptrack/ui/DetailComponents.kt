@@ -8,14 +8,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
@@ -81,6 +84,53 @@ fun MapChromeButton(
         MapChromeSurface(progress, Modifier.size(36.dp), CircleShape)
         Glyph(glyph, contentDescription = null, tint = chromeInk(progress), size = 18.dp)
     }
+}
+
+/**
+ * iOS: TripDetailTopBar.cell. One half of the actions capsule: 44 wide and 36 tall, the glyph at
+ * 15 semibold (an 18 box here). It takes no 44 × 44 target of its own: the capsule is 36 tall.
+ */
+@Composable
+fun MapChromeCell(
+    glyph: AppGlyph,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    progress: Float = 0f,
+    enabled: Boolean = true,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        modifier
+            .size(44.dp, 36.dp)
+            .alpha(if (enabled) 1f else 0.4f)
+            .plainPressFeedback(interaction)
+            .clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
+            .semantics { this.contentDescription = contentDescription },
+        contentAlignment = Alignment.Center,
+    ) {
+        Glyph(glyph, contentDescription = null, tint = chromeInk(progress), size = 18.dp)
+    }
+}
+
+/**
+ * iOS: TripDetailTopBar.actionsCapsule. Share and «…» fused into one capsule on the same glass as
+ * the circle: two [MapChromeCell]s and a [MapChromeDivider] between them, 88 × 36 in all. Two
+ * islands with a gap read as debris, one capsule with a divider reads as a control. The capsule
+ * is not wrapped in the circle's 44 target, so its edge stands 12 from the screen like iOS.
+ */
+@Composable
+fun MapChromeCapsule(progress: Float, modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+    Box(modifier.height(36.dp)) {
+        MapChromeSurface(progress, Modifier.matchParentSize(), CapsuleShape)
+        Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically, content = content)
+    }
+}
+
+/** The hairline between the capsule's cells: 0.5 wide, 18 tall, white at 18 % until the bar is solid. */
+@Composable
+fun MapChromeDivider(progress: Float) {
+    Box(Modifier.width(0.5.dp).height(18.dp).background(Color.White.copy(alpha = if (progress > 0.5f) 0f else 0.18f)))
 }
 
 /** The ink of a map control: white over the glass, the theme's ink once the bar is solid. */
@@ -291,7 +341,8 @@ fun JourneyLinkRow(title: String?, start: java.time.Instant, end: java.time.Inst
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Glyph(AppGlyph.suitcaseFill, contentDescription = null, tint = AppTheme.accent, size = 15.dp)
+            // iOS: suitcase.fill at 12 bold draws 14.3 × 12 pt: the glyph box is 1.2 × the point size (the 15 it had drew it 4 % large).
+            Glyph(AppGlyph.suitcaseFill, contentDescription = null, tint = AppTheme.accent, size = 14.4.dp)
             Text("${strings.journeyPartOf(name)} · $days ${strings.nounDays(days)}", style = inter(12f, InterWeight.semibold),
                 color = AppTheme.accent, maxLines = 1, modifier = Modifier.weight(1f))
             Glyph(AppGlyph.chevronRight, contentDescription = null, tint = AppTheme.accent, size = 12.dp)

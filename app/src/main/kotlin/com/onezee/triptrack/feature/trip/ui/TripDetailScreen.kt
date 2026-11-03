@@ -6,11 +6,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -111,6 +113,9 @@ import com.onezee.triptrack.ui.JourneyLinkRow
 import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.ui.LocalTripPhotoImages
 import com.onezee.triptrack.ui.MapChromeButton
+import com.onezee.triptrack.ui.MapChromeCapsule
+import com.onezee.triptrack.ui.MapChromeCell
+import com.onezee.triptrack.ui.MapChromeDivider
 import com.onezee.triptrack.ui.PhotoImage
 import com.onezee.triptrack.ui.PhotoImport
 import com.onezee.triptrack.ui.PhotoSource
@@ -180,6 +185,18 @@ private fun TripDetailContent(
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     var showActions by remember { mutableStateOf(false) }
     var shareAfterPublish by remember { mutableStateOf(false) }
+    // iOS canOfferShare: one's own trip always (a private one is published first), someone else's only when public.
+    val showShare = socialFeature != null && !state.isLoading && trip != null && com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)
+    val share = com.onezee.triptrack.feature.social.ui.rememberTripShare(
+        social = socialFeature,
+        tripId = trip?.id ?: UUID(0L, 0L),
+        title = trip?.title ?: strings.tripTitle(),
+        needsPublish = state.isOwn && trip?.isPrivate == true,
+        onPublish = { shareAfterPublish = true; vm.requestPublish() },
+        autoShare = shareAfterPublish && trip?.isPrivate == false && trip.isOnServer,
+        onShared = { shareAfterPublish = false },
+        onFailed = { toast = ToastItem(ToastType.error, strings.proFailed()) },
+    )
     // iOS showReactionPicker / reactorsPeek: both live at the root, over the whole screen.
     var reactionPicker by remember { mutableStateOf(false) }
     var reactorsPeek by remember { mutableStateOf<String?>(null) }
@@ -187,6 +204,8 @@ private fun TripDetailContent(
     var selectedCheckpoint by remember { mutableStateOf<CheckpointState?>(null) }
     var selectedSegment by remember { mutableStateOf<SegmentState?>(null) }
     var viewerIndex by remember { mutableStateOf<Int?>(null) }
+    var openedBadge by remember { mutableStateOf<String?>(null) }
+    var editingDescription by remember { mutableStateOf(false) }
     var photoToDelete by remember { mutableStateOf<DetailPhotoState?>(null) }
     var journeyTick by remember { mutableIntStateOf(0) }
     var composerOpenings by remember { mutableIntStateOf(0) }
@@ -220,6 +239,12 @@ private fun TripDetailContent(
         if (state.deleted || state.draftResolved) navigator.pop()
     }
 
+    // iOS SettingsManager.pinnedTripIds: null when the app has no showcase to pin to.
+    val pinned by produceState<Boolean?>(null, trip?.id, feature.pins) {
+        val pins = feature.pins
+        val id = trip?.id
+        if (pins == null || id == null) value = null else pins.pinnedIds.collect { value = id in it }
+    }
     val vehicle by produceState<Vehicle?>(null, trip?.vehicleId) { value = trip?.vehicleId?.let { withContext(feature.worker) { feature.vehicle(it) } } }
     var vehicleKnown by remember { mutableStateOf(false) }
     LaunchedEffect(vehicle, trip?.vehicleId) { vehicleKnown = true }
@@ -338,6 +363,10 @@ private fun TripDetailContent(
                     vehicle = vehicle,
                     vehicleKnown = vehicleKnown,
                     journey = journey,
+                    // iOS journeyLinkRow: someone else's leg names the author's journey when it is public.
+                    foreignJourney = social?.journey.takeIf { !state.isOwn },
+                    onOpenForeignJourney = { navigator.push(TripsDestination.SocialJourney(it)) },
+                    onOwnVehicle = feature.openVehicle,
                     signedIn = signedIn,
                     safeBottom = safeBottom,
                     onOpenJourney = { navigator.push(TripsDestination.JourneyDetail(it)) },
@@ -354,18 +383,20 @@ private fun TripDetailContent(
                     onOpenPhotoAt = { viewerIndex = it },
                     onDeletePhoto = { photoToDelete = it },
                     onAddPhotos = { pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                    onOpenBadge = { openedBadge = it },
+                    onEditDescription = { editingDescription = true },
+                    // iOS: the reactions and the discussion are the last two sections of the same 22-point column.
+                    social = {
+                        if (socialFeature != null && !state.isLoading) {
+                            if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
+                                onOpenPicker = { reactionPicker = true },
+                                onPeekReactors = { reactorsPeek = it },
+                                onOpenProfile = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) })
+                            if (state.isOwn || !trip.isPrivate) com.onezee.triptrack.feature.social.ui.TripDiscussion(
+                                trip.id, state.isOwn, trip.isOnServer, social?.commentCountRaw ?: 0, socialFeature, navigator, focus)
+                        }
+                    },
                 )
-                if (socialFeature != null && !state.isLoading) {
-                    if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
-                        onPublishForShare = { shareAfterPublish = true; vm.requestPublish() },
-                        autoShare = shareAfterPublish && !trip.isPrivate && trip.isOnServer,
-                        onShared = { shareAfterPublish = false },
-                        onOpenPicker = { reactionPicker = true },
-                        onPeekReactors = { reactorsPeek = it },
-                        onOpenProfile = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) })
-                    if (state.isOwn || !trip.isPrivate) com.onezee.triptrack.feature.social.ui.TripDiscussion(
-                        trip.id, state.isOwn, trip.isOnServer, social?.commentCountRaw ?: 0, socialFeature, navigator, focus)
-                }
             }
             Box(Modifier.fillMaxWidth().height(safeTop + 28.dp).edgeScrims(top = true))
             DetailTopBar(
@@ -374,11 +405,19 @@ private fun TripDetailContent(
                 onBack = { navigator.pop() },
                 backTag = if (state.isLoading) "detail_loading_back" else "detail_back",
                 pill = social?.author?.takeIf { !state.isOwn }?.let { author -> { AuthorPill(author, onClick = { navigator.push(TripsDestination.PublicProfile(author.id, author)) }) } },
-                actions = if (state.isOwn && !state.isLoading) ({
-                    Box {
-                        MapChromeButton(AppGlyph.ellipsis, strings.moreActions(), { haptics.tap(); showActions = true }, Modifier.testTag("detail_actions"), progress)
-                        ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onCombine = { composerOpenings++; showComposer = true }))
-                    }
+                actions = if (!state.isLoading && (showShare || state.isOwn)) ({
+                    TripTopBarActions(
+                        progress = progress,
+                        showShare = showShare,
+                        showActions = state.isOwn,
+                        shareBusy = share.busy,
+                        onShare = { haptics.tap(); share.start() },
+                        onActions = { haptics.tap(); showActions = true },
+                        popover = { ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onCombine = { composerOpenings++; showComposer = true },
+                            pinned = pinned, onTogglePin = {
+                                feature.pins?.let { pins -> scope.launch { if (!pins.toggle(trip.id)) toast = ToastItem(ToastType.info, strings.profileShowcaseLimit()) } }
+                            })) },
+                    )
                 }) else null,
             )
         }
@@ -416,6 +455,7 @@ private fun TripDetailContent(
                 onDelete = if (state.isOwn) ({ id -> deletePhoto(feature, vm, state, id, scope, { toast = it }, strings.photoDeleted()) }) else null,
             )
         }
+        openedBadge?.let { id -> TripBadgeOverlay(id, onDismiss = { openedBadge = null }) }
         if (reactionPicker) {
             ReactionPickerOverlay(
                 currentReaction = state.myReaction,
@@ -464,6 +504,11 @@ private fun TripDetailContent(
             onDismissRequest = { selectedSegment = null },
         )
     }
+    if (editingDescription) TripDescriptionSheet(
+        initial = trip?.description.orEmpty(),
+        onSave = { vm.updateDescription(it) },
+        onDismissRequest = { editingDescription = false },
+    )
     if (showComposer && trip != null) {
         // A fresh composer per opening: a created journey must not close the next one at once.
         val composer = entryViewModel("composer:${trip.id}:$composerOpenings") { feature.journeyComposer(trip.asPreviewTrip()) }
@@ -508,9 +553,10 @@ private fun deletePhoto(feature: TripsFeature, vm: TripDetailViewModel, state: T
 }
 
 /**
- * iOS: TripDetailView.ownerActions. Publish or make private, open the journey or combine one,
- * the two exports, delete. Edit and «pin to profile» belong to screens not ported yet and are not
- * offered (a row that does nothing is worse than none).
+ * iOS: TripDetailView.ownerActions. Publish or make private, pin to the profile, open the journey
+ * or combine one, the two exports, delete. «Редактировать» leads to the Edit trip sheet, which is
+ * not ported, and is left out (a row that does nothing is worse than none); the pin shows for a
+ * public, finished trip that is not a draft, and needs the showcase ([pins]).
  */
 @Composable
 private fun ownerActions(
@@ -519,18 +565,58 @@ private fun ownerActions(
     vm: TripDetailViewModel,
     navigator: DestinationNavigator<TripsDestination>,
     onCombine: () -> Unit,
+    pinned: Boolean?,
+    onTogglePin: () -> Unit,
 ): List<ActionPopoverItem> {
     val strings = appStrings
     val trip = state.trip ?: return emptyList()
-    return listOf(
+    return listOfNotNull(
         if (trip.isPrivate) ActionPopoverItem(strings.publishAction(), AppGlyph.globe, testTag = "detail_action_publish") { vm.requestPublish() }
         else ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "detail_action_publish") { vm.requestHide() },
+        // iOS pin / pin.slash; the drawn set has no thumbtack yet, the Я journal menu stands in with the flag too.
+        if (pinned != null && !trip.isPrivate && trip.confirmation != TripConfirmation.draft && trip.endDate != null)
+            ActionPopoverItem(if (pinned) strings.profileUnpin() else strings.profilePin(), AppGlyph.flag, testTag = "detail_action_profile_pin", action = onTogglePin) else null,
         if (journey != null) ActionPopoverItem(strings.journeyOpen(), AppGlyph.suitcase, testTag = "detail_action_journey") { navigator.push(TripsDestination.JourneyDetail(journey.id)) }
         else ActionPopoverItem(strings.journeyCombine(), AppGlyph.suitcase, testTag = "detail_action_journey", action = onCombine),
         ActionPopoverItem(strings.exportGPX(), AppGlyph.squareAndArrowDown, testTag = "detail_action_export_gpx") { vm.export(TripExportFormat.gpx) },
         ActionPopoverItem(strings.exportCSV(), AppGlyph.tablecells, testTag = "detail_action_export_csv") { vm.export(TripExportFormat.csv) },
         ActionPopoverItem(strings.deleteTripAction(), AppGlyph.trash, isDestructive = true, testTag = "detail_action_delete") { vm.requestDelete() },
     )
+}
+
+/**
+ * iOS: TripDetailTopBar.actionsCapsule. Share and «…» fused into one capsule, but only when there
+ * are two of them: alone in a capsule a cell is a squat 44 × 36 oval beside the 36 circle of
+ * «Назад», so one control is the plain map-chrome circle, the same token as every other button on
+ * this map. Someone else's public trip has share only; only the owner gets «…».
+ */
+@Composable
+private fun TripTopBarActions(
+    progress: Float,
+    showShare: Boolean,
+    showActions: Boolean,
+    shareBusy: Boolean,
+    onShare: () -> Unit,
+    onActions: () -> Unit,
+    popover: @Composable () -> Unit,
+) {
+    val strings = appStrings
+    when {
+        showShare && showActions -> MapChromeCapsule(progress) {
+            MapChromeCell(AppGlyph.squareAndArrowUp, strings.share(), onShare, Modifier.testTag("detail_share"), progress, enabled = !shareBusy)
+            MapChromeDivider(progress)
+            Box {
+                MapChromeCell(AppGlyph.ellipsis, strings.moreActions(), onActions, Modifier.testTag("detail_actions"), progress)
+                popover()
+            }
+        }
+        showShare -> MapChromeButton(AppGlyph.squareAndArrowUp, strings.share(), onShare,
+            Modifier.testTag("detail_share").alpha(if (shareBusy) 0.4f else 1f), progress)
+        showActions -> Box {
+            MapChromeButton(AppGlyph.ellipsis, strings.moreActions(), onActions, Modifier.testTag("detail_actions"), progress)
+            popover()
+        }
+    }
 }
 
 /**
@@ -574,6 +660,9 @@ private fun InfoPanel(
     vehicle: Vehicle?,
     vehicleKnown: Boolean,
     journey: Journey?,
+    foreignJourney: com.onezee.triptrack.model.SocialFeedTripJourney?,
+    onOpenForeignJourney: (UUID) -> Unit,
+    onOwnVehicle: (UUID) -> Unit,
     signedIn: Boolean,
     safeBottom: androidx.compose.ui.unit.Dp,
     onOpenJourney: (UUID) -> Unit,
@@ -590,6 +679,9 @@ private fun InfoPanel(
     focusCheckpointId: UUID?,
     highlightedMomentId: UUID?,
     onFocusConsumed: () -> Unit,
+    onOpenBadge: (String) -> Unit,
+    onEditDescription: () -> Unit,
+    social: @Composable ColumnScope.() -> Unit,
 ) {
     val trip = state.trip ?: return
     val strings = appStrings
@@ -602,9 +694,12 @@ private fun InfoPanel(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             TripTitleBlock(trip)
-            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown, foreignVehicle = foreignVehicle, onForeignVehicle = onForeignVehicle)
+            TripChipsRow(trip, state.isOwn, signedIn, vehicle, vehicleKnown, foreignVehicle = foreignVehicle, onForeignVehicle = onForeignVehicle, onOwnVehicle = onOwnVehicle)
             if (journey != null) {
                 JourneyLinkRow(journey.title, journey.startDate, journey.endDate, onTap = { onOpenJourney(journey.id) }, modifier = Modifier.testTag("detail_journey_row"), now = now)
+            } else if (foreignJourney != null) {
+                JourneyLinkRow(foreignJourney.title, foreignJourney.startDate, foreignJourney.endDate, onTap = { onOpenForeignJourney(foreignJourney.id) },
+                    modifier = Modifier.testTag("detail_journey_row"), now = now)
             }
         }
         if (state.isOwn && trip.confirmation == TripConfirmation.draft && loaded) DraftTripBanner(onConfirmDraft, onDiscardDraft)
@@ -653,21 +748,28 @@ private fun InfoPanel(
         if (trip.source == TripOrigin.recorded && state.drivingTime + state.stoppedTime > 0) {
             DetailSection(strings.movingAndStops()) { MovingStopsCard(state.drivingTime, state.stoppedTime) }
         }
-        trip.description?.trim()?.takeIf { it.isNotEmpty() }?.let { text ->
-            DetailSection(strings.descriptionSection()) { DescriptionCard(text) }
-        }
+        val description = trip.description?.trim().orEmpty()
+        if (description.isNotEmpty()) DetailSection(strings.descriptionSection()) { DescriptionCard(description) }
+        else if (state.isOwn) DetailSection(strings.descriptionSection()) { DescriptionPrompt(onEditDescription) }
         if (loaded) TripPhotosSection(state.photos, state.isOwn, onOpenPhotoAt, onDeletePhoto, if (state.isOwn) onAddPhotos else null)
+        // iOS badgesSection: what the trip earned, after the photos and before the reactions.
+        if (trip.badgeIds.isNotEmpty()) TripAchievementsSection(trip.badgeIds, onOpenBadge)
+        social()
     }
 }
 
-/** iOS: TripDetailView.loadErrorState. Back, the rings, «Не удалось загрузить поездку», retry. */
+/**
+ * iOS: TripDetailView.loadErrorState. A header, back and «Поездка» centred over a balancing spacer;
+ * under it the empty ring, «Не удалось загрузить поездку» and the retry. The block stands above the
+ * centre: one spacer above it, two below.
+ */
 @Composable
 private fun LoadFailedState(onRetry: () -> Unit, onBack: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars).testTag("trip_load_failed")) {
-        Row(Modifier.padding(start = 16.dp, top = 8.dp)) {
+        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             val interaction = remember { MutableInteractionSource() }
             Box(
                 Modifier.size(34.dp).plainPressFeedback(interaction).background(Color.Black.copy(alpha = 0.4f), CircleShape)
@@ -676,12 +778,18 @@ private fun LoadFailedState(onRetry: () -> Unit, onBack: () -> Unit) {
                     .testTag("detail_back"),
                 contentAlignment = Alignment.Center,
             ) { Glyph(AppGlyph.chevronLeft, contentDescription = null, tint = Color.White, size = 17.dp) }
+            Spacer(Modifier.weight(1f))
+            Text(strings.tripTitle(), style = inter(16f, InterWeight.bold), color = colors.text, maxLines = 1)
+            Spacer(Modifier.weight(1f))
+            // Balances the back circle so the title sits centred.
+            Spacer(Modifier.size(36.dp))
         }
-        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Box(Modifier.size(108.dp).padding(bottom = 26.dp))
+        Spacer(Modifier.weight(1f))
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(Modifier.padding(bottom = 26.dp).size(108.dp).border(10.dp, colors.cardAlt, CircleShape).testTag("trip_load_failed_ring"))
             Text(strings.tripLoadFailed(), style = inter(20f, InterWeight.bold), color = colors.text, textAlign = TextAlign.Center)
             Text(strings.tripLoadFailedBody(), style = inter(14f), color = colors.textSecondary, textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 40.dp, vertical = 8.dp))
+                modifier = Modifier.padding(horizontal = 40.dp).padding(top = 8.dp))
             Row(
                 Modifier.padding(top = 22.dp).background(AppTheme.accent, RoundedCornerShape(50))
                     .clickable(interactionSource = null, indication = null, role = Role.Button) { haptics.tap(); onRetry() }
@@ -693,6 +801,7 @@ private fun LoadFailedState(onRetry: () -> Unit, onBack: () -> Unit) {
                 Text(strings.tryAgain(), style = inter(15f, InterWeight.bold), color = Color.White)
             }
         }
+        Spacer(Modifier.weight(2f))
     }
 }
 

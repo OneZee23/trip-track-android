@@ -413,6 +413,8 @@ class TripDetailViewModel(
             placeManager?.registerCheckpoint(checkpoint, tripId, recording = recording())
         }
     }
+    /** iOS applyEdits for the description alone: the text the owner wrote, trimmed; one's own trip only. */
+    fun updateDescription(text: String): Job? = edit { repository.updateNotes(tripId, text.trim()) }
     fun renameSegment(id: UUID, name: String?): Job? = edit { repository.updateSegment(id, name) }
     fun deleteSegment(id: UUID): Job? = edit { repository.deleteSegment(id) }
     fun updateCheckpoint(id: UUID, name: String?, coverId: UUID?, photoIds: List<UUID>): Job? = edit { repository.updateCheckpoint(id, name, coverId, photoIds) }

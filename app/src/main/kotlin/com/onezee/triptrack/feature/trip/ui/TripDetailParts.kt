@@ -25,7 +25,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -78,6 +85,7 @@ import com.onezee.triptrack.ui.TripAutoTitle
 import com.onezee.triptrack.ui.cards.hasDisplayableName
 import com.onezee.triptrack.ui.durationSegments
 import java.time.Instant
+import java.util.UUID
 import kotlin.math.roundToLong
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.CircleShape
@@ -87,6 +95,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.onezee.triptrack.R
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.text.style.TextAlign
+import com.onezee.triptrack.designsystem.theme.iosShadow
+import com.onezee.triptrack.feature.me.AchievementRow
+import com.onezee.triptrack.feature.me.BadgeArt
+import com.onezee.triptrack.feature.me.MeArtwork
+import com.onezee.triptrack.feature.social.ui.PublicBadgeOverlay
+import com.onezee.triptrack.logic.BadgeDefinitions
 import com.onezee.triptrack.model.SocialAuthor
 import com.onezee.triptrack.model.SocialFeedVehicle
 
@@ -148,16 +164,21 @@ fun TripChipsRow(
     modifier: Modifier = Modifier,
     foreignVehicle: SocialFeedVehicle? = null,
     onForeignVehicle: (() -> Unit)? = null,
+    onOwnVehicle: ((UUID) -> Unit)? = null,
 ) {
     val strings = appStrings
+    val haptics = rememberHaptics()
     Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         DetailChip { Text(strings.timeRange(trip.startDate, trip.endDate), style = inter(12f, InterWeight.medium, monospacedDigits = true)) }
         if (isOwn) {
-            DetailChip {
+            val open = if (vehicle != null && onOwnVehicle != null) Modifier.clickable(role = Role.Button) { haptics.tap(); onOwnVehicle(vehicle.id) } else Modifier
+            DetailChip(open.testTag("detail_own_vehicle")) {
                 when {
                     vehicle != null -> {
-                        Text(vehicle.avatarEmoji, style = inter(12f))
+                        // iOS displayEmoji: a car glyph stands in for a pixel avatar, whose emoji field holds a sprite name.
+                        Text(if (vehicle.avatarEmoji.startsWith(PIXEL_AVATAR_PREFIX)) "🚗" else vehicle.avatarEmoji, style = inter(12f))
                         Text(vehicle.name, maxLines = 1)
+                        if (onOwnVehicle != null) ChipChevron()
                     }
                     trip.vehicleId != null && vehicleKnown -> {
                         Glyph(AppGlyph.car, contentDescription = null, size = 14.dp)
@@ -180,6 +201,8 @@ fun TripChipsRow(
                     Text(foreignVehicle.avatarEmoji, style = inter(12f))
                 }
                 Text(foreignVehicle.name, maxLines = 1)
+                // iOS: a chevron on a chip that opens nothing would be a lie; it shows only with a page to open.
+                if (onForeignVehicle != null) ChipChevron()
             }
         }
         if (trip.source == TripOrigin.manual) {
@@ -195,6 +218,12 @@ fun TripChipsRow(
             }
         }
     }
+}
+
+/** iOS: `chevron.right` at 9 semibold, half strength, closing a chip that opens something. */
+@Composable
+private fun ChipChevron() {
+    Glyph(AppGlyph.chevronRight, contentDescription = null, size = 10.8.dp, modifier = Modifier.alpha(0.5f))
 }
 
 /**
@@ -368,6 +397,42 @@ fun DescriptionCard(text: String, modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * iOS: notesSection's invitation on one's own trip with nothing written. A header over nothing would
+ * be an empty section, so the prompt is the only thing worth the space, and how an owner finds out
+ * the field exists at all: a dashed accent box (radius 12, dash 5 / 4 at 35 %, stroke inside the
+ * bounds like `strokeBorder`) with the pencil and one line.
+ */
+@Composable
+fun DescriptionPrompt(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val strings = appStrings
+    val accent = AppTheme.accent
+    val interaction = remember { MutableInteractionSource() }
+    Row(
+        modifier
+            .fillMaxWidth()
+            .plainPressFeedback(interaction)
+            .drawBehind {
+                val stroke = 1.dp.toPx()
+                drawRoundRect(
+                    accent.copy(alpha = 0.35f),
+                    topLeft = Offset(stroke / 2, stroke / 2),
+                    size = Size(size.width - stroke, size.height - stroke),
+                    cornerRadius = CornerRadius(12.dp.toPx() - stroke / 2),
+                    style = Stroke(stroke, pathEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))),
+                )
+            }
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
+            .padding(14.dp)
+            .testTag("detail_add_description"),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Glyph(AppGlyph.squareAndPencil, contentDescription = null, tint = accent, size = 18.dp)
+        Text(strings.addNotesCTA(), style = inter(14f, InterWeight.medium), color = accent)
+    }
+}
+
 /** The bytes of a detail photo: the local file when it is here, else the server's copy. */
 fun DetailPhotoState.source(thumbnail: Boolean): PhotoSource? = when {
     filename != null -> PhotoSource.Local(filename)
@@ -398,17 +463,19 @@ fun TripPhotosSection(
     DetailSection(title, modifier, trailing = {
         if (isOwn && onAdd != null) {
             val interaction = remember { MutableInteractionSource() }
+            // iOS: the «+» is 20 pt with a 44 pt target taken back out of the layout (padding −12), so
+            // the heading row is as tall as its text. Compose widens a small clickable to 48 dp by itself.
             Box(
                 Modifier
-                    .size(44.dp)
-                    .padding(start = 12.dp)
+                    .size(20.dp)
                     .plainPressFeedback(interaction)
                     .clickable(interactionSource = interaction, indication = null, role = Role.Button) { haptics.tap(); onAdd() }
                     .semantics { contentDescription = strings.addPhotos() }
                     .testTag("detail_add_photo"),
-                contentAlignment = Alignment.CenterEnd,
+                contentAlignment = Alignment.Center,
             ) {
-                Glyph(AppGlyph.plusCircleFill, contentDescription = null, tint = AppTheme.accent, size = 24.dp)
+                // The artwork keeps a margin in its 24 box; the box may pass the 20 footprint by two.
+                Glyph(AppGlyph.plusCircleFill, contentDescription = null, modifier = Modifier.requiredSize(24.dp), tint = AppTheme.accent, size = 24.dp)
             }
         }
     }) {
@@ -448,6 +515,74 @@ fun TripPhotosSection(
             }
         }
     }
+}
+
+/**
+ * iOS: TripAchievementsGrid. «Достижения поездки»: three-up cards, each the badge's engraving over
+ * its name. The card is already the plate: no disc under the drawing, which would be a badge inside
+ * a badge. A tap opens the badge. An id this build does not know (a newer server) is skipped, as
+ * iOS `earnedBadges` does.
+ */
+@Composable
+fun TripAchievementsSection(badgeIds: List<String>, onOpen: (String) -> Unit, modifier: Modifier = Modifier) {
+    val known = badgeIds.filter { id -> BadgeDefinitions.all.any { it.id == id } }
+    if (known.isEmpty()) return
+    DetailSection(appStrings.tripAchievements(), modifier) {
+        Column(Modifier.fillMaxWidth().testTag("trip_achievements"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            known.chunked(3).forEach { row ->
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    row.forEach { id -> AchievementCard(id, onOpen, Modifier.weight(1f)) }
+                    repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AchievementCard(id: String, onOpen: (String) -> Unit, modifier: Modifier) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    val definition = BadgeDefinitions.all.first { it.id == id }
+    val shape = RoundedCornerShape(14.dp)
+    val shadow = if (AppTheme.isDark) Color.Transparent else Color.Black.copy(alpha = 0.03f)
+    val interaction = remember { MutableInteractionSource() }
+    val title = MeArtwork.badgeTitles[id]?.let { strings.tr(it) }.orEmpty()
+    Column(
+        modifier
+            .iosShadow(shape, shadow, radius = 2.dp, y = 1.dp)
+            .background(colors.card, shape)
+            .plainPressFeedback(interaction)
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button) { haptics.tap(); onOpen(id) }
+            .padding(horizontal = 6.dp, vertical = 14.dp)
+            .testTag("trip_achievement_$id"),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        BadgeArt(AchievementRow(id, definition.category, definition.rarity, unlocked = true, earnCount = 1), 56.dp)
+        // A long word shrinks a little (0.7) before it is split mid-word; two lines on a normal size.
+        Text(
+            title,
+            Modifier.heightIn(min = 28.dp),
+            style = interScaled(11f, InterWeight.semibold),
+            color = colors.text,
+            textAlign = TextAlign.Center,
+            maxLines = 3,
+            autoSize = TextAutoSize.StepBased(minFontSize = points(11f * 0.7f), maxFontSize = points(11f), stepSize = points(0.25f)),
+        )
+    }
+}
+
+/**
+ * iOS: BadgeDetailOverlay for a badge of this trip. The house badge card; iOS adds the date, the
+ * trip's name and the personal figure under the description, which need the badge ledger's dates and
+ * `recordValue`, neither ported.
+ */
+@Composable
+fun TripBadgeOverlay(id: String, onDismiss: () -> Unit) {
+    val definition = BadgeDefinitions.all.firstOrNull { it.id == id } ?: return
+    PublicBadgeOverlay(AchievementRow(id, definition.category, definition.rarity, unlocked = true, earnCount = 1), onDismiss)
 }
 
 /** iOS VehicleAvatar.assetPrefix: an avatar that names a sprite, not an emoji to print. */
