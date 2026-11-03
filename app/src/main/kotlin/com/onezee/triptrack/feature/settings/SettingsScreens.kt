@@ -111,7 +111,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
 }
 
 /** The sheets iOS gives `presentationDragIndicator(.visible)`: Настройки, its sub-pages, auto-record and the stereo picker. */
-private val SettingsSheet.hasGrabber: Boolean
+internal val SettingsSheet.hasGrabber: Boolean
     get() = when (this) {
         SettingsSheet.settings, SettingsSheet.appPreferences, SettingsSheet.privacy, SettingsSheet.autoRecord, SettingsSheet.stereo -> true
         else -> false

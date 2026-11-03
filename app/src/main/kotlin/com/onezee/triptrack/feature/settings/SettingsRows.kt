@@ -36,7 +36,7 @@ import com.onezee.triptrack.feature.me.isAccessibilitySize
  */
 @Composable
 internal fun SettingsTile(glyph: AppGlyph?, @DrawableRes icon: Int? = null, modifier: Modifier = Modifier) {
-    Box(modifier.size(30.dp).background(AppTheme.accentBg, RoundedCornerShape(8.dp)), contentAlignment = Alignment.Center) {
+    Box(modifier.size(30.dp).background(AppTheme.accentBg, RoundedCornerShape(8.dp)).testTag("settings_tile"), contentAlignment = Alignment.Center) {
         if (icon != null) Image(painterResource(icon), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(AppTheme.accent))
         else if (glyph != null) Glyph(glyph, null, tint = AppTheme.accent, size = SettingsGlyphBox)
     }

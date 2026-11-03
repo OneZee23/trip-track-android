@@ -426,8 +426,8 @@ private fun androidx.compose.foundation.layout.RowScope.Metric(value: String, un
 
 /** Parchment, faint roads, a speed-gradient route from the start (red dot) to the finish (green). */
 @Composable
-private fun MockMap(strings: AppStrings) {
-    BoxWithConstraints(Modifier.fillMaxWidth().height(150.dp).background(Color(0xFFE8E1D3))) {
+internal fun MockMap(strings: AppStrings) {
+    BoxWithConstraints(Modifier.fillMaxWidth().height(150.dp).background(Color(0xFFE8E1D3)).testTag("onboarding_mock_map")) {
         val w = maxWidth
         Canvas(Modifier.fillMaxSize()) {
             val width = size.width

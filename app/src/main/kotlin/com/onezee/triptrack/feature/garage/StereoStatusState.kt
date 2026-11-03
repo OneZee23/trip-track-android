@@ -41,12 +41,18 @@ internal fun rememberStereoStatus(graph: AppGraph, settings: SettingsState, vehi
     val outputs by produceState<List<SavedBluetoothDevice>>(emptyList(), graph) {
         graph.location.carStereos.changes.collect { value = withContext(Dispatchers.IO) { graph.location.carStereos.outputs() } }
     }
-    val linked = settings.stereos.firstOrNull { it.vehicleId == vehicleId }
-    return when {
-        !bluetoothOn && linked?.uuid != AutoTripController.ANDROID_AUTO -> StereoStatus.BluetoothOff
-        linked != null -> StereoStatus.Linked(linked.name, outputs.any { it.uuid.equals(linked.uuid, ignoreCase = true) })
-        else -> StereoStatus.NotLinked
-    }
+    return stereoStatus(bluetoothOn, settings.stereos.firstOrNull { it.vehicleId == vehicleId }, outputs)
+}
+
+/**
+ * The three faces of the status card. Bluetooth off comes first and covers a vehicle with no stereo too, as iOS checks the radio
+ * before it looks at the car; Android Auto is the one link that needs no Bluetooth, so it never reads as «off». A linked stereo is
+ * «connected» when the phone plays through its output now, matched by the id without regard to case.
+ */
+internal fun stereoStatus(bluetoothOn: Boolean, linked: SavedBluetoothDevice?, outputs: List<SavedBluetoothDevice>): StereoStatus = when {
+    !bluetoothOn && linked?.uuid != AutoTripController.ANDROID_AUTO -> StereoStatus.BluetoothOff
+    linked != null -> StereoStatus.Linked(linked.name, outputs.any { it.uuid.equals(linked.uuid, ignoreCase = true) })
+    else -> StereoStatus.NotLinked
 }
 
 private fun bluetoothEnabled(context: Context): Boolean =
