@@ -151,6 +151,8 @@ class MeInteractionTests {
     @Test fun theGuestCardIsOnMeWhileSettingsKeepLanguageAndTheme() {
         val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
         compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { MeTab(graph) } }
+        // The page below the hero depends on the library (an empty one is the first run), so it waits for it.
+        compose.waitUntil(5000) { graph.me.profile.state.value.loaded }
         compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_guest_signin"))
         compose.onNodeWithTag("profile_guest_signin").assertIsDisplayed()
         compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_gear"))
