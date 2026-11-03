@@ -51,7 +51,7 @@ fun SocialShareAction(social: SocialFeature, id: java.util.UUID, journey: Boolea
     ToastHost(toast, onDismiss = { toast = null })
 }
 
-/** What the top bar needs of a share in progress: whether the button is spent, and the tap. */
+/** iOS: TripDetailView `isGeneratingShare` and `openStoryShare`. What the top bar needs of a share in progress: whether the button is spent, and the tap. */
 @Stable
 class TripShare(val busy: Boolean, val start: () -> Unit)
 

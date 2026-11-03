@@ -34,6 +34,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -521,24 +522,33 @@ fun TripPhotosSection(
  * iOS: TripAchievementsGrid. «Достижения поездки»: three-up cards, each the badge's engraving over
  * its name. The card is already the plate: no disc under the drawing, which would be a badge inside
  * a badge. A tap opens the badge. An id this build does not know (a newer server) is skipped, as
- * iOS `earnedBadges` does.
+ * iOS `earnedBadges` does. At the accessibility text sizes the grid is two across: a third of the
+ * width splits «Марафонец» mid-word.
  */
 @Composable
 fun TripAchievementsSection(badgeIds: List<String>, onOpen: (String) -> Unit, modifier: Modifier = Modifier) {
     val known = badgeIds.filter { id -> BadgeDefinitions.all.any { it.id == id } }
     if (known.isEmpty()) return
+    val columns = if (LocalDensity.current.fontScale >= ACCESSIBILITY_FONT_SCALE) 2 else 3
     DetailSection(appStrings.tripAchievements(), modifier) {
         Column(Modifier.fillMaxWidth().testTag("trip_achievements"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            known.chunked(3).forEach { row ->
+            known.chunked(columns).forEach { row ->
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                     row.forEach { id -> AchievementCard(id, onOpen, Modifier.weight(1f)) }
-                    repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                    repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
     }
 }
 
+/**
+ * iOS `isAccessibilitySize` starts at AX1, where the body text is 1.65 times the default; the
+ * largest ordinary size is 1.35. Android's own scale has no such step, so the grid changes between.
+ */
+private const val ACCESSIBILITY_FONT_SCALE = 1.5f
+
+/** iOS: TripAchievementsGrid, one card: the engraving 56, the name in Inter 11 semibold, padding 14 / 6, radius 14. */
 @Composable
 private fun AchievementCard(id: String, onOpen: (String) -> Unit, modifier: Modifier) {
     val strings = appStrings

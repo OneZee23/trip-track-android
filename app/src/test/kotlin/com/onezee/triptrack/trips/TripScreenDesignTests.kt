@@ -4,6 +4,13 @@ package com.onezee.triptrack.trips
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import com.onezee.triptrack.feature.trip.ui.TripAchievementsSection
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -224,6 +231,26 @@ class TripScreenDesignTests : TripsScreenTest() {
         compose.onNodeWithTag("badge_close").performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("public_badge_overlay").assertDoesNotExist()
+    }
+
+    /** iOS: «two on accessibility sizes, where a third of the width split «Марафонец» mid-word». */
+    @Test fun achievementsStandTwoAcrossAtTheAccessibilityTextSizes() {
+        show {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale = 2f)) {
+                TripAchievementsSection(listOf("first_trip", "road_regular", "road_warrior", "marathon_42"), {}, Modifier.padding(16.dp))
+            }
+        }
+        val a = bounds("trip_achievement_first_trip")
+        val b = bounds("trip_achievement_road_regular")
+        val c = bounds("trip_achievement_road_warrior")
+        val d = bounds("trip_achievement_marathon_42")
+        assertEquals(a.top.value, b.top.value, 0.1f)
+        assertEquals(c.top.value, d.top.value, 0.1f)
+        assertTrue(c.top > a.bottom, "the third card starts the second row")
+        (b.left - a.right).near(10f)
+        // Two flexible columns of the 16-in-from-each-side width, 10 apart.
+        a.width.near((compose.onRoot().getUnclippedBoundsInRoot().width.value - 32f - 10f) / 2f, 1f)
     }
 
     @Test fun aTripWithNothingEarnedHasNoAchievementsSection() {
