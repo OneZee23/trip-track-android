@@ -163,7 +163,7 @@ internal fun ProfileTripTile(trip: Trip, unit: DistanceUnit, onTap: () -> Unit, 
         Column(Modifier.fillMaxWidth().iosShadow(shape, shadow, radius = 2.dp, y = 1.dp).clip(shape).background(colors.card)) {
             // The thumbnail is flush with three edges, so the tile's own clip rounds the two corners that need it.
             Box(Modifier.fillMaxWidth().height(72.dp)) {
-                if (trip.previewCoordinates.size > 1) ProfileMapPreview(listOf(trip.previewCoordinates), Modifier.fillMaxSize())
+                if (trip.previewCoordinates.size > 1) com.onezee.triptrack.ui.MapSnapshotPreview(trip.previewCoordinates, trip.id, Modifier.fillMaxSize(), height = 72.dp, width = 175.dp, cornerRadius = 0.dp)
                 else Box(Modifier.fillMaxSize().background(colors.cardAlt), contentAlignment = Alignment.Center) {
                     Glyph(AppGlyph.mapSlash, null, tint = colors.textTertiary, size = symbolBox(16f))
                 }

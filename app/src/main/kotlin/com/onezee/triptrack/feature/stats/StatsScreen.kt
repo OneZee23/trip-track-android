@@ -30,7 +30,7 @@ import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.atlas.ui.WorldGlyph
 import com.onezee.triptrack.feature.atlas.ui.WorldGlyphIcon
-import com.onezee.triptrack.feature.me.RoutePreview
+import com.onezee.triptrack.ui.MapSnapshotPreview
 import com.onezee.triptrack.feature.social.ui.SocialGlyph
 import com.onezee.triptrack.feature.social.ui.SocialGlyphIcon
 import com.onezee.triptrack.feature.social.ui.SocialSectionLabel
@@ -198,7 +198,7 @@ private fun MemoryCard(trip: Trip, onOpen: () -> Unit) {
         Column(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(strings.statsYearAgoToday().uppercase(strings.language.locale), style = AppType.statCaption, letterSpacing = AppType.statCaptionTracking, color = colors.textSecondary)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(80.dp, 56.dp).clip(RoundedCornerShape(10.dp))) { RoutePreview(trip.previewCoordinates, Modifier.matchParentSize()) }
+                MapSnapshotPreview(trip.previewCoordinates, trip.id, Modifier.size(80.dp, 56.dp).clip(RoundedCornerShape(10.dp)), height = 56.dp, width = 80.dp, cornerRadius = 10.dp)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(trip.title?.takeIf { it.isNotEmpty() } ?: trip.region?.takeIf { it.isNotEmpty() } ?: StatsPeriodFormat.dayMonthShort(trip.startDate, strings.language, strings.zone),
                         style = AppType.itemTitle, color = colors.text, maxLines = 1)

@@ -343,14 +343,8 @@ private fun JournalTripCard(trip: Trip, level: Int, pinned: Boolean, vehicles: L
             pressResponse = if (onComposeJourney != null) CardPressResponse.hold else CardPressResponse.tap,
             onLongPress = onComposeJourney?.let { open -> { haptics.action(); open(trip) } }, onLongPressLabel = strings.journeyCombine(),
             vehicle = vehicle, averageSpeed = speed,
-            modifier = if (pinnable) Modifier.semantics { customActions = listOf(CustomAccessibilityAction(pinLabel) { onPin(trip.id); true }) } else Modifier,
-            map = { coordinates, height -> JournalMap(coordinates, height) })
+            modifier = if (pinnable) Modifier.semantics { customActions = listOf(CustomAccessibilityAction(pinLabel) { onPin(trip.id); true }) } else Modifier)
     }
-}
-
-@Composable
-private fun JournalMap(coordinates: List<GeoPoint>, height: androidx.compose.ui.unit.Dp) {
-    Box(Modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(12.dp))) { ProfileMapPreview(listOf(coordinates), Modifier.fillMaxSize()) }
 }
 
 @Composable
@@ -387,7 +381,7 @@ internal fun ProfileTripRow(trip: Trip, unit: DistanceUnit, pinned: Boolean = fa
         Text(trip.title?.takeIf(String::isNotBlank) ?: region ?: strings.longDate(trip.startDate),
             Modifier.fillMaxWidth().padding(horizontal = 13.dp).padding(bottom = 10.dp), style = interScaled(17f, InterWeight.heavy), color = AppTheme.colors.text, maxLines = 2)
         Box(Modifier.fillMaxWidth().height(118.dp).clip(RoundedCornerShape(12.dp))) {
-            ProfileMapPreview(listOf(trip.previewCoordinates), Modifier.fillMaxSize())
+            com.onezee.triptrack.ui.MapSnapshotPreview(trip.previewCoordinates, trip.id, Modifier.fillMaxSize(), height = 118.dp)
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = 13.dp).padding(top = 12.dp, bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             val distance = Measure.distanceParts(trip.distance, unit, strings.language.code, strings, Measure.Style.tenths)

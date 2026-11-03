@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,12 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -86,7 +80,8 @@ import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.ReactionEmoji
 import com.onezee.triptrack.model.TripOrigin
-import com.onezee.triptrack.ui.LightRoutePreview
+import com.onezee.triptrack.ui.MapSnapshotPreview
+import com.onezee.triptrack.ui.MapSnapshotRoutesPreview
 import com.onezee.triptrack.ui.RegionDisplay
 import com.onezee.triptrack.ui.RelativeTripDate
 import com.onezee.triptrack.ui.SystemColors
@@ -160,10 +155,10 @@ private fun tripMetrics(distance: Double, seconds: Long, padMinutes: Boolean, av
 
 /** The map slot of a card: the route on the card-alt ground, or the struck-out map when there is none. */
 @Composable
-private fun CardMap(coordinates: List<GeoPoint>, height: Dp, modifier: Modifier = Modifier) {
+private fun CardMap(coordinates: List<GeoPoint>, tripId: java.util.UUID, height: Dp, modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(12.dp)
     if (coordinates.size > 1) {
-        LightRoutePreview(listOf(coordinates), modifier.fillMaxWidth().height(height).clip(shape))
+        MapSnapshotPreview(coordinates, tripId, modifier.fillMaxWidth().height(height).clip(shape), height = height)
     } else {
         Box(modifier.fillMaxWidth().height(height).clip(shape).background(AppTheme.colors.cardAlt), contentAlignment = Alignment.Center) {
             Glyph(AppGlyph.mapSlash, contentDescription = null, tint = AppTheme.colors.textTertiary, size = 26.dp)
@@ -247,7 +242,7 @@ fun ProfileTripCard(
             }
             Text(title, style = inter(17f, InterWeight.heavy), letterSpacing = points(-0.085f), color = colors.text, maxLines = 2,
                 modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp))
-            if (map != null && trip.coordinates.size > 1) map(trip.coordinates, mapHeight) else CardMap(trip.coordinates, mapHeight)
+            if (map != null && trip.coordinates.size > 1) map(trip.coordinates, mapHeight) else CardMap(trip.coordinates, trip.id, mapHeight)
             Box(Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp)) {
                 MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = true, averageSpeed = averageSpeed))
             }
@@ -295,7 +290,7 @@ fun SocialFeedCard(
                     Text(title, style = inter(17f, InterWeight.heavy), letterSpacing = points(-0.085f), color = colors.text, maxLines = 2,
                         modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp))
                 }
-                CardMap(trip.coordinates, 178.dp)
+                CardMap(trip.coordinates, trip.id, 178.dp)
                 Box(Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp)) {
                     MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = false))
                 }
@@ -468,6 +463,8 @@ fun JourneyCard(
     thumbs: List<List<GeoPoint>>,
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
+    snapshotIdentity: String = "journey:${routes.hashCode()}",
+    thumbIds: List<java.util.UUID> = emptyList(),
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -487,7 +484,7 @@ fun JourneyCard(
                         Glyph(AppGlyph.mapSlash, contentDescription = null, tint = colors.textTertiary, size = 24.dp)
                     }
                 } else {
-                    JourneyRoutes(routes, Modifier.matchParentSize())
+                    MapSnapshotRoutesPreview(routes, snapshotIdentity, Modifier.matchParentSize(), height = 150.dp, cornerRadius = 16.dp)
                 }
                 Row(
                     Modifier
@@ -504,7 +501,7 @@ fun JourneyCard(
                 }
                 if (thumbs.isNotEmpty()) {
                     Row(Modifier.align(Alignment.TopEnd).padding(10.dp), horizontalArrangement = Arrangement.spacedBy((-10).dp)) {
-                        thumbs.forEach { leg ->
+                        thumbs.forEachIndexed { index, leg ->
                             Box(
                                 Modifier
                                     .size(28.dp)
@@ -512,7 +509,8 @@ fun JourneyCard(
                                     .background(colors.cardAlt)
                                     .border(2.dp, Color.White, RoundedCornerShape(7.dp)),
                             ) {
-                                if (leg.size > 1) MiniRoute(leg, Modifier.matchParentSize())
+                                if (leg.size > 1) MapSnapshotPreview(leg, thumbIds.getOrNull(index)?.toString() ?: "journey-thumb:${leg.hashCode()}",
+                                    Modifier.matchParentSize(), height = 28.dp, width = 28.dp, cornerRadius = 7.dp)
                             }
                         }
                     }
@@ -534,37 +532,6 @@ fun JourneyCard(
 private fun Modifier.cardShadow(shape: androidx.compose.ui.graphics.Shape): Modifier {
     val shadow = if (AppTheme.isDark) Color.Transparent else Color.Black.copy(alpha = 0.03f)
     return iosShadow(shape, shadow, radius = 2.dp, y = 1.dp)
-}
-
-/**
- * iOS: CardMapPreview's lines (accent, width 3, dots only for a single route), drawn on the
- * card-alt ground in one shared frame. iOS hosts a live map per journey card; here the lines alone.
- */
-@Composable
-private fun JourneyRoutes(routes: List<List<GeoPoint>>, modifier: Modifier) {
-    LightRoutePreview(routes, modifier, accent = AppTheme.accent)
-}
-
-/** A leg's thumbnail: its route on the card-alt ground, in the stack of the journey card. */
-@Composable
-private fun MiniRoute(route: List<GeoPoint>, modifier: Modifier) {
-    val accent = AppTheme.accent
-    Canvas(modifier) {
-        val lats = route.map { it.latitude }
-        val lons = route.map { it.longitude }
-        val minLat = lats.min(); val maxLat = lats.max(); val minLon = lons.min(); val maxLon = lons.max()
-        val pad = 4.dp.toPx()
-        val w = size.width - pad * 2; val h = size.height - pad * 2
-        val scale = minOf(if (maxLat > minLat) h / (maxLat - minLat) else 1.0, if (maxLon > minLon) w / (maxLon - minLon) else 1.0)
-        if (maxLat == minLat && maxLon == minLon) return@Canvas
-        val midLat = (minLat + maxLat) / 2; val midLon = (minLon + maxLon) / 2
-        val path = Path()
-        route.forEachIndexed { index, p ->
-            val o = Offset((size.width / 2 + (p.longitude - midLon) * scale).toFloat(), (size.height / 2 - (p.latitude - midLat) * scale).toFloat())
-            if (index == 0) path.moveTo(o.x, o.y) else path.lineTo(o.x, o.y)
-        }
-        drawPath(path, accent, style = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-    }
 }
 
 // ---------------------------------------------------------------------------------------------
