@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.Glyph
+import com.onezee.triptrack.designsystem.components.NavCircleButton
 import com.onezee.triptrack.designsystem.components.PressableCard
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
@@ -108,10 +109,10 @@ fun ColumnScope.AtlasSummaryContent(
                 // No search field and no «Trips in the atlas» row yet, as on iOS: their screens are not
                 // built, and a field that searches nothing is a press that does nothing.
                 item(key = "regions-header") {
-                    SectionHeader(strings.atlasRegions(), strings.formattedCount(state.exploration.regionCount), Modifier.padding(top = 4.dp))
+                    SectionHeader(strings.atlasRegions(), strings.formattedCount(state.exploration.regionCount), Modifier.testTag("atlas_header_regions"))
                 }
                 item(key = "regions") {
-                    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(AtlasTheme.cardRadius)).background(AtlasTheme.colors.card)) {
+                    Column(Modifier.fillMaxWidth().testTag("atlas_regions_card").clip(RoundedCornerShape(AtlasTheme.cardRadius)).background(AtlasTheme.colors.card)) {
                         state.exploration.regions.forEachIndexed { index, region ->
                             if (index > 0) Box(Modifier.padding(start = 68.dp).fillMaxWidth().height(1.dp).background(AtlasTheme.colors.separator))
                             RegionRow(region, unit, strings) { onOpenRegion(region.id) }
@@ -119,7 +120,7 @@ fun ColumnScope.AtlasSummaryContent(
                     }
                 }
                 item(key = "cities-header") {
-                    SectionHeader(strings.atlasCities(), strings.atlasCitiesOutOf(state.overview.cities.size, totalCities), Modifier.padding(top = 4.dp))
+                    SectionHeader(strings.atlasCities(), strings.atlasCitiesOutOf(state.overview.cities.size, totalCities), Modifier.testTag("atlas_header_cities"))
                 }
                 item(key = "cities") {
                     ChipFlow(Modifier.fillMaxWidth()) {
@@ -185,19 +186,31 @@ private fun ShareButton(loading: Boolean, offline: Boolean, onShare: () -> Unit,
     ) {
         Box(Modifier.size(44.dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size(36.dp).background(if (offline) atlas.chip else atlas.accentSoft, CircleShape), contentAlignment = Alignment.Center) {
-                Glyph(AppGlyph.squareAndArrowUp, contentDescription = null, tint = if (offline) atlas.secondary else atlas.accentInk, size = 18.dp)
+                // square.and.arrow.up at 16 semibold is 14.3 × 18.0 of ink. The artwork is a little taller for its width than
+                // the symbol, so the box (1.2 × 16 = 19.2) is cut to 18.8 to be about 0.7 off in both (AT-01).
+                Glyph(AppGlyph.squareAndArrowUp, contentDescription = null, tint = if (offline) atlas.secondary else atlas.accentInk, size = 18.8.dp,
+                    modifier = Modifier.testTag("atlas_share_glyph"))
             }
         }
     }
 }
 
-/** A section heading and its count on the right, WITHOUT a chevron: «all regions» is not a screen yet. */
+/**
+ * A section heading and its count, WITHOUT a chevron: «all regions» is not a screen yet. The count stands at the right
+ * edge (iOS: a Spacer between the two, AT-04); only «Поездки здесь 49» keeps its count beside the heading
+ * ([countInline]), with the «Все ⌄» link at the right.
+ */
 @Composable
-fun SectionHeader(title: String, count: String, modifier: Modifier = Modifier, trailing: @Composable () -> Unit = {}) {
+fun SectionHeader(title: String, count: String, modifier: Modifier = Modifier, countInline: Boolean = false, trailing: @Composable () -> Unit = {}) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         AtlasSectionTitle(title)
-        Text(count, style = AppType.meta.tabular(), color = AtlasTheme.colors.secondary, maxLines = 1)
-        Spacer(Modifier.weight(1f))
+        if (countInline) {
+            Text(count, style = AppType.meta.tabular(), color = AtlasTheme.colors.secondary, maxLines = 1)
+            Spacer(Modifier.weight(1f))
+        } else {
+            Spacer(Modifier.weight(1f))
+            Text(count, Modifier.testTag("atlas_section_count"), style = AppType.meta.tabular(), color = AtlasTheme.colors.secondary, maxLines = 1)
+        }
         trailing()
     }
 }
@@ -271,7 +284,9 @@ fun ColumnScope.AtlasRegionContent(
             ))
         }
         if (region.cities.isNotEmpty() || fogged > 0) {
-            item(key = "cities-header") { SectionHeader(strings.atlasCities(), strings.atlasCitiesOutOf(region.visitedCityCount, region.totalCities)) }
+            item(key = "cities-header") {
+                SectionHeader(strings.atlasCities(), strings.atlasCitiesOutOf(region.visitedCityCount, region.totalCities), Modifier.testTag("atlas_region_header_cities"))
+            }
             item(key = "cities") {
                 // A city chip takes the camera closer; the region stays selected.
                 ChipFlow(Modifier.fillMaxWidth()) {
@@ -282,7 +297,7 @@ fun ColumnScope.AtlasRegionContent(
         }
         if (trips.isNotEmpty()) {
             item(key = "trips-header") {
-                SectionHeader(strings.atlasTripsHere(), "${trips.size}") {
+                SectionHeader(strings.atlasTripsHere(), "${trips.size}", countInline = true) {
                     if (trips.size > 4 && !showsAll) {
                         val haptics = rememberHaptics()
                         val interaction = remember { MutableInteractionSource() }
@@ -355,14 +370,14 @@ fun AtlasSelectionPanel(
                 if (trip != null) {
                     TripCard(trip, strings, unit, now) { haptics.action(); onOpenTrip(trip) }
                 } else if (road != null) {
-                    Row(Modifier.padding(start = 16.dp, end = 60.dp, top = 4.dp, bottom = 6.dp)) {
-                        Text(strings.mapRoadTrips(road.size), style = inter(17f, InterWeight.semibold), color = atlas.ink, maxLines = 1)
+                    // 16 above the heading, 6 under it: the heading starts 41 under the panel's top (AT-12).
+                    Row(Modifier.padding(start = 16.dp, end = 60.dp, top = 16.dp, bottom = 6.dp)) {
+                        Text(strings.mapRoadTrips(road.size), Modifier.testTag("mymap_road_heading"), style = inter(17f, InterWeight.semibold), color = atlas.ink, maxLines = 1)
                     }
                     val shown = if (expanded) road else road.take(2)
                     LazyColumn(Modifier.fillMaxWidth().weight(1f, fill = false)) {
                         itemsIndexed(shown, key = { _, it -> it.id }) { _, item ->
-                            AtlasTripRow(TripAutoTitle.display(item.title, item.startDate, strings), tripLine(item, strings, unit, now), item,
-                                onOpen = { onSelectTrip(item.id) }, testTag = "mymap_road_trip")
+                            AtlasRoadRow(TripAutoTitle.display(item.title, item.startDate, strings), tripLine(item, strings, unit, now), item) { onSelectTrip(item.id) }
                         }
                     }
                     if (!expanded && road.size > 2) {
@@ -371,8 +386,9 @@ fun AtlasSelectionPanel(
                     }
                 }
             }
-            Box(Modifier.align(Alignment.TopEnd).padding(top = 10.dp, end = 12.dp)) {
-                CircleButton(AppGlyph.xmark, strings.closeSheet(), "mymap_close", diameter = 36.dp, onClick = onClose)
+            // iOS: NavCircleIcon(xmark), 40 in the card colour with a soft shadow, 14 from the top and 16 from the edge (AT-13).
+            Box(Modifier.align(Alignment.TopEnd).padding(top = 14.dp, end = 16.dp)) {
+                NavCircleButton(AppGlyph.xmark, onClick = onClose, contentDescription = strings.closeSheet(), modifier = Modifier.testTag("mymap_close"))
             }
         }
     }
@@ -403,7 +419,8 @@ private const val ROAD_PANEL = 260f
 private fun TripCard(trip: MapTripPin, strings: AppStrings, unit: DistanceUnit, now: Instant, onOpen: () -> Unit) {
     val atlas = AtlasTheme.colors
     val words = strings.language.code
-    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 60.dp, top = 2.dp), horizontalArrangement = Arrangement.spacedBy(12.dp),
+    // 14 under the grabber's strip: the thumbnail starts 39 under the panel's top (AT-12).
+    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 60.dp, top = 14.dp).testTag("mymap_trip_row"), horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically) {
         MapTripThumb(trip, 56.dp)
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

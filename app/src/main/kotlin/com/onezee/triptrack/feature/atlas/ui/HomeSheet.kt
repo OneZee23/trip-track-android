@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -47,12 +48,10 @@ import com.onezee.triptrack.feature.settings.HomeState
 import com.onezee.triptrack.logic.radius
 import com.onezee.triptrack.map.MapHost
 import com.onezee.triptrack.map.MapHostState
+import com.onezee.triptrack.map.area.MapArea
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
-import com.onezee.triptrack.map.route.MapRoutes
-import com.onezee.triptrack.map.route.RouteAppearance
-import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.model.GeoBounds
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.HomeSettings
@@ -60,7 +59,6 @@ import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.ui.LocalLiveMaps
 import kotlin.math.PI
 import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * iOS: HomeSheet. Everything about home on one screen: place the point, show the pin or not, the
@@ -80,7 +78,7 @@ fun HomeSheet(home: HomeState, fallback: GeoPoint?, onChange: (HomeState) -> Uni
                 HomeMapCard(home, fallback) { onChange(home.copy(coordinate = it)) }
                 if (home.coordinate != null) {
                     HomeCard {
-                        ToggleRow(strings.homeShowOnMap(), home.showsOnMap, "home_shows_toggle") { onChange(home.copy(showsOnMap = it)) }
+                        ToggleRow(strings.homeShowOnMap(), home.showsOnMap, "home_shows_toggle", minHeight = HOME_TOGGLE_HEIGHT) { onChange(home.copy(showsOnMap = it)) }
                         Note(strings.homeVisibleOnlyToYou())
                     }
                     HomeCard {
@@ -90,7 +88,7 @@ fun HomeSheet(home: HomeState, fallback: GeoPoint?, onChange: (HomeState) -> Uni
                         }
                     }
                     HomeCard {
-                        ToggleRow(strings.homeZoneToggle(), home.trimsPublicTracks, "home_zone_toggle") { onChange(home.copy(trimsPublicTracks = it)) }
+                        ToggleRow(strings.homeZoneToggle(), home.trimsPublicTracks, "home_zone_toggle", minHeight = HOME_TOGGLE_HEIGHT) { onChange(home.copy(trimsPublicTracks = it)) }
                         // The price is named BEFORE the press: switching it on re-sends every public trip.
                         Note(strings.homeZoneNote())
                     }
@@ -116,6 +114,9 @@ fun HomeSheet(home: HomeState, fallback: GeoPoint?, onChange: (HomeState) -> Uni
         )
     }
 }
+
+/** iOS `.frame(minHeight: 44)` on the two toggles of the home sheet (AT-17); the sheet «Вид карты» keeps 56. */
+internal val HOME_TOGGLE_HEIGHT = 44.dp
 
 @Composable
 private fun HomeCard(content: @Composable ColumnScope.() -> Unit) {
@@ -166,13 +167,9 @@ private fun HomeMapCard(home: HomeState, fallback: GeoPoint?, onPlace: (GeoPoint
             }
             val house = remember(density) { homeGlyphBitmap(density) }
             val markers = home.coordinate?.let { listOf(MapMarker("home_pin_picker", it, MapMarker.Kind.HOME, image = house)) }.orEmpty()
-            val ring = remember(home.coordinate, radius) {
-                home.coordinate?.let { centre ->
-                    MapRoutes(listOf(RouteGeometry.build(circle(centre, radius), preview = true)),
-                        RouteAppearance(2.0, null, lineColorOverride = worldArgb(0xC8, 0x47, 0x2D, 0.7), showsEndpoints = false))
-                }
-            }
-            MapHost(mapState, Modifier.fillMaxSize(), routes = ring, markers = markers, onMapTap = { haptics.tap(); onPlace(it.coordinate) },
+            val accent = atlas.accent
+            val zone = remember(home.coordinate, radius, accent) { home.coordinate?.let { homeZone(it, radius, accent) } }
+            MapHost(mapState, Modifier.fillMaxSize(), area = zone, markers = markers, onMapTap = { haptics.tap(); onPlace(it.coordinate) },
                 showsUserLocation = true, systemInsets = WindowInsets(0))
         }
         // The hint stands only while there is no home: it explains the screen's one action.
@@ -190,10 +187,10 @@ private fun around(centre: GeoPoint, metres: Double): GeoBounds {
     return GeoBounds(centre.latitude - dLat, centre.latitude + dLat, centre.longitude - dLon, centre.longitude + dLon)
 }
 
-/** The radius as a ring of 64 points: MapLibre has no circle in metres. */
-private fun circle(centre: GeoPoint, metres: Double): List<GeoPoint> = (0..64).map { i ->
-    val angle = 2 * PI * i / 64
-    val dLat = metres * cos(angle) / 111_320.0
-    val dLon = metres * sin(angle) / (111_320.0 * maxOf(0.01, cos(centre.latitude * PI / 180)))
-    GeoPoint(centre.latitude + dLat, centre.longitude + dLon)
-}
+/**
+ * iOS: the picker's MKCircleRenderer, `fillColor = accent at 0.16`, `strokeColor = accent at 0.7`, `lineWidth = 2`: a
+ * tinted disc around the house, not a bare ring (AT-18). The radius as a ring of 64 points: MapLibre has no circle in
+ * metres.
+ */
+internal fun homeZone(centre: GeoPoint, metres: Double, accent: androidx.compose.ui.graphics.Color): MapArea =
+    MapArea(MapArea.disc(centre, metres), accent.copy(alpha = 1f).toArgb(), fillOpacity = 0.16, strokeOpacity = 0.7, strokeWidthPoints = 2.0)

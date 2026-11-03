@@ -107,6 +107,34 @@ class WorldScreenshotTests(private val dark: Boolean) : WorldScreenTest() {
         screen("atlas_beta_sheet")
     }
 
+    /** «Как мы считаем» at the iPhone's medium height (AT-15), the third card running under the edge. */
+    @Test fun atlasExplanationSheet() {
+        showAtlas(dark)
+        compose.onNodeWithTag("atlas_explored_title").performClick()
+        compose.onNodeWithTag("atlas_explanation_sheet").assertExists()
+        screen("atlas_explanation_sheet")
+    }
+
+    /** The home sheet with no home set yet (iOS h2) and with one placed, the zone on (h3, h5). */
+    @Test fun atlasHomeSheetEmpty() {
+        showAtlas(dark)
+        compose.onNodeWithTag("atlas_appearance").performClick()
+        compose.onNodeWithTag("atlas_home_row").performClick()
+        settle()
+        compose.onNodeWithTag("home_sheet").assertExists()
+        screen("atlas_home_sheet_empty")
+    }
+
+    @Test fun atlasHomeSheetPlaced() {
+        home.value = HomeState(coordinate = GeoPoint(45.035, 38.975), trimsPublicTracks = true)
+        showAtlas(dark)
+        compose.onNodeWithTag("atlas_appearance").performClick()
+        compose.onNodeWithTag("atlas_home_row").performClick()
+        settle()
+        compose.onNodeWithTag("home_sheet").assertExists()
+        screen("atlas_home_sheet")
+    }
+
     @Test fun atlasLocationDenied() {
         permission.value = AtlasLocationPermission.denied
         showAtlas(dark)
