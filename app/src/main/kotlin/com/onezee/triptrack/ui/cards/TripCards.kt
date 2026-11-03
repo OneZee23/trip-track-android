@@ -134,9 +134,12 @@ private fun MetricsStrip(blocks: List<Pair<List<Pair<String, String>>, String>>)
     }
 }
 
-/** The three blocks: distance in tenths, time, the overall average speed. [padMinutes]: «4 ч 05 мин» on the profile card. */
+/**
+ * The three blocks: distance in tenths, time, the overall average speed ([averageSpeed], metres per
+ * second, replaces it: the Я journal honours the «moving only» setting). [padMinutes]: «4 ч 05 мин» on the profile card.
+ */
 @Composable
-private fun tripMetrics(distance: Double, seconds: Long, padMinutes: Boolean): List<Pair<List<Pair<String, String>>, String>> {
+private fun tripMetrics(distance: Double, seconds: Long, padMinutes: Boolean, averageSpeed: Double? = null): List<Pair<List<Pair<String, String>>, String>> {
     val strings = appStrings
     val unit = LocalDistanceUnit.current
     val lang = strings.language.code
@@ -145,7 +148,7 @@ private fun tripMetrics(distance: Double, seconds: Long, padMinutes: Boolean): L
     val m = (seconds % 3600) / 60
     val time = if (h == 0L) listOf("$m" to strings.minutesUnitShort())
     else listOf("$h" to strings.hoursUnitShort(), (if (padMinutes) "%02d".format(m) else "$m") to strings.minutesUnitShort())
-    val speed = Measure.speedParts(if (seconds > 0) distance / seconds else 0.0, unit, lang, strings)
+    val speed = Measure.speedParts(averageSpeed ?: if (seconds > 0) distance / seconds else 0.0, unit, lang, strings)
     return listOf(
         listOf(d.value to d.unit) to strings.distance(),
         time to strings.duration(),
@@ -189,8 +192,11 @@ fun DriverRank.color(): Color = when (this) {
 
 /**
  * iOS: ProfileTripCardView.swift. A trip of one's own history (Я) and of the pinned rows: the
- * level tag and date, the title, the route, three numbers. No author, no reactions: status is the
- * screen's business, never a badge on the card. The caller owns the tap's haptic.
+ * level tag and date, the car it was driven in, the title, the route, three numbers. No author, no
+ * reactions: status is the screen's business, never a badge on the card. The caller owns the tap's
+ * haptic. [vehicle] is the car of the trip when it still stands in the garage with a drawn sprite;
+ * [averageSpeed] replaces the overall average (metres per second); [map] draws the route slot of a
+ * trip with a route, where the caller has a better map than the light preview.
  */
 @Composable
 fun ProfileTripCard(
@@ -202,6 +208,10 @@ fun ProfileTripCard(
     mapHeight: Dp = 178.dp,
     pressResponse: CardPressResponse = CardPressResponse.tap,
     onLongPress: (() -> Unit)? = null,
+    vehicle: ProfileCardVehicle? = null,
+    averageSpeed: Double? = null,
+    onLongPressLabel: String? = null,
+    map: (@Composable (List<GeoPoint>, Dp) -> Unit)? = null,
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -210,19 +220,22 @@ fun ProfileTripCard(
     val date = strings.dayMonth(trip.startDate) + if (named && !region.isNullOrEmpty()) " · $region" else ""
     val title = (if (named) TripAutoTitle.localized(trip.title, trip.startDate, strings)?.takeIf { it.isNotEmpty() } else null)
         ?: region?.takeIf { it.isNotEmpty() } ?: strings.dayMonth(trip.startDate)
-    PressableCard(onClick = onTap, modifier = modifier.fillMaxWidth().testTag("profile_trip_card"), response = pressResponse, onLongClick = onLongPress) {
+    PressableCard(onClick = onTap, modifier = modifier.fillMaxWidth().testTag("profile_trip_card"), response = pressResponse, onLongClick = onLongPress, onLongClickLabel = onLongPressLabel) {
         Column(Modifier.fillMaxWidth().surfaceCard()) {
             Row(
                 Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(7.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (level != null) Text("LVL $level", style = handjet(13f), color = AppTheme.gold, maxLines = 1)
-                Text(date, style = inter(11f), color = colors.textTertiary, maxLines = 1, modifier = Modifier.weight(1f, fill = false))
-                if (trip.source == TripOrigin.manual) {
-                    Glyph(AppGlyph.pencilLine, strings.manualTripBadge(), tint = colors.textTertiary, size = 14.dp, modifier = Modifier.testTag("profile_trip_manual"))
+                // The date gives way first: the car's name keeps its room, as iOS's layoutPriority does.
+                Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(7.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (level != null) Text("LVL $level", style = handjet(13f), color = AppTheme.gold, maxLines = 1)
+                    Text(date, style = inter(11f), color = colors.textTertiary, maxLines = 1, modifier = Modifier.weight(1f, fill = false))
+                    if (trip.source == TripOrigin.manual) {
+                        Glyph(AppGlyph.pencilLine, strings.manualTripBadge(), tint = colors.textTertiary, size = 14.dp, modifier = Modifier.testTag("profile_trip_manual"))
+                    }
+                    if (vehicle != null) ProfileCardVehicleTag(vehicle)
                 }
-                Spacer(Modifier.weight(1f))
                 when {
                     isPinned -> Text("● " + strings.profilePinned(), style = inter(11f, InterWeight.semibold), color = AppTheme.accent, maxLines = 1,
                         modifier = Modifier.testTag("profile_trip_pinned"))
@@ -232,9 +245,9 @@ fun ProfileTripCard(
             }
             Text(title, style = inter(17f, InterWeight.heavy), letterSpacing = points(-0.085f), color = colors.text, maxLines = 2,
                 modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp))
-            CardMap(trip.coordinates, mapHeight)
+            if (map != null && trip.coordinates.size > 1) map(trip.coordinates, mapHeight) else CardMap(trip.coordinates, mapHeight)
             Box(Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp)) {
-                MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = true))
+                MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = true, averageSpeed = averageSpeed))
             }
         }
     }
