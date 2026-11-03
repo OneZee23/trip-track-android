@@ -157,6 +157,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                         item(key = "hero") {
                             PublicHero(profile, state.garage.firstOrNull { it.id == profile.activeVehicle?.id }
                                 ?: profile.activeVehicle?.let { PublicVehicle(it.id, it.name, it.avatarEmoji, avatarStyle = it.avatarStyle, level = it.level, odometerKm = it.odometerKm) }, name, isOwn,
+                                carPower = profile.activeVehicle?.id?.let { state.garagePower[it] },
                                 // iOS countryGlyph: the country is this device's setting and the profile DTO carries none, so only one's own preview prints it.
                                 country = if (isOwn) countryLine(social.ownCountry(), strings) else null,
                                 followBusy = state.isTogglingFollow, now = now,
@@ -267,7 +268,7 @@ private fun PreviewBanner(modifier: Modifier = Modifier) {
  */
 @Composable
 private fun PublicHero(
-    profile: SocialProfile, vehicle: PublicVehicle?, name: String, isOwn: Boolean, country: String?, followBusy: Boolean, now: java.time.Instant,
+    profile: SocialProfile, vehicle: PublicVehicle?, name: String, isOwn: Boolean, carPower: Double?, country: String?, followBusy: Boolean, now: java.time.Instant,
     onFollow: () -> Unit, onFollowers: () -> Unit, onFollowing: () -> Unit, onCopyName: () -> Unit, onVehicle: (UUID) -> Unit,
     onLevel: () -> Unit, onStats: () -> Unit, onPhoto: (List<PublicPhotoPage>, Int) -> Unit, coverOverlay: @Composable BoxScope.() -> Unit,
 ) {
@@ -327,7 +328,7 @@ private fun PublicHero(
             StatColumn(if (privacy) "••••" else "${profile.stats.regionsCount}", strings.statsRegions(), ink, secondary, photos.isNotEmpty())
         }
     }
-    val garage = @Composable { car: PublicVehicle?, road: Boolean, onCoverEdge: Boolean -> if (car != null) ForeignCar(car, paid, road, onCoverEdge, ink, secondary, onVehicle) else if (road) RoadScene(roadTime) }
+    val garage = @Composable { car: PublicVehicle?, road: Boolean, onCoverEdge: Boolean -> if (car != null) ForeignCar(car, carPower, paid, road, onCoverEdge, ink, secondary, onVehicle) else if (road) RoadScene(roadTime) }
     Column(Modifier.fillMaxWidth().testTag("profile_hero")) {
         if (photos.isNotEmpty()) {
             Box {
@@ -403,11 +404,12 @@ private fun FollowButton(title: String, busy: Boolean, enabled: Boolean, onClick
  * (the name 15 semibold, the rest 12 in the secondary ink), about 106 of panel instead of 270.
  */
 @Composable
-private fun ForeignCar(car: PublicVehicle, paid: Boolean, road: Boolean, onCoverEdge: Boolean, ink: Color, secondary: Color, onVehicle: (UUID) -> Unit) {
+private fun ForeignCar(car: PublicVehicle, powerHp: Double?, paid: Boolean, road: Boolean, onCoverEdge: Boolean, ink: Color, secondary: Color, onVehicle: (UUID) -> Unit) {
+    val strings = appStrings
     val vehicle = car.asVehicle()
     val style = vehicle.avatarStyle.takeIf { it in VehicleAvatar.styles(vehicle.type) } ?: VehicleAvatar.styles(vehicle.type).first()
     val photo = car.mainPhoto?.takeIf { it.isNotEmpty() }
-    val caption = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
+    val caption = vehicleCaption(car.make, car.model, car.year, powerHp, strings)
     BoxWithConstraints(if (onCoverEdge) Modifier.pulledUp(82.dp) else Modifier) {
         val width = if (onCoverEdge) 250.dp else if (road) minOf(maxWidth - 72.dp, 300.dp) else minOf(maxWidth * .67f, 300.dp)
         Column(Modifier.fillMaxWidth().clickable(role = Role.Button) { onVehicle(car.id) }.testTag("garage_header_vehicle"),
@@ -427,17 +429,28 @@ private fun ForeignCar(car: PublicVehicle, paid: Boolean, road: Boolean, onCover
             if (onCoverEdge) Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(car.name, Modifier.weight(1f, fill = false), style = interScaled(15f, InterWeight.semibold), color = ink, maxLines = 1)
                 Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 11.dp)
-                if (caption.isNotEmpty()) Text(caption, Modifier.weight(1f, fill = false), style = interScaled(12f), color = secondary, maxLines = 1)
+                if (caption.isNotEmpty()) Text(caption, Modifier.weight(1f, fill = false).testTag("garage_header_caption"), style = interScaled(12f), color = secondary, maxLines = 1)
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(car.name, style = interScaled(17f, InterWeight.semibold), color = ink)
                     Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 11.dp)
                 }
-                if (caption.isNotEmpty()) Text(caption, style = interScaled(12f), color = secondary, modifier = Modifier.padding(bottom = 14.dp))
+                if (caption.isNotEmpty()) Text(caption, style = interScaled(12f), color = secondary, modifier = Modifier.padding(bottom = 14.dp).testTag("garage_header_caption"))
             }
         }
     }
 }
+
+/**
+ * iOS: VehicleCatalogCaption.modelLine, the hero's form (no capsule, no body type): the make and the model
+ * are one name, then the year, then the power of the chosen catalogue variant: «Haval Jolion · 2022 · 143 л.с.».
+ */
+internal fun vehicleCaption(make: String?, model: String?, year: Int?, powerHp: Double?, strings: com.onezee.triptrack.designsystem.strings.AppStrings): String =
+    listOfNotNull(
+        listOfNotNull(make, model).filter { it.isNotEmpty() }.joinToString(" ").ifEmpty { null },
+        year?.takeIf { it > 0 }?.toString(),
+        powerHp?.let { strings.garagePower(UnitNumber.upToTenth(it, strings.language.code)) },
+    ).joinToString(" · ")
 
 /**
  * iOS `.padding(.top, -x)`: the content is placed [amount] higher and the layout is that much

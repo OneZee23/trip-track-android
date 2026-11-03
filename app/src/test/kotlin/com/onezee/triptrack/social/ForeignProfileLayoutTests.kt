@@ -18,6 +18,7 @@ import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.feature.TripsDestination
 import com.onezee.triptrack.feature.social.ui.countryLine
+import com.onezee.triptrack.feature.social.ui.vehicleCaption
 import com.onezee.triptrack.model.ProfilePhotoDTO
 import com.onezee.triptrack.model.SocialActiveVehicle
 import java.util.UUID
@@ -49,7 +50,8 @@ class ForeignProfileLayoutTests : SocialScreenTest() {
     }
 
     private fun withCar() {
-        val car = SocialFixtures.car.copy(name = "Jolion", make = "Haval", model = "Jolion", year = 2022, avatarEmoji = "pixel_car_red")
+        val car = SocialFixtures.car.copy(name = "Jolion", make = "Haval", model = "Jolion", year = 2022, avatarEmoji = "pixel_car_red",
+            catalogModelId = "haval-jolion", catalogGenerationId = "haval-jolion-2021", catalogVariantId = "haval-jolion-2021-15t-143-mt6")
         api.cars = listOf(car)
         api.profileValue = api.profileValue.copy(activeVehicle = SocialActiveVehicle(car.id, car.name, car.level, car.odometerKm, car.avatarEmoji))
     }
@@ -70,6 +72,22 @@ class ForeignProfileLayoutTests : SocialScreenTest() {
         // What follows moves up with it: the identity row is the block less 82, and the 14 of the column, below the photo.
         val identity = bounds("profile_display_name")
         (identity.top - photo.bottom).near(181f - 82f + 14f, 5f)
+    }
+
+    /** iOS VehicleCatalogCaption (hero form): «Haval Jolion · 2022 · 143 л.с.», the make and the model one name, not three parts. */
+    @Test fun theCaptionIsTheMakeAndModelThenTheYearThenTheCataloguePower() {
+        withCover(); withCar()
+        profile()
+        compose.onNodeWithTag("garage_header_caption", useUnmergedTree = true).assertTextEquals("Haval Jolion · 2022 · 143 л.с.")
+    }
+
+    @Test fun theCaptionLeavesOutWhatIsNotKnown() {
+        val s = ru
+        assertEquals("Haval Jolion · 2022 · 143 л.с.", vehicleCaption("Haval", "Jolion", 2022, 143.0, s))
+        assertEquals("Haval Jolion · 2022", vehicleCaption("Haval", "Jolion", 2022, null, s))
+        assertEquals("Jolion", vehicleCaption("", "Jolion", 0, null, s))
+        assertEquals("Haval · 79.6 л.с.", vehicleCaption("Haval", null, null, 79.6, s))
+        assertEquals("", vehicleCaption(null, null, null, null, s))
     }
 
     @Test fun theNumbersAreNineteenHeavyUnderACoverPhoto() {

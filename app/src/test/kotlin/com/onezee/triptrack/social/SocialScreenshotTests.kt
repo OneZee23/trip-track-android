@@ -55,7 +55,8 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
     /** SO-01, SO-02: their active car stands on the cover's edge, the numbers are 19 heavy. */
     @Test fun profileCoverWithCar() {
         cover()
-        val car=SocialFixtures.car.copy(name="Jolion",make="Haval",model="Jolion",year=2022,avatarEmoji="pixel_car_red")
+        val car=SocialFixtures.car.copy(name="Jolion",make="Haval",model="Jolion",year=2022,avatarEmoji="pixel_car_red",
+            catalogModelId="haval-jolion",catalogGenerationId="haval-jolion-2021",catalogVariantId="haval-jolion-2021-15t-143-mt6")
         api.cars=listOf(car)
         api.profileValue=api.profileValue.copy(activeVehicle=SocialActiveVehicle(car.id,car.name,car.level,car.odometerKm,car.avatarEmoji))
         profile();compose.onNodeWithTag("garage_header_vehicle").assertExists();shot("profile_cover_car")
