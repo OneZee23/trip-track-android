@@ -21,9 +21,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -49,6 +48,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.onezee.triptrack.designsystem.theme.AppRadius
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
+import com.onezee.triptrack.designsystem.theme.ContinuousTopRoundedRectangle
 import com.onezee.triptrack.designsystem.theme.LocalReduceMotion
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
@@ -89,6 +89,11 @@ enum class SheetDetent {
  *
  * A window, like the house dialog: it outranks the tab bar from any call site. The sheet slides in
  * on a spring, a drag down or the scrim closes it, and so does back.
+ *
+ * It looks like the iPhone's system sheet: the page under it dims by [AtlasColors.sheetScrim] (12 %
+ * in light) and the top corners are [AppRadius.sheet], a continuous curve. The Atlas sheets and the
+ * sync sheet ask for a larger [cornerRadius] there too. A [CustomNavBar] inside it clears the
+ * grabber's strip, as iOS `navBarInSheet` does.
  */
 @Composable
 fun ContentSizedSheet(
@@ -99,6 +104,8 @@ fun ContentSizedSheet(
     contentClearsNavigationBar: Boolean = false,
     /** iOS interactiveDismissDisabled: recovery and saved-trip results require an explicit answer. */
     dismissible: Boolean = true,
+    /** iOS `presentationCornerRadius`; the system's own, unless the screen sets one. */
+    cornerRadius: Dp = AppRadius.sheet,
     content: @Composable SheetScope.() -> Unit,
 ) {
     val density = LocalDensity.current
@@ -147,13 +154,13 @@ fun ContentSizedSheet(
                 Modifier
                     .fillMaxSize()
                     .graphicsLayer { alpha = presence.value }
-                    .background(AtlasTheme.colors.scrim)
+                    .background(AtlasTheme.colors.sheetScrim)
                     .pointerInput(Unit) { detectTapGestures { dismiss() } }
                     .semantics { hideFromAccessibility() }
                     .testTag("sheet_scrim"),
             )
             val navigation = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            val shape = RoundedCornerShape(topStart = AppRadius.sheet, topEnd = AppRadius.sheet)
+            val shape = remember(cornerRadius) { ContinuousTopRoundedRectangle(cornerRadius) }
             Column(
                 Modifier
                     .fillMaxWidth()

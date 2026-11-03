@@ -30,8 +30,12 @@ object AppRadius {
     /** Photo and map thumbnails inside a card. */
     val thumbnail = 12.dp
 
-    /** Top corners of a bottom sheet, the house value of the Atlas sheet. */
-    val sheet = AtlasTheme.sheetRadius
+    /**
+     * Top corners of a bottom sheet: the iPhone's own sheet radius (about 10, a continuous curve
+     * that measures 15 along the edge). The Atlas sheets and the sync sheet ask for more with
+     * `ContentSizedSheet(cornerRadius = …)`, as they do there.
+     */
+    val sheet = 10.dp
 }
 
 object AppSpacing {

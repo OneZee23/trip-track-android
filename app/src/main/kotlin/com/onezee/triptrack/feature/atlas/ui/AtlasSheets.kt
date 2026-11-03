@@ -116,7 +116,7 @@ fun AtlasAppearanceSheet(
 ) {
     val strings = appStrings
     val atlas = AtlasTheme.colors
-    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background) {
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background, cornerRadius = AtlasTheme.sheetRadius) {
         val sheet = this
         Column(Modifier.fillMaxWidth().height(APPEARANCE_SHEET_HEIGHT).testTag("atlas_appearance_sheet")) {
             AtlasControlsHeader(strings.atlasMapStyle(), onClose = { sheet.dismiss() })
@@ -304,7 +304,7 @@ fun homeSummary(home: HomeState, strings: AppStrings, unit: com.onezee.triptrack
 fun AtlasExplanationSheet(onDismissRequest: () -> Unit) {
     val strings = appStrings
     val atlas = AtlasTheme.colors
-    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background) {
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background, cornerRadius = AtlasTheme.sheetRadius) {
         val sheet = this
         Column(Modifier.fillMaxWidth().testTag("atlas_explanation_sheet")) {
             AtlasControlsHeader(strings.atlasHowWeCount(), onClose = { sheet.dismiss() })

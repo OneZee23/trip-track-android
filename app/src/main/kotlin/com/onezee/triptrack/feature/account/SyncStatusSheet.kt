@@ -56,7 +56,8 @@ import com.onezee.triptrack.sync.SyncOperation
 fun SyncStatusSheet(state: AccountScreenState, onRetry: () -> Unit, onDismissRequest: () -> Unit) {
     // iOS: .presentationDetents([.medium, .large]): at least half the screen, taller with a long queue.
     val half = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() } / 2
-    ContentSizedSheet(onDismissRequest = onDismissRequest, background = AppTheme.colors.bg, minimumHeight = half) {
+    // iOS .presentationCornerRadius(22).
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = AppTheme.colors.bg, minimumHeight = half, cornerRadius = 22.dp) {
         SyncStatusContent(state, onRetry)
     }
 }

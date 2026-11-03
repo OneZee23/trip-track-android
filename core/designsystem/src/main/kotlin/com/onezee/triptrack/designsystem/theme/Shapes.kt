@@ -33,6 +33,20 @@ class ContinuousRoundedRectangle(private val radius: Dp) : Shape {
     override fun hashCode(): Int = radius.hashCode()
 }
 
+/**
+ * The top corners of an iOS sheet: the same continuous curve as [ContinuousRoundedRectangle], on
+ * the two upper corners only. The sheet runs on past the bottom edge of the screen, so its lower
+ * corners are square.
+ */
+@Immutable
+class ContinuousTopRoundedRectangle(private val radius: Dp) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
+        Outline.Generic(continuousTopRoundedRect(size, with(density) { radius.toPx() }))
+
+    override fun equals(other: Any?): Boolean = other is ContinuousTopRoundedRectangle && other.radius == radius
+    override fun hashCode(): Int = radius.hashCode()
+}
+
 private const val EDGE = 1.52866483f
 private const val C1 = 1.08849323f
 private const val C2 = 0.86840689f
@@ -63,6 +77,25 @@ internal fun continuousRoundedRect(size: Size, radius: Float): Path {
         cubicTo(0f, C1 * r, 0f, C2 * r, P2 * r, P1 * r)
         cubicTo(C4 * r, C3 * r, C3 * r, C4 * r, P1 * r, P2 * r)
         cubicTo(C2 * r, 0f, C1 * r, 0f, EDGE * r, 0f)
+        close()
+    }
+}
+
+internal fun continuousTopRoundedRect(size: Size, radius: Float): Path {
+    val w = size.width
+    val h = size.height
+    val r = min(radius, min(w / 2f, h) / EDGE).coerceAtLeast(0f)
+    return Path().apply {
+        moveTo(0f, h)
+        lineTo(0f, EDGE * r)
+        cubicTo(0f, C1 * r, 0f, C2 * r, P2 * r, P1 * r)
+        cubicTo(C4 * r, C3 * r, C3 * r, C4 * r, P1 * r, P2 * r)
+        cubicTo(C2 * r, 0f, C1 * r, 0f, EDGE * r, 0f)
+        lineTo(w - EDGE * r, 0f)
+        cubicTo(w - C1 * r, 0f, w - C2 * r, 0f, w - P1 * r, P2 * r)
+        cubicTo(w - C3 * r, C4 * r, w - C4 * r, C3 * r, w - P2 * r, P1 * r)
+        cubicTo(w, C2 * r, w, C1 * r, w, EDGE * r)
+        lineTo(w, h)
         close()
     }
 }

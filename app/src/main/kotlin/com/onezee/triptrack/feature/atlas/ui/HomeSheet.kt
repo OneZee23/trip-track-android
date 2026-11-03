@@ -72,7 +72,7 @@ fun HomeSheet(home: HomeState, fallback: GeoPoint?, onChange: (HomeState) -> Uni
     val strings = appStrings
     val atlas = AtlasTheme.colors
     var confirmingRemove by rememberSaveable { mutableStateOf(false) }
-    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background, detent = SheetDetent.large) {
+    ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background, detent = SheetDetent.large, cornerRadius = AtlasTheme.sheetRadius) {
         val sheet = this
         Column(Modifier.fillMaxWidth().testTag("home_sheet")) {
             AtlasControlsHeader(strings.homeSheetTitle(), onClose = { sheet.dismiss() })

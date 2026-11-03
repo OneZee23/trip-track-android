@@ -135,6 +135,7 @@ private fun animatedAtlasColors(target: AtlasColors) = AtlasColors(
     glass = animatedColor(target.glass),
     glassBorder = animatedColor(target.glassBorder),
     scrim = animatedColor(target.scrim),
+    sheetScrim = animatedColor(target.sheetScrim),
 )
 
 private fun removeAnimations(resolver: ContentResolver): Boolean =
