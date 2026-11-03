@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -86,6 +87,7 @@ import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.iosShadow
 import com.onezee.triptrack.designsystem.theme.rememberHaptics
 import com.onezee.triptrack.feature.drafts.DraftBucket
+import com.onezee.triptrack.feature.drafts.DraftsLayout
 import com.onezee.triptrack.feature.drafts.DraftsViewModel
 import com.onezee.triptrack.feature.trip.TripSummary
 import com.onezee.triptrack.logic.distance
@@ -131,7 +133,7 @@ fun DraftsListScreen(vm: DraftsViewModel, onOpenTrip: (TripSummary) -> Unit, onB
 
     Box(Modifier.fillMaxSize().background(AppTheme.colors.bg).testTag("drafts_list")) {
         if (state.drafts.isEmpty() && !state.isLoading) {
-            EmptyState(Modifier.padding(top = windowHeight * 0.30f - safeTop).padding(horizontal = 24.dp))
+            DraftsEmpty(windowHeight)
         } else {
             LazyColumn(
                 Modifier.fillMaxSize(),
@@ -221,7 +223,7 @@ private fun Header(
     val strings = appStrings
     val atlas = AtlasTheme.colors
     val safeTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    Box(Modifier.fillMaxWidth().background(AppTheme.colors.glass)) {
+    Box(Modifier.fillMaxWidth().background(headerGlass()).testTag("drafts_header")) {
         Row(
             Modifier.fillMaxWidth().padding(top = safeTop).height(46.dp).padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -256,6 +258,15 @@ private fun Header(
         Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(1.dp).background(atlas.separator))
     }
 }
+
+/**
+ * iOS: `.ultraThinMaterial` under the header. Over the page it measures 241, 240, 237 on 248, 246, 242 in
+ * light (a shade DARKER than the page) and 40, 39, 41 on 18, 18, 20 in dark; the house glass tint is
+ * lighter than the page in light (254, 253, 252). The tint here is the colour that gives those
+ * numbers at the alpha of a thin material, so the list still shows through a little.
+ */
+@Composable
+internal fun headerGlass(): Color = if (AppTheme.isDark) Color(46, 44, 46).copy(alpha = 0.8f) else Color(239, 239, 236).copy(alpha = 0.8f)
 
 @Composable
 private fun HeaderText(text: String, tag: String, onClick: () -> Unit) {
@@ -303,7 +314,6 @@ private fun DraftRow(
     SwipeRow(
         leading = SwipePlate(strings.draftConfirm(), AppTheme.accent, "draft_swipe_mine", onConfirm),
         trailing = SwipePlate(strings.delete(), Color(0xFFFF3B30), "draft_swipe_delete", onDelete),
-        shape = shape,
         modifier = modifier,
     ) {
         Column(Modifier.fillMaxWidth().background(atlas.card, shape)) {
@@ -329,41 +339,46 @@ private fun DraftRow(
     }
 }
 
+/** The plate of a swipe action: 74 wide, and 8 from the row (iOS's system swipe actions measure both). */
+private val SwipePlateWidth = 74.dp
+private val SwipePlateGap = 8.dp
+
 /**
- * The system swipe actions iOS lists have, which Compose lists lack: drag the row aside to reveal
- * its plate, let go past the plate to keep it open, past half the row to act at once (full swipe).
+ * The system swipe actions iOS lists have, which Compose lists lack. Drag the row aside and its
+ * plate appears at the edge, detached: 74 wide, its own rounded corners, 8 from the row, so the row
+ * stands 82 from where it began. Let go past that to keep it open, past half the row to act at once
+ * (full swipe, the plate then grows with the row). The row slides under the list's margin, not over
+ * it: what leaves the row's own bounds is clipped, as the list clips it on iOS.
  */
 @Composable
-private fun SwipeRow(leading: SwipePlate, trailing: SwipePlate, shape: androidx.compose.ui.graphics.Shape, modifier: Modifier, content: @Composable () -> Unit) {
+private fun SwipeRow(leading: SwipePlate, trailing: SwipePlate, modifier: Modifier, content: @Composable () -> Unit) {
     val density = LocalDensity.current
-    val plate = with(density) { 74.dp.toPx() }
+    val open = with(density) { (SwipePlateWidth + SwipePlateGap).toPx() }
+    val gap = with(density) { SwipePlateGap.toPx() }
     val scope = rememberCoroutineScope()
     val offset = remember { Animatable(0f) }
     val haptics = rememberHaptics()
-    BoxWithConstraints(modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier.fillMaxWidth().clipToBounds()) {
         val width = with(density) { maxWidth.toPx() }
         val full = width * 0.55f
         fun settle(velocity: Float) = scope.launch {
             val value = offset.value
             when {
-                value > full || (value > plate && velocity > 2500f) -> { haptics.action(); offset.animateTo(0f, spring()); leading.onTrigger() }
-                value < -full || (value < -plate && velocity < -2500f) -> { offset.animateTo(0f, spring()); trailing.onTrigger() }
-                value > plate / 2 -> offset.animateTo(plate, spring(stiffness = 600f))
-                value < -plate / 2 -> offset.animateTo(-plate, spring(stiffness = 600f))
+                value > full || (value > open && velocity > 2500f) -> { haptics.action(); offset.animateTo(0f, spring()); leading.onTrigger() }
+                value < -full || (value < -open && velocity < -2500f) -> { offset.animateTo(0f, spring()); trailing.onTrigger() }
+                value > open / 2 -> offset.animateTo(open, spring(stiffness = 600f))
+                value < -open / 2 -> offset.animateTo(-open, spring(stiffness = 600f))
                 else -> offset.animateTo(0f, spring(stiffness = 600f))
             }
         }
-        if (offset.value != 0f) {
-            Box(Modifier.matchParentSize().clip(shape)) {
-                if (offset.value > 0f) {
-                    PlateButton(leading, Modifier.align(Alignment.CenterStart).fillMaxHeight().width(with(density) { offset.value.toDp() })) {
-                        scope.launch { offset.animateTo(0f) }; leading.onTrigger()
-                    }
-                } else {
-                    PlateButton(trailing, Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(with(density) { (-offset.value).toDp() })) {
-                        scope.launch { offset.animateTo(0f) }; trailing.onTrigger()
-                    }
-                }
+        // The plates stand as tall as the row: the box matches the size the row gives the whole.
+        if (offset.value > gap) Box(Modifier.matchParentSize()) {
+            PlateButton(leading, Modifier.align(Alignment.CenterStart).fillMaxHeight().width(with(density) { (offset.value - gap).toDp() })) {
+                scope.launch { offset.animateTo(0f) }; leading.onTrigger()
+            }
+        } else if (offset.value < -gap) Box(Modifier.matchParentSize()) {
+            PlateButton(trailing, Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(with(density) { (-offset.value - gap).toDp() })) {
+                scope.launch { offset.animateTo(0f) }; trailing.onTrigger()
             }
         }
         Box(
@@ -380,8 +395,9 @@ private fun SwipeRow(leading: SwipePlate, trailing: SwipePlate, shape: androidx.
 
 @Composable
 private fun PlateButton(plate: SwipePlate, modifier: Modifier, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(16.dp)
     Box(
-        modifier.background(plate.fill).clickable(interactionSource = null, indication = null, role = Role.Button, onClick = onClick).testTag(plate.tag),
+        modifier.clip(shape).background(plate.fill).clickable(interactionSource = null, indication = null, role = Role.Button, onClick = onClick).testTag(plate.tag),
         contentAlignment = Alignment.Center,
     ) {
         Text(plate.label, style = inter(13f, InterWeight.semibold), color = Color.White, maxLines = 1, softWrap = false)
@@ -464,6 +480,17 @@ private fun WideButton(text: String, ink: Color, fill: Color, enabled: Boolean, 
     }
 }
 
+/**
+ * iOS: empty, placed by `DraftsLayout.emptyTop − safeTop` INSIDE the safe area, which is 30 % of the
+ * screen's height from the screen's top. This screen is edge to edge, so the block's top is the
+ * 30 % itself: taking the status bar off it again set the block a status-bar height too high on a
+ * phone (DR-05; a render with no insets could not show it).
+ */
+@Composable
+internal fun DraftsEmpty(windowHeight: androidx.compose.ui.unit.Dp) {
+    EmptyState(Modifier.padding(top = DraftsLayout(windowHeight.value.toDouble(), 0.0, 0.0).emptyTop.dp).padding(horizontal = 24.dp))
+}
+
 /** iOS: emptyState. The tray in its circle, «Черновиков нет» and what will show up here; its top at 30 %. */
 @Composable
 private fun EmptyState(modifier: Modifier) {
@@ -490,11 +517,16 @@ private fun EmptyState(modifier: Modifier) {
 @Composable
 fun ProfileDraftsRow(drafts: List<TripSummary>, now: Instant, onTap: () -> Unit, modifier: Modifier = Modifier) {
     if (drafts.isEmpty()) return
+    ProfileDraftsRow(drafts.size, drafts.maxOf { it.startDate }, now, onTap, modifier)
+}
+
+/** The same card from what it needs: how many drafts there are and when the newest was recorded. */
+@Composable
+fun ProfileDraftsRow(count: Int, last: Instant, now: Instant, onTap: () -> Unit, modifier: Modifier = Modifier) {
+    if (count <= 0) return
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
-    val count = drafts.size
-    val last = drafts.maxOf { it.startDate }
     val day = when (ChronoUnit.DAYS.between(last.atZone(strings.zone).toLocalDate(), now.atZone(strings.zone).toLocalDate())) {
         0L -> strings.today().lowercase(strings.language.locale)
         1L -> strings.yesterday().lowercase(strings.language.locale)
