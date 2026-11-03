@@ -125,13 +125,13 @@ class FeedHeaderMenuTests : TripsScreenTest() {
         order.zipWithNext().forEach { (a, b) -> assertTrue(top(a) < top(b), "$a stands above $b") }
     }
 
-    @Test fun sharingACardMintsItsLinkAndOpensTheCompactSheet() {
+    @Test fun sharingACardOpensThePosterStudio() {
         feedOf(signedIn = true)
         compose.onAllNodesWithTag("feed_card_menu")[0].performClick()
         compose.onNodeWithTag("feed_card_action_share").performClick()
         compose.waitForIdle()
         assertEquals(1, minted.size)
-        compose.onNodeWithTag("trip_link_sheet").assertExists()
+        compose.onNodeWithTag("trip_poster_sheet").assertExists()
     }
 
     @Test fun reportingACardOpensTheReportSheet() {
@@ -142,8 +142,8 @@ class FeedHeaderMenuTests : TripsScreenTest() {
         compose.onNodeWithTag("report_sheet").assertExists()
     }
 
-    /** A guest cannot report (the endpoint needs an account), and cannot share: the door opens instead and nothing is minted. */
-    @Test fun aGuestWhoSharesOrReportsIsSentToSignIn() {
+    /** A guest needs an account to report; poster export stays available without one. */
+    @Test fun guestCanExportPosterButReportNeedsSignIn() {
         var opened = 0
         feedOf(signedIn = false, door = { opened++ })
         compose.onAllNodesWithTag("feed_card_menu")[0].performClick()
@@ -154,9 +154,9 @@ class FeedHeaderMenuTests : TripsScreenTest() {
         compose.onAllNodesWithTag("feed_card_menu")[0].performClick()
         compose.onNodeWithTag("feed_card_action_share").performClick()
         compose.waitForIdle()
-        assertEquals(2, opened)
+        assertEquals(1, opened)
         assertTrue(minted.isEmpty())
-        compose.onNodeWithTag("trip_link_sheet").assertDoesNotExist()
+        compose.onNodeWithTag("trip_poster_sheet").assertExists()
     }
 
     // ---- FD-06: a guest who reacts
@@ -175,16 +175,16 @@ class FeedHeaderMenuTests : TripsScreenTest() {
 
     @Test fun whatAGuestTappedIsDoneOnceAfterARealSignIn() {
         val pending = PendingSocialActions()
-        val share = PendingSocialAction.Share(card())
-        pending.hold(share)
+        val picker = PendingSocialAction.Picker(card())
+        pending.hold(picker)
         pending.authenticated()
-        assertSame(share, pending.release(signedIn = true))
+        assertSame(picker, pending.release(signedIn = true))
         assertNull(pending.release(signedIn = true), "one-shot")
     }
 
     @Test fun aSheetClosedWithoutSigningInDropsIt() {
         val pending = PendingSocialActions()
-        pending.hold(PendingSocialAction.Share(card()))
+        pending.hold(PendingSocialAction.Picker(card()))
         assertNull(pending.release(signedIn = false))
         // And it does not wait for the next sign-in either.
         pending.authenticated()
@@ -200,7 +200,7 @@ class FeedHeaderMenuTests : TripsScreenTest() {
 
     @Test fun aNewPromptForgetsTheSuccessOfAnEarlierOne() {
         val pending = PendingSocialActions()
-        pending.hold(PendingSocialAction.Share(card()))
+        pending.hold(PendingSocialAction.Picker(card()))
         pending.authenticated()
         // The login outlived its sheet and succeeded late; the next prompt must not inherit it.
         pending.hold(PendingSocialAction.Picker(card()))

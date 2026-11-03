@@ -25,6 +25,9 @@ import com.onezee.triptrack.feature.TripsDestination
 import com.onezee.triptrack.feature.social.SocialFeature
 import com.onezee.triptrack.social.FakeSocialApi
 import com.onezee.triptrack.social.MemoryCommentArchive
+import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.feature.trip.ui.TripEditSheet
+import com.onezee.triptrack.feature.social.ui.TripPosterSheet
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -144,6 +147,49 @@ class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
         screen("trip_actions")
     }
 
+    @Test fun tripEditSheet() {
+        val trip = latest()
+        show(dark) { TripEditSheet(trip, onMain { feature.vehicles() }, { _, _, _, _, _ -> }, {}) }
+        compose.onNodeWithTag("trip_edit_sheet").assertExists()
+        screen("trip_edit")
+        compose.onNodeWithTag("trip_edit_access_row").performClick()
+        compose.onNodeWithTag("trip_edit_access_private").assertExists()
+        screen("trip_edit_access")
+        compose.onNodeWithTag("trip_edit_access_private").performClick()
+        compose.onNodeWithTag("trip_edit_vehicle_row").performClick()
+        compose.onNodeWithTag("trip_edit_vehicle_transfer").assertExists()
+        screen("trip_edit_vehicle")
+    }
+
+    @Test fun tripPosterSheet() {
+        val trip = latest()
+        show(dark) { TripPosterSheet(TripSummary.from(trip), "Водитель", "https://trip-track.app/s/abc123") {} }
+        compose.onNodeWithTag("trip_poster_sheet").assertExists()
+        screen("trip_poster")
+        val strings = com.onezee.triptrack.designsystem.strings.AppStrings(RuntimeEnvironment.getApplication(), com.onezee.triptrack.designsystem.strings.AppLanguage.ru)
+        compose.onNodeWithText(strings.tabMap()).performClick()
+        screen("trip_poster_map")
+        compose.onNodeWithText(strings.sharePosterMinimal()).performClick()
+        screen("trip_poster_minimal")
+        compose.onNodeWithText(strings.sharePosterStory()).performClick()
+        screen("trip_poster_story")
+        compose.onNodeWithText(strings.sharePosterStickerPng()).performClick()
+        screen("trip_poster_sticker")
+    }
+
+    @Test fun tripClosedState() {
+        signIn()
+        val cards = socialCards()
+        val road = detail(trips().first { it.title == "Краснодар → Геленджик" }.id)!!
+        social.feedPage = { SocialFeedResponse(cards) }
+        social.remoteTrip = { throw com.onezee.triptrack.network.ApiError.TripNotFound }
+        showFeed(dark)
+        compose.onAllNodesWithTag("social_trip_card")[0].performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Поездка закрыта").assertExists()
+        screen("trip_closed")
+    }
+
     @Test fun tripDeleteConfirmation() {
         showMe(dark)
         openTrip(latest())
@@ -255,8 +301,8 @@ class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
         shot("trip_description")
         compose.onNodeWithTag("detail_add_description").performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("description_sheet").assertExists()
-        screen("trip_description_sheet")
+        compose.onNodeWithTag("trip_edit_sheet").assertExists()
+        screen("trip_edit_from_description")
     }
 
     /** TD-10: «Закрепить в профиле» on a public, finished trip. */

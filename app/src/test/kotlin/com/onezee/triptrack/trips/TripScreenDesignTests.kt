@@ -156,7 +156,7 @@ class TripScreenDesignTests : TripsScreenTest() {
         compose.onNodeWithTag("detail_actions").assertDoesNotExist()
     }
 
-    @Test fun shareMintsTheLinkAndHandsItToTheSystemSheet() {
+    @Test fun shareMintsTheLinkAndOpensThePosterStudio() {
         signIn()
         showMe()
         val trip = publicTrip()
@@ -164,6 +164,10 @@ class TripScreenDesignTests : TripsScreenTest() {
         compose.onNodeWithTag("detail_share").performClick()
         compose.waitForIdle()
         assertEquals(listOf(trip.id), minted)
+        compose.onNodeWithTag("trip_poster_sheet").assertExists()
+        compose.onNodeWithText("https://trip-track.app/s/abc123").assertExists()
+        compose.onNodeWithTag("trip_poster_share").performClick()
+        compose.waitForIdle()
         val chooser = Shadows.shadowOf(compose.activity).nextStartedActivity
         assertNotNull(chooser)
         assertEquals(Intent.ACTION_CHOOSER, chooser.action)
@@ -309,12 +313,12 @@ class TripScreenDesignTests : TripsScreenTest() {
         openTrip(latest())
         compose.onNodeWithTag("detail_add_description").performScrollTo().performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("description_sheet").assertExists()
-        compose.onNodeWithTag("description_field").performTextInput("Ехали к морю")
-        compose.onNodeWithTag("description_done").performClick()
+        compose.onNodeWithTag("trip_edit_sheet").assertExists()
+        compose.onNodeWithTag("trip_edit_description").performTextInput("Ехали к морю")
+        compose.onNodeWithTag("trip_edit_done").performClick()
         compose.waitForIdle()
         assertEquals("Ехали к морю", detail(latest().id)!!.tripDescription)
-        compose.onNodeWithTag("description_sheet").assertDoesNotExist()
+        compose.onNodeWithTag("trip_edit_sheet").assertDoesNotExist()
         compose.onNodeWithTag("detail_description").assertExists()
     }
 
@@ -323,11 +327,11 @@ class TripScreenDesignTests : TripsScreenTest() {
         openTrip(latest())
         compose.onNodeWithTag("detail_add_description").performScrollTo().performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("description_field").performTextInput("жид")
+        compose.onNodeWithTag("trip_edit_description").performTextInput("жид")
         compose.onNodeWithTag("description_refused").assertExists()
-        compose.onNodeWithTag("description_done").performClick()
+        compose.onNodeWithTag("trip_edit_done").performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("description_sheet").assertExists()
+        compose.onNodeWithTag("trip_edit_sheet").assertExists()
         assertTrue(detail(latest().id)!!.tripDescription.isNullOrEmpty())
     }
 
@@ -336,7 +340,7 @@ class TripScreenDesignTests : TripsScreenTest() {
         openTrip(latest())
         compose.onNodeWithTag("detail_add_description").performScrollTo().performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("description_field").performTextInput("а".repeat(520))
+        compose.onNodeWithTag("trip_edit_description").performTextInput("а".repeat(520))
         compose.onNodeWithText("500 / 500").assertExists()
     }
 
