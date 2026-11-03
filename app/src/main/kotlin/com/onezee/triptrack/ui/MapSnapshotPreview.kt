@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -47,6 +48,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.theme.AppTheme
+import com.onezee.triptrack.map.MapLabels
 import com.onezee.triptrack.model.GeoPoint
 import java.util.UUID
 import kotlin.math.max
@@ -95,7 +97,7 @@ internal class WeightedLruCache<K, V>(private val capacity: Int, private val wei
 }
 
 internal object SnapshotRules {
-    val retryDelaysMillis = listOf(0L, 1_500L, 2_500L)
+    val retryDelaysMillis = listOf(0L, 1_500L, 4_000L)
 
     fun region(points: List<GeoPoint>, minimumSpan: Double = 0.005): SnapshotRegion {
         val minLat = points.minOf { it.latitude }
@@ -147,6 +149,7 @@ internal object SnapshotEngine {
         key: SnapshotKey,
         density: Float,
         styleUri: String,
+        language: String,
         minimumSpan: Double,
         overlay: Overlay,
     ): Bitmap? {
@@ -169,6 +172,7 @@ internal object SnapshotEngine {
             snapshotter.setObserver(object : MapSnapshotter.Observer {
                 override fun onDidFinishLoadingStyle() {
                     POI_LAYER_IDS.forEach { id -> snapshotter.getLayer(id)?.setProperties(PropertyFactory.visibility(Property.NONE)) }
+                    MapLabels.styleLabelLayers.forEach { id -> MapLabels.localize(snapshotter.getLayer(id), language) }
                 }
                 override fun onStyleImageMissing(imageName: String) = Unit
             })
@@ -187,11 +191,8 @@ internal object SnapshotEngine {
         }
     }
 
-    private val POI_LAYER_IDS = listOf(
-        "poi", "poi_label", "poi_transit", "poi_park", "poi_z15", "poi_z15_label", "poi_z15_transit", "poi_z15_park",
-        "poi_z16", "poi_z16_label", "poi_z17", "poi_z17_label", "poi_z18", "poi_z18_label",
-        "poi_dot", "poi_icon", "poi_text", "poi_name", "poi-label", "poi-label-small",
-    )
+    /** The point-of-interest layers of OpenFreeMap's liberty style; the dark style draws none (iOS `.excludingAll`). */
+    private val POI_LAYER_IDS = listOf("poi_r20", "poi_r7", "poi_r1", "poi_transit")
 }
 
 internal sealed interface Overlay {
@@ -291,7 +292,7 @@ internal fun MapSnapshotPreview(
     width: Dp? = 340.dp,
     cornerRadius: Dp = 12.dp,
 ) = MapSnapshotPreviewContent(listOf(coordinates), identity, modifier, height, width, cornerRadius,
-    Overlay.Trip(AppTheme.accent, SystemColors.green(AppTheme.isDark), AppTheme.colors.text), "trip")
+    Overlay.Trip(AppTheme.accent, SystemColors.green(AppTheme.isDark), AppTheme.colors.text), "trip", placeholderAccent = null)
 
 @Composable
 internal fun MapSnapshotRoutesPreview(
@@ -301,7 +302,7 @@ internal fun MapSnapshotRoutesPreview(
     height: Dp = 150.dp,
     cornerRadius: Dp = 16.dp,
 ) = MapSnapshotPreviewContent(routes, identity, modifier, height, null, cornerRadius,
-    Overlay.MultiRoute(routes, AppTheme.accent, 3f), "journey")
+    Overlay.MultiRoute(routes, AppTheme.accent, 3f), "journey", placeholderAccent = AppTheme.accent)
 
 @Composable
 private fun MapSnapshotPreviewContent(
@@ -313,10 +314,14 @@ private fun MapSnapshotPreviewContent(
     cornerRadius: Dp,
     overlay: Overlay,
     variant: String,
+    /** iOS: the placeholder is LightRoutePreview's own orange; journeys keep their accent line. */
+    placeholderAccent: Color?,
 ) {
     val context = LocalContext.current.applicationContext
     val density = LocalDensity.current.density
     val dark = AppTheme.isDark
+    // The activity's configuration carries the app's own language; the application context's may not.
+    val language = LocalConfiguration.current.locales[0].language
     val live = LocalLiveMaps.current && !LocalInspectionMode.current
     val coordinates = remember(routes) { routes.flatten() }
     var size by remember { mutableStateOf(IntSize.Zero) }
@@ -330,7 +335,8 @@ private fun MapSnapshotPreviewContent(
     ).value
     val fallback = @Composable {
         Box(Modifier.fillMaxSize().background(colors.cardAlt)) {
-            LightRoutePreview(routes, Modifier.matchParentSize().alpha(if (live) 0.6f else 1f), accent = AppTheme.accent)
+            val line = Modifier.matchParentSize().alpha(if (live) 0.6f else 1f)
+            if (placeholderAccent != null) LightRoutePreview(routes, line, accent = placeholderAccent) else LightRoutePreview(routes, line)
             if (live && bitmap == null && !failed) {
                 Box(Modifier.matchParentSize().background(Brush.linearGradient(
                     colors = listOf(Color.Transparent, Color.White.copy(alpha = if (dark) 0.08f else 0.32f), Color.Transparent),
@@ -349,19 +355,19 @@ private fun MapSnapshotPreviewContent(
         else if (bitmap == null) fallback()
         else Image(bitmap!!.asImageBitmap(), null, Modifier.matchParentSize().alpha(snapshotAlpha), contentScale = ContentScale.Crop)
     }
-    LaunchedEffect(identity, coordinates, dark, size, live) {
+    LaunchedEffect(identity, coordinates, dark, size, live, language) {
         bitmap = null
         failed = false
         if (!live || coordinates.size < 2 || size.width < 2 || size.height < 2) return@LaunchedEffect
         SnapshotEngine.installMemoryCallback(context)
         val renderWidthPx = width?.let { (it.value * density).roundToInt() } ?: size.width
         val renderHeightPx = (height.value * density).roundToInt()
-        val key = SnapshotRules.key(identity, dark, renderWidthPx, renderHeightPx, coordinates, variant)
+        val key = SnapshotRules.key(identity, dark, renderWidthPx, renderHeightPx, coordinates, "$variant-$language")
         SnapshotEngine.cached(key)?.let { bitmap = it; return@LaunchedEffect }
         SnapshotRules.retryDelaysMillis.forEachIndexed { index, wait ->
             if (wait > 0) delay(wait)
             try {
-                val image = SnapshotEngine.render(context, coordinates, key, density, LiveMaps.style(dark), 0.005, overlay)
+                val image = SnapshotEngine.render(context, coordinates, key, density, LiveMaps.style(dark), language, 0.005, overlay)
                 if (image != null) { bitmap = image; return@LaunchedEffect }
                 if (index == 0) failed = true
             } catch (cancelled: CancellationException) { throw cancelled }

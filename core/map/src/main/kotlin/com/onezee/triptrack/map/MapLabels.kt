@@ -1,6 +1,7 @@
 package com.onezee.triptrack.map
 
 import org.maplibre.android.maps.Style
+import org.maplibre.android.snapshotter.MapSnapshotter
 import org.maplibre.android.style.expressions.Expression
 import org.maplibre.android.style.layers.Layer
 import org.maplibre.android.style.layers.PropertyFactory
@@ -46,6 +47,14 @@ object MapLabels {
     fun localize(style: Style, language: String) {
         val text = expression(language)
         for (layer in style.layers) localize(layer, text)
+    }
+
+    /** A snapshotter's labels, once its style has loaded: it cannot list its layers, so [styleLabelLayers] names them. */
+    fun localizeOnLoad(snapshotter: MapSnapshotter, language: String) {
+        snapshotter.setObserver(object : MapSnapshotter.Observer {
+            override fun onDidFinishLoadingStyle() = styleLabelLayers.forEach { localize(snapshotter.getLayer(it), language) }
+            override fun onStyleImageMissing(imageName: String) = Unit
+        })
     }
 
     /** One layer of a snapshotter's style ([styleLabelLayers]). */

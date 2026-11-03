@@ -2,6 +2,7 @@ package com.onezee.triptrack.map.snapshot
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.onezee.triptrack.map.MapLabels
 import com.onezee.triptrack.map.MapStyles
 import com.onezee.triptrack.model.GeoBounds
 import kotlin.coroutines.resume
@@ -37,6 +38,7 @@ object MapSnapshots {
             .withStyleBuilder(Style.Builder().fromUri(styleUri))
             .withLogo(false)
         val snapshotter = MapSnapshotter(context, options)
+        MapLabels.localizeOnLoad(snapshotter, context.resources.configuration.locales[0].language)
         suspendCancellableCoroutine { continuation ->
             continuation.invokeOnCancellation { runCatching { snapshotter.cancel() } }
             snapshotter.start({ result ->

@@ -13,11 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.IntSize
 import com.onezee.triptrack.designsystem.theme.AppTheme
+import com.onezee.triptrack.map.MapLabels
 import com.onezee.triptrack.map.MapStyles
 import com.onezee.triptrack.model.GeoPoint
 import org.maplibre.android.MapLibre
@@ -46,6 +48,7 @@ internal object ProfileMapCache {
 @Composable
 internal fun ProfileMapPreview(routes: List<List<GeoPoint>>, modifier: Modifier) {
     val context = LocalContext.current
+    val language = LocalConfiguration.current.locales[0].language
     val density = LocalDensity.current.density
     val preview = LocalInspectionMode.current
     val dark = AppTheme.isDark
@@ -72,6 +75,7 @@ internal fun ProfileMapPreview(routes: List<List<GeoPoint>>, modifier: Modifier)
         val options = MapSnapshotter.Options((size.width / density).roundToInt().coerceAtLeast(2), (size.height / density).roundToInt().coerceAtLeast(2)).withRegion(region).withPixelRatio(density)
             .withStyleBuilder(Style.Builder().fromUri(MapStyles.OPEN_FREE_MAP_LIBERTY)).withLogo(false).withAttribution(true)
         val snapshotter = MapSnapshotter(context, options)
+        MapLabels.localizeOnLoad(snapshotter, language)
         var current = true
         snapshotter.start({ snapshot ->
             if (current && ProfileMapCache.epoch() == epoch) {

@@ -31,7 +31,7 @@ class MapSnapshotRulesTests {
 
     @Test
     fun retriesLandAtZeroOneAndFourSeconds() {
-        assertEquals(listOf(0L, 1_500L, 2_500L), SnapshotRules.retryDelaysMillis)
+        assertEquals(listOf(0L, 1_500L, 4_000L), SnapshotRules.retryDelaysMillis)
     }
 
     @Test

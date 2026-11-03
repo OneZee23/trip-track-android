@@ -61,7 +61,8 @@ class LocationPermissionUiTests {
         assertEquals(setOf(RecordingPermission.fineLocation, RecordingPermission.activityRecognition), ledger.asked())
     }
 
-    @Test fun backgroundAccessOpensSettingsBeforeAskingForActivity() {
+    /** Android 11+ answers the background request with the app's location page; activity waits for that answer. */
+    @Test fun backgroundAccessIsRequestedBeforeAskingForActivity() {
         shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
         val ledger = PermissionLedger.InMemory()
         compose.setContent {
@@ -70,8 +71,10 @@ class LocationPermissionUiTests {
             }
         }
         compose.onNodeWithTag("onboarding_continue_background").performClick()
-        assertEquals(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, shadowOf(RuntimeEnvironment.getApplication()).nextStartedActivity.action)
+        val request = shadowOf(RuntimeEnvironment.getApplication()).nextStartedActivity
+        assertEquals("android.content.pm.action.REQUEST_PERMISSIONS", request.action)
+        assertEquals(listOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+            request.getStringArrayExtra("android.content.pm.extra.REQUEST_PERMISSIONS_NAMES")?.toList())
         assertEquals(setOf(RecordingPermission.backgroundLocation), ledger.asked())
-        assertNull(shadowOf(compose.activity).lastRequestedPermission)
     }
 }
