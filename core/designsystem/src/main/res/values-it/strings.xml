@@ -239,7 +239,7 @@
     <string name="android_level_label">LVL %1$d</string>
     <string name="android_map_attribution" formatted="false">Attribuzioni della mappa</string>
     <string name="android_map_link_unavailable" formatted="false">Nessun browser disponibile per aprire questo link.</string>
-    <string name="android_permission_background_hint" formatted="false">Nella schermata successiva apri Autorizzazioni → Posizione e scegli «Consenti sempre» per avviare i viaggi quando sali in auto.</string>
+    <string name="android_permission_background_hint" formatted="false">Nella schermata successiva scegli «Consenti sempre» per avviare i viaggi quando sali in auto.</string>
     <string name="android_precise_location_body" formatted="false">Serve la posizione esatta per tracciare il percorso e misurare la distanza. Apri Impostazioni → Autorizzazioni → Posizione e attiva «Usa posizione esatta».</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
     <string name="android_recording_xp">+%1$s XP</string>

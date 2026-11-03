@@ -239,7 +239,7 @@
     <string name="android_level_label">LVL %1$d</string>
     <string name="android_map_attribution" formatted="false">Crédits de la carte</string>
     <string name="android_map_link_unavailable" formatted="false">Aucun navigateur ne permet d’ouvrir ce lien.</string>
-    <string name="android_permission_background_hint" formatted="false">Sur l’écran suivant, ouvrez Autorisations → Position et choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.</string>
+    <string name="android_permission_background_hint" formatted="false">Sur l’écran suivant, choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.</string>
     <string name="android_precise_location_body" formatted="false">La position exacte est nécessaire pour tracer votre itinéraire et mesurer la distance. Ouvrez Paramètres → Autorisations → Position et activez « Utiliser la position exacte ».</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
     <string name="android_recording_xp">+%1$s XP</string>

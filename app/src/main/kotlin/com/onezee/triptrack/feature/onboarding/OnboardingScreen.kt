@@ -88,7 +88,6 @@ import com.onezee.triptrack.logic.previewCoordinates
 import com.onezee.triptrack.location.permissions.HealthIssue
 import com.onezee.triptrack.location.permissions.HealthSettings
 import com.onezee.triptrack.location.permissions.Oem
-import com.onezee.triptrack.location.permissions.RequestMethod
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.logic.metresPerSecond
 import com.onezee.triptrack.logic.speedParts
@@ -126,15 +125,12 @@ fun OnboardingScreen(
         answers++
         coordinator.answered(pendingToken)
     }
-    val settingsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        answers++
-        coordinator.answered(pendingToken)
-    }
+    // Background location too goes through the permission request: from Android 11 the system
+    // answers it with this app's own location page, «Allow all the time» one tap away, where the
+    // app details page made the person find Permissions → Location themselves.
     coordinator.ask = { permission, token ->
         pendingToken = token
-        if (PermissionPlan.method(permission, Build.VERSION.SDK_INT) == RequestMethod.settingsPage) {
-            settingsLauncher.launch(HealthSettings.targets(context, HealthIssue.noBackgroundLocation, Oem.other).first())
-        } else launcher.launch(OnboardingPermissionCoordinator.manifestNames(permission))
+        launcher.launch(OnboardingPermissionCoordinator.manifestNames(permission))
     }
 
     OnboardingContent(

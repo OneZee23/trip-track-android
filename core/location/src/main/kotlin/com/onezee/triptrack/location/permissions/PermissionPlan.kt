@@ -23,8 +23,8 @@ enum class RequestMethod {
     /** The ordinary permission dialog. */
     dialog,
     /**
-     * Android 11+: open app settings for «Allow all the time»; the runtime dialog no longer
-     * offers that choice. Read the permission again when the person returns.
+     * Android 11+: the request opens the app's own location page instead of a dialog, since the
+     * dialog no longer offers «Allow all the time». The explanation says which choice to make there.
      */
     settingsPage,
 }

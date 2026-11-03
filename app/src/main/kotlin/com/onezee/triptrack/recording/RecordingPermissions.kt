@@ -28,7 +28,6 @@ internal fun RecordingPermissionSheet(graph: LocationGraph, resumeTick: Int, onC
     var revision by remember { mutableIntStateOf(0) }
     var token by remember { mutableIntStateOf(0) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { flow.complete(token); revision++ }
-    val settingsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { flow.complete(token); revision++ }
     val step = remember(revision, resumeTick) {
         val granted = PermissionPlan.effectiveGrants(Build.VERSION.SDK_INT) { context.checkSelfPermission(it.manifestName) == PackageManager.PERMISSION_GRANTED }
         PermissionPlan.next(Build.VERSION.SDK_INT, granted, graph.permissionLedger.asked())
@@ -54,8 +53,8 @@ internal fun RecordingPermissionSheet(graph: LocationGraph, resumeTick: Int, onC
             MeAction(strings.onboardingContinue(), {
                 flow.begin(explanation.permission)?.let {
                     token = it
-                    if (explanation.method == RequestMethod.settingsPage) settingsLauncher.launch(HealthSettings.targets(context, HealthIssue.noBackgroundLocation, Oem.other).first())
-                    else launcher.launch(PermissionPlan.manifestNames(explanation.permission))
+                    // From Android 11 the system shows the app's location page for background location.
+                    launcher.launch(PermissionPlan.manifestNames(explanation.permission))
                 }
             }, enabled = !flow.isRequesting)
         }

@@ -209,7 +209,7 @@
     <string name="android_level_label">LVL %1$d</string>
     <string name="android_map_attribution" formatted="false">Kartennachweise</string>
     <string name="android_map_link_unavailable" formatted="false">Zum Öffnen dieses Links ist kein Browser verfügbar.</string>
-    <string name="android_permission_background_hint" formatted="false">Öffne auf der nächsten Seite Berechtigungen → Standort und wähle „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.</string>
+    <string name="android_permission_background_hint" formatted="false">Wähle auf der nächsten Seite „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.</string>
     <string name="android_precise_location_body" formatted="false">Für Route und Entfernung wird der genaue Standort benötigt. Öffne Einstellungen → Berechtigungen → Standort und aktiviere „Genauen Standort verwenden“.</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
     <string name="android_recording_xp">+%1$s XP</string>

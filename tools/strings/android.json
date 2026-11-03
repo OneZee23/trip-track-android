@@ -103,19 +103,19 @@
   },
   "android_permission_background_hint": {
     "values": {
-      "en": "On the next screen open Permissions → Location and choose “Allow all the time” so trips can start when you get in the car.",
-      "ru": "На следующем экране откройте Разрешения → Местоположение и выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.",
-      "de": "Öffne auf der nächsten Seite Berechtigungen → Standort und wähle „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.",
-      "es": "En la siguiente pantalla abre Permisos → Ubicación y elige «Permitir siempre» para iniciar viajes al subir al coche.",
-      "fr": "Sur l’écran suivant, ouvrez Autorisations → Position et choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.",
-      "it": "Nella schermata successiva apri Autorizzazioni → Posizione e scegli «Consenti sempre» per avviare i viaggi quando sali in auto.",
-      "pl": "Na następnym ekranie otwórz Uprawnienia → Lokalizacja i wybierz „Zezwalaj cały czas”, aby trasy zaczynały się, gdy wsiadasz do auta.",
-      "id": "Di layar berikutnya buka Izin → Lokasi dan pilih “Izinkan sepanjang waktu” agar perjalanan bisa dimulai saat Anda masuk mobil.",
-      "tr": "Sonraki ekranda İzinler → Konum bölümünü açıp “Her zaman izin ver” seçin; arabaya bindiğinizde yolculuklar başlayabilsin.",
-      "fil": "Sa susunod na screen, buksan ang Mga Pahintulot → Lokasyon at piliin ang “Payagan sa lahat ng oras” para magsimula ang biyahe kapag sumakay ka sa kotse.",
-      "uk": "На наступному екрані відкрийте Дозволи → Місцезнаходження та виберіть «Дозволяти завжди», щоб поїздки починалися, коли ви сідаєте в машину.",
-      "kk": "Келесі экранда Рұқсаттар → Орналасқан жер бөлімін ашып, «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.",
-      "pt": "Na próxima tela, abra Permissões → Localização e escolha “Permitir o tempo todo” para iniciar viagens ao entrar no carro."
+      "en": "On the next screen choose “Allow all the time” so trips can start when you get in the car.",
+      "ru": "На следующем экране выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.",
+      "de": "Wähle auf der nächsten Seite „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.",
+      "es": "En la siguiente pantalla elige «Permitir siempre» para iniciar viajes al subir al coche.",
+      "fr": "Sur l’écran suivant, choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.",
+      "it": "Nella schermata successiva scegli «Consenti sempre» per avviare i viaggi quando sali in auto.",
+      "pl": "Na następnym ekranie wybierz „Zezwalaj cały czas”, aby trasy zaczynały się, gdy wsiadasz do auta.",
+      "id": "Di layar berikutnya pilih “Izinkan sepanjang waktu” agar perjalanan bisa dimulai saat Anda masuk mobil.",
+      "tr": "Sonraki ekranda “Her zaman izin ver” seçeneğini seçin; arabaya bindiğinizde yolculuklar başlayabilsin.",
+      "fil": "Sa susunod na screen, piliin ang “Payagan sa lahat ng oras” para magsimula ang biyahe kapag sumakay ka sa kotse.",
+      "uk": "На наступному екрані виберіть «Дозволяти завжди», щоб поїздки починалися, коли ви сідаєте в машину.",
+      "kk": "Келесі экранда «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.",
+      "pt": "Na próxima tela, escolha “Permitir o tempo todo” para iniciar viagens ao entrar no carro."
     },
     "replace": false
   },

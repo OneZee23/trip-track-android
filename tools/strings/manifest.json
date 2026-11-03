@@ -40,7 +40,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "6b586f8e7f2773ad1767fe33a1487f316286e60816cbcd55471a7511ff6d8a8d"
+    "tools/strings/android.json": "be0c64a071043fc5b1f8a2491b828243f228847fab32bfafaf8a700430b203cd"
   },
   "languages": [
     "en",

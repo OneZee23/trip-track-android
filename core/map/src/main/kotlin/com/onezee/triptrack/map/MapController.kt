@@ -134,6 +134,8 @@ internal class MapController(
 
     private fun onStyleLoaded(loaded: Style) {
         style = loaded
+        // The activity's configuration carries the app's own language, not only the phone's.
+        MapLabels.localize(loaded, mapView.resources.configuration.locales[0].language)
         areaLayers.addTo(loaded, area)
         if (fog != null) ensureFog()?.addTo(loaded)
         veinLayers.addTo(loaded, vein)
