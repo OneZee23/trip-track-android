@@ -119,6 +119,8 @@ data class VehicleBiography(
     val regions: Int,
     val cities: Int,
     val routes: List<List<GeoPoint>>,
+    /** The regions themselves, for the chips under the mini map (iOS `regions`). */
+    val regionStats: List<MapRegionStat> = emptyList(),
 )
 
 data class PublicVehicleState(
@@ -180,7 +182,7 @@ class PublicVehicleViewModel(
         val hashes = mine.flatMap { it.previewCoordinates }.mapTo(HashSet()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }
         val exploration = MapExploration.build(mine, hashes, RegionAtlas.shared)
         return VehicleBiography(mine, MeAggregates.compute(mine, now = now(), zone = zone()), exploration.regions.size,
-            exploration.regions.sumOf { it.visitedCityCount }, mine.map { it.previewCoordinates }.filter { it.size >= 2 })
+            exploration.regions.sumOf { it.visitedCityCount }, mine.map { it.previewCoordinates }.filter { it.size >= 2 }, exploration.regions)
     }
 }
 
