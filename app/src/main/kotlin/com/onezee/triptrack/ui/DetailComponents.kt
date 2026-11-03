@@ -105,8 +105,12 @@ fun MapChromeSurface(progress: Float, modifier: Modifier, shape: androidx.compos
     }
 }
 
-/** The dark glass of map controls: a near-black at the opacity the material reads at over a map. */
-val ChromeGlass = Color(0xFF1C1C1E).copy(alpha = 0.62f)
+/**
+ * The dark glass of map controls: a near-black at the opacity the material reads at over a map.
+ * The dark ultra-thin material turns the light hero (244, 242, 238) into (170, 169, 167) on the
+ * iPhone, which #1C1C1E gives at 0.34 (the 3 November audit, SH-03: 0.62 read charcoal, 109).
+ */
+val ChromeGlass = Color(0xFF1C1C1E).copy(alpha = 0.34f)
 
 /**
  * iOS: TripDetailTopBar.swift. Back on the left, the actions on the right, both over the hero;
