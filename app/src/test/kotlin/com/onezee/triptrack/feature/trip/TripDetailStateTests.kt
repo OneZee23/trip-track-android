@@ -4,6 +4,7 @@ package com.onezee.triptrack.feature.trip
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.data.db.entity.VehicleEntity
 import com.onezee.triptrack.logic.*
+import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.model.*
 import java.util.UUID
 import kotlin.coroutines.ContinuationInterceptor
@@ -76,6 +77,18 @@ class TripDetailStateTests : PresentationTestCase() {
         assertContains(vm.state.value.exported!!.content, "12.500000")
         assertEquals(3, vm.state.value.exported!!.content.lines().size)
         assertEquals(0, repository.fetchTripCount())
+    }
+    @Test fun remoteTrackThinnedPastTheGapRuleDrawsAsOneLine() = runTest(dispatcher) {
+        val card = api.card(day = t0)
+        // The server thins a long drive to ~1.1 km a step, just past RouteGeometry's 1 km gap.
+        val track = (0 until 6).map { SocialTrackPoint(45.0 + it * 0.01, 39.0 + (it % 2) * 0.005, 20.0, t0.plusSeconds(55L * it)) }
+        api.remoteTrip = { SocialTripResponse(card, track) }
+        val vm = own(TripDetailViewModel(card.id, repository, api, dispatcher, { owner }, social = card))
+        vm.load().join()
+        assertTrue(vm.state.value.isPreviewRoute)
+        val shape = RouteGeometry.build(vm.state.value.coordinates, vm.state.value.speeds, vm.state.value.isPreviewRoute)
+        assertEquals(1, shape.lines.size)
+        assertEquals(6, shape.lines.single().coordinates.size)
     }
     @Test fun deleteWaitsForHouseConfirmationAndKeepsTheSubjectAfterDismissal() = runTest(dispatcher) {
         val trip = insert()

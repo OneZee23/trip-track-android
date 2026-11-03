@@ -34,6 +34,14 @@ Onboarding and the recording permission sheet opened the app details page, and t
 Permissions → Location. Background location is now requested like the other permissions: from Android 11
 the system answers with the app's own location page. The hint says only which choice to make (13 languages).
 
+## Someone else's trip
+
+`/social/trip` returns the track thinned to about a kilometre a step (395 points over 408 km, median
+1081 m), and Android split it at RouteGeometry's 1 km gap: the line fell apart into short coloured dashes.
+iOS draws such a trip from its preview, one solid line. A server track is now one line too
+(`isPreviewRoute` for every remote-backed trip), keeping its speed colours. Test:
+`TripDetailStateTests.remoteTrackThinnedPastTheGapRuleDrawsAsOneLine`.
+
 ## Checked on the emulator, build 7
 
 - Onboarding in Russian, every system question in order, nothing stacked.

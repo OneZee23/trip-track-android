@@ -178,7 +178,9 @@ class TripDetailViewModel(
     private suspend fun prepare(t: Trip, own: Boolean, remote: Boolean, expected: Long): TripDetailState {
         currentCoroutineContext().ensureActive()
         val points = t.trackPoints
-        val previewRoute = points.size <= 1 && t.previewPolyline != null
+        // iOS draws someone else's trip from its preview, one solid line. The server's track is thinned
+        // to about a kilometre a step, so the 1 km gap rule would shred it into dashes: it is one line too.
+        val previewRoute = remote || (points.size <= 1 && t.previewPolyline != null)
         val coords = if (points.size > 1) points.map { it.coordinate } else t.previewCoordinates
         val replay = if (points.size > 1) TripReplay.prepare(points) else TripReplay.prepare(coords)
         val prepared = if (own) photoPreparer.prepare(t) else TripPhotoPlacement.Prepared(emptyMap(), emptyList(), emptyMap())
