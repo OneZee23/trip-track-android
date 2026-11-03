@@ -76,6 +76,7 @@ enum class MeDestination { drafts, settings, achievements, garage }
 // iOS: ProfileView.swift.
 data class MeState(
     val loaded: Boolean = false,
+    val allTrips: List<Trip> = emptyList(),
     val history: PreparedProfileHistory = PreparedProfileHistory.build(ProfileHistoryLibrary(emptyList()), emptyList(), "", null, null, Locale.ENGLISH),
     val hero: ProfileHeroState = ProfileHeroState(),
     val calendar: HistoryCalendar = HistoryCalendar(),
@@ -137,7 +138,7 @@ class MeViewModel(
                 library = next
                 journeys = loadedJourneys
                 vehicles = loadedVehicles
-                mutableState.update { it.copy(loaded = true, calendar = HistoryCalendar(days, days.values.maxOrNull() ?: 0.0), drafts = drafts, vehicles = loadedVehicles, failed = false) }
+                mutableState.update { it.copy(loaded = true, allTrips = trips, calendar = HistoryCalendar(days, days.values.maxOrNull() ?: 0.0), drafts = drafts, vehicles = loadedVehicles, failed = false) }
                 // Missing local trips may be pins from a second phone. Only known invalid trips are removed.
                 val byId = trips.associateBy { it.id }
                 val pins = identitySource.identity.value.pinnedTripIds

@@ -22,6 +22,10 @@ data class NotificationPreferencesState(
 ) {
     val master get() = reactions || follows || comments || weeklyRecap || companions
 }
+
+object AdminAccess {
+    fun canShowAdminCard(loaded: Boolean, isAdmin: Boolean): Boolean = loaded && isAdmin
+}
 // iOS: NotificationPreferencesView.swift (load/save).
 interface NotificationPreferencesService {
     suspend fun load(): NotificationPrefsResponse

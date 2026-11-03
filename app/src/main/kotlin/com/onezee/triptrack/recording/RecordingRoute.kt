@@ -106,6 +106,7 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
         dockInset = dock, hasVehicles = vehicles.isNotEmpty(),
         // The + and − dim at the limits of the zoom the buttons step through.
         canZoomIn = canZoomIn, canZoomOut = canZoomOut,
+        mapReady = map.camera != null,
         onHudHeightChanged = { hudHeight = it },
         map = { TrackingMap(state, vehicle, fog, map, cameraMode, { cameraMode = TrackingCameraMode.none }, hudHeight + 24.0 + dock.value, Modifier.fillMaxSize()) })
     state.stopPreview?.let { preview ->

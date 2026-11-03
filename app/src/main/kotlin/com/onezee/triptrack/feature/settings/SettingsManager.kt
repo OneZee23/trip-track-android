@@ -53,6 +53,8 @@ data class SettingsState(
     val cloudSyncEnabled: Boolean = false,
     val showOnPublicMap: Boolean = false,
     val home: HomeState = HomeState(),
+    val homeAsked: Boolean = false,
+    val homeDeclinedAt: java.time.Instant? = null,
     val selectedVehicleId: UUID? = null,
     val sheets: List<SettingsSheet> = emptyList(),
     val failed: Boolean = false,
@@ -105,6 +107,7 @@ class SettingsManager(
         preferences.set(DistanceUnit.storageKey, distance.rawValue)
         preferences.set("volumeUnit", volume.rawValue)
         val home = preferences.string("home.settings")?.let { raw -> runCatching { Json.decodeFromString<HomeSettings>(raw) }.getOrNull() }
+        val homeDeclinedAt = preferences.string("home.declinedAt")?.let { raw -> runCatching { java.time.Instant.parse(raw) }.getOrNull() }
         mutableState.update { it.copy(loaded = true, localUserId = row.id, distanceUnit = distance, volumeUnit = volume,
             theme = row.themeMode ?: "dark", language = row.language ?: "ru", selectedVehicleId = row.selectedVehicleId,
             autoRecordMode = autoRecord.mode, autoRecordTrigger = autoRecord.trigger, autoStopTimeout = autoRecord.autoStopTimeout,
@@ -112,7 +115,9 @@ class SettingsManager(
             showOnPublicMap = preferences.string(PUBLIC_MAP_KEY)?.toBooleanStrictOrNull() ?: false,
             averageSpeed = preferences.string("com.triptrack.settings.avgSpeedMode")?.let { raw -> AvgSpeedMode.entries.firstOrNull { it.rawValue == raw } } ?: AvgSpeedMode.overall,
             home = home?.let { value -> HomeState(if (value.latitude != null && value.longitude != null) GeoPoint(value.latitude!!, value.longitude!!) else null,
-                value.radius, value.showsOnMap, value.trimsPublicTracks) } ?: HomeState(), failed = false) }
+                value.radius, value.showsOnMap, value.trimsPublicTracks) } ?: HomeState(),
+            homeAsked = preferences.string("home.asked")?.toBooleanStrictOrNull() ?: false,
+            homeDeclinedAt = homeDeclinedAt, failed = false) }
     }
     fun setDistanceUnit(unit: DistanceUnit) = saveRow({ it.copy(distanceUnit = unit.rawValue) }) {
         preferences.set(DistanceUnit.storageKey, unit.rawValue); it.copy(distanceUnit = unit)
@@ -172,6 +177,19 @@ class SettingsManager(
         preferences.set("home.settings", Json.encodeToString(HomeSettings(home.coordinate?.latitude, home.coordinate?.longitude, home.radius, home.showsOnMap, home.trimsPublicTracks)))
         mutableState.update { it.copy(home = home) }
         if (before != home.activeZone) effects.homeZoneChanged(before, home.activeZone)
+    }
+    fun acceptInferredHome(home: GeoPoint) = edit {
+        preferences.set("home.asked", "true")
+        val current = state.value.home
+        val updated = current.copy(coordinate = home)
+        val before = current.activeZone
+        preferences.set("home.settings", Json.encodeToString(HomeSettings(home.latitude, home.longitude, updated.radius, updated.showsOnMap, updated.trimsPublicTracks)))
+        mutableState.update { it.copy(home = updated, homeAsked = true, homeDeclinedAt = null) }
+        if (before != updated.activeZone) effects.homeZoneChanged(before, updated.activeZone)
+    }
+    fun declineInferredHome(at: java.time.Instant) = edit {
+        preferences.set("home.declinedAt", at.toString())
+        mutableState.update { it.copy(homeDeclinedAt = at) }
     }
     fun openSheet(sheet: SettingsSheet) { mutableState.update { if (it.sheet == sheet) it else it.copy(sheets = it.sheets + sheet) } }
     fun dismissSheet() { mutableState.update { it.copy(sheets = it.sheets.dropLast(1)) } }

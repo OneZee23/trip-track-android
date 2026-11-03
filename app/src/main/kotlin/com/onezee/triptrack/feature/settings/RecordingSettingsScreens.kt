@@ -211,11 +211,13 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
     val garage by graph.me.garage.state.collectAsState()
     var selected by remember { mutableStateOf(vehicleId ?: state.selectedVehicleId) }
     var allowed by remember { mutableStateOf(Build.VERSION.SDK_INT < 31 || context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) }
+    var bluetoothEnabled by remember { mutableStateOf(runCatching { context.getSystemService(BluetoothManager::class.java)?.adapter?.isEnabled == true }.getOrDefault(false)) }
     var refresh by remember { mutableIntStateOf(0) }
     val owner = LocalLifecycleOwner.current
     DisposableEffect(owner) {
         val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) {
             allowed = Build.VERSION.SDK_INT < 31 || context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+            bluetoothEnabled = runCatching { context.getSystemService(BluetoothManager::class.java)?.adapter?.isEnabled == true }.getOrDefault(false)
             refresh++
         } }
         owner.lifecycle.addObserver(observer)
@@ -243,6 +245,7 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
         vehicles = if (vehicleId == null) garage.vehicles.map { it.vehicle }.filter { it.soldAt == null } else null,
         selected = selected, onSelect = { selected = it },
         allowed = allowed, onAllow = { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) },
+        bluetoothEnabled = bluetoothEnabled,
         outputs = outputs, nearby = devices.filter { it.uuid.uppercase(java.util.Locale.ROOT) !in currentIds },
         isLinked = { device -> state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected } },
         onLink = { device -> selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() } },
@@ -262,6 +265,7 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
 internal fun StereoPickerContent(
     vehicles: List<Vehicle>?, selected: UUID?, onSelect: (UUID) -> Unit,
     allowed: Boolean, onAllow: () -> Unit,
+    bluetoothEnabled: Boolean = true,
     outputs: List<SavedBluetoothDevice>, nearby: List<SavedBluetoothDevice>,
     isLinked: (SavedBluetoothDevice) -> Boolean, onLink: (SavedBluetoothDevice) -> Unit,
     onRefresh: () -> Unit, onOpenSettings: () -> Unit, onBack: () -> Unit,
@@ -274,7 +278,14 @@ internal fun StereoPickerContent(
             Text(strings.linkStereo(), Modifier.weight(1f).semantics { heading() }, style = inter(17f, InterWeight.bold), color = colors.text)
             SheetCloseCircle(onClick = onBack)
         }
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (!bluetoothEnabled) {
+            Column(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Box(Modifier.size(72.dp).background(colors.cardAlt, CircleShape), Alignment.Center) { Glyph(AppGlyph.antennaRadiowaves, null, tint = colors.textSecondary, size = 32.dp) }
+                Text(strings.btOffTitle(), Modifier.padding(top = 14.dp), style = inter(19f, InterWeight.bold), color = colors.text)
+                Text(strings.btOffSheetBody(), Modifier.padding(top = 8.dp), style = inter(14f), color = colors.textSecondary, textAlign = TextAlign.Center)
+                Text(strings.openSettings(), Modifier.padding(top = 18.dp).background(AppTheme.accent, CapsuleShape).clickable(role = Role.Button, onClick = onOpenSettings).padding(horizontal = 26.dp, vertical = 14.dp), style = inter(15f, InterWeight.bold), color = androidx.compose.ui.graphics.Color.White)
+            }
+        } else Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (vehicles != null) StereoSection(strings.myVehicle()) {
                 vehicles.forEachIndexed { index, vehicle ->
                     if (index > 0) StereoDivider()

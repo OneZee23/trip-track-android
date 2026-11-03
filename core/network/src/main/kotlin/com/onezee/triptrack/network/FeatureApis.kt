@@ -26,3 +26,12 @@ class SocialCommentsApi(private val client: ApiClient) {
     suspend fun create(request: SocialCommentCreateRequest): SocialCommentCreateResponse =
         client.post(ApiEndpoint.socialComment, request, singleAttempt = true)
 }
+
+// iOS: Views/Admin/AdminModel.swift. Server authorization remains authoritative for every call.
+class AdminApi(private val client: ApiClient) {
+    suspend fun summary(): AdminSummary = client.post(ApiEndpoint.adminSummary, EmptyRequest())
+    suspend fun subscriptions(): AdminItems<AdminSubscription> = client.post(ApiEndpoint.adminSubscriptions, EmptyRequest())
+    suspend fun events(): AdminItems<AdminEvent> = client.post(ApiEndpoint.adminEvents, EmptyRequest())
+    suspend fun flags(): AdminItems<AdminFlag> = client.post(ApiEndpoint.adminFlags, EmptyRequest())
+    suspend fun setFlag(name: String, enabled: Boolean) = client.post<AdminFlagRequest, EmptyResponse>(ApiEndpoint.adminFlag, AdminFlagRequest(name, enabled))
+}

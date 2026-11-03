@@ -10,12 +10,14 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,6 +55,58 @@ import kotlinx.coroutines.withContext
 
 internal val LocalMeAverageSpeed = compositionLocalOf { AvgSpeedMode.overall }
 
+@Composable
+internal fun HomeQuestionCard(place: String, onYes: () -> Unit, onNo: () -> Unit) {
+    val strings = appStrings
+    Column(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+            Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(AppTheme.accentBg), Alignment.Center) {
+                Glyph(AppGlyph.houseFill, null, tint = AppTheme.accent, size = 15.dp)
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(strings.homeQuestionTitle(), style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+                Text(place, style = inter(13f, InterWeight.semibold), color = AppTheme.colors.textSecondary, maxLines = 1)
+                Text(strings.homeQuestionHint(), style = inter(12f), color = AppTheme.colors.textTertiary)
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PromptChoice(strings.homeYes(), true, onYes, Modifier.weight(1f))
+            PromptChoice(strings.homeNo(), false, onNo, Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+internal fun JourneySuggestionBanner(subtitle: String, onCombine: () -> Unit, onDismiss: () -> Unit) {
+    val strings = appStrings
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(AppTheme.accentBg).padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+            Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(AppTheme.accentBg), Alignment.Center) {
+                Glyph(AppGlyph.map, null, tint = AppTheme.accent, size = 15.dp)
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(strings.journeySuggestTitle(), style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+                Text(subtitle, style = inter(12f), color = AppTheme.colors.textSecondary)
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PromptChoice(strings.journeySuggestCombine(), true, onCombine, Modifier.weight(1f))
+            PromptChoice(strings.journeyNotNow(), false, onDismiss, Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun PromptChoice(title: String, primary: Boolean, action: () -> Unit, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(14.dp)
+    Box(modifier.clip(shape).background(if (primary) AppTheme.accent else AppTheme.colors.cardAlt)
+        .then(if (primary) Modifier else Modifier.border(1.dp, AppTheme.colors.textTertiary.copy(alpha = .35f), shape))
+        .clickable(role = Role.Button, onClick = action).padding(horizontal = 8.dp, vertical = 11.dp), contentAlignment = Alignment.Center) {
+        Text(title, style = inter(13f, InterWeight.bold), color = if (primary) androidx.compose.ui.graphics.Color.White else AppTheme.colors.text, maxLines = 1,
+            autoSize = TextAutoSize.StepBased(minFontSize = inter(11f).fontSize, maxFontSize = inter(13f).fontSize))
+    }
+}
+
 /**
  * iOS: ProfileView.stageNavigation. The tab has no header of its own: the hero card is the first
  * thing on the page (4 under the status bar, or the cover from the very top of the screen), and
@@ -74,6 +128,8 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         onBadge: (String) -> Unit = {}, onRecord: () -> Unit = {}, clubsSubtitle: String? = null,
                         socialFeature: com.onezee.triptrack.feature.social.SocialFeature? = null,
                         onCompanionTrip: (com.onezee.triptrack.model.SocialFeedTrip) -> Unit = {},
+                        homeCandidate: Pair<GeoPoint, String>? = null, suggestedTrips: List<Trip> = emptyList(), suggestionSubtitle: String = "",
+                        onAcceptHome: (GeoPoint) -> Unit = {}, onDeclineHome: () -> Unit = {}, onCombineSuggestion: (List<Trip>) -> Unit = {}, onDismissSuggestion: () -> Unit = {},
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -145,6 +201,12 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                 }
                 if (state.drafts.isNotEmpty()) item(key = "drafts") { DraftsSection(state, now, onDrafts) }
                 item(key = "history_header") { ProfileHistoryHeader(state.query, onQuery, state.mode, onMode) }
+                if (homeCandidate != null || suggestedTrips.isNotEmpty()) item(key = "journey_prompts") {
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        homeCandidate?.let { (point, place) -> HomeQuestionCard(place, { onAcceptHome(point) }, onDeclineHome) }
+                        if (suggestedTrips.isNotEmpty()) JourneySuggestionBanner(suggestionSubtitle, { onCombineSuggestion(suggestedTrips) }, onDismissSuggestion)
+                    }
+                }
                 item(key = "calendar") {
                     // Canon's 16 pt to the first card is padding, so it survives a filter that matches nothing.
                     Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange) }

@@ -41,7 +41,7 @@ import kotlinx.coroutines.*
  * Empty, it is a real empty state: the drawing, the words and the one action.
  */
 @Composable
-internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePhotoStore, onBack: () -> Unit, onChanged: () -> Unit) {
+internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePhotoStore, onBack: () -> Unit, onChanged: () -> Unit, onShowPhotos: suspend () -> Unit = {}) {
     val strings = appStrings
     val colors = AppTheme.colors
     val context = LocalContext.current
@@ -52,6 +52,7 @@ internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePh
     var delete by remember { mutableStateOf<VehiclePhoto?>(null) }
     var busy by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
+    var askVisibilityOpen by remember { mutableStateOf(false) }
     var loaded by remember(id) { mutableStateOf(false) }
     LaunchedEffect(id, revision) {
         try { photos = withContext(Dispatchers.IO) { store.photos(id) }; loaded = true; onChanged() }
@@ -61,6 +62,7 @@ internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePh
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(9)) { uris ->
         if (uris.isNotEmpty() && !busy) scope.launch {
             busy = true
+            val hadNone = photos.isEmpty()
             try {
                 withContext(Dispatchers.IO) {
                     for (uri in uris) {
@@ -76,6 +78,12 @@ internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePh
                     }
                 }
                 revision++
+                val prefs = context.getSharedPreferences("${context.packageName}_preferences", android.content.Context.MODE_PRIVATE)
+                val askKey = "vehiclePhotoVisibilityAsked.$id"
+                if (hadNone && !prefs.getBoolean(askKey, false)) {
+                    prefs.edit().putBoolean(askKey, true).apply()
+                    askVisibilityOpen = true
+                }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { failed = true }
             finally { busy = false }
@@ -83,6 +91,13 @@ internal fun VehiclePhotosScreen(id: UUID, vehicleName: String, store: VehiclePh
     }
     VehiclePhotosPage(vehicleName, photos, loaded, failed, busy, onBack, onAdd = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
         onOpen = { index -> selected = photos.toList() to index })
+    if (askVisibilityOpen) AppConfirmDialog(strings.vehiclePhotoAskTitle(), strings.vehiclePhotoAskBody(),
+        actions = listOf(AppDialogAction(strings.vehiclePhotoAskShow()) {
+            scope.launch {
+                onShowPhotos()
+                askVisibilityOpen = false
+            }
+        }), onDismiss = { askVisibilityOpen = false }, cancelTitle = strings.vehiclePhotoAskKeep())
     selected?.let { (pages, start) ->
         MePhotoViewer(strings.vehiclePhotos(), start, pages.size, { selected = null },
             photo = { index -> VehicleLocalPhoto(pages[index].filename, Modifier.fillMaxSize(), ContentScale.Fit, remoteURL = pages[index].remoteURL) },

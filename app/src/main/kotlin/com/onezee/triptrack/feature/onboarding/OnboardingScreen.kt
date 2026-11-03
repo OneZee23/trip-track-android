@@ -83,6 +83,8 @@ import com.onezee.triptrack.feature.account.linkedText
 import com.onezee.triptrack.location.permissions.PermissionLedger
 import com.onezee.triptrack.location.permissions.PermissionPlan
 import com.onezee.triptrack.location.permissions.RecordingPermission
+import com.onezee.triptrack.model.Trip
+import com.onezee.triptrack.logic.previewCoordinates
 import com.onezee.triptrack.location.permissions.HealthIssue
 import com.onezee.triptrack.location.permissions.HealthSettings
 import com.onezee.triptrack.location.permissions.Oem
@@ -107,6 +109,7 @@ fun OnboardingScreen(
     resumeTick: Int,
     onFinished: () -> Unit,
     startPage: Int = 0,
+    exampleTrip: Trip? = null,
 ) {
     val context = LocalContext.current
     val coordinator = remember { OnboardingPermissionCoordinator(ledger, Build.VERSION.SDK_INT) { grantedPermissions(context) } }
@@ -137,6 +140,7 @@ fun OnboardingScreen(
     OnboardingContent(
         page = page,
         distanceUnit = distanceUnit,
+        exampleTrip = exampleTrip,
         isRequesting = coordinator.isRequesting,
         locationGranted = RecordingPermission.fineLocation in granted,
         backgroundGranted = RecordingPermission.backgroundLocation in granted,
@@ -172,13 +176,14 @@ fun OnboardingContent(
     onContinue: (Int) -> Unit,
     approximateLocation: Boolean = false,
     onOpenLocationSettings: () -> Unit = {},
+    exampleTrip: Trip? = null,
 ) {
     val colors = AppTheme.colors
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("onboarding")) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
             when (page) {
                 0 -> WelcomePage { onContinue(0) }
-                1 -> ValuePage(distanceUnit) { onContinue(1) }
+                1 -> ValuePage(distanceUnit, exampleTrip) { onContinue(1) }
                 2 -> PermissionPage(2, R.drawable.onboard_fog, appStrings.onboardingLocation(), appStrings.onboardingLocationSub(), locationGranted, isRequesting,
                     spacing = 12.dp, consentTop = 4.dp, "onboarding_continue_location",
                     approximateLocation, onOpenLocationSettings) { onContinue(2) }
@@ -316,12 +321,12 @@ private fun ColumnScope.WelcomePage(onContinue: () -> Unit) {
  * the other pages. A shorter screen scrolls the story above the button.
  */
 @Composable
-private fun ColumnScope.ValuePage(distanceUnit: DistanceUnit, onContinue: () -> Unit) {
+private fun ColumnScope.ValuePage(distanceUnit: DistanceUnit, exampleTrip: Trip?, onContinue: () -> Unit) {
     val strings = appStrings
     Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
         OnboardingHero(R.drawable.onboard_memory)
         PageTitle(strings.onboardingValueTitle(), "onboarding_page_1")
-        Box(Modifier.padding(horizontal = 28.dp).padding(top = 20.dp, bottom = 24.dp)) { MockTripCard(distanceUnit) }
+        Box(Modifier.padding(horizontal = 28.dp).padding(top = 20.dp, bottom = 24.dp)) { MockTripCard(distanceUnit, exampleTrip) }
     }
     Box(Modifier.padding(horizontal = 32.dp).padding(top = 8.dp, bottom = 56.dp)) {
         PrimaryButton(strings.onboardingContinue(), "onboarding_continue_value", onClick = onContinue)
@@ -390,14 +395,14 @@ private fun ConsentText(strings: AppStrings, modifier: Modifier = Modifier) {
  * meets «km» on its first screen.
  */
 @Composable
-private fun MockTripCard(distanceUnit: DistanceUnit) {
+private fun MockTripCard(distanceUnit: DistanceUnit, trip: Trip? = null) {
     val strings = appStrings
     val shape = RoundedCornerShape(16.dp)
     Column(Modifier.fillMaxWidth().iosShadow(shape, Color.Black.copy(alpha = 0.12f), radius = 24.dp, y = 8.dp).clip(shape).background(Color.White)) {
-        MockMap(strings)
+        MockMap(strings, trip)
         val lang = strings.language.code
-        val distance = Measure.distanceParts(246_000.0, distanceUnit, lang, strings)
-        val average = Measure.speedParts(DistanceUnit.km.metresPerSecond(82.0), distanceUnit, lang, strings)
+        val distance = Measure.distanceParts(trip?.distance ?: 246_000.0, distanceUnit, lang, strings)
+        val average = Measure.speedParts(trip?.averageSpeed ?: DistanceUnit.km.metresPerSecond(82.0), distanceUnit, lang, strings)
         Column(Modifier.fillMaxWidth().padding(bottom = 6.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(strings.onboardingMockTripTitle(), style = inter(13.5f, InterWeight.bold), color = Color(0xFF1E1E23),
                 modifier = Modifier.padding(horizontal = 16.dp).padding(top = 12.dp))
@@ -426,7 +431,7 @@ private fun androidx.compose.foundation.layout.RowScope.Metric(value: String, un
 
 /** Parchment, faint roads, a speed-gradient route from the start (red dot) to the finish (green). */
 @Composable
-internal fun MockMap(strings: AppStrings) {
+internal fun MockMap(strings: AppStrings, trip: Trip? = null) {
     BoxWithConstraints(Modifier.fillMaxWidth().height(150.dp).background(Color(0xFFE8E1D3)).testTag("onboarding_mock_map")) {
         val w = maxWidth
         Canvas(Modifier.fillMaxSize()) {
@@ -439,14 +444,36 @@ internal fun MockMap(strings: AppStrings) {
                 cubicTo(width * 0.3f, height * 0.4f, width * 0.42f, height * 0.6f, width * 0.45f, height)
             }
             drawPath(roads, Color(0xFFD6CDBA), style = Stroke(3.dp.toPx()))
+            val coordinates = trip?.previewCoordinates.orEmpty()
             val route = Path().apply {
+                if (coordinates.size > 1) {
+                    val minLat = coordinates.minOf { it.latitude }; val maxLat = coordinates.maxOf { it.latitude }
+                    val minLon = coordinates.minOf { it.longitude }; val maxLon = coordinates.maxOf { it.longitude }
+                    val spanLat = (maxLat - minLat).takeIf { it != 0.0 } ?: 1.0
+                    val spanLon = (maxLon - minLon).takeIf { it != 0.0 } ?: 1.0
+                    coordinates.forEachIndexed { index, point ->
+                        val x = width * (0.1f + .8f * ((point.longitude - minLon) / spanLon).toFloat())
+                        val y = height * (0.1f + .8f * (1.0 - (point.latitude - minLat) / spanLat).toFloat())
+                        if (index == 0) moveTo(x, y) else lineTo(x, y)
+                    }
+                } else {
                 moveTo(width * 0.11f, height * 0.83f)
                 cubicTo(width * 0.38f, height * 0.95f, width * 0.45f, height * 0.18f, width * 0.72f, height * 0.11f)
+                }
             }
             drawPath(route, Brush.linearGradient(listOf(AppTheme.green, AppTheme.yellow, AppTheme.red), Offset(0f, height), Offset(width, 0f)),
                 style = Stroke(4.dp.toPx(), cap = StrokeCap.Round))
             // iOS mockEndpointDot: a 9 pt disc with a 2 pt white stroke centred on its edge, 11 pt across with 7 pt of colour.
-            for ((point, color) in listOf(Offset(width * 0.11f, height * 0.83f) to AppTheme.red, Offset(width * 0.72f, height * 0.11f) to AppTheme.green)) {
+            val endpoints = if (coordinates.size > 1) {
+                val minLat = coordinates.minOf { it.latitude }; val maxLat = coordinates.maxOf { it.latitude }
+                val minLon = coordinates.minOf { it.longitude }; val maxLon = coordinates.maxOf { it.longitude }
+                val spanLat = (maxLat - minLat).takeIf { it != 0.0 } ?: 1.0
+                val spanLon = (maxLon - minLon).takeIf { it != 0.0 } ?: 1.0
+                val first = Offset(width * (0.1f + .8f * ((coordinates.first().longitude - minLon) / spanLon).toFloat()), height * (0.1f + .8f * (1.0 - (coordinates.first().latitude - minLat) / spanLat).toFloat()))
+                val last = Offset(width * (0.1f + .8f * ((coordinates.last().longitude - minLon) / spanLon).toFloat()), height * (0.1f + .8f * (1.0 - (coordinates.last().latitude - minLat) / spanLat).toFloat()))
+                listOf(first to AppTheme.red, last to AppTheme.green)
+            } else listOf(Offset(width * 0.11f, height * 0.83f) to AppTheme.red, Offset(width * 0.72f, height * 0.11f) to AppTheme.green)
+            for ((point, color) in endpoints) {
                 drawCircle(Color.White, 5.5.dp.toPx(), point)
                 drawCircle(color, 3.5.dp.toPx(), point)
             }

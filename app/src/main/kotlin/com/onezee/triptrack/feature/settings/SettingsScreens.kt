@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,6 +26,7 @@ import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.feature.me.isAccessibilitySize
+import com.onezee.triptrack.feature.me.ProfileSectionLabel
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.LocalAppVersion
@@ -42,6 +44,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     val privacyState = privacy?.state?.collectAsState()?.value ?: PrivacySettingsState()
     val usageEnabled by graph.me.analytics.enabled.collectAsState()
     val profile by graph.me.profile.state.collectAsState()
+    var adminOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) { if (manager.state.value.sheets.isEmpty()) manager.openSheet(SettingsSheet.settings) }
     DisposableEffect(Unit) { onDispose { manager.closeSheets() } }
     val context = LocalContext.current
@@ -56,6 +59,10 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
             ContentSizedSheet(close, background = AppTheme.colors.bg, detent = if (page == SettingsSheet.privacy) SheetDetent.content else SheetDetent.large, grabber = page.hasGrabber) {
                 when (page) {
                     SettingsSheet.settings -> SettingsContent(state, graph.themeManager.mode, language, auth.isSignedIn, notificationState,
+                        isAdmin = AdminAccess.canShowAdminCard(notificationState.loaded, notificationState.isAdmin),
+                        onAdmin = { adminOpen = true },
+                        adminNewAccounts = notificationState.newAccounts,
+                        onAdminNewAccounts = { notifications?.setPreferences(newAccounts = it) },
                         onClose = { dismiss() }, onOpen = manager::openSheet, onNotificationMaster = { notifications?.setMaster(it) },
                         onWriteAuthor = { open("mailto:privacy@trip-track.app") }, onTelegram = { open("https://t.me/onezee_co") },
                         onPolicy = { open("https://trip-track.app/privacy") }, onTerms = { open("https://trip-track.app/terms") },
@@ -108,6 +115,9 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
             }, onDismissRequest = { if (manager.state.value.sheet == SettingsSheet.language) manager.dismissSheet() }, testTagPrefix = "settings_language")
         else -> Unit
     }
+    if (adminOpen) ContentSizedSheet({ adminOpen = false }, background = AppTheme.colors.bg, detent = SheetDetent.large) {
+        com.onezee.triptrack.feature.settings.AdminPanelScreen(graph.apiClient) { adminOpen = false }
+    }
 }
 
 /** The sheets iOS gives `presentationDragIndicator(.visible)`: Настройки, its sub-pages, auto-record and the stereo picker. */
@@ -127,7 +137,8 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
                              notifications: NotificationPreferencesState, onClose: () -> Unit, onOpen: (SettingsSheet) -> Unit,
                              onNotificationMaster: (Boolean) -> Unit, onWriteAuthor: () -> Unit, onTelegram: () -> Unit,
                              onPolicy: () -> Unit = {}, onTerms: () -> Unit = {}, onOpenStreetMap: () -> Unit = {},
-                             account: @Composable () -> Unit = {}) {
+                             account: @Composable () -> Unit = {}, isAdmin: Boolean = false, onAdmin: () -> Unit = {},
+                             adminNewAccounts: Boolean = true, onAdminNewAccounts: (Boolean) -> Unit = {}) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).testTag("settings_sheet")) {
         MeSheetHeader(strings.settingsTitle(), 12.dp, onClose)
@@ -141,6 +152,13 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
                     MeDivider()
                     account()
                 }
+            }
+            if (isAdmin) Column(Modifier.surfaceCard(16.dp).testTag("settings_admin_group")) {
+                ProfileSectionLabel(strings.adminSectionTitle(), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
+                SettingsIconRow(strings.adminPanelTitle(), glyph = AppGlyph.clipboard, subtitle = strings.adminPanelSubtitle(), tag = "settings_admin_panel", onClick = onAdmin) { SettingsRowChevron() }
+                MeDivider()
+                MeToggle(strings.adminNotifyNewUsers(), adminNewAccounts, onAdminNewAccounts, enabled = notifications.loaded,
+                    tag = "settings_admin_new_accounts", hint = strings.adminHintNewUsers())
             }
             Column(Modifier.surfaceCard(16.dp)) {
                 SettingsIconRow(strings.lang(), glyph = AppGlyph.characterBubble, tag = "settings_language", onClick = { onOpen(SettingsSheet.language) }) { SettingsRowValue(language.endonym) }

@@ -27,6 +27,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.onezee.triptrack.designsystem.theme.iosShadow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
@@ -92,16 +94,53 @@ internal fun MeRow(title: String, value: String = "", subtitle: String? = null, 
 
 @Composable
 internal fun MeToggle(title: String, checked: Boolean, onChange: (Boolean) -> Unit, subtitle: String? = null,
-                      enabled: Boolean = true, tag: String = "") {
+                      enabled: Boolean = true, tag: String = "", hint: String? = null) {
     Row(Modifier.fillMaxWidth().testTag(tag).toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onChange)
         .padding(horizontal = 14.dp, vertical = 10.dp).heightIn(min = 38.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Text(title, style = interScaled(14.5f, InterWeight.semibold), color = AppTheme.colors.text.copy(alpha = if (enabled) 1f else .5f))
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(title, style = interScaled(14.5f, InterWeight.semibold), color = AppTheme.colors.text.copy(alpha = if (enabled) 1f else .5f))
+                if (hint != null) SettingsHintPopoverButton(hint)
+            }
             if (subtitle != null) Text(subtitle, style = interScaled(11.5f), color = AppTheme.colors.textSecondary)
         }
         // iOS: the system Toggle, 51 × 31 with a large white knob and no outline; the row switches as a whole.
         Box(Modifier.clearAndSetSemantics {}) { HouseSwitch(checked, onChange, enabled = enabled) }
+    }
+}
+
+@Composable
+private fun SettingsHintPopoverButton(text: String) {
+    var open by remember { mutableStateOf(false) }
+    val strings = appStrings
+    Box {
+        Text("?", Modifier.size(18.dp).background(if (open) AppTheme.accent else AppTheme.colors.cardAlt, CircleShape)
+            .clickable(role = Role.Button, onClickLabel = strings.settingsHintTitle()) { open = !open }
+            .wrapContentSize(Alignment.Center).testTag("settings_hint"), style = inter(11f, InterWeight.semibold), color = if (open) androidx.compose.ui.graphics.Color.White else AppTheme.colors.textTertiary)
+        // Below the disc with iOS's 4 pt gap. IntOffset is in pixels: 26 px put the bubble's arrow on the disc.
+        val below = with(androidx.compose.ui.platform.LocalDensity.current) { (18.dp + 4.dp).roundToPx() }
+        if (open) androidx.compose.ui.window.Popup(alignment = Alignment.TopCenter, offset = androidx.compose.ui.unit.IntOffset(0, below),
+            onDismissRequest = { open = false }, properties = androidx.compose.ui.window.PopupProperties(focusable = true, dismissOnClickOutside = true)) {
+            val bubbleColor = AppTheme.colors.card
+            // Room around the bubble for its shadow: a popup window clips whatever its content draws outside.
+            Column(Modifier.padding(start = 24.dp, end = 24.dp, bottom = 28.dp).width(248.dp).clickable(role = Role.Button, onClick = { open = false })) {
+                Canvas(Modifier.fillMaxWidth().height(8.dp)) {
+                    val arrow = androidx.compose.ui.graphics.Path().apply {
+                        moveTo(size.width / 2 - 8.dp.toPx(), size.height)
+                        lineTo(size.width / 2, 0f)
+                        lineTo(size.width / 2 + 8.dp.toPx(), size.height)
+                        close()
+                    }
+                    drawPath(arrow, bubbleColor)
+                }
+                // iOS SettingsHintBubble: card fill, radius 14, shadow black 0.14 r16 y4, 13 pt text with 3 pt extra leading.
+                Box(Modifier.iosShadow(RoundedCornerShape(14.dp), androidx.compose.ui.graphics.Color.Black.copy(alpha = .14f), 16.dp, y = 4.dp)
+                    .background(AppTheme.colors.card, RoundedCornerShape(14.dp)).padding(14.dp)) {
+                    Text(text, style = inter(13f).copy(lineHeight = (13f * 1.2f + 3f).sp), color = AppTheme.colors.text)
+                }
+            }
+        }
     }
 }
 

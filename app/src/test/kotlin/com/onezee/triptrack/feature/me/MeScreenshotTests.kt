@@ -22,6 +22,8 @@ import com.github.takahirom.roborazzi.captureRoboImage
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.AppGlyph
+import com.onezee.triptrack.designsystem.components.AppConfirmDialog
+import com.onezee.triptrack.designsystem.components.AppDialogAction
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.settings.*
@@ -77,6 +79,53 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun heroDay() = hero(RoadSceneTime.day)
     @Test fun heroSunset() = hero(RoadSceneTime.sunset)
     @Test fun heroNight() = hero(RoadSceneTime.night)
+    @Test fun journeyPrompts() = shot("journey_prompts") {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            HomeQuestionCard("Краснодар", {}, {})
+            JourneySuggestionBanner("Владикавказ · 6 поездок", {}, {})
+        }
+    }
+    @Test fun bluetoothOff() = shot("bluetooth_off") {
+        com.onezee.triptrack.feature.settings.StereoPickerContent(
+            vehicles = null, selected = null, onSelect = {}, allowed = true, onAllow = {}, bluetoothEnabled = false,
+            outputs = emptyList(), nearby = emptyList(), isLinked = { false }, onLink = {}, onRefresh = {},
+            onOpenSettings = {}, onBack = {},
+        )
+    }
+    @Test fun adminSettingsCard() = shot("admin_settings") {
+        com.onezee.triptrack.feature.settings.SettingsContent(
+            SettingsState(loaded = true), ThemeMode.dark, AppLanguage.ru, true,
+            NotificationPreferencesState(isAdmin = true, loaded = true), {}, {}, {}, {}, {}, isAdmin = true,
+            onAdmin = {}, adminNewAccounts = true, onAdminNewAccounts = {},
+        )
+    }
+    @Test fun adminSettingsHint() = shot("admin_settings_hint", before = {
+        compose.onNodeWithTag("settings_hint").performClick()
+    }) {
+        com.onezee.triptrack.feature.settings.SettingsContent(
+            SettingsState(loaded = true), ThemeMode.dark, AppLanguage.ru, true,
+            NotificationPreferencesState(isAdmin = true, loaded = true), {}, {}, {}, {}, {}, isAdmin = true,
+            onAdmin = {}, adminNewAccounts = true, onAdminNewAccounts = {},
+        )
+    }
+    @Test fun vehiclePhotoVisibilityQuestion() = shot("vehicle_photo_visibility_question") {
+        AppConfirmDialog(appStrings.vehiclePhotoAskTitle(), appStrings.vehiclePhotoAskBody(),
+            listOf(AppDialogAction(appStrings.vehiclePhotoAskShow()) {}), {}, appStrings.vehiclePhotoAskKeep())
+    }
+    @Test fun trackingMapLoading() = shot("tracking_map_loading") {
+        com.onezee.triptrack.recording.TrackingScreen(
+            com.onezee.triptrack.recording.TrackingState(), null, false, com.onezee.triptrack.recording.TrackingActions(),
+            Instant.parse("2026-10-31T12:00:00Z"), mapReady = false,
+        )
+    }
+    @Test fun onboardingUsesLatestTrip() = shot("onboarding_own_trip") {
+        val example = Trip(distance = 92_400.0, averageSpeed = 19.0,
+            previewPolyline = Trip.encodePolyline(listOf(GeoPoint(55.7, 37.5), GeoPoint(55.9, 37.7), GeoPoint(56.0, 38.0))))
+        com.onezee.triptrack.feature.onboarding.OnboardingContent(
+            page = 1, distanceUnit = DistanceUnit.km, isRequesting = false, locationGranted = false,
+            backgroundGranted = false, notificationsGranted = false, onContinue = {}, exampleTrip = example,
+        )
+    }
     private fun hero(time: RoadSceneTime) = shot("hero_${time.name}") {
         ProfileHeroCard(MeFixtures.hero.copy(roadTime = time), DistanceUnit.km, {}, {}, {})
     }

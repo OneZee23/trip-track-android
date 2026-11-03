@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
@@ -25,6 +26,11 @@ import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
 import com.onezee.triptrack.ui.navigation.entryViewModel
 import com.onezee.triptrack.ui.navigation.rememberLocalViewModel
 import com.onezee.triptrack.model.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import com.onezee.triptrack.logic.JourneySuggester
+import com.onezee.triptrack.logic.GeohashEncoder
+import com.onezee.triptrack.logic.previewCoordinates
 import com.onezee.triptrack.network.*
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -48,6 +54,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var photosOpen by rememberSaveable { mutableStateOf(false) }
     var editing by rememberSaveable { mutableStateOf<String?>(null) }
     var composerAnchor by remember { mutableStateOf<Trip?>(null) }
+    var composerPreselected by remember { mutableStateOf<List<Trip>?>(null) }
+    var inferredHome by remember { mutableStateOf<Pair<GeoPoint, String>?>(null) }
+    var suggestedChain by remember { mutableStateOf<List<Trip>>(emptyList()) }
+    var suggestionSubtitle by remember { mutableStateOf("") }
     var composerOpening by remember { mutableIntStateOf(0) }
     var deleting by remember { mutableStateOf<UUID?>(null) }
     var mutationFailed by remember { mutableStateOf(false) }
@@ -58,6 +68,35 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     val scope = rememberCoroutineScope()
     val strings = appStrings
+    val context = LocalContext.current
+    LaunchedEffect(state.allTrips, settings.home, settings.homeAsked, settings.homeDeclinedAt, strings.language) {
+        inferredHome = null
+        suggestedChain = emptyList()
+        if (settings.home.coordinate == null) {
+            if (JourneySuggester.shouldAskHome(null, settings.homeAsked, settings.homeDeclinedAt, java.time.Instant.now())) {
+                val candidate = withContext(Dispatchers.Default) { JourneySuggester.inferHome(state.allTrips, strings.zone) }
+                if (candidate != null) {
+                    val key = GeohashEncoder.encode(candidate.latitude, candidate.longitude, 5)
+                    val name = withContext(Dispatchers.IO) { graph.tripsFeature.localities(setOf(key))[key] }
+                    inferredHome = candidate to (name ?: "%.3f, %.3f".format(candidate.latitude, candidate.longitude))
+                }
+            }
+        } else settings.home.coordinate?.let { home ->
+            val existing = runCatching { graph.trips.fetchJourneys() }.getOrDefault(emptyList())
+            val chain = withContext(Dispatchers.Default) { JourneySuggester.suggestion(state.allTrips, home, existing, java.time.Instant.now(), strings.zone) }
+            val dismissed = context.getSharedPreferences("${context.packageName}_preferences", android.content.Context.MODE_PRIVATE).getString("journeySuggestion.dismissed", null)
+            if (chain != null && chain.lastOrNull()?.id.toString() != dismissed) {
+                suggestedChain = chain
+                val names = chain.dropLast(1).mapNotNull { trip -> trip.previewCoordinates.lastOrNull() }
+                    .map { GeohashEncoder.encode(it.latitude, it.longitude, 5) }
+                    .distinct()
+                val localities = withContext(Dispatchers.IO) { graph.tripsFeature.localities(names.toSet()) }
+                val placeNames = names.mapNotNull(localities::get).distinct().take(2)
+                val trips = "${chain.size} ${strings.nounTrips(chain.size)}"
+                suggestionSubtitle = if (placeNames.isEmpty()) trips else placeNames.joinToString(", ") + " · " + trips
+            }
+        }
+    }
     fun mutate(action: suspend () -> Unit) {
         if (mutating) return
         mutating = true; mutationFailed = false
@@ -104,6 +143,16 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 signedIn = auth.isSignedIn, needsReauth = auth.needsReauth, onSignIn = { signInOpen = true },
                 onBadge = { navigator.push(MeRoute.Badge(it)) }, onRecord = { graph.tabStore.select(com.onezee.triptrack.designsystem.navigation.AppTab.record) },
                 clubsSubtitle = waitlist?.let { clubsRowSubtitle(it.total, it.joined, strings) },
+                homeCandidate = inferredHome,
+                suggestedTrips = suggestedChain,
+                suggestionSubtitle = suggestionSubtitle,
+                onAcceptHome = { point -> graph.settingsManager.acceptInferredHome(point); inferredHome = null },
+                onDeclineHome = { graph.settingsManager.declineInferredHome(java.time.Instant.now()); inferredHome = null },
+                onCombineSuggestion = { chain -> composerPreselected = chain; composerAnchor = chain.firstOrNull() },
+                onDismissSuggestion = {
+                    suggestedChain.lastOrNull()?.id?.let { id -> context.getSharedPreferences("${context.packageName}_preferences", android.content.Context.MODE_PRIVATE).edit().putString("journeySuggestion.dismissed", id.toString()).apply() }
+                    suggestedChain = emptyList()
+                },
                 socialFeature = graph.social,
                 onCompanionTrip = { item -> navigator.push(MeRoute.Social(com.onezee.triptrack.feature.TripsDestination.TripDetail(item.id, preview = item.asTrip(), social = item))) })
         }) { destination ->
@@ -166,7 +215,9 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                     val passport by model.state.collectAsState()
                     VehicleMapScreen(passport.vehicle?.name.orEmpty(), passport.passport.routes, passport.passport.regionCount, passport.passport.cityCount) { navigator.pop() }
                 }
-                is MeRoute.VehiclePhotos -> VehiclePhotosScreen(destination.id, garage.vehicles.firstOrNull { it.vehicle.id == destination.id }?.vehicle?.name.orEmpty(), feature.vehiclePhotos, { navigator.pop() }, {})
+                is MeRoute.VehiclePhotos -> VehiclePhotosScreen(destination.id, garage.vehicles.firstOrNull { it.vehicle.id == destination.id }?.vehicle?.name.orEmpty(), feature.vehiclePhotos, { navigator.pop() }, {}, onShowPhotos = {
+                    graph.vehicles.vehicle(destination.id)?.let { vehicle -> graph.vehicles.updateVehicleVisibility(destination.id, vehicle.visibleToOthers, vehicle.plateVisible, vehicle.mapVisible, true); feature.garage.reload() }
+                })
                 MeRoute.Achievements -> AchievementsScreen(state.achievements, { navigator.pop() }) { navigator.push(MeRoute.Badge(it)) }
                 is MeRoute.Badge -> BadgeDetailScreen(state.achievements.firstOrNull { it.id == destination.id }, { navigator.pop() }, settings.distanceUnit)
                 MeRoute.Clubs -> ClubsScreen(graph, waitlist, { waitlist = it }, { navigator.pop() })
@@ -180,8 +231,8 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         if (mutationFailed) ToastView(remember { ToastItem(ToastType.info, strings.garageLoadFailed()) }, { mutationFailed = false }, Modifier.align(Alignment.BottomCenter).padding(16.dp))
     }
     composerAnchor?.let { anchor ->
-        val model = rememberLocalViewModel("me-composer:${anchor.id}:$composerOpening") { graph.tripsFeature.journeyComposer(anchor) }
-        JourneyComposerSheet(model, onCreated = { profile.reload() }, onDismissRequest = { composerAnchor = null })
+        val model = rememberLocalViewModel("me-composer:${anchor.id}:$composerOpening") { graph.tripsFeature.journeyComposer(anchor, composerPreselected) }
+        JourneyComposerSheet(model, onCreated = { profile.reload() }, onDismissRequest = { composerAnchor = null; composerPreselected = null })
     }
     if (settingsOpen) SettingsRoute(graph) { settingsOpen = false }
     if (signInOpen) com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, graph.auth, onDismissRequest = { signInOpen = false })

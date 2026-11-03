@@ -119,6 +119,7 @@ fun TrackingScreen(
     hasVehicles: Boolean = vehicle != null,
     canZoomIn: Boolean = true,
     canZoomOut: Boolean = true,
+    mapReady: Boolean = true,
     onHudHeightChanged: (Double) -> Unit = {},
     map: @Composable () -> Unit = { TrackingMapPlaceholder(state.coordinates, Modifier.fillMaxSize()) },
 ) {
@@ -129,6 +130,7 @@ fun TrackingScreen(
     Box(modifier.fillMaxSize().testTag("screen_record")) {
         // The haze is on the TOP only: the controls at the bottom stand on the map itself.
         Box(Modifier.fillMaxSize().edgeScrims(top = true)) { map() }
+        if (!mapReady) com.onezee.triptrack.feature.atlas.ui.CarLoading(Modifier.align(Alignment.Center))
         Column(
             Modifier.fillMaxSize().windowInsetsPadding(contentInsets.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))
                 .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp + dockInset),
