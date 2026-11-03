@@ -353,7 +353,7 @@ private fun PublicHero(
             Column(Modifier.padding(horizontal = 16.dp).padding(top = 10.dp).fillMaxWidth().clip(shape)
                 .background(if (hasCover) Color.Transparent else AppTheme.colors.roadHeroCard)
                 .drawBehind { if (hasCover) { drawCover(background); drawRect(Color.Black.copy(alpha = .64f)) } }
-                .border(1.dp, if (hasCover) Color.Transparent else AppTheme.accent.copy(alpha = .22f), shape)) {
+                .border(1.dp, if (hasCover) Color.Transparent else AppTheme.accent.copy(alpha = .22f), shape).testTag("profile_hero_card")) {
                 Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 14.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                     identity()
                     if (bio != null) Text(bio, style = interScaled(14f), color = ink, modifier = Modifier.testTag("profile_bio"))
