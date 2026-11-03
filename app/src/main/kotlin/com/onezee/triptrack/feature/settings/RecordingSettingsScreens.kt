@@ -207,7 +207,6 @@ private fun AutoRecordStep(plus: Boolean, enabled: Boolean, label: String, onCli
 @Composable
 internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? = null) {
     val context = LocalContext.current
-    val strings = appStrings
     val state by graph.settingsManager.state.collectAsState()
     val garage by graph.me.garage.state.collectAsState()
     var selected by remember { mutableStateOf(vehicleId ?: state.selectedVehicleId) }
@@ -238,40 +237,64 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
     }
     // iOS: «Текущий аудиовыход» is what the phone plays through now, «Устройства рядом» what it could pair with.
     val currentIds = outputs.mapTo(mutableSetOf()) { it.uuid.uppercase(java.util.Locale.ROOT) }
-    val nearby = devices.filter { it.uuid.uppercase(java.util.Locale.ROOT) !in currentIds }
-    fun isLinked(device: SavedBluetoothDevice) = state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected }
-    fun link(device: SavedBluetoothDevice) { selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() } }
+    StereoPickerContent(
+        // A stereo belongs to one vehicle: from a vehicle's own screen it is that one; from the recording screen
+        // the person says which (the iPhone's sheet is always opened for one).
+        vehicles = if (vehicleId == null) garage.vehicles.map { it.vehicle }.filter { it.soldAt == null } else null,
+        selected = selected, onSelect = { selected = it },
+        allowed = allowed, onAllow = { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) },
+        outputs = outputs, nearby = devices.filter { it.uuid.uppercase(java.util.Locale.ROOT) !in currentIds },
+        isLinked = { device -> state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected } },
+        onLink = { device -> selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() } },
+        onRefresh = { refresh++ },
+        // Android pairs a car stereo in the system's Bluetooth settings; the phone cannot find classic devices itself.
+        onOpenSettings = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ },
+        onBack = onBack,
+    )
+}
+
+/**
+ * iOS BluetoothScanSheet.scanContent: «Привязать магнитолу» 17 bold with the grey close disc (16 from the sides and the top, 8
+ * below), then 8 above the cards, 10 between them and 32 under the last. [vehicles] is null on a vehicle's own screen, where the
+ * stereo is that vehicle's; elsewhere the person says which. Nothing here reads the phone: the picker above gathers the state.
+ */
+@Composable
+internal fun StereoPickerContent(
+    vehicles: List<Vehicle>?, selected: UUID?, onSelect: (UUID) -> Unit,
+    allowed: Boolean, onAllow: () -> Unit,
+    outputs: List<SavedBluetoothDevice>, nearby: List<SavedBluetoothDevice>,
+    isLinked: (SavedBluetoothDevice) -> Boolean, onLink: (SavedBluetoothDevice) -> Unit,
+    onRefresh: () -> Unit, onOpenSettings: () -> Unit, onBack: () -> Unit,
+) {
+    val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
     Column(Modifier.fillMaxSize().testTag("stereo_picker")) {
-        // iOS header: «Привязать магнитолу» 17 bold and the grey close disc, 16 from the sides and the top, 8 below.
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(strings.linkStereo(), Modifier.weight(1f).semantics { heading() }, style = inter(17f, InterWeight.bold), color = colors.text)
             SheetCloseCircle(onClick = onBack)
         }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            // A stereo belongs to one vehicle: from a vehicle's own screen it is that one; from the recording screen
-            // the person says which (the iPhone's sheet is always opened for one).
-            if (vehicleId == null) StereoSection(strings.myVehicle()) {
-                garage.vehicles.filter { it.vehicle.soldAt == null }.forEachIndexed { index, item ->
+            if (vehicles != null) StereoSection(strings.myVehicle()) {
+                vehicles.forEachIndexed { index, vehicle ->
                     if (index > 0) StereoDivider()
-                    Row(Modifier.fillMaxWidth().clickable(role = Role.RadioButton) { haptics.selection(); selected = item.vehicle.id }.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text(item.vehicle.name, Modifier.weight(1f), style = inter(14f, InterWeight.semibold), color = colors.text, maxLines = 1)
-                        if (selected == item.vehicle.id) Glyph(AppGlyph.checkmark, null, tint = AppTheme.accent, size = 18.dp)
+                    Row(Modifier.fillMaxWidth().clickable(role = Role.RadioButton) { haptics.selection(); onSelect(vehicle.id) }.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(vehicle.name, Modifier.weight(1f), style = inter(14f, InterWeight.semibold), color = colors.text, maxLines = 1)
+                        if (selected == vehicle.id) Glyph(AppGlyph.checkmark, null, tint = AppTheme.accent, size = 18.dp)
                     }
                 }
             }
-            if (!allowed) MeAction(strings.continueButton(), { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) })
+            if (!allowed) MeAction(strings.continueButton(), onAllow)
             if (outputs.isNotEmpty()) StereoSection(strings.currentAudioOutput()) {
                 outputs.forEachIndexed { index, device ->
                     if (index > 0) StereoDivider()
-                    StereoOutputRow(device, isLinked(device), enabled = selected != null) { link(device) }
+                    StereoOutputRow(device, isLinked(device), enabled = selected != null) { onLink(device) }
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                     ProfileSectionLabel(strings.nearbyDevices(), Modifier.weight(1f))
-                    Box(Modifier.size(24.dp).clickable(role = Role.Button) { haptics.tap(); refresh++ }.semantics { contentDescription = strings.tryAgain() }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(24.dp).clickable(role = Role.Button) { haptics.tap(); onRefresh() }.semantics { contentDescription = strings.tryAgain() }, contentAlignment = Alignment.Center) {
                         Glyph(AppGlyph.arrowClockwise, null, tint = AppTheme.accent, size = 15.6.dp)
                     }
                 }
@@ -282,13 +305,12 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
                     }
                     nearby.forEachIndexed { index, device ->
                         if (index > 0) StereoDivider()
-                        NearbyDeviceRow(device, isLinked(device), enabled = selected != null) { link(device) }
+                        NearbyDeviceRow(device, isLinked(device), enabled = selected != null) { onLink(device) }
                     }
                 }
             }
             Text(strings.scanHint(), Modifier.fillMaxWidth().padding(top = 4.dp), style = inter(12f), color = colors.textTertiary, textAlign = TextAlign.Center)
-            // Android pairs a car stereo in the system's Bluetooth settings; the phone cannot find classic devices itself.
-            Text(strings.openSettings(), Modifier.fillMaxWidth().clickable(role = Role.Button) { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ }.padding(vertical = 12.dp).testTag("stereo_open_settings"),
+            Text(strings.openSettings(), Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onOpenSettings).padding(vertical = 12.dp).testTag("stereo_open_settings"),
                 style = inter(14f, InterWeight.semibold), color = AppTheme.accent, textAlign = TextAlign.Center)
         }
     }
