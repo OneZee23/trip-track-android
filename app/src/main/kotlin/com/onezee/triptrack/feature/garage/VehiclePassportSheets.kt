@@ -93,7 +93,7 @@ internal fun Drive2Sheet(initial: String, syncs: Boolean, onSave: (String) -> Bo
     val haptics = rememberHaptics()
     var input by rememberSaveable { mutableStateOf(initial) }
     val normalized = Drive2Link.normalized(input)
-    val paste = androidx.compose.ui.platform.LocalContext.current.getString(android.R.string.paste)
+    val paste = androidx.compose.ui.res.stringResource(android.R.string.paste)
     ContentSizedSheet(onDismiss, background = colors.card) {
         // Inside the columns below the sheet's own receiver is hidden by theirs, so the way out is taken here.
         val close = { dismiss() }
