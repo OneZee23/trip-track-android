@@ -19,6 +19,7 @@ import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.settings.*
+import com.onezee.triptrack.logic.levelSourceKm
 import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
 import com.onezee.triptrack.ui.navigation.entryViewModel
 import com.onezee.triptrack.ui.navigation.rememberLocalViewModel
@@ -127,12 +128,42 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 is MeRoute.Passport -> {
                     val model = entryViewModel("passport:${destination.id}") { feature.passport(destination.id) }
                     val passport by model.state.collectAsState()
-                    VehiclePassportScreen(passport, settings.distanceUnit, { navigator.pop() }, model::openSheet,
+                    // iOS: the level, the trips, the map and the photos are pages the vehicle page pushes; everything else is a sheet.
+                    val page: (VehicleSheet) -> Boolean = { sheet ->
+                        when (sheet) {
+                            VehicleSheet.level -> { navigator.push(MeRoute.VehicleLevel(destination.id)); true }
+                            VehicleSheet.trips -> { navigator.push(MeRoute.VehicleTrips(destination.id)); true }
+                            VehicleSheet.map -> { navigator.push(MeRoute.VehicleMap(destination.id)); true }
+                            VehicleSheet.photos -> { navigator.push(MeRoute.VehiclePhotos(destination.id)); true }
+                            else -> false
+                        }
+                    }
+                    // Coming back from the photos, the hero may have a new main photo; from the trips, nothing changed.
+                    val onTop = navigator.current == destination
+                    LaunchedEffect(onTop) { if (onTop) model.load() }
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    VehiclePassportScreen(passport, settings.distanceUnit, { navigator.pop() }, { sheet -> if (!page(sheet)) model.openSheet(sheet) },
                         onSelect = { if (passport.vehicle?.soldAt == null) graph.settingsManager.selectVehicle(destination.id) },
-                        onTrip = { navigator.push(MeRoute.Trip(it.id, it)) })
+                        onTrip = { navigator.push(MeRoute.Trip(it.id, it)) },
+                        stereo = rememberStereoStatus(graph, settings, destination.id), autoRecordOn = settings.autoRecordMode != AutoRecordMode.off,
+                        onBluetoothSettings = { context.startActivity(android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)) })
                     VehiclePassportSheets(graph, model, passport, settings, onEdit = { editing = destination.id.toString(); model.dismissSheet() },
                         onDelete = { deleting = destination.id; model.dismissSheet() }, onTrip = { navigator.push(MeRoute.Trip(it.id, it)) })
                 }
+                is MeRoute.VehicleLevel -> garage.vehicles.firstOrNull { it.vehicle.id == destination.id }?.vehicle?.let { vehicle ->
+                    VehicleLevelScreen(vehicle.level, vehicle.levelSourceKm, settings.distanceUnit) { navigator.pop() }
+                } ?: LaunchedEffect(Unit) { navigator.pop() }
+                is MeRoute.VehicleTrips -> {
+                    val trips by produceState<List<Trip>?>(null, destination.id) { value = graph.trips.fetchVehicleGarageTrips(destination.id) }
+                    VehicleTripsScreen(garage.vehicles.firstOrNull { it.vehicle.id == destination.id }?.vehicle?.name.orEmpty(), trips.orEmpty(), trips != null, settings.distanceUnit, { navigator.pop() },
+                        onTrip = { navigator.push(MeRoute.Trip(it.id, it)) })
+                }
+                is MeRoute.VehicleMap -> {
+                    val model = entryViewModel("vehicle-map:${destination.id}") { feature.passport(destination.id) }
+                    val passport by model.state.collectAsState()
+                    VehicleMapScreen(passport.vehicle?.name.orEmpty(), passport.passport.routes, passport.passport.regionCount, passport.passport.cityCount) { navigator.pop() }
+                }
+                is MeRoute.VehiclePhotos -> VehiclePhotosScreen(destination.id, garage.vehicles.firstOrNull { it.vehicle.id == destination.id }?.vehicle?.name.orEmpty(), feature.vehiclePhotos, { navigator.pop() }, {})
                 MeRoute.Achievements -> AchievementsScreen(state.achievements, { navigator.pop() }) { navigator.push(MeRoute.Badge(it)) }
                 is MeRoute.Badge -> BadgeDetailScreen(state.achievements.firstOrNull { it.id == destination.id }, { navigator.pop() }, settings.distanceUnit)
                 MeRoute.Clubs -> ClubsScreen(graph, waitlist, { waitlist = it }, { navigator.pop() })
