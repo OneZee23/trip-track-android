@@ -121,6 +121,43 @@ class AutoRecordTriggerShotTests(private val dark: Boolean) {
         capture("04-output-labels")
     }
 
+    private val polo = SavedBluetoothDevice("audio-Polo Radio", "Polo Radio")
+    private val androidAuto get() = SavedBluetoothDevice(AutoTripController.ANDROID_AUTO, strings.androidAuto())
+
+    private fun picker(vehicles: List<Vehicle>?, outputs: List<SavedBluetoothDevice>, nearby: List<SavedBluetoothDevice>, linked: Set<String> = emptySet(), onLink: (SavedBluetoothDevice) -> Unit = {}) {
+        compose.setContent {
+            TripTrackTheme(isDark = dark, language = AppLanguage.ru, reduceMotion = true) {
+                Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) {
+                    StereoPickerContent(vehicles, vehicles?.first()?.id ?: java.util.UUID(0, 1), {}, allowed = true, onAllow = {}, outputs = outputs, nearby = nearby,
+                        isLinked = { it.name in linked }, onLink = onLink, onRefresh = {}, onOpenSettings = {}, onBack = {})
+                }
+            }
+        }
+    }
+
+    @Test fun theStereoPickerListsWhatPlaysAndWhatIsNearby() {
+        picker(null, listOf(polo, androidAuto), listOf(SavedBluetoothDevice("AA:01", "JBL Flip 6"), SavedBluetoothDevice("AA:02", "Kenwood KDC")), linked = setOf("Polo Radio"))
+        compose.onNodeWithText(strings.currentAudioOutput()).assertExists()
+        compose.onNodeWithText(strings.nearbyDevices()).assertExists()
+        capture("05-picker")
+    }
+
+    @Test fun theStereoPickerAsksWhichVehicleAndSaysWhenNothingIsNearby() {
+        picker(listOf(Vehicle(name = "Полторашка"), Vehicle(name = "Нива")), emptyList(), emptyList())
+        compose.onNodeWithText(strings.myVehicle()).assertExists()
+        compose.onNodeWithText(strings.noDevicesFound()).assertExists()
+        compose.onNodeWithText(strings.currentAudioOutput()).assertDoesNotExist()
+        capture("06-picker-empty")
+    }
+
+    @Test fun aLinkedOutputIsNotLinkedAgainButANewOneIs() {
+        val picked = mutableListOf<String>()
+        picker(null, listOf(polo, androidAuto), emptyList(), linked = setOf("Polo Radio")) { picked += it.name }
+        compose.onNodeWithTag("stereo_Polo Radio").performClick()
+        compose.onNodeWithTag("stereo_Android Auto").performClick()
+        assertEquals(listOf("Android Auto"), picked)
+    }
+
     companion object {
         @JvmStatic @ParameterizedRobolectricTestRunner.Parameters(name = "dark={0}")
         fun themes(): List<Array<Any>> = listOf(arrayOf(false), arrayOf(true))

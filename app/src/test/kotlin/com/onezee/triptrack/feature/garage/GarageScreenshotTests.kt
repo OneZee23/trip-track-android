@@ -62,8 +62,8 @@ class GarageScreenshotTests(private val dark: Boolean) {
         compose.waitForIdle()
     }
 
-    private fun shot(name: String, scrollTo: String? = null) {
-        if (scrollTo != null) { compose.onNodeWithTag("vehicle_passport_scroll").performScrollToNode(hasTestTag(scrollTo)); compose.waitForIdle() }
+    private fun shot(name: String, scrollTo: String? = null, scroller: String = "vehicle_passport_scroll") {
+        if (scrollTo != null) { compose.onNodeWithTag(scroller).performScrollToNode(hasTestTag(scrollTo)); compose.waitForIdle() }
         compose.onRoot().captureRoboImage("src/test/screenshots/garage_${name}_$suffix.png")
     }
 
@@ -90,6 +90,14 @@ class GarageScreenshotTests(private val dark: Boolean) {
         val hybrid = GarageFixtures.car.copy(powertrain = Powertrain.pluginHybrid, electricConsumption = 17.5, electricityPrice = 6.0, electricRangeKm = 50.0)
         passport(GarageFixtures.passportState.copy(vehicle = hybrid)); shot("passport_hybrid", scrollTo = "vehicle_energy")
     }
+
+    private fun form(vehicle: Vehicle) = content {
+        VehicleEditContent(VehicleEditState(vehicle = vehicle, odometerText = "96400", initialOdometerText = "96400", energy = VehicleEnergyDraft.from(vehicle, DistanceUnit.km)),
+            DistanceUnit.km, isNew = false, {}, {}, {}, {}, {}, { _, _ -> }, {}, { _, _, _, _, _ -> }, { _, _, _, _ -> }, {}, {}, onSold = {})
+    }
+    @Test fun formTop() { form(GarageFixtures.car); shot("form_top") }
+    @Test fun formEngine() { form(GarageFixtures.car.copy(powertrain = Powertrain.pluginHybrid)); shot("form_engine", scrollTo = "vehicle_powertrain_row", scroller = "vehicle_edit_scroll") }
+    @Test fun formOfAMotorcycleHasNoTypeRow() { form(GarageFixtures.car.copy(type = VehicleType.moto, avatarStyle = "motorcycle", avatarEmoji = "pixel_motorcycle_red")); shot("form_moto") }
 
     @Test fun levelPage() { content { VehicleLevelScreen(6, 1655.0, DistanceUnit.km, {}) }; shot("level") }
     @Test fun tripsPage() { content { VehicleTripsScreen("Полторашка", GarageFixtures.recent, true, DistanceUnit.km, {}, {}) }; shot("trips") }
