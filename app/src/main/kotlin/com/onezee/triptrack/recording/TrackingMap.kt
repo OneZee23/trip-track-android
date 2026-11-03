@@ -120,7 +120,8 @@ internal fun TrackingMap(
             gesturesEnabled = !recorder.isRecording,
             chromeInsets = MapInsets(bottom = bottomInset, top = 52.0),
             cameraChromeInsets = MapInsets.Zero,
-            systemInsets = WindowInsets.safeDrawing,
+            // The bottom of the map's safe area is the HUD's dock (bottomInset), not the navigation bar's own inset.
+            systemInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
             styleUri = LiveMaps.style(true),
         )
     }

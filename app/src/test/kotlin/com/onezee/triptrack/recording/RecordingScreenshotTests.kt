@@ -7,9 +7,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.github.takahirom.roborazzi.captureScreenRoboImage
+import com.onezee.triptrack.location.recording.StartRefusal
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.location.recording.RecorderState
 import com.onezee.triptrack.model.*
@@ -75,6 +80,33 @@ class RecordingScreenshotTests(private val dark: Boolean) : RecordingScreenTest(
         show(dark) { TripCompleteSummary(fixture.trip, fixture.rewards, fixture.found, { _, _ -> }, {}, {}, {}, {}) }
         shot("summary")
     }
+    // RC-16: the signal banners, which no earlier render showed.
+    @Test fun signalLost() { screen(fixture.recording.copy(recorder = fixture.recording.recorder.copy(gpsStale = true))); shot("signal_lost") }
+    @Test fun signalWeak() { screen(fixture.recording.copy(recorder = fixture.recording.recorder.copy(gpsAccuracy = 60.0))); shot("signal_weak") }
+
+    // RC-20: the refusal with the way past it.
+    @Test fun startRefused() { screen(TrackingState(refusal = StartRefusal.noFix)); shot("start_refused") }
+
+    // RC-17: the legend, over the top right of the map, in the dark palette in both themes.
+    @Test fun gpsLegend() {
+        show(dark) { Box(Modifier.fillMaxSize().background(Color(0xFF262B36)).padding(top = 60.dp, end = 0.dp), contentAlignment = Alignment.TopEnd) { GPSLegendCard(GPSSignal.searching, {}) } }
+        shot("gps_legend")
+    }
+
+    // RC-25 and RC-32: the badge card in place, and the editor of the note: both are windows of their own.
+    @Test fun summaryBadge() {
+        show(dark) { TripCompleteSummary(fixture.trip, fixture.rewards, fixture.found, { _, _ -> }, {}, {}, {}, {}) }
+        compose.onNodeWithTag("summary_badge_first_trip").performScrollTo().performClick()
+        compose.waitForIdle()
+        captureScreenRoboImage("src/test/screenshots/recording_summary_badge_$theme.png")
+    }
+    @Test fun summaryNotes() {
+        show(dark) { TripCompleteSummary(fixture.trip, fixture.rewards, fixture.found, { _, _ -> }, {}, {}, {}, {}) }
+        compose.onNodeWithTag("summary_description").performScrollTo().performClick()
+        compose.waitForIdle()
+        captureScreenRoboImage("src/test/screenshots/recording_summary_notes_$theme.png")
+    }
+
     @Test fun recovery() {
         show(dark) { Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) {
             TrackingScreen(TrackingState(), fixture.car, false, TrackingActions(), fixture.now)
