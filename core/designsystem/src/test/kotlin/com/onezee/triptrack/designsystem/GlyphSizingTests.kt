@@ -160,7 +160,9 @@ class GlyphSizingTests(private val glyph: AppGlyph, private val symbol: Ink) {
             AppGlyph.xmarkCircleFill to Ink(1.012f, 1.011f),
             // The wave-3 set, drawn by eye; measured the same way (100 pt, semibold) for size only.
             AppGlyph.antennaRadiowaves to Ink(1.080f, 0.910f),
+            AppGlyph.antennaRadiowavesSlash to Ink(1.090f, 1.030f),
             AppGlyph.bellFill to Ink(0.960f, 1.040f),
+            AppGlyph.clipboard to Ink(1.040f, 1.240f),
             AppGlyph.envelopeFill to Ink(1.220f, 0.860f),
             AppGlyph.handRaisedFill to Ink(0.820f, 1.080f),
             AppGlyph.icloudFill to Ink(1.250f, 0.870f),
