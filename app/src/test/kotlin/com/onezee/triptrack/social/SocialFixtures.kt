@@ -58,6 +58,11 @@ internal open class FakeSocialApi : SocialApi {
     var profileError: Exception? = null
     var inboxError: Exception? = null
     var cars = listOf(SocialFixtures.car)
+    var searchPeopleValue: suspend (String, Int) -> SocialUsersResponse = { _, _ -> SocialUsersResponse(emptyList()) }
+    var suggestedPeopleValue: suspend (Int) -> SocialSuggestedResponse = { SocialSuggestedResponse(emptyList()) }
+    var companionsValue: suspend (UUID) -> CompanionsListResponse = { CompanionsListResponse(emptyList(), true) }
+    var candidatesValue: suspend (UUID, String?, String?) -> CompanionsCandidatesResponse = { _, _, _ -> CompanionsCandidatesResponse(emptyList()) }
+    var myTripsValue: suspend (String?) -> CompanionsMyTripsResponse = { CompanionsMyTripsResponse(emptyList()) }
     var publicPage: suspend (String?) -> PublicTripsResponse = { PublicTripsResponse(SocialFixtures.mapTrips(), null) }
     override suspend fun profile(id: UUID): SocialProfile { profileError?.let { throw it }; return profileValue }
     override suspend fun profileTrips(id: UUID, cursor: String, limit: Int) = SocialFeedResponse(emptyList())
@@ -69,6 +74,8 @@ internal open class FakeSocialApi : SocialApi {
     override suspend fun follow(id: UUID, follow: Boolean) {}
     var peopleValue: suspend (UUID, FollowListMode) -> SocialFollowersResponse = { _, _ -> SocialFollowersResponse(listOf(SocialFixtures.author), 1) }
     override suspend fun people(id: UUID, mode: FollowListMode) = peopleValue(id, mode)
+    override suspend fun searchPeople(query: String, limit: Int) = searchPeopleValue(query, limit)
+    override suspend fun suggestedPeople(limit: Int) = suggestedPeopleValue(limit)
     override suspend fun block(id: UUID, block: Boolean) {}
     override suspend fun report(target: ReportTarget, reason: ReportReason, notes: String?) {}
     override suspend fun shareTrip(tripId: UUID) = error("unused")
@@ -78,6 +85,10 @@ internal open class FakeSocialApi : SocialApi {
     override suspend fun unreadCount() = 1
     override suspend fun markRead(ids: List<UUID>?) {}
     override suspend fun invitePreview(tripId: UUID) = CompanionInvitePreview(CompanionDriverPreview(SocialFixtures.account,"Driver","🚗"),SocialFixtures.now,42000.0,3600.0,"Тверская область")
+    override suspend fun companions(tripId: UUID) = companionsValue(tripId)
+    override suspend fun companionCandidates(tripId: UUID, query: String?, cursor: String?) = candidatesValue(tripId, query, cursor)
+    override suspend fun inviteCompanion(tripId: UUID, accountId: UUID) = CompanionInviteResult(accountId, CompanionStatus.pending)
+    override suspend fun removeCompanion(tripId: UUID, accountId: UUID) {}
     override suspend fun respondToInvite(tripId: UUID, accept: Boolean) = if (accept) CompanionStatus.accepted else CompanionStatus.declined
-    override suspend fun companionTrips(cursor: String?) = CompanionsMyTripsResponse(emptyList())
+    override suspend fun companionTrips(cursor: String?) = myTripsValue(cursor)
 }

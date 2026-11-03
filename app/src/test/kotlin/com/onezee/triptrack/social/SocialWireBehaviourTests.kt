@@ -40,6 +40,13 @@ class SocialWireBehaviourTests : SocialScreenTest() {
             request.url.encodedPath=="/social/follow" || request.url.encodedPath=="/social/unfollow" -> if(failAction)denied("USER_NOT_FOUND") else ok("""{"following":true}""")
             request.url.encodedPath=="/social/block" || request.url.encodedPath=="/social/unblock" -> if(failAction)denied("USER_NOT_FOUND") else ok("""{"blocked":true}""")
             request.url.encodedPath=="/social/report" -> ok("""{"reported":true}""")
+            request.url.encodedPath==ApiEndpoint.socialSearch -> ok(encoded(SocialUsersResponse(listOf(SocialFixtures.author))))
+            request.url.encodedPath==ApiEndpoint.socialSuggested -> ok(encoded(SocialSuggestedResponse(listOf(SocialSuggestedUser(SocialFixtures.author.id, SocialFixtures.author.displayName, SocialFixtures.author.avatarEmoji, SocialFixtures.author.profileLevel, "sharedRegion", 425.2)))))
+            request.url.encodedPath==ApiEndpoint.companionsList -> ok(encoded(CompanionsListResponse(listOf(CompanionItem(owner, "Driver", "🚗", CompanionStatus.accepted)), true)))
+            request.url.encodedPath==ApiEndpoint.companionsCandidates -> ok(encoded(CompanionsCandidatesResponse(listOf(CompanionCandidate(SocialFixtures.account, "Rider", "🛻", 8)), null)))
+            request.url.encodedPath==ApiEndpoint.companionsInvite -> ok("""{"companion":{"accountId":"${SocialFixtures.account}","status":0}}""")
+            request.url.encodedPath==ApiEndpoint.companionsRemove -> ok("""{"ok":true}""")
+            request.url.encodedPath==ApiEndpoint.companionsMyTrips -> ok(encoded(CompanionsMyTripsResponse(listOf(SocialFixtures.trip(0)), "next-page")))
             request.url.encodedPath=="/social/comments" -> ok(encoded(TripCommentsResponse(listOf(TripComment(commentId,SocialFixtures.author,"Тест",SocialFixtures.now,true)))))
             request.url.encodedPath=="/social/comment" -> { commentCreateCalls++; if(failAction)MockResponse.Builder().code(503).body("down").build() else ok("""{"id":"$commentId","createdAt":"2026-10-25T12:00:00Z"}""") }
             request.url.encodedPath=="/social/comment/delete" -> if(failAction)denied("VALIDATION_FAILED") else ok("""{"deleted":true}""")
@@ -139,6 +146,44 @@ class SocialWireBehaviourTests : SocialScreenTest() {
         assertEquals(before, server.requestCount)
         networkMain { wire.markRead(null) }
         assertFalse("ids" in body(request("/notifications/mark-read")))
+    }
+    @Test fun discoverSearchAndSuggestionsKeepTheIosPostContract() {
+        networkMain { assertEquals(SocialFixtures.author.id, wire.searchPeople("Иван", 25).users.single().id) }
+        val search = request(ApiEndpoint.socialSearch)
+        assertEquals("test-access", search.headers["x-access-token"])
+        assertEquals(JsonObject(mapOf("query" to JsonPrimitive("Иван"), "limit" to JsonPrimitive(25))), body(search))
+        networkMain { assertEquals("sharedRegion", wire.suggestedPeople(10).users.single().matchReason) }
+        val suggested = request(ApiEndpoint.socialSuggested)
+        assertEquals(JsonObject(mapOf("limit" to JsonPrimitive(10))), body(suggested))
+    }
+    @Test fun guestDiscoverCallsDoNotSendAnAccessToken() {
+        val guest = ApiSocial(client) { false }
+        networkMain { guest.searchPeople("Driver") }
+        assertNull(request(ApiEndpoint.socialSearch).headers["x-access-token"])
+        networkMain { guest.suggestedPeople() }
+        assertNull(request(ApiEndpoint.socialSuggested).headers["x-access-token"])
+    }
+    @Test fun companionRosterCandidatesInviteAndRemoveUseTheIosContract() {
+        val tripId = SocialFixtures.trip(0).id
+        networkMain { assertEquals(CompanionStatus.accepted, wire.companions(tripId).items.single().status) }
+        assertEquals(JsonObject(mapOf("tripId" to JsonPrimitive(tripId.toString()))), body(request(ApiEndpoint.companionsList)))
+        networkMain { assertEquals(SocialFixtures.account, wire.companionCandidates(tripId, "Rider", null).items.single().accountId) }
+        assertEquals(JsonObject(mapOf("tripId" to JsonPrimitive(tripId.toString()), "query" to JsonPrimitive("Rider"))), body(request(ApiEndpoint.companionsCandidates)))
+        networkMain { assertEquals(CompanionStatus.pending, wire.inviteCompanion(tripId, SocialFixtures.account).status) }
+        assertEquals(setOf("tripId", "accountId"), body(request(ApiEndpoint.companionsInvite)).keys)
+        networkMain { wire.removeCompanion(tripId, SocialFixtures.account) }
+        assertEquals(setOf("tripId", "accountId"), body(request(ApiEndpoint.companionsRemove)).keys)
+    }
+    @Test fun companionTripsKeepTheCursorAndDecodeTheIosResponse() {
+        val cursor = "2026-10-20T10:00:00Z|${SocialFixtures.trip(0).id}"
+        networkMain {
+            val response = wire.companionTrips(cursor)
+            assertEquals(SocialFixtures.trip(0).id, response.items.single().id)
+            assertEquals("next-page", response.nextCursor)
+        }
+        val sent = body(request(ApiEndpoint.companionsMyTrips))
+        assertEquals(setOf("cursor"), sent.keys)
+        assertEquals(cursor, sent["cursor"]!!.jsonPrimitive.content)
     }
     private fun <T> networkMain(block: suspend () -> T): T {
         var result: Result<T>? = null

@@ -81,6 +81,7 @@ class TripsFeature(
     private val placeManager: PlaceManager? = null,
     placeChanges: Flow<Unit> = kotlinx.coroutines.flow.emptyFlow(),
     private val nameCheckpoint: suspend (com.onezee.triptrack.model.TripCheckpoint, UUID) -> Unit = { _, _ -> },
+    val failedSyncQueue: Flow<Boolean> = kotlinx.coroutines.flow.emptyFlow(),
 ) {
     @Volatile var accountId: () -> UUID? = { null }
     @Volatile var socialApi: TripSocialApi = NoAccountSocialApi
@@ -245,6 +246,10 @@ sealed interface TripsDestination : com.onezee.triptrack.ui.navigation.NavDestin
 
     data object Drafts : TripsDestination {
         override val key: Any get() = "drafts"
+    }
+
+    data object Discover : TripsDestination {
+        override val key: Any get() = "discover"
     }
 
     // iOS: ProfilePreviewDest. The social screens push into the same stack as the trips, so «back»

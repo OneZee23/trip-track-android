@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -41,12 +42,14 @@ import com.onezee.triptrack.feature.garage.VehicleAvatar
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.feature.social.ui.PublicJourneyCard
 import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.feature.feed.asTrip
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.LocalClock
 import com.onezee.triptrack.ui.cards.ProfileCardVehicle
 import com.onezee.triptrack.ui.cards.ProfileTripCard
 import java.time.Instant
+import kotlinx.coroutines.withContext
 
 internal val LocalMeAverageSpeed = compositionLocalOf { AvgSpeedMode.overall }
 
@@ -69,6 +72,8 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         coverPromptHidden: Boolean = false, onHideCoverPrompt: () -> Unit = {}, onUnpinElsewhere: () -> Unit = {}, onComposeJourney: (Trip) -> Unit = {},
                         onStats: () -> Unit = {}, signedIn: Boolean = true, needsReauth: Boolean = false, onSignIn: () -> Unit = {},
                         onBadge: (String) -> Unit = {}, onRecord: () -> Unit = {}, clubsSubtitle: String? = null,
+                        socialFeature: com.onezee.triptrack.feature.social.SocialFeature? = null,
+                        onCompanionTrip: (com.onezee.triptrack.model.SocialFeedTrip) -> Unit = {},
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -80,6 +85,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
     val now = LocalClock.current.instant()
     val hero = state.hero
     val reduceMotion = LocalReduceMotion.current
+    var visibilityNoticeDismissed by rememberSaveable { mutableStateOf(socialFeature?.noticePreferences?.getBoolean("profile.visibility_notice_seen", false) ?: true) }
     Box(Modifier.fillMaxSize().background(colors.bg)) {
         LazyColumn(Modifier.fillMaxSize().then(if (hasCover) Modifier else Modifier.statusBarsPadding()).testTag("screen_me"), state = listState,
             contentPadding = PaddingValues(bottom = tabBarContentClearance())) {
@@ -88,6 +94,25 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                     ProfileHeroCard(hero, unit, onSettings, onVehicle, onAddVehicle, onProfile, onLevel, coverPhotos, api, onPhotos, onStats, safeTop)
                     if (!hasCover && !coverPromptHidden) ProfileAddCoverPrompt(onPhotos, onHideCoverPrompt, Modifier.padding(horizontal = 16.dp).padding(top = 12.dp))
                 }
+            }
+            socialFeature?.let { feature -> item(key = "remote_notices") {
+                com.onezee.triptrack.feature.social.ui.RemoteNoticeStack(feature, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.me, showsUpdate = false,
+                    modifier = Modifier.padding(bottom = 12.dp))
+            } }
+            if (signedIn && !visibilityNoticeDismissed) item(key = "visibility_notice") {
+                VisibilityNoticeCard(
+                    title = strings.visibilityNoticeTitle(), body = strings.visibilityNoticeBody(),
+                    configure = strings.visibilityNoticeConfigure(), dismiss = strings.visibilityNoticeDismiss(),
+                    onConfigure = {
+                        visibilityNoticeDismissed = true
+                        socialFeature?.noticePreferences?.edit()?.putBoolean("profile.visibility_notice_seen", true)?.apply()
+                        onSettings()
+                    },
+                    onDismiss = {
+                        visibilityNoticeDismissed = true
+                        socialFeature?.noticePreferences?.edit()?.putBoolean("profile.visibility_notice_seen", true)?.apply()
+                    },
+                )
             }
             if (state.failed) item(key = "retry") {
                 Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp).fillMaxWidth().surfaceCard(16.dp)) { MeRow(strings.tripLoadFailed(), strings.tryAgain(), tag = "me_retry", onClick = onReload) }
@@ -127,9 +152,53 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                 if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { PinsElsewhereRow(state.showcaseElsewhere.size, onUnpinElsewhere, Modifier.padding(bottom = 12.dp)) }
                 profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney)
                 if (state.history.visibleTrips.isEmpty()) item(key = "empty") { ProfileHistoryEmpty(state.query.isNotBlank(), onClear) }
+                if (signedIn && socialFeature != null) item(key = "with_me") {
+                    WithMeSection(socialFeature, unit, onOpen = onCompanionTrip)
+                }
             }
         }
         if (hasCover && scrolled) Box(Modifier.align(Alignment.TopStart).fillMaxWidth().height(safeTop).background(colors.bg))
+    }
+}
+
+@Composable
+internal fun WithMeSection(social: com.onezee.triptrack.feature.social.SocialFeature, unit: DistanceUnit, onOpen: (SocialFeedTrip) -> Unit) {
+    val strings = appStrings
+    var retry by remember(social.accountId) { mutableIntStateOf(0) }
+    val state by produceState<Pair<List<SocialFeedTrip>, Boolean>?>(null, social.accountId, retry) {
+        value = try { withContext(social.worker) { social.api.companionTrips(null).let { it.items to false } } }
+        catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+        catch (_: Exception) { emptyList<SocialFeedTrip>() to true }
+    }
+    val trips = state?.first.orEmpty()
+    if (trips.isEmpty() && state?.second != true) return
+    Column(Modifier.fillMaxWidth().testTag("profile_with_me")) {
+        Box(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp, bottom = 8.dp)) { ProfileSectionLabel(strings.withMeSection()) }
+        if (trips.isNotEmpty()) trips.forEach { item ->
+            Column(Modifier.padding(horizontal = 16.dp).padding(bottom = 10.dp)) {
+                Text(item.author.displayName ?: strings.withMeDriverNoName(), Modifier.padding(start = 4.dp, bottom = 6.dp), style = inter(12f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+                ProfileTripRow(item.asTrip(), unit, onClick = { onOpen(item) }, historicalLevel = item.author.profileLevel)
+            }
+        }
+        if (state?.second == true) Row(
+            Modifier.padding(horizontal = 16.dp, vertical = 10.dp).fillMaxWidth().surfaceCard(12.dp).padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(strings.withMeLoadFailed(), Modifier.weight(1f), style = inter(12f), color = AppTheme.colors.textSecondary)
+            Text(strings.retry(), Modifier.clickable(role = Role.Button) { retry++ }, style = inter(12f, InterWeight.semibold), color = AppTheme.accent)
+        }
+    }
+}
+
+@Composable
+internal fun VisibilityNoticeCard(title: String, body: String, configure: String, dismiss: String, onConfigure: () -> Unit, onDismiss: () -> Unit) {
+    Column(Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp).fillMaxWidth().surfaceCard(14.dp).padding(14.dp).testTag("visibility_notice"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(title, style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+        Text(body, style = inter(12f), color = AppTheme.colors.textSecondary)
+        Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+            Text(configure, Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onConfigure), style = inter(13f, InterWeight.semibold), color = AppTheme.accent)
+            Text(dismiss, Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onDismiss), style = inter(13f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+        }
     }
 }
 

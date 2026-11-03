@@ -53,10 +53,12 @@ class SocialFeature(
     val syncOwnProfile: suspend () -> Unit = {},
     /** The inbox's gear: the notification switches of the settings (null in tests, the gear hides). */
     val notificationPreferences: (() -> com.onezee.triptrack.feature.settings.NotificationPreferencesViewModel)? = null,
+    val loadRemoteConfig: suspend () -> com.onezee.triptrack.network.RemoteConfig? = { null },
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     val accountId: UUID? get() = accountIdSource()
+    val noticePreferences: SharedPreferences = preferences
     val signedIn: Boolean get() = accountId != null
 
     val inbox = InboxStore(api, { signedIn }, worker)

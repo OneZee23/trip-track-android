@@ -33,6 +33,7 @@ fun SocialDestinationScreen(dest: TripsDestination, social: SocialFeature, navig
         is TripsDestination.PublicAchievements -> PublicAchievementsScreen(dest, navigator)
         is TripsDestination.PublicLevels -> PublicLevelsScreen(dest, navigator)
         TripsDestination.Inbox -> InboxScreen(social, navigator)
+        TripsDestination.Discover -> DiscoverScreen(social, navigator)
         else -> Unit
     }
 }

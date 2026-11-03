@@ -74,6 +74,91 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
     }
     @Test fun follows() { showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.followers),dark);shot("followers") }
     @Test fun following() { showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.following),dark);shot("following") }
+    @Test fun discoverSuggestions() {
+        api.suggestedPeopleValue = { SocialSuggestedResponse(listOf(SocialSuggestedUser(SocialFixtures.author.id, "Driver", "🚗", 8, "sharedRegion", 425.2))) }
+        showDestination(TripsDestination.Discover, dark)
+        compose.onNodeWithTag("discover_screen").assertExists(); shot("discover_suggestions")
+    }
+    @Test fun discoverSuggestionsEmpty() { showDestination(TripsDestination.Discover, dark); shot("discover_suggestions_empty") }
+    @Test fun discoverResults() {
+        api.searchPeopleValue = { query, _ -> SocialUsersResponse(if (query == "Driver") listOf(SocialFixtures.author) else emptyList()) }
+        showDestination(TripsDestination.Discover, dark)
+        compose.onNodeWithTag("discover_search_field").performTextInput("Driver")
+        compose.mainClock.advanceTimeBy(350); compose.waitForIdle(); compose.onNodeWithTag("discover_empty_results").assertDoesNotExist(); shot("discover_results")
+    }
+    @Test fun discoverResultsEmpty() {
+        showDestination(TripsDestination.Discover, dark)
+        compose.onNodeWithTag("discover_search_field").performTextInput("No match")
+        compose.mainClock.advanceTimeBy(350); compose.waitForIdle(); compose.onNodeWithTag("discover_empty_results").assertExists(); shot("discover_results_empty")
+    }
+    private fun companionsSection() {
+        show(dark) {
+            androidx.compose.runtime.CompositionLocalProvider(com.onezee.triptrack.feature.social.LocalSocial provides services) {
+                TripCompanionsSection(SocialFixtures.trip(0).id, true, true, emptyList(), services, feature.feedNavigator)
+            }
+        }
+        compose.waitForIdle()
+    }
+    @Test fun companionsEmpty() {
+        api.companionsValue = { CompanionsListResponse(emptyList(), true) }
+        companionsSection(); compose.onNodeWithTag("companions_empty").assertExists(); shot("companions_empty")
+    }
+    @Test fun companionsRosterAndPicker() {
+        api.companionsValue = { CompanionsListResponse(listOf(CompanionItem(SocialFixtures.account, "Rider", "🛻", CompanionStatus.accepted)), true) }
+        api.candidatesValue = { _, _, _ -> CompanionsCandidatesResponse(listOf(CompanionCandidate(owner, "Guest", "🚙", 4))) }
+        companionsSection(); compose.onNodeWithTag("companions_summary").performClick(); compose.waitForIdle(); window("companions_roster")
+        compose.onNodeWithTag("companions_invite").performClick(); compose.waitForIdle(); compose.onNodeWithTag("companions_picker").assertExists(); window("companions_picker")
+    }
+    @Test fun remoteFeedUpdateAndAnnouncement() {
+        services.close()
+        val text = com.onezee.triptrack.network.RemoteConfig.LocalizedText(mapOf("en" to "Update copy", "ru" to "Обновление"))
+        val config = com.onezee.triptrack.network.RemoteConfig(
+            update = com.onezee.triptrack.network.RemoteConfig.UpdatePolicy(recommended = "999.0.0", message = text),
+            announcements = listOf(com.onezee.triptrack.network.RemoteConfig.Announcement(
+                id = "screenshot-feed-notice", placement = com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed,
+                title = text, body = text,
+            )),
+        )
+        services = makeSocial(api, loadRemoteConfig = { config })
+        show(dark) { RemoteNoticeStack(services, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed, true) }
+        compose.waitForIdle()
+        compose.onNodeWithTag("remote_update_card").assertExists()
+        compose.onNodeWithTag("remote_announcement_screenshot-feed-notice").assertExists()
+        shot("feed_remote_notices")
+    }
+    @Test fun feedOfflineSyncFailure() {
+        show(dark) { com.onezee.triptrack.feature.feed.ui.FeedSyncFailureBanner(true) }
+        compose.onNodeWithTag("feed_sync_failure").assertExists(); shot("feed_sync_offline")
+    }
+    @Test fun feedServerSyncFailure() {
+        show(dark) { com.onezee.triptrack.feature.feed.ui.FeedSyncFailureBanner(false) }
+        compose.onNodeWithTag("feed_sync_failure").assertExists(); shot("feed_sync_server")
+    }
+    @Test fun profileVisibilityNotice() {
+        show(dark) {
+            val strings = com.onezee.triptrack.designsystem.theme.appStrings
+            com.onezee.triptrack.feature.me.VisibilityNoticeCard(
+                strings.visibilityNoticeTitle(), strings.visibilityNoticeBody(), strings.visibilityNoticeConfigure(), strings.visibilityNoticeDismiss(), {}, {},
+            )
+        }
+        compose.onNodeWithTag("visibility_notice").assertExists(); shot("profile_visibility_notice")
+    }
+    @Test fun profileWithMeTrips() {
+        api.myTripsValue = { CompanionsMyTripsResponse(listOf(SocialFixtures.trip(2).copy(previewPolyline = null))) }
+        show(dark) {
+            com.onezee.triptrack.feature.me.WithMeSection(services, com.onezee.triptrack.designsystem.theme.LocalDistanceUnit.current) {}
+        }
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("profile_with_me").fetchSemanticsNodes().isNotEmpty() }
+        shot("profile_with_me")
+    }
+    @Test fun profileWithMeLoadFailure() {
+        api.myTripsValue = { throw ApiError.Transport("offline") }
+        show(dark) {
+            com.onezee.triptrack.feature.me.WithMeSection(services, com.onezee.triptrack.designsystem.theme.LocalDistanceUnit.current) {}
+        }
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("profile_with_me").fetchSemanticsNodes().isNotEmpty() }
+        shot("profile_with_me_error")
+    }
     @Test fun followersEmpty() {
         api.peopleValue={_,_->SocialFollowersResponse(emptyList(),0)}
         showDestination(TripsDestination.FollowList(SocialFixtures.account,FollowListMode.followers),dark);shot("followers_empty")

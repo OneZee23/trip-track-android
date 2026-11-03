@@ -17,6 +17,7 @@ import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
+import com.onezee.triptrack.feature.feed.asTrip
 import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.logic.levelSourceKm
@@ -102,7 +103,9 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 onStats = { navigator.push(MeRoute.Stats) },
                 signedIn = auth.isSignedIn, needsReauth = auth.needsReauth, onSignIn = { signInOpen = true },
                 onBadge = { navigator.push(MeRoute.Badge(it)) }, onRecord = { graph.tabStore.select(com.onezee.triptrack.designsystem.navigation.AppTab.record) },
-                clubsSubtitle = waitlist?.let { clubsRowSubtitle(it.total, it.joined, strings) })
+                clubsSubtitle = waitlist?.let { clubsRowSubtitle(it.total, it.joined, strings) },
+                socialFeature = graph.social,
+                onCompanionTrip = { item -> navigator.push(MeRoute.Social(com.onezee.triptrack.feature.TripsDestination.TripDetail(item.id, preview = item.asTrip(), social = item))) })
         }) { destination ->
             when (destination) {
                 MeRoute.Garage -> GarageScreen(garage, settings.distanceUnit, { navigator.pop() }, { editing = "" },

@@ -155,6 +155,7 @@ fun FeedScreen(
     // The session is read where it is drawn: a sign-in from the sheet below recomposes the header.
     @Suppress("UNUSED_VARIABLE") val session = services?.auth?.state?.collectAsState()?.value
     val signedIn = feature.signedIn()
+    val syncFailed by feature.failedSyncQueue.collectAsState(initial = false)
     val navigator = feature.feedNavigator
 
     val pager = rememberPagerState(initialPage = if (feature.feedFollowing) 1 else 0) { 2 }
@@ -242,6 +243,7 @@ fun FeedScreen(
                 // circle before them opens Discover, which is not ported: no control that opens nothing.
                 onSignIn = if (!signedIn) openSignIn else null,
                 onBell = if (signedIn && services != null) ({ navigator.push(TripsDestination.Inbox) }) else null,
+                onSearch = if (services != null) ({ navigator.push(TripsDestination.Discover) }) else null,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 10.dp),
             )
             AnimatedVisibility(offline, enter = slideInVertically { -it } + fadeIn(), exit = slideOutVertically { -it } + fadeOut()) {
@@ -275,12 +277,16 @@ fun FeedScreen(
                 } else {
                     FeedPage(
                         social = social,
+                        noticeFeature = services,
+                        syncFailed = syncFailed,
+                        isOffline = offline,
                         mode = pageMode,
                         list = list,
                         vm = vm,
                         now = now(),
                         isOwn = ::isOwn,
                         hasPrivateTrip = signedIn && state.hasAnyPrivateTrip,
+                        onOpenDiscover = { navigator.push(TripsDestination.Discover) },
                         onOpen = ::open,
                         onComments = { card -> navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id), focus = com.onezee.triptrack.model.TripFocus.Comments)) },
                         onOpenJourney = { navigator.push(TripsDestination.SocialJourney(it)) },
@@ -555,6 +561,10 @@ private fun ModeSwitcher(mode: FeedMode, onSelect: (FeedMode) -> Unit, modifier:
 @Composable
 private fun FeedPage(
     social: SocialFeedState,
+    noticeFeature: com.onezee.triptrack.feature.social.SocialFeature?,
+    syncFailed: Boolean,
+    isOffline: Boolean,
+    onOpenDiscover: () -> Unit,
     mode: FeedMode,
     list: LazyListState,
     vm: FeedViewModel,
@@ -577,16 +587,30 @@ private fun FeedPage(
         when {
             social.isLoading && social.cards.isEmpty() -> LazyColumn(Modifier.fillMaxSize(), state = list,
                 contentPadding = PaddingValues(start = 30.dp, end = 30.dp, top = 12.dp, bottom = clearance)) {
+                if (syncFailed) item { FeedSyncFailureBanner(isOffline) }
+                if (mode == FeedMode.all && noticeFeature != null) item { com.onezee.triptrack.feature.social.ui.RemoteNoticeStack(noticeFeature, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed, showsUpdate = true) }
                 item { SkeletonCards() }
             }
             social.error != null && social.cards.isEmpty() -> LazyColumn(Modifier.fillMaxSize(), state = list,
                 contentPadding = PaddingValues(horizontal = 14.dp)) {
+                if (syncFailed) item { FeedSyncFailureBanner(isOffline) }
+                if (mode == FeedMode.all && noticeFeature != null) item { com.onezee.triptrack.feature.social.ui.RemoteNoticeStack(noticeFeature, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed, showsUpdate = true) }
                 item { ErrorState { haptics.tap(); vm.refresh(mode) } }
             }
             social.cards.isEmpty() -> if (mode == FeedMode.following) {
-                CenteredState(strings.followingEmptyTitle(), strings.followingEmptyBody(), tag = "feed_following_empty")
+                Column(Modifier.fillMaxSize()) {
+                    if (syncFailed) FeedSyncFailureBanner(isOffline)
+                    Box(Modifier.weight(1f)) {
+                        CenteredState(strings.followingEmptyTitle(), strings.followingEmptyBody(), tag = "feed_following_empty") {
+                            AccentButton(strings.findPeople(), AppGlyph.magnifyingglass, Modifier.testTag("following_empty_find_people"), onOpenDiscover)
+                        }
+                    }
+                }
             } else {
-                CenteredState(strings.feedEmptyTitle(), strings.feedEmptyBody(), tag = "feed_empty") {
+                Column(Modifier.fillMaxSize()) {
+                    if (syncFailed) FeedSyncFailureBanner(isOffline)
+                    noticeFeature?.let { com.onezee.triptrack.feature.social.ui.RemoteNoticeStack(it, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed, showsUpdate = true) }
+                    Box(Modifier.weight(1f)) { CenteredState(strings.feedEmptyTitle(), strings.feedEmptyBody(), tag = "feed_empty") {
                     if (hasPrivateTrip) {
                         val interaction = remember { MutableInteractionSource() }
                         Row(
@@ -601,6 +625,8 @@ private fun FeedPage(
                             Text(strings.feedPublishOneOf(), style = inter(14f, InterWeight.semibold), color = AppTheme.accent)
                         }
                     }
+                    AccentButton(strings.findPeople(), AppGlyph.magnifyingglass, Modifier.testTag("feed_empty_find_people"), onOpenDiscover)
+                    } }
                 }
             }
             else -> LazyColumn(
@@ -609,6 +635,8 @@ private fun FeedPage(
                 contentPadding = PaddingValues(start = 14.dp, end = 14.dp, bottom = clearance),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                if (syncFailed) item { FeedSyncFailureBanner(isOffline) }
+                if (mode == FeedMode.all && noticeFeature != null) item { com.onezee.triptrack.feature.social.ui.RemoteNoticeStack(noticeFeature, com.onezee.triptrack.network.RemoteConfig.Announcement.Placement.feed, showsUpdate = true) }
                 items(social.cards, key = { it.trip.id }) { card ->
                     // Only the last card asks for the next page (iOS: currentItem == trips.last).
                     LaunchedEffect(card.trip.id, social.cards.lastOrNull()?.trip?.id) {
@@ -631,6 +659,18 @@ private fun FeedPage(
                 }
                 if (social.isLoadingMore) item { LoadingMoreRow(Modifier.padding(vertical = 16.dp)) }
             }
+        }
+    }
+}
+
+@Composable
+internal fun FeedSyncFailureBanner(offline: Boolean) {
+    val strings = appStrings
+    Row(Modifier.fillMaxWidth().background(AppTheme.colors.card, RoundedCornerShape(14.dp)).padding(14.dp).testTag("feed_sync_failure"), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Glyph(AppGlyph.exclamationmarkTriangleFill, null, tint = Color(0xFFFF9F0A), size = 18.dp)
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(if (offline) strings.feedServerUnreachable() else strings.feedSyncIncomplete(), style = inter(14f, InterWeight.semibold), color = AppTheme.colors.text)
+            Text(if (offline) strings.feedTryADifferent() else strings.feedAFewItems(), style = inter(12f), color = AppTheme.colors.textSecondary)
         }
     }
 }

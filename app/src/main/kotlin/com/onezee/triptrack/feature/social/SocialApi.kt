@@ -37,6 +37,8 @@ interface SocialApi {
     suspend fun publicTrips(id: UUID, cursor: String?, limit: Int?, vehicleId: UUID? = null): PublicTripsResponse
     suspend fun follow(id: UUID, follow: Boolean)
     suspend fun people(id: UUID, mode: FollowListMode): SocialFollowersResponse
+    suspend fun searchPeople(query: String, limit: Int = 25): SocialUsersResponse
+    suspend fun suggestedPeople(limit: Int = 10): SocialSuggestedResponse
     suspend fun block(id: UUID, block: Boolean)
     suspend fun report(target: ReportTarget, reason: ReportReason, notes: String?)
     suspend fun shareTrip(tripId: UUID): SocialShareResponse
@@ -47,6 +49,10 @@ interface SocialApi {
     /** Null marks everything read; an empty list is never sent (it would be a no-op at best). */
     suspend fun markRead(ids: List<UUID>?)
     suspend fun invitePreview(tripId: UUID): CompanionInvitePreview
+    suspend fun companions(tripId: UUID): CompanionsListResponse
+    suspend fun companionCandidates(tripId: UUID, query: String?, cursor: String?): CompanionsCandidatesResponse
+    suspend fun inviteCompanion(tripId: UUID, accountId: UUID): CompanionInviteResult
+    suspend fun removeCompanion(tripId: UUID, accountId: UUID)
     suspend fun respondToInvite(tripId: UUID, accept: Boolean): CompanionStatus
     suspend fun companionTrips(cursor: String?): CompanionsMyTripsResponse
 }
@@ -73,6 +79,10 @@ class ApiSocial(private val client: ApiClient, private val signedIn: () -> Boole
     override suspend fun people(id: UUID, mode: FollowListMode): SocialFollowersResponse = client.post(
         if (mode == FollowListMode.followers) ApiEndpoint.socialFollowers else ApiEndpoint.socialFollowing,
         SocialFollowersRequest(accountId = id, limit = 100, offset = 0), requiresAuth = signedIn())
+    override suspend fun searchPeople(query: String, limit: Int): SocialUsersResponse =
+        client.post(ApiEndpoint.socialSearch, SocialSearchRequest(query, limit), requiresAuth = signedIn())
+    override suspend fun suggestedPeople(limit: Int): SocialSuggestedResponse =
+        client.post(ApiEndpoint.socialSuggested, SocialSuggestedRequest(limit), requiresAuth = signedIn())
     override suspend fun block(id: UUID, block: Boolean) {
         client.post<SocialBlockRequest, SocialBlockResponse>(if (block) ApiEndpoint.socialBlock else ApiEndpoint.socialUnblock, SocialBlockRequest(id))
     }
@@ -92,6 +102,14 @@ class ApiSocial(private val client: ApiClient, private val signedIn: () -> Boole
         client.post<NotificationsMarkReadRequest, EmptyResponse>(ApiEndpoint.notificationsMarkRead, NotificationsMarkReadRequest(ids))
     }
     override suspend fun invitePreview(tripId: UUID): CompanionInvitePreview = client.post(ApiEndpoint.companionsInvitePreview, CompanionsTripRequest(tripId))
+    override suspend fun companions(tripId: UUID): CompanionsListResponse = client.post(ApiEndpoint.companionsList, CompanionsTripRequest(tripId))
+    override suspend fun companionCandidates(tripId: UUID, query: String?, cursor: String?): CompanionsCandidatesResponse =
+        client.post(ApiEndpoint.companionsCandidates, CompanionsCandidatesRequest(tripId, query, cursor))
+    override suspend fun inviteCompanion(tripId: UUID, accountId: UUID): CompanionInviteResult =
+        client.post<CompanionsInviteRequest, CompanionsInviteResponse>(ApiEndpoint.companionsInvite, CompanionsInviteRequest(tripId, accountId)).companion
+    override suspend fun removeCompanion(tripId: UUID, accountId: UUID) {
+        client.post<CompanionsRemoveRequest, CompanionsRemoveResponse>(ApiEndpoint.companionsRemove, CompanionsRemoveRequest(tripId, accountId))
+    }
     override suspend fun respondToInvite(tripId: UUID, accept: Boolean): CompanionStatus =
         client.post<CompanionsRespondRequest, CompanionsRespondResponse>(ApiEndpoint.companionsRespond, CompanionsRespondRequest(tripId, accept)).status
     override suspend fun companionTrips(cursor: String?): CompanionsMyTripsResponse = client.post(ApiEndpoint.companionsMyTrips, CompanionsMyTripsRequest(cursor))

@@ -219,6 +219,7 @@ class AppGraph(
             tripChanges(database), preferences, syncHost, ::isOffline, placeManager = placeManager,
             placeChanges = RoomWorldChanges(database).events.filter { it == WorldChange.places }.map { },
             nameCheckpoint = location.checkpointNamer::name,
+            failedSyncQueue = syncHost.queueState.map { it.failed.isNotEmpty() },
         ).also { feature ->
             feature.openPlace = { world.openPlace(it) }
             feature.pins = object : com.onezee.triptrack.feature.TripPins {
@@ -267,6 +268,7 @@ class AppGraph(
                 com.onezee.triptrack.sync.DiscussionArchive(apiClient, java.io.File(context.noBackupFilesDir, "TripDiscussions"))),
             syncOwnProfile = { me.identity.syncJournal() },
             notificationPreferences = { me.notificationPreferences() },
+            loadRemoteConfig = { com.onezee.triptrack.network.RemoteConfigApi(apiClient).config(BuildConfig.VERSION_NAME).config },
         ).also { it.selectTab = tabStore::select }
     }
 

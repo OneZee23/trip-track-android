@@ -402,6 +402,14 @@ private fun TripDetailContent(
                     // iOS: the reactions and the discussion are the last two sections of the same 22-point column.
                     social = {
                         if (socialFeature != null && !state.isLoading) {
+                            com.onezee.triptrack.feature.social.ui.TripCompanionsSection(
+                                tripId = trip.id,
+                                isOwn = state.isOwn,
+                                isOnServer = trip.isOnServer,
+                                cachedRoster = trip.companions,
+                                social = socialFeature,
+                                navigator = navigator,
+                            )
                             if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
                                 onOpenPicker = { reactionPicker = true },
                                 onPeekReactors = { reactorsPeek = it },
