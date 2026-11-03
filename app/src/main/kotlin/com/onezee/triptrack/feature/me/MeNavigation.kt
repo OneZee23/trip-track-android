@@ -99,11 +99,22 @@ private fun socialRoute(key: String): MeRoute? {
     }
 }
 
+/**
+ * Whether the floating tab bar stays under this screen. iOS keeps it on the garage, the vehicle
+ * page, the drafts and the clubs (their content ends at `CustomTabBar.clearanceAboveSafeArea`);
+ * every other screen pushed from Я hides it with `.hideAppTabBar()`: the trip, the statistics, the
+ * profile and its pickers, the achievements, the journeys and everyone else's screens.
+ */
+internal val MeRoute.keepsTabBar: Boolean get() = when (this) {
+    MeRoute.Garage, is MeRoute.Passport, MeRoute.Clubs, MeRoute.Drafts -> true
+    else -> false
+}
+
 /** iOS: ProfileView.navigationDestination(for: MeDest.self). One owner for scroll and view models. */
 @Composable
 internal fun MeNavHost(feature: TripsFeature, navigator: MeNavigator, root: @Composable () -> Unit,
                        screen: @Composable (MeRoute) -> Unit = {}) {
-    if (navigator.current != null) HideAppTabBar()
+    if (navigator.current?.keepsTabBar == false) HideAppTabBar()
     TabNavHost(navigator.stack, root = root) { destination ->
         val trips = destination.tripsDestination
         if (trips == null) screen(destination) else TripsDestinationScreen(trips, feature, navigator)

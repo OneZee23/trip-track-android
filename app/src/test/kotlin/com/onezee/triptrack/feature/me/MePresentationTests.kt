@@ -36,6 +36,18 @@ class MePresentationTests {
         assertEquals(3, calendarHeatStep(100.0, 100.0))
         assertEquals(3, calendarHeatStep(5.0, 0.0))
     }
+    // iOS: ProfileView.navigationDestination: the garage, the vehicle page, the drafts and the clubs keep
+    // the floating bar (their content ends at CustomTabBar.clearanceAboveSafeArea); every other screen
+    // pushed from Я calls `.hideAppTabBar()`.
+    @Test fun theTabBarStaysOnlyOnTheFourScreensIosKeepsItOn() {
+        val id = UUID.fromString("10000000-0000-4000-8000-000000000001")
+        val keeps = listOf(MeRoute.Garage, MeRoute.Passport(id), MeRoute.Clubs, MeRoute.Drafts)
+        keeps.forEach { assertTrue(it.keepsTabBar, "$it keeps the bar") }
+        val hides = listOf(MeRoute.Profile, MeRoute.Achievements, MeRoute.Badge("first"), MeRoute.Levels, MeRoute.Country, MeRoute.Stats,
+            MeRoute.Trip(id), MeRoute.Journey(id), MeRoute.SocialJourney(id),
+            MeRoute.Social(com.onezee.triptrack.feature.TripsDestination.PublicProfile(id)))
+        hides.forEach { assertFalse(it.keepsTabBar, "$it hides the bar") }
+    }
     @Test fun twoFastPushesHaveOneDestinationAndBackKeepsTheParent() {
         val navigation = MeNavigator()
         val passport = MeRoute.Passport(UUID.fromString("10000000-0000-4000-8000-000000000001"))

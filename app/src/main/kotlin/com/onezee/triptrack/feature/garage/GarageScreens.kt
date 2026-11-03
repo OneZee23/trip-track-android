@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.onezee.triptrack.designsystem.components.*
+import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.me.ProfileStat
 import com.onezee.triptrack.feature.me.ProfileTripRow
@@ -71,7 +72,7 @@ internal fun GarageScreen(state: GarageState, unit: DistanceUnit, onBack: () -> 
         }
         if (state.loaded && state.vehicles.isEmpty()) {
             GarageEmptyState(onAdd, Modifier.weight(1f))
-        } else LazyColumn(contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        } else LazyColumn(contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = tabBarContentClearance()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.failed) item { MeRow(strings.garageLoadFailed()) }
             if (state.active != null) {
                 item { Text(strings.garageActive(), style = AppType.section, color = AppTheme.colors.textSecondary) }
@@ -159,7 +160,8 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
             Text(if (state.failed) strings.garageLoadFailed() else if (state.loaded) strings.vehicleDeletedNote() else strings.loadingGeneric(), Modifier.padding(16.dp), style = AppType.body, color = AppTheme.colors.textSecondary)
             return@Column
         }
-        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // iOS: the bar stays on the vehicle page, and the last row clears it.
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = tabBarContentClearance()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.fillMaxWidth().surfaceCard(24.dp).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(Modifier.clickable(role = Role.Button, onClickLabel = strings.vehiclePhotos()) { onSheet(VehicleSheet.photos) }) {
                     VehicleStage(vehicle, photoFilename = state.mainPhoto?.filename, remoteURL = state.mainPhoto?.remoteURL)

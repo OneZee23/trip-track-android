@@ -74,12 +74,17 @@ class TripsBehaviourTests : TripsScreenTest() {
         compose.waitForIdle()
         compose.onNodeWithTag("drafts_list").assertExists()
         assertEquals(com.onezee.triptrack.feature.me.MeRoute.Drafts, meNavigator.current)
+        // SH-09: iOS keeps the floating bar on the list, with «Все мои» standing over it.
+        assertFalse(visibility.isHiddenByScreen)
+        compose.onNodeWithTag("tab_bar").assertExists()
         compose.onAllNodesWithTag("draft_row")[0].performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("trip_detail").assertExists()
+        assertTrue(visibility.isHiddenByScreen)
         compose.onNodeWithTag("detail_back").performClick()
         compose.waitForIdle()
         compose.onNodeWithTag("drafts_list").assertExists()
+        assertFalse(visibility.isHiddenByScreen)
         Espresso.pressBack()
         compose.waitForIdle()
         compose.onNodeWithTag("profile_drafts").assertIsDisplayed()
@@ -286,6 +291,8 @@ class TripsBehaviourTests : TripsScreenTest() {
         compose.waitForIdle()
         compose.onNodeWithTag("app_dialog").assertExists()
         assertTrue(decisions.isEmpty())
+        // The question stands over the bar, which would otherwise stay tappable under the scrim.
+        assertTrue(visibility.isHiddenByScreen)
 
         compose.onNodeWithTag("drafts_delete_confirm").performClick()
         compose.waitForIdle()
