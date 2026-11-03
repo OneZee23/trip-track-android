@@ -1,19 +1,22 @@
 // iOS: ProfileSettingsSheet.swift, AppPreferencesView.swift, PrivacySettingsView.swift, NotificationPreferencesView.swift
 package com.onezee.triptrack.feature.settings
 
-import androidx.activity.compose.BackHandler
-
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
@@ -21,6 +24,7 @@ import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
+import com.onezee.triptrack.feature.me.isAccessibilitySize
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.LocalAppVersion
@@ -43,47 +47,49 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     val context = LocalContext.current
     fun open(uri: String) { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri))) }
     val pickers = setOf(SettingsSheet.units, SettingsSheet.theme, SettingsSheet.language, SettingsSheet.averageSpeed)
-    val screen = state.sheets.lastOrNull { it !in pickers } ?: SettingsSheet.settings
-    ContentSizedSheet(onDismiss, background = AppTheme.colors.bg, detent = SheetDetent.large) {
-        BackHandler(state.sheets.size > 1 && state.sheet !in pickers) { manager.dismissSheet() }
-        when (screen) {
-            SettingsSheet.settings -> SettingsContent(state, graph.themeManager.mode, language, auth.isSignedIn, notificationState,
-                onClose = { dismiss() }, onOpen = manager::openSheet, onNotificationMaster = { notifications?.setMaster(it) },
-                onWriteAuthor = { open("mailto:privacy@trip-track.app") }, onTelegram = { open("https://t.me/onezee_co") },
-                account = { AccountEntry(graph) })
-            SettingsSheet.appPreferences -> SettingsDetail(strings.settingsAppPrefs(), manager::dismissSheet) {
-                MeRow(strings.settingsUnits(), strings.unitDistanceBadge(state.distanceUnit), tag = "settings_units", onClick = { manager.openSheet(SettingsSheet.units) })
-                MeDivider()
-                MeRow(strings.avgSpeedModeTitle(), if (state.averageSpeed == AvgSpeedMode.overall) strings.avgSpeedOverall() else strings.avgSpeedMoving(), tag = "settings_average_speed", onClick = { manager.openSheet(SettingsSheet.averageSpeed) })
-            }
-            SettingsSheet.privacy -> SettingsDetail(strings.privacyTitle(), manager::dismissSheet) {
-                MeToggle(strings.usageTitle(), usageEnabled, { graph.me.analytics.setEnabled(it, profile.hero.tripCount > 0) }, strings.usageDetail(), tag = "settings_usage_analytics")
-                if (auth.isSignedIn) {
-                    MeToggle(strings.publicProfileTitle(), privacyState.isPublic, { privacy?.setPublicProfile(it) }, strings.privacyPublicProfileSub(), enabled = privacyState.loaded, tag = "privacy_public_profile")
-                    MeToggle(strings.settingsPublicProfile(), state.showOnPublicMap, manager::setShowOnPublicMap)
-                    if (privacyState.supportsBlocks) ProfileVisibilityBlock.entries.forEach { block ->
-                        MeToggle(visibilityLabel(block, strings), privacyState.visibility[block] == true, { privacy?.setVisibility(block, it) }, enabled = block !in privacyState.pending)
+    // iOS presents each sub-page as a sheet of its own over the one before it: Настройки, then Приватность or
+    // «Единицы и формат» over it, a picker over that. The pickers are drawn below, over the last page.
+    state.sheets.filter { it !in pickers }.forEachIndexed { index, page ->
+        key(page) {
+            val close: () -> Unit = if (index == 0) onDismiss else manager::dismissSheet
+            // Приватность opens at iOS's medium detent: as tall as its rows, scrolling when they outgrow the screen.
+            ContentSizedSheet(close, background = AppTheme.colors.bg, detent = if (page == SettingsSheet.privacy) SheetDetent.content else SheetDetent.large, grabber = page.hasGrabber) {
+                when (page) {
+                    SettingsSheet.settings -> SettingsContent(state, graph.themeManager.mode, language, auth.isSignedIn, notificationState,
+                        onClose = { dismiss() }, onOpen = manager::openSheet, onNotificationMaster = { notifications?.setMaster(it) },
+                        onWriteAuthor = { open("mailto:privacy@trip-track.app") }, onTelegram = { open("https://t.me/onezee_co") },
+                        onPolicy = { open("https://trip-track.app/privacy") }, onTerms = { open("https://trip-track.app/terms") },
+                        onOpenStreetMap = { open("https://www.openstreetmap.org/copyright") },
+                        account = { AccountEntry(graph) })
+                    SettingsSheet.appPreferences -> SettingsSheetPage(strings.settingsAppPrefs()) {
+                        SettingsPreferencesCard(state, onOpen = manager::openSheet)
+                        Text(strings.appPrefsFootnote(), Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 10.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                     }
-                    MeRow(strings.settingsNotifications(), onClick = { manager.openSheet(SettingsSheet.notifications) })
+                    SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle()) {
+                        Column(Modifier.surfaceCard(16.dp)) {
+                            MeToggle(strings.usageTitle(), usageEnabled, { graph.me.analytics.setEnabled(it, profile.hero.tripCount > 0) }, strings.usageDetail(), tag = "settings_usage_analytics")
+                            if (auth.isSignedIn) {
+                                MeToggle(strings.publicProfileTitle(), privacyState.isPublic, { privacy?.setPublicProfile(it) }, strings.privacyPublicProfileSub(), enabled = privacyState.loaded, tag = "privacy_public_profile")
+                                MeToggle(strings.settingsPublicProfile(), state.showOnPublicMap, manager::setShowOnPublicMap)
+                                if (privacyState.supportsBlocks) ProfileVisibilityBlock.entries.forEach { block ->
+                                    MeToggle(visibilityLabel(block, strings), privacyState.visibility[block] == true, { privacy?.setVisibility(block, it) }, enabled = block !in privacyState.pending)
+                                }
+                                MeRow(strings.settingsNotifications(), onClick = { manager.openSheet(SettingsSheet.notifications) })
+                            }
+                            MeRow(strings.homeRow(), if (state.home.coordinate == null) strings.homeNotSet() else strings.homeZoneShort(Measure.radius(state.home.radius.rawValue.toDouble(), state.distanceUnit, strings.language.code, strings)), tag = "settings_home", onClick = { manager.openSheet(SettingsSheet.home) })
+                            if (privacyState.failed) MeRow(strings.publicDataLoadFailed(), strings.tryAgain(), onClick = { privacy?.load() })
+                        }
+                    }
+                    SettingsSheet.notifications -> SettingsSheetPage(strings.settingsNotifications()) {
+                        Column(Modifier.surfaceCard(16.dp)) { NotificationPreferencesContent(notificationState, notifications) }
+                    }
+                    SettingsSheet.home -> HomeSettingsContent(state.home, state.distanceUnit, { dismiss() }, manager::setHome)
+                    SettingsSheet.autoRecord -> AutoRecordSettingsContent(graph, state, { dismiss() }, onStereo = { manager.openSheet(SettingsSheet.stereo) })
+                    SettingsSheet.stereo -> StereoPicker(graph, onBack = { dismiss() })
+                    SettingsSheet.logs -> DebugLogsContent(graph) { dismiss() }
+                    else -> Unit
                 }
-                MeRow(strings.homeRow(), if (state.home.coordinate == null) strings.homeNotSet() else strings.homeZoneShort(Measure.radius(state.home.radius.rawValue.toDouble(), state.distanceUnit, strings.language.code, strings)), tag = "settings_home", onClick = { manager.openSheet(SettingsSheet.home) })
-                if (privacyState.failed) MeRow(strings.publicDataLoadFailed(), strings.tryAgain(), onClick = { privacy?.load() })
             }
-            SettingsSheet.notifications -> SettingsDetail(strings.settingsNotifications(), manager::dismissSheet) {
-                NotificationPreferencesContent(notificationState, notifications)
-            }
-            SettingsSheet.home -> HomeSettingsContent(state.home, state.distanceUnit, manager::dismissSheet, manager::setHome)
-            SettingsSheet.autoRecord -> AutoRecordSettingsContent(graph, state, manager::dismissSheet)
-            SettingsSheet.stereo -> StereoPicker(graph, onBack = manager::dismissSheet)
-            SettingsSheet.logs -> DebugLogsContent(graph, manager::dismissSheet)
-            SettingsSheet.about -> SettingsDetail(strings.about(), manager::dismissSheet) {
-                MeRow(strings.tr(com.onezee.triptrack.designsystem.R.string.app_name), LocalAppVersion.current)
-                MeRow(strings.privacyPolicy(), onClick = { open("https://trip-track.app/privacy") })
-                MeRow(strings.termsOfService(), onClick = { open("https://trip-track.app/terms") })
-                MeRow(strings.osmAttribution(), onClick = { open("https://www.openstreetmap.org/copyright") })
-                MeRow(strings.naturalEarthAttribution())
-            }
-            else -> Unit
         }
     }
     when (state.sheet) {
@@ -104,43 +110,117 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     }
 }
 
+/** The sheets iOS gives `presentationDragIndicator(.visible)`: Настройки, its sub-pages, auto-record and the stereo picker. */
+private val SettingsSheet.hasGrabber: Boolean
+    get() = when (this) {
+        SettingsSheet.settings, SettingsSheet.appPreferences, SettingsSheet.privacy, SettingsSheet.autoRecord, SettingsSheet.stereo -> true
+        else -> false
+    }
+
+/**
+ * iOS ProfileSettingsSheet: three cards, grouped by what a row is about. The account (privacy, notifications, sync;
+ * a guest has the privacy row alone), the app (language, theme, units), the author (letter, channel, logs), and under
+ * them the footer with the mark, the legal links and the map credits.
+ */
 @Composable
 internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: AppLanguage, signedIn: Boolean,
                              notifications: NotificationPreferencesState, onClose: () -> Unit, onOpen: (SettingsSheet) -> Unit,
                              onNotificationMaster: (Boolean) -> Unit, onWriteAuthor: () -> Unit, onTelegram: () -> Unit,
+                             onPolicy: () -> Unit = {}, onTerms: () -> Unit = {}, onOpenStreetMap: () -> Unit = {},
                              account: @Composable () -> Unit = {}) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).testTag("settings_sheet")) {
-        MeSheetHeader(strings.settingsTitle(), onClose)
+        MeSheetHeader(strings.settingsTitle(), 12.dp, onClose)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 14.dp).padding(bottom = 26.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(Modifier.surfaceCard(16.dp)) {
-                MeRow(strings.privacyTitle(), subtitle = if (signedIn) strings.privacyRowSub() else strings.usageTitle(), glyph = AppGlyph.infoCircleFill, tag = "settings_privacy", onClick = { onOpen(SettingsSheet.privacy) })
+                SettingsIconRow(strings.privacyTitle(), glyph = AppGlyph.handRaisedFill, subtitle = if (signedIn) strings.privacyRowSub() else strings.usageTitle(), tag = "settings_privacy",
+                    onClick = { onOpen(SettingsSheet.privacy) }, trailing = { SettingsRowChevron() }, stacksTrailing = false)
                 if (signedIn) {
                     MeDivider()
-                    MeToggle(strings.settingsNotifications(), notifications.master, onNotificationMaster, enabled = notifications.loaded, tag = "settings_notifications")
+                    SettingsToggleRow(strings.settingsNotifications(), notifications.master, onNotificationMaster, AppGlyph.bellFill, enabled = notifications.loaded, tag = "settings_notifications")
+                    MeDivider()
+                    account()
                 }
-                if (signedIn) account()
             }
             Column(Modifier.surfaceCard(16.dp)) {
-                MeRow(strings.lang(), language.endonym, glyph = AppGlyph.characterBubble, tag = "settings_language", onClick = { onOpen(SettingsSheet.language) })
+                SettingsIconRow(strings.lang(), glyph = AppGlyph.characterBubble, tag = "settings_language", onClick = { onOpen(SettingsSheet.language) }) { SettingsRowValue(language.endonym) }
                 MeDivider()
-                MeRow(strings.theme(), themeLabel(theme, strings), glyph = themeGlyph(theme), tag = "settings_theme", onClick = { onOpen(SettingsSheet.theme) })
+                SettingsIconRow(strings.theme(), glyph = themeGlyph(theme), tag = "settings_theme", onClick = { onOpen(SettingsSheet.theme) }) { SettingsRowValue(themeLabel(theme, strings)) }
                 MeDivider()
-                MeRow(strings.settingsAppPrefs(), strings.unitDistanceBadge(state.distanceUnit), glyph = AppGlyph.gearshapeFill, tag = "settings_app_prefs", onClick = { onOpen(SettingsSheet.appPreferences) })
-                MeDivider()
-                MeRow(strings.autoRecord(), autoRecordLabel(state.autoRecordMode, strings), tag = "settings_auto_record", onClick = { onOpen(SettingsSheet.autoRecord) })
+                SettingsIconRow(strings.settingsAppPrefs(), glyph = AppGlyph.ruler, tag = "settings_app_prefs", onClick = { onOpen(SettingsSheet.appPreferences) }) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        SettingsRowValue(strings.unitDistanceBadge(state.distanceUnit)); SettingsRowChevron()
+                    }
+                }
             }
             Column(Modifier.surfaceCard(16.dp)) {
-                MeRow(strings.writeAuthor(), subtitle = strings.settingsWriteToAuthorSub(), glyph = AppGlyph.pencil, onClick = onWriteAuthor)
+                SettingsIconRow(strings.writeAuthor(), glyph = AppGlyph.envelopeFill, subtitle = strings.settingsWriteToAuthorSub(), tag = "settings_write_author",
+                    onClick = onWriteAuthor, trailing = { SettingsRowChevron() }, stacksTrailing = false)
                 MeDivider()
-                MeRow(strings.telegramChannel(), subtitle = strings.settingsTelegramSub(), icon = com.onezee.triptrack.R.drawable.telegram_icon, tag = "settings_telegram", onClick = onTelegram)
+                SettingsIconRow(strings.telegramChannel(), icon = com.onezee.triptrack.R.drawable.telegram_icon, subtitle = strings.settingsTelegramSub(), tag = "settings_telegram",
+                    onClick = onTelegram, trailing = { SettingsRowChevron() }, stacksTrailing = false)
                 MeDivider()
-                MeRow(strings.settingsSendLogs(), subtitle = strings.settingsSendLogsSub(), glyph = AppGlyph.flag, tag = "settings_logs", onClick = { onOpen(SettingsSheet.logs) })
+                SettingsIconRow(strings.settingsSendLogs(), glyph = AppGlyph.ladybugFill, subtitle = strings.settingsSendLogsSub(), tag = "settings_logs",
+                    onClick = { onOpen(SettingsSheet.logs) }, trailing = { SettingsRowChevron() }, stacksTrailing = false)
             }
-            MeRow(strings.about(), LocalAppVersion.current, tag = "settings_about", onClick = { onOpen(SettingsSheet.about) })
+            SettingsFooter(onPolicy, onTerms, onOpenStreetMap)
             if (state.failed) MeRow(strings.publicDataLoadFailed())
         }
     }
+}
+
+/** iOS AppPreferencesView.card: the units and the average speed; each shows its value and opens a picker. */
+@Composable
+internal fun SettingsPreferencesCard(state: SettingsState, onOpen: (SettingsSheet) -> Unit) {
+    val strings = appStrings
+    Column(Modifier.surfaceCard(16.dp)) {
+        SettingsIconRow(strings.settingsUnits(), glyph = AppGlyph.ruler, tag = "settings_units", onClick = { onOpen(SettingsSheet.units) }) { SettingsRowValue(strings.unitDistanceBadge(state.distanceUnit)) }
+        MeDivider()
+        SettingsIconRow(strings.avgSpeedModeTitle(), glyph = AppGlyph.speedometer, tag = "settings_average_speed", onClick = { onOpen(SettingsSheet.averageSpeed) }) {
+            SettingsRowValue(if (state.averageSpeed == AvgSpeedMode.overall) strings.avgSpeedOverall() else strings.avgSpeedMoving())
+        }
+    }
+}
+
+/**
+ * iOS footer(): centred under the cards, 12 below them. The mark in the pixel face and the version, the two legal
+ * links side by side (stacked at the accessibility sizes), the OpenStreetMap credit as a link and the Natural Earth
+ * line as text: the licence names the first and asks nothing of the second.
+ */
+@Composable
+private fun SettingsFooter(onPolicy: () -> Unit, onTerms: () -> Unit, onOpenStreetMap: () -> Unit) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val accessibility = isAccessibilitySize()
+    val haptics = rememberHaptics()
+    val link = interScaled(11f, InterWeight.medium).copy(textDecoration = TextDecoration.Underline)
+    Column(Modifier.fillMaxWidth().padding(top = 12.dp).testTag("settings_footer"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val mark = @Composable {
+            Text(strings.tr(com.onezee.triptrack.designsystem.R.string.android_wordmark), style = pressStart2P(8f), color = AppTheme.accent)
+            Text("· v${LocalAppVersion.current} · OneZee", style = interScaled(12f), color = colors.textSecondary)
+        }
+        if (accessibility) Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) { mark() }
+        else Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) { mark() }
+        val links = @Composable {
+            Text(strings.privacyPolicy(), Modifier.clickable(role = Role.Button) { haptics.tap(); onPolicy() }.testTag("settings_privacy_policy"), style = link, color = colors.textSecondary, textAlign = TextAlign.Center)
+            Text(strings.termsOfService(), Modifier.clickable(role = Role.Button) { haptics.tap(); onTerms() }.testTag("settings_terms"), style = link, color = colors.textSecondary, textAlign = TextAlign.Center)
+        }
+        if (accessibility) Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) { links() }
+        else Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) { links() }
+        Text(strings.osmAttribution(), Modifier.clickable(role = Role.Button) { haptics.tap(); onOpenStreetMap() }.testTag("settings_osm_attribution"),
+            style = interScaled(11f).copy(textDecoration = TextDecoration.Underline), color = colors.textSecondary, textAlign = TextAlign.Center)
+        Text(strings.naturalEarthAttribution(), Modifier.testTag("settings_ne_attribution"), style = interScaled(11f), color = colors.textSecondary, textAlign = TextAlign.Center)
+    }
+}
+
+/**
+ * iOS: a sub-page of Настройки is a sheet of its own, headed like the settings sheet (22 bold, the grey 30 pt close
+ * disc, 12 below it) with its cards 14 from the edges and 26 above the bottom.
+ */
+@Composable
+internal fun SheetScope.SettingsSheetPage(title: String, content: @Composable ColumnScope.() -> Unit) {
+    MeSheetHeader(title, 12.dp) { dismiss() }
+    Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 14.dp).padding(bottom = 26.dp), verticalArrangement = Arrangement.spacedBy(4.dp), content = content)
 }
 
 @Composable
