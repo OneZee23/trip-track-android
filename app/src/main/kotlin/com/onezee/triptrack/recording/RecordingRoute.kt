@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
+import com.onezee.triptrack.designsystem.navigation.tabBarTappableInset
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.me.MeTab
 import com.onezee.triptrack.feature.settings.*
@@ -33,6 +34,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Instant
+
+/** The zoom the + and − buttons step between. */
+private const val MIN_ZOOM = 1.0
+private const val MAX_ZOOM = 19.0
 
 @Composable
 fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
@@ -85,16 +90,24 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
             HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.noPreciseLocation, health.oem))
         } else permissionOpen = true
     }
+    // The blocks stand 24 above the physical bottom, or above a tappable navigation bar (see TrackingScreen).
+    val dock = tabBarTappableInset()
+    // Derived: the camera moves with every fix, the buttons only change at the ends of the zoom.
+    val canZoomIn by remember { derivedStateOf { map.camera?.zoom?.let { it < MAX_ZOOM - .01 } ?: true } }
+    val canZoomOut by remember { derivedStateOf { map.camera?.zoom?.let { it > MIN_ZOOM + .01 } ?: true } }
     TrackingScreen(state, vehicle, !precise, TrackingActions(
         back = onClose,
         start = { if (precise) presenter.start() else openLocation() }, blocked = presenter::blockedStart,
         startAnyway = { presenter.start(force = true) }, pause = presenter::pause, checkpoint = presenter::checkpoint,
         finish = presenter::askFinish, vehicle = { picking = true }, transfer = presenter::setTransfer,
         health = { healthOpen = true }, locate = { cameraMode = cameraMode.next() },
-        zoom = { zoomIn -> map.camera?.let { camera -> map.execute(MapCameraCommand.Move(camera.centre, (camera.zoom + if (zoomIn) 1 else -1).coerceIn(1.0, 19.0), true)) } },
+        zoom = { zoomIn -> map.camera?.let { camera -> map.execute(MapCameraCommand.Move(camera.centre, (camera.zoom + if (zoomIn) 1 else -1).coerceIn(MIN_ZOOM, MAX_ZOOM), true)) } },
     ), now, healthHint = health.issues.firstOrNull()?.message?.let(strings::tr), cameraMode = cameraMode, discarded = discarded,
+        dockInset = dock, hasVehicles = vehicles.isNotEmpty(),
+        // The + and − dim at the limits of the zoom the buttons step through.
+        canZoomIn = canZoomIn, canZoomOut = canZoomOut,
         onHudHeightChanged = { hudHeight = it },
-        map = { TrackingMap(state, vehicle, fog, map, cameraMode, { cameraMode = TrackingCameraMode.none }, hudHeight + 24.0, Modifier.fillMaxSize()) })
+        map = { TrackingMap(state, vehicle, fog, map, cameraMode, { cameraMode = TrackingCameraMode.none }, hudHeight + 24.0 + dock.value, Modifier.fillMaxSize()) })
     state.stopPreview?.let { preview ->
         StopConfirmationSheet(preview, state.recorder.isPaused, state.busy, presenter::finish, presenter::pauseInstead, presenter::cancelFinish)
     }

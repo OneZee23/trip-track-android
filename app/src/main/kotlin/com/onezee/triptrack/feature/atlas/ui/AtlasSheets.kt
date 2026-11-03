@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -29,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,6 +48,8 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -53,6 +59,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -70,10 +78,12 @@ import com.onezee.triptrack.designsystem.theme.AppType
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
 import com.onezee.triptrack.designsystem.theme.CapsuleShape
 import com.onezee.triptrack.designsystem.theme.ContinuousRoundedRectangle
+import com.onezee.triptrack.designsystem.theme.InterLineHeight
 import com.onezee.triptrack.designsystem.theme.InterWeight
 import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
 import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
+import com.onezee.triptrack.designsystem.theme.points
 import com.onezee.triptrack.designsystem.theme.rememberHaptics
 import com.onezee.triptrack.feature.atlas.AtlasAppearance
 import com.onezee.triptrack.feature.settings.HomeState
@@ -94,7 +104,7 @@ fun AtlasControlsHeader(title: String, onClose: () -> Unit, closeTag: String = "
         Box(Modifier.size(width = 36.dp, height = 5.dp).background(atlas.handle, CapsuleShape))
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(title, Modifier.weight(1f).semantics { heading() }, style = AppType.sheetTitle, color = atlas.ink, maxLines = 1)
-            CircleButton(AppGlyph.xmark, strings.close(), closeTag, fill = atlas.searchBackground, tint = atlas.secondary, glyphSize = 15.dp, onClick = onClose)
+            CircleButton(AppGlyph.xmark, strings.close(), closeTag, fill = atlas.searchBackground, tint = atlas.secondary, glyphSize = CLOSE_CROSS_GLYPH, onClick = onClose)
         }
     }
 }
@@ -233,14 +243,17 @@ private fun DrawScope.drawOpenedCells(size: Size, colour: Color) {
     }
 }
 
-/** iOS Toggle in a row: the whole row is the target; TalkBack hears a switch with its state. */
+/**
+ * iOS Toggle in a row: the whole row is the target; TalkBack hears a switch with its state. The sheet «Вид карты»
+ * lays its rows out 56 tall; the cards of the home sheet ask for `minHeight: 44` (AT-17).
+ */
 @Composable
-fun ToggleRow(title: String, checked: Boolean, testTag: String, onChange: (Boolean) -> Unit) {
+fun ToggleRow(title: String, checked: Boolean, testTag: String, minHeight: Dp = 56.dp, onChange: (Boolean) -> Unit) {
     val atlas = AtlasTheme.colors
     val haptics = rememberHaptics()
     val interaction = remember { MutableInteractionSource() }
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 56.dp)
+        Modifier.fillMaxWidth().heightIn(min = minHeight)
             .clickable(interactionSource = interaction, indication = null) { haptics.selection(); onChange(!checked) }
             .semantics(mergeDescendants = true) {
                 role = Role.Switch
@@ -299,16 +312,24 @@ fun homeSummary(home: HomeState, strings: AppStrings, unit: com.onezee.triptrack
     return parts.joinToString(" · ")
 }
 
-/** iOS: AtlasExplanationSheet. The numbers the app really counts, nothing it does not. */
+/**
+ * iOS: AtlasExplanationSheet. The numbers the app really counts, nothing it does not. `.presentationDetents([.medium,
+ * .large])` opens it 453 of 852 tall (AT-15), the third card running under the screen's edge: here too it opens at
+ * that share of the window and the cards scroll inside. Dragging it up to the full height is not built: the house
+ * sheet has the two detents «content» and «large» only, and a third would be a change of the shared sheet.
+ */
 @Composable
 fun AtlasExplanationSheet(onDismissRequest: () -> Unit) {
     val strings = appStrings
     val atlas = AtlasTheme.colors
+    val window = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val navigation = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     ContentSizedSheet(onDismissRequest = onDismissRequest, background = atlas.background, cornerRadius = AtlasTheme.sheetRadius) {
         val sheet = this
-        Column(Modifier.fillMaxWidth().testTag("atlas_explanation_sheet")) {
+        // The sheet adds the navigation bar under its content: the height counts it, so the whole is the half.
+        Column(Modifier.fillMaxWidth().height(window * EXPLANATION_OPENS_AT - navigation).testTag("atlas_explanation_sheet")) {
             AtlasControlsHeader(strings.atlasHowWeCount(), onClose = { sheet.dismiss() })
-            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Explanation(WorldGlyph.curvePath, strings.atlasNewRoads(), strings.atlasRoadsExplanation())
                 Explanation(WorldGlyph.circlePath, strings.atlasTotalTravelled(), strings.atlasTripsExplanation())
                 Explanation(null, strings.atlasPeriod(), strings.atlasPeriodRoadsExplanation())
@@ -330,9 +351,23 @@ private fun Explanation(symbol: WorldGlyph?, title: String, body: String) {
             else Glyph(AppGlyph.calendar, contentDescription = null, tint = atlas.accent, size = 20.dp)
             Text(title.uppercase(appStrings.language.locale), style = AppType.statCaption, letterSpacing = AppType.statCaptionTracking, color = atlas.ink)
         }
-        Text(body, style = inter(15f), color = atlas.secondary)
+        Text(body, Modifier.testTag("atlas_explanation_body"), style = inter(15f).withLineSpacing(15f, 3f), color = atlas.secondary)
     }
 }
+
+/** The medium detent of the iPhone: the sheet's height of 453 on a screen of 852. */
+private const val EXPLANATION_OPENS_AT = 453f / 852f
+
+/**
+ * iOS `.lineSpacing(extra)`: the font's own line height plus [extra] between the lines, and none above the first or
+ * under the last (AT-16).
+ */
+@Composable
+@ReadOnlyComposable
+fun TextStyle.withLineSpacing(size: Float, extra: Float): TextStyle = copy(
+    lineHeight = points(size * InterLineHeight + extra),
+    lineHeightStyle = LineHeightStyle(alignment = LineHeightStyle.Alignment.Center, trim = LineHeightStyle.Trim.Both),
+)
 
 /** iOS: AtlasBetaSheetModel.Subject. One card for both tabs: the question is the same. */
 enum class BetaSubject { atlas, places }
@@ -351,7 +386,8 @@ fun AtlasBetaSheet(subject: BetaSubject, onDismissRequest: () -> Unit) {
         val sheet = this
         Column(Modifier.fillMaxWidth().padding(20.dp).testTag("atlas_beta_sheet"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(if (subject == BetaSubject.atlas) strings.atlasBetaTitle() else strings.placesBetaTitle(), style = inter(19f, InterWeight.semibold), color = colors.text)
-            Text(if (subject == BetaSubject.atlas) strings.atlasBetaBody() else strings.placesBetaBody(), style = inter(14f), color = colors.textSecondary)
+            Text(if (subject == BetaSubject.atlas) strings.atlasBetaBody() else strings.placesBetaBody(), Modifier.testTag("atlas_beta_body"),
+                style = inter(14f).withLineSpacing(14f, 3f), color = colors.textSecondary)
             Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SheetButton(strings.writeAuthor(), AppTheme.accent, Color.White, "atlas_beta_feedback") {
                     haptics.tap()

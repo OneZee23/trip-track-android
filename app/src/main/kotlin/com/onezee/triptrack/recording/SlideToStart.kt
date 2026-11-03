@@ -2,6 +2,7 @@
 package com.onezee.triptrack.recording
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,12 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.onClick
@@ -35,6 +39,32 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 // iOS: SlideToStartView.threshold, thumbSize, trackHeight, horizontalInset.
+/**
+ * iOS ProgressView(.circular): eight rounded spokes round a gap, the brightest one the head that steps
+ * clockwise eight times a second and the tail fading behind it to a floor, measured on the iPhone's
+ * render: over a grey of 78 the head reads .63 of white, then .52, .41, .29 and .23 for the rest. Still
+ * under «Remove animations».
+ */
+@Composable
+internal fun SpokeSpinner(color: Color, modifier: Modifier = Modifier) {
+    val step = if (LocalReduceMotion.current) 7 else rememberInfiniteTransition(label = "spokes")
+        .animateFloat(0f, 8f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "spokeStep").value.toInt().coerceIn(0, 7)
+    Canvas(modifier.progressSemantics()) {
+        val unit = size.minDimension / 20f
+        val fades = floatArrayOf(.79f, .65f, .51f, .36f, .29f, .29f, .29f, .29f)
+        for (index in 0 until 8) {
+            // Spoke 0 stands at twelve o'clock; the head is spoke [step] and the tail trails counter-clockwise.
+            val behind = (step - index + 8) % 8
+            val angle = Math.toRadians(index * 45.0 - 90.0)
+            val dx = kotlin.math.cos(angle).toFloat()
+            val dy = kotlin.math.sin(angle).toFloat()
+            val centre = Offset(size.width / 2, size.height / 2)
+            drawLine(color.copy(alpha = color.alpha / .8f * fades[behind]), centre + Offset(dx, dy) * (3.3f * unit + 1.3f * unit),
+                centre + Offset(dx, dy) * (10f * unit - 1.3f * unit), 2.6f * unit, StrokeCap.Round)
+        }
+    }
+}
+
 object SlideToStartPolicy {
     const val threshold = .66f
     fun commits(offset: Float, travel: Float): Boolean = travel > 0 && offset / travel >= threshold
@@ -88,8 +118,9 @@ fun SlideToStart(
         }) {
         val travel = with(density) { (maxWidth - 64.dp).toPx().coerceAtLeast(0f) }
         val progress = if (travel > 0) (offset.value / travel).coerceIn(0f, 1f) else 0f
-        Box(Modifier.fillMaxSize().clip(CircleShape)
-            .background(if (blocked) Color.White.copy(alpha = .07f) else AppTheme.accent.copy(alpha = .15f))
+        // Not clipped: the live thumb's glow reaches past the track, as on the iPhone.
+        Box(Modifier.fillMaxSize()
+            .background(if (blocked) Color.White.copy(alpha = .07f) else AppTheme.accent.copy(alpha = .15f), CircleShape)
             .then(if (blocked) Modifier.pointerInput(Unit) { detectTapGestures(onPress = { explain(); tryAwaitRelease() }) } else Modifier)
             .graphicsLayer { alpha = if (completed) 0f else 1f; scaleX = if (completed) .96f else 1f; scaleY = scaleX }) {
             if (!blocked) Box(Modifier.width(with(density) { offset.value.toDp() } + 64.dp).fillMaxHeight()
@@ -126,7 +157,10 @@ fun SlideToStart(
                 }
             }
             Box(Modifier.offset { IntOffset(offset.value.roundToInt() + with(density) { 4.dp.roundToPx() }, 0) }
-                .align(Alignment.CenterStart).size(56.dp).background(if (blocked) Color(0xFF525252) else AppTheme.accent, CircleShape)
+                .align(Alignment.CenterStart).size(56.dp)
+                // iOS: the live thumb glows in accent at .4, radius 8; the held one casts nothing.
+                .iosShadow(CircleShape, if (blocked) Color.Transparent else AppTheme.accent.copy(alpha = .4f), 8.dp)
+                .background(if (blocked) Color(0xFF525252) else AppTheme.accent, CircleShape)
                 .then(if (!blocked) Modifier.pointerInput(travel) {
                     detectHorizontalDragGestures(
                         onDragStart = { raw = offset.value; halfway = false; near = false },
@@ -147,8 +181,10 @@ fun SlideToStart(
                         },
                     )
                 } else Modifier), contentAlignment = Alignment.Center) {
-                if (blocked) RecordingSpinner(Color.White.copy(alpha = .8f), Modifier.size(22.dp))
-                else Glyph(AppGlyph.play, null, tint = Color.White, size = 22.dp)
+                // The held thumb says «not your turn» with the system's own spoke spinner (iOS ProgressView, white at .8).
+                if (blocked) SpokeSpinner(Color.White.copy(alpha = .8f), Modifier.size(20.dp))
+                // play.fill, 21 bold.
+                else RecordingShape(RecordingMark.play, 16.85f, 18.7f, Color.White)
             }
         }
     }

@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -69,10 +70,11 @@ import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.ContentSizedSheet
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.NavCircleButton
+import com.onezee.triptrack.designsystem.components.NavCircleIcon
 import com.onezee.triptrack.designsystem.components.PressableCard
 import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
-import com.onezee.triptrack.designsystem.navigation.tabBarClearanceAboveSafeArea
+import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter
 import com.onezee.triptrack.designsystem.theme.AppTheme
@@ -170,7 +172,7 @@ private fun PlaceDetailContent(state: PlaceDetailState, vm: PlaceDetailViewModel
                 )
             }
         }
-        Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
+        Column(Modifier.fillMaxSize().testTag("place_scroll").verticalScroll(scroll)) {
             // A clear window onto the map: the scroll is caught over the whole screen.
             Spacer(Modifier.fillMaxWidth().height(MAP_HEIGHT.dp))
             Sheet(state, vm, feature, Modifier.heightIn(min = (height.value - MAP_HEIGHT).dp), onRename = { renaming = true }, onDelete = { confirmingDelete = true })
@@ -220,11 +222,15 @@ private fun PassesPill(count: Int, strings: AppStrings) {
 private fun FloatingHeader(name: String, progress: Float, safeTop: androidx.compose.ui.unit.Dp, onBack: () -> Unit) {
     val atlas = AtlasTheme.colors
     if (progress <= 0f) return
-    Column(Modifier.fillMaxWidth().alpha(progress).background(atlas.background.copy(alpha = 0.97f))) {
+    // iOS: the background at .92 over `.ultraThinMaterial`. A blur of what lies behind is not available under API 31, and the
+    // material lets about half of the remaining 8 % through: .97 flat is the same weight (PL-07, divergences).
+    Column(Modifier.fillMaxWidth().alpha(progress).background(atlas.background.copy(alpha = 0.97f)).testTag("place_floating_header")) {
         Row(Modifier.fillMaxWidth().padding(top = safeTop + 3.dp, bottom = 8.dp).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (progress > 0.5f) NavCircleButton(AppGlyph.chevronLeft, onClick = onBack, contentDescription = appStrings.back())
-            else Spacer(Modifier.size(40.dp))
+            // iOS: the back button is ALWAYS in the header and fades with it; it takes taps above one half (`allowsHitTesting`).
+            // Below that the disc on the map still holds the tap, so this one is the drawing only (PL-07).
+            if (progress > 0.5f) NavCircleButton(AppGlyph.chevronLeft, onClick = onBack, contentDescription = appStrings.back(), modifier = Modifier.testTag("place_header_back"))
+            else NavCircleIcon(AppGlyph.chevronLeft, Modifier.testTag("place_header_back"))
             Text(name, Modifier.weight(1f), style = AppType.headerTitle, color = atlas.ink, maxLines = 1, textAlign = TextAlign.Center)
             Spacer(Modifier.size(40.dp))
         }
@@ -238,9 +244,9 @@ private fun Sheet(state: PlaceDetailState, vm: PlaceDetailViewModel, feature: Wo
     val strings = appStrings
     val shape = RoundedCornerShape(topStart = AtlasTheme.sheetRadius, topEnd = AtlasTheme.sheetRadius)
     Column(
-        modifier.fillMaxWidth().iosShadow(shape, Color.Black.copy(alpha = if (AppTheme.isDark) 0.5f else 0.16f), radius = 14.dp, y = (-8).dp)
+        modifier.fillMaxWidth().testTag("place_sheet").iosShadow(shape, Color.Black.copy(alpha = if (AppTheme.isDark) 0.5f else 0.16f), radius = 14.dp, y = (-8).dp)
             .background(atlas.background, shape)
-            .padding(start = AtlasTheme.sideInset, end = AtlasTheme.sideInset, top = 8.dp, bottom = tabBarClearanceAboveSafeArea() + 16.dp),
+            .padding(start = AtlasTheme.sideInset, end = AtlasTheme.sideInset, top = 8.dp, bottom = tabBarContentClearance()),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { Box(Modifier.size(width = 36.dp, height = 5.dp).background(atlas.handle, CapsuleShape)) }
@@ -288,11 +294,12 @@ private fun HereRow(stats: PlaceStats, strings: AppStrings) {
             withStyle(SpanStyle(fontSize = unitStyle.fontSize, fontFamily = unitStyle.fontFamily, fontWeight = unitStyle.fontWeight)) { append(text.substring(at + number.length)) }
         }
     }
-    Row(Modifier.fillMaxWidth().testTag("place_here_row"), verticalAlignment = Alignment.CenterVertically) {
-        Text(annotated, Modifier.weight(1f), color = atlas.secondary)
+    // iOS: `HStack(alignment: .firstTextBaseline, spacing: 8)`, so the chip's text stands on the baseline of the line (PL-06).
+    Row(Modifier.fillMaxWidth().testTag("place_here_row"), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(annotated, Modifier.weight(1f).alignByBaseline().testTag("place_here_text"), color = atlas.secondary)
         when {
-            stats.isFrequentGuest -> PlaceChipLabel(strings.placeChipFrequent())
-            stats.isFirstTime -> PlaceChipLabel(strings.placeChipFirst())
+            stats.isFrequentGuest -> PlaceChipLabel(strings.placeChipFrequent(), Modifier.alignByBaseline().testTag("place_chip"))
+            stats.isFirstTime -> PlaceChipLabel(strings.placeChipFirst(), Modifier.alignByBaseline().testTag("place_chip"))
         }
     }
 }
@@ -337,7 +344,8 @@ private fun UsualCard(state: PlaceDetailState, strings: AppStrings) {
 @Composable
 private fun UsualRow(course: Double, label: String?, detail: String, median: Double, strings: AppStrings) {
     val atlas = AtlasTheme.colors
-    Row(Modifier.fillMaxWidth().heightIn(min = 40.dp).padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically,
+    // iOS: `.frame(minHeight: 40)` and no padding of its own: the card is 79 tall for a two-line row (PL-05).
+    Row(Modifier.fillMaxWidth().heightIn(min = 40.dp).testTag("place_usual_row"), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         if (label == null) PassCourseGlyph(course)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -432,23 +440,24 @@ private fun DeleteBlock(onDelete: () -> Unit) {
                 Text(strings.placeDelete(), style = AppType.button, color = AppTheme.red)
             }
         }
-        Text(strings.placeDeleteHint(), style = AppType.meta, color = atlas.secondary, textAlign = TextAlign.Center)
+        Text(strings.placeDeleteHint(), Modifier.testTag("place_delete_hint"), style = AppType.meta, color = atlas.secondary, textAlign = TextAlign.Center)
     }
 }
 
 /** The mock's white card: one radius and one set of fields for «Обычно занимает» and the passes. */
 @Composable
 private fun PaperCard(content: @Composable ColumnScope.() -> Unit) {
-    Column(Modifier.fillMaxWidth().background(AtlasTheme.colors.card, ContinuousRoundedRectangle(AtlasTheme.cardRadius))
+    Column(Modifier.fillMaxWidth().testTag("place_usual_card").background(AtlasTheme.colors.card, ContinuousRoundedRectangle(AtlasTheme.cardRadius))
         .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp), content = content)
 }
 
 @Composable
 private fun CardHeader(title: String, caption: String) {
-    Row(Modifier.fillMaxWidth().padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        AtlasSectionTitle(title)
+    // The card's own 2 stands between the header and the row; nothing of the header's (PL-05). First-text-baseline.
+    Row(Modifier.fillMaxWidth().testTag("place_card_header"), verticalAlignment = Alignment.Top) {
+        AtlasSectionTitle(title, Modifier.alignByBaseline())
         Spacer(Modifier.weight(1f))
-        Text(caption, style = AppType.meta, color = AtlasTheme.colors.secondary, maxLines = 1)
+        Text(caption, Modifier.alignByBaseline(), style = AppType.meta, color = AtlasTheme.colors.secondary, maxLines = 1)
     }
 }
 
@@ -481,7 +490,7 @@ fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit,
                 Text(strings.placeRenameTitle(), Modifier.weight(1f).semantics { heading() }, style = AppType.sheetTitle, color = atlas.ink)
                 CircleButton(AppGlyph.xmark, strings.close(), "place_rename_close", diameter = 44.dp, fill = atlas.searchBackground) { sheet.dismiss() }
             }
-            Row(Modifier.fillMaxWidth().height(56.dp).background(atlas.card, ContinuousRoundedRectangle(14.dp))
+            Row(Modifier.fillMaxWidth().height(56.dp).testTag("place_rename_box").background(atlas.card, ContinuousRoundedRectangle(14.dp))
                 .border(1.dp, atlas.separator, ContinuousRoundedRectangle(14.dp)).padding(start = 14.dp, end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
@@ -498,7 +507,9 @@ fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit,
                     }
                 }
             }
-            Text(if (address == null) strings.placeRenameHint() else strings.placeRenameHintAddress(address), style = AppType.meta, color = atlas.secondary)
+            // iOS: `.padding(.top, -4)`: the hint stands 10 under the field, the rows after it unmoved (PL-10).
+            Text(if (address == null) strings.placeRenameHint() else strings.placeRenameHintAddress(address), Modifier.pulledUp(4.dp).testTag("place_rename_hint"),
+                style = AppType.meta, color = atlas.secondary)
             if (address != null && text.trim() != address) {
                 val haptics = rememberHaptics()
                 PressableCard(onClick = { haptics.tap(); setText(address) }, modifier = Modifier.testTag("place_rename_use_address")) {
@@ -509,9 +520,29 @@ fun PlaceRenameSheet(name: String?, address: String?, onSave: (String?) -> Unit,
                 }
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box(Modifier.weight(1f)) { SheetButton(strings.cancel(), atlas.searchBackground, atlas.ink, "place_rename_cancel") { sheet.dismiss() } }
-                Box(Modifier.weight(1f)) { SheetButton(strings.save(), atlas.accent, Color.White, "place_rename_save") { save() } }
+                Box(Modifier.weight(1f)) { RenameButton(strings.cancel(), atlas.searchBackground, atlas.ink, "place_rename_cancel") { sheet.dismiss() } }
+                Box(Modifier.weight(1f)) { RenameButton(strings.save(), atlas.accent, Color.White, "place_rename_save") { save() } }
             }
         }
     }
+}
+
+/**
+ * iOS: PlaceRenameSheet.sheetButtonLabel. 52 tall, `AppType.button` (16 semibold), the stat radius 16: the beta card's 44 with
+ * 15 semibold and 14 is another button (PL-09).
+ */
+@Composable
+private fun RenameButton(title: String, fill: Color, ink: Color, testTag: String, onClick: () -> Unit) {
+    PressableCard(onClick = onClick, modifier = Modifier.fillMaxWidth().testTag(testTag)) {
+        Box(Modifier.fillMaxWidth().height(52.dp).background(fill, ContinuousRoundedRectangle(AtlasTheme.statRadius)), contentAlignment = Alignment.Center) {
+            Text(title, style = AppType.button, color = ink, maxLines = 1)
+        }
+    }
+}
+
+/** SwiftUI's negative `.padding(.top, -x)`: the box starts [by] earlier and ends where its content does, so what follows does not move. */
+private fun Modifier.pulledUp(by: androidx.compose.ui.unit.Dp): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    val pull = by.roundToPx()
+    layout(placeable.width, (placeable.height - pull).coerceAtLeast(0)) { placeable.place(0, -pull) }
 }

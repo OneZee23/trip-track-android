@@ -5,11 +5,16 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
@@ -127,9 +132,10 @@ private fun SummaryPresentation(graph: AppGraph, initialTrip: Trip, outcome: Sto
                         // Android's picker has no persisted checked selection; removal lives beside the attached photo.
                         Column {
                             com.onezee.triptrack.ui.PhotoImage(com.onezee.triptrack.ui.PhotoSource.Local(photo.filename), maxPixels = 240, modifier = Modifier.size(72.dp))
-                            TrackingIcon(AppGlyph.trash, strings.delete(), "summary_photo_remove_${photo.id}", {
-                                mutate { graph.trips.deletePhoto(photo.id, trip.id); photos.remove(uri) }
-                            }, fill = AppColors.light.cardAlt, tint = AppTheme.red)
+                            Box(Modifier.size(44.dp).clickable(role = androidx.compose.ui.semantics.Role.Button) { mutate { graph.trips.deletePhoto(photo.id, trip.id); photos.remove(uri) } }
+                                .semantics { contentDescription = strings.delete() }.testTag("summary_photo_remove_${photo.id}"), contentAlignment = Alignment.Center) {
+                                Glyph(AppGlyph.trash, null, tint = AppTheme.red, size = 20.dp)
+                            }
                         }
                     }
                 }

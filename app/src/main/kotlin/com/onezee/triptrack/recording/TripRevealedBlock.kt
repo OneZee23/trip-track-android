@@ -1,12 +1,12 @@
 // iOS: TripRevealedBlock.swift, TripDiscoveries.swift, DiscoveriesAvailability.swift.
 package com.onezee.triptrack.recording
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.*
@@ -36,6 +36,9 @@ fun TripDiscoveries.visible(enabled: Boolean = DiscoveriesAvailability.isEnabled
 
 val TripDiscoveries.isEmpty: Boolean get() = newKm < .5 && newRegionIds.isEmpty() && secrets.isEmpty() && riddles.isEmpty() && milestones.isEmpty()
 
+/** iOS SealPainter.ring(for: .milestone): #F0A070. */
+private val MILESTONE_RING = Color(0xFFF0A070)
+
 @Composable
 fun TripRevealedBlock(discoveries: TripDiscoveries, modifier: Modifier = Modifier) {
     val visible = discoveries.visible()
@@ -44,9 +47,13 @@ fun TripRevealedBlock(discoveries: TripDiscoveries, modifier: Modifier = Modifie
     val km = visible.newKm.takeIf { it >= .5 }?.let {
         Measure.distance(it * 1000, LocalDistanceUnit.current, strings.language.code, strings, Measure.Style.adaptive)
     }
-    Column(modifier.fillMaxWidth().background(AppTheme.colors.card, RoundedCornerShape(16.dp)).padding(14.dp).testTag("summary_revealed"),
+    Column(modifier.fillMaxWidth().summaryCard(16.dp).padding(14.dp).testTag("summary_revealed"),
         verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(strings.revealedTitle(), style = inter(15f, InterWeight.heavy), color = AppTheme.colors.text)
+        // The seal in the colour of the find's kind; with no finds (they are hidden) the milestone's warm one.
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            RecordingGlyphIcon(RecordingGlyph.sealFill, RecordingInk.sealFillSemibold14, MILESTONE_RING, Modifier.testTag("summary_revealed_seal"))
+            Text(strings.revealedTitle(), style = inter(15f, InterWeight.heavy), color = AppTheme.colors.text)
+        }
         val line = TripRevealedLine.compose(strings, km, visible.secrets.size, visible.riddles.size, visible.milestones.size)
         if (line.isNotEmpty()) Text(line, style = inter(13f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
     }

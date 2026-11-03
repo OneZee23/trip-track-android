@@ -94,6 +94,7 @@ import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.model.GeoBounds
 import com.onezee.triptrack.model.MapTripPin
 import com.onezee.triptrack.model.Measure
+import com.onezee.triptrack.recording.SpokeSpinner
 import com.onezee.triptrack.ui.navigation.TabNavHost
 import java.time.Instant
 import kotlinx.coroutines.launch
@@ -161,9 +162,10 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
         val motion = rememberSlotMotion(target)
         val sheetTop = motion.top.value.toDouble()
         val placeAnchor = if (slot.showsPeekRow) slot.peekTop else slot.tabBarTop
-        val cardShown = state.selectedPlace != null || (state.homeSelected && state.home.mapPin != null)
-        // The slot's top, followed by the map controls: the card when one holds the slot.
-        val slotTop = if (cardShown) placeAnchor - 12 - PLACE_CARD_HEIGHT.value else sheetTop
+        // The slot's top, followed by the map controls: the PLACE card when one holds the slot. The home card does not
+        // move them (iOS slotTop asks for `selectedPlace` only): they stay at the peek and the 96 card, drawn over
+        // them, hides the capsule completely (AT-07).
+        val slotTop = if (state.selectedPlace != null) placeAnchor - 12 - PLACE_CARD_HEIGHT.value else sheetTop
         val selectionPanel = state.selection != null && region == null
 
         // Back on Android closes what is open before it leaves the tab (Android's back guidance).
@@ -371,17 +373,7 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
             )
         }
 
-        if (renderingPoster) {
-            Row(
-                Modifier.align(Alignment.BottomCenter).padding(bottom = (screenHeight.value - slot.collapsedTop(variant).toFloat() + 8).dp)
-                    .background(Color.Black.copy(alpha = 0.55f), CapsuleShape).padding(horizontal = 14.dp, vertical = 10.dp).testTag("mymap_share_progress"),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                CarLoadingDots(Color.White)
-                Text(strings.shareRendering(), style = inter(13f, InterWeight.semibold), color = Color.White)
-            }
-        }
+        if (renderingPoster) PosterProgressPill(Modifier.align(Alignment.BottomCenter).padding(bottom = posterPillBottom(tappable)))
 
         ToastHost(toast, onDismiss = { toast = null })
     }
@@ -451,6 +443,25 @@ private fun EmptyAtlas(modifier: Modifier) {
 
 /** iOS MyMapSheet.collapsedHeight: 166 + the tab bar clearance + 2. */
 private val EMPTY_SHEET_HEIGHT: Float = 166f + TabBarMetrics.clearance.value + 2f
+
+/**
+ * iOS posterProgress: `.padding(.bottom, MyMapSheet.collapsedHeight + 8)` from the screen's bottom, so the pill's foot stands
+ * 286 up and overlaps the head of the collapsed sheet. A tappable navigation bar lifts the sheet and the pill with it (AT-19).
+ */
+internal fun posterPillBottom(tappable: androidx.compose.ui.unit.Dp): androidx.compose.ui.unit.Dp = (EMPTY_SHEET_HEIGHT + 8f).dp + tappable
+
+/** «Готовим снимок…»: the white system spinner and the words on a black pill, over the map while the poster is built. */
+@Composable
+internal fun PosterProgressPill(modifier: Modifier = Modifier) {
+    Row(
+        modifier.testTag("mymap_share_progress").background(Color.Black.copy(alpha = 0.55f), CapsuleShape).padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        SpokeSpinner(Color.White, Modifier.size(20.dp).testTag("mymap_share_spinner"))
+        Text(appStrings.shareRendering(), style = inter(13f, InterWeight.semibold), color = Color.White)
+    }
+}
 
 /** Puts the bottom edge of the content at [y] (dp from the screen's top) by OFFSET, never by padding. */
 fun Modifier.anchorBottom(y: Double, density: androidx.compose.ui.unit.Density): Modifier = layout { measurable, constraints ->

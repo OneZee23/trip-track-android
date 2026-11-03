@@ -46,8 +46,9 @@ fun CarLoading(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center) {
         Box(Modifier.offset(y = 15.dp).size(width = 80.dp, height = 2.dp).background(AppTheme.colors.textTertiary.copy(alpha = 0.3f), RoundedCornerShape(1.dp)))
         Box(Modifier.offset(y = 15.dp)) { CarLoadingDots(AppTheme.colors.textTertiary) }
-        Glyph(AppGlyph.car, contentDescription = null, tint = AppTheme.accent, size = 30.dp,
-            modifier = Modifier.offset(x = drive.dp).rotate(rock))
+        // car.fill at 28 semibold is 33.5 × 26.4 of ink; the box is 1.2 × the point size (AT-06).
+        Glyph(AppGlyph.car, contentDescription = null, tint = AppTheme.accent, size = 33.6.dp,
+            modifier = Modifier.offset(x = drive.dp).rotate(rock).testTag("atlas_loading_car"))
     }
 }
 

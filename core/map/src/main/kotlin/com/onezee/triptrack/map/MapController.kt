@@ -6,6 +6,8 @@ import androidx.lifecycle.Lifecycle
 import com.onezee.triptrack.logic.MapRect
 import com.onezee.triptrack.logic.RegionLabelAnnotation
 import com.onezee.triptrack.map.attribution.HouseAttributionManager
+import com.onezee.triptrack.map.area.AreaLayers
+import com.onezee.triptrack.map.area.MapArea
 import com.onezee.triptrack.map.attribution.MapAttribution
 import com.onezee.triptrack.map.camera.CameraFraming
 import com.onezee.triptrack.map.camera.MapCameraCommand
@@ -46,8 +48,8 @@ import org.maplibre.android.maps.Style
  * Everything behind one [MapHost]: the MapView's lifecycle, the style and the order of our layers on
  * it, the camera, and the fog's background and memory rules. Main thread only.
  *
- * Layer order, bottom to top: the map style (labels included) → fog → vein → route casing, line, dash,
- * ends → markers. The fog is opaque enough that whatever lies under it does not exist for the eye, so
+ * Layer order, bottom to top: the map style (labels included) → area (the home zone's disc) → fog → vein →
+ * route casing, line, dash, ends → markers. The fog is opaque enough that whatever lies under it does not exist for the eye, so
  * the vein, the route and the markers go above it.
  */
 internal class MapController(
@@ -58,6 +60,7 @@ internal class MapController(
 ) {
     private var map: MapLibreMap? = null
     private var style: Style? = null
+    private val areaLayers = AreaLayers()
     private val routeLayers = RouteLayers()
     private val veinLayers = VeinLayers()
     private val markerLayers = MarkerLayers(density)
@@ -73,6 +76,7 @@ internal class MapController(
 
     private var fog: MapFog? = null
     private var routes: MapRoutes? = null
+    private var area: MapArea? = null
     private var vein: MapVein? = null
     private var markers: List<MapMarker> = emptyList()
     var onMarkerTap: ((MapMarker) -> Unit)? = null
@@ -130,6 +134,7 @@ internal class MapController(
 
     private fun onStyleLoaded(loaded: Style) {
         style = loaded
+        areaLayers.addTo(loaded, area)
         if (fog != null) ensureFog()?.addTo(loaded)
         veinLayers.addTo(loaded, vein)
         routeLayers.addTo(loaded, routes)
@@ -165,6 +170,12 @@ internal class MapController(
         layer.setRevealed(value.revealed)
         val reveal = value.liveReveal
         layer.setLiveReveal(reveal?.point, reveal?.progress ?: 0.0, reveal?.metres ?: FogRules.REVEAL_METRES)
+    }
+
+    fun setArea(value: MapArea?) {
+        if (value == area) return
+        area = value
+        style?.let { areaLayers.update(it, value) }
     }
 
     fun setRoutes(value: MapRoutes?) {

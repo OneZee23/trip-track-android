@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -66,6 +67,7 @@ import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.navigation.tabBarTappableInset
 import com.onezee.triptrack.designsystem.strings.AppStrings
+import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.AppType
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
 import com.onezee.triptrack.designsystem.theme.CapsuleShape
@@ -84,6 +86,7 @@ import com.onezee.triptrack.feature.atlas.ui.AtlasBetaSheet
 import com.onezee.triptrack.feature.atlas.ui.AtlasSectionTitle
 import com.onezee.triptrack.feature.atlas.ui.AtlasSheet
 import com.onezee.triptrack.feature.atlas.ui.BetaSubject
+import com.onezee.triptrack.feature.atlas.ui.CLOSE_CROSS_GLYPH
 import com.onezee.triptrack.feature.atlas.ui.CircleButton
 import com.onezee.triptrack.feature.atlas.ui.SuggestionSkeleton
 import com.onezee.triptrack.feature.atlas.ui.WorldGlyph
@@ -364,8 +367,10 @@ private fun ColumnScope.SearchContent(state: PlacesTabState, vm: PlacesTabViewMo
             PlacesSearchOutcome.nothingFound -> NothingFound()
             else -> LazyColumn(
                 Modifier.weight(1f).fillMaxWidth().testTag("places_search_results"),
-                // The keyboard covers the panel's bottom: the last rows come out from under it.
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding() + 16.dp),
+                // The keyboard covers the panel's bottom: the last rows come out from under it. With the keyboard down they still
+                // clear the tab bar, as iOS's `.padding(.bottom, 291)` does at any time (PL-04).
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp,
+                    bottom = maxOf(WindowInsets.ime.asPaddingValues().calculateBottomPadding() + 16.dp, tabBarContentClearance())),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(search.results, key = { it.place.id }) { item -> PlaceCard(item, compact = true, onTap = { onOpen(item.place.id) }) }
@@ -400,13 +405,14 @@ private fun SearchRow(query: String, onQuery: (String) -> Unit, focus: FocusRequ
     val haptics = rememberHaptics()
     Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(
-            Modifier.weight(1f).height(44.dp).background(atlas.searchBackground, ContinuousRoundedRectangle(12.dp)).padding(horizontal = 12.dp),
+            Modifier.weight(1f).height(44.dp).testTag("places_search_field").background(atlas.searchBackground, ContinuousRoundedRectangle(12.dp)).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Glyph(AppGlyph.magnifyingglass, contentDescription = null, tint = atlas.secondary, size = 17.dp)
             Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
-                if (query.isEmpty()) Text(strings.placesSearchPlaceholder(), style = AppType.body, color = atlas.secondary, maxLines = 1)
+                // The system placeholder, dimmer than the magnifier (iOS tertiaryLabel: 3C3C43 at 30 % in light, EBEBF5 at 30 % in dark): PL-02.
+                if (query.isEmpty()) Text(strings.placesSearchPlaceholder(), Modifier.testTag("places_search_placeholder"), style = AppType.body, color = placeholderInk(), maxLines = 1)
                 BasicTextField(
                     value = query,
                     onValueChange = onQuery,
@@ -420,8 +426,10 @@ private fun SearchRow(query: String, onQuery: (String) -> Unit, focus: FocusRequ
             }
             if (query.isNotEmpty()) {
                 val interaction = remember { MutableInteractionSource() }
-                Box(Modifier.size(28.dp).clickable(interactionSource = interaction, indication = null, role = Role.Button) { haptics.tap(); onQuery("") }
-                    .semantics { contentDescription = strings.calendarClearFilter() }, contentAlignment = Alignment.Center) {
+                // iOS: the bare 15 pt symbol after the field, its right edge 13.4 from the field's. The 28 target stays, moved
+                // right by the 5 that the old centred glyph stood inside it (PL-03).
+                Box(Modifier.offset(x = 5.dp).size(28.dp).clickable(interactionSource = interaction, indication = null, role = Role.Button) { haptics.tap(); onQuery("") }
+                    .semantics { contentDescription = strings.calendarClearFilter() }.testTag("places_search_clear"), contentAlignment = Alignment.Center) {
                     Glyph(AppGlyph.xmarkCircleFill, contentDescription = null, tint = atlas.secondary, size = 17.dp)
                 }
             }
@@ -435,6 +443,10 @@ private fun SearchRow(query: String, onQuery: (String) -> Unit, focus: FocusRequ
         }
     }
 }
+
+/** iOS `TextField` placeholder: the system's tertiary label, which is dimmer than the secondary grey beside it. */
+@Composable
+private fun placeholderInk(): Color = if (AppTheme.isDark) Color(235, 235, 245).copy(alpha = .3f) else Color(60, 60, 67).copy(alpha = .3f)
 
 /** iOS sortChips: the order as CHIPS, not a sheet: the whole choice in view, one tap to change it. */
 @Composable
@@ -511,11 +523,13 @@ private fun PlacesSection(state: PlacesTabState, onOpen: (UUID) -> Unit) {
         return
     }
     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("places_list"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        state.groups.forEachIndexed { index, group ->
-            Row(Modifier.fillMaxWidth().padding(top = if (state.groups.size > 1 && index > 0) 6.dp else 0.dp), verticalAlignment = Alignment.CenterVertically) {
-                AtlasSectionTitle(groupTitle(group.kind, strings))
+        state.groups.forEach { group ->
+            // `.padding(.top, total > 1 ? 6 : 0)`: EVERY header gets the 6 once there is more than one group, the first
+            // included, so it stands 12 + 6 under the card above it (PL-01). First-text-baseline, as on iOS.
+            Row(Modifier.fillMaxWidth().padding(top = if (state.groups.size > 1) 6.dp else 0.dp).testTag("places_group_header"), verticalAlignment = Alignment.Top) {
+                AtlasSectionTitle(groupTitle(group.kind, strings), Modifier.alignByBaseline())
                 Spacer(Modifier.weight(1f))
-                Text(strings.formattedCount(group.items.size), style = AppType.meta.tabular(), color = atlas.secondary)
+                Text(strings.formattedCount(group.items.size), Modifier.alignByBaseline(), style = AppType.meta.tabular(), color = atlas.secondary)
             }
             group.items.forEach { item -> PlaceCard(item, compact = state.showsOrganization, onTap = { onOpen(item.place.id) }) }
         }
@@ -563,7 +577,8 @@ private fun SelectionContent(state: PlacesTabState, placeId: UUID?, hintId: UUID
                 hint != null -> PlaceSuggestionCard(hint, onSave = { onSave(hint) })
             }
         }
-        CircleButton(AppGlyph.xmark, strings.close(), "places_selection_close", tint = atlas.secondary, glyphSize = 15.dp, onClick = onClose)
+        // iOS: the same xmark 13 bold in a 36 disc as the Atlas cards' (AT-10): the same box.
+        CircleButton(AppGlyph.xmark, strings.close(), "places_selection_close", tint = atlas.secondary, glyphSize = CLOSE_CROSS_GLYPH, onClick = onClose)
     }
 }
 
@@ -592,12 +607,15 @@ private fun ColumnScope.EmptyContent(state: PlacesTabState, vm: PlacesTabViewMod
             }
         }
         if (state.recentTrips.isNotEmpty()) {
-            Box(Modifier.padding(horizontal = 16.dp)) { AtlasSectionTitle(strings.placesMarkInTrip()) }
-            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).background(atlas.card, ContinuousRoundedRectangle(AtlasTheme.cardRadius))
-                .padding(horizontal = 16.dp, vertical = 2.dp)) {
-                state.recentTrips.forEachIndexed { index, trip ->
-                    if (index > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(atlas.separator))
-                    RecentTripRow(trip, strings, unit) { onOpenTrip(trip) }
+            // iOS: title and card share a `VStack(spacing: 10)`; here they were two children of the panel's 12 (PL-11).
+            Column(Modifier.fillMaxWidth().testTag("places_mark_in_trip"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(Modifier.padding(horizontal = 16.dp).testTag("places_mark_in_trip_title")) { AtlasSectionTitle(strings.placesMarkInTrip()) }
+                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("places_mark_in_trip_card").background(atlas.card, ContinuousRoundedRectangle(AtlasTheme.cardRadius))
+                    .padding(horizontal = 16.dp, vertical = 2.dp)) {
+                    state.recentTrips.forEachIndexed { index, trip ->
+                        if (index > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(atlas.separator))
+                        RecentTripRow(trip, strings, unit) { onOpenTrip(trip) }
+                    }
                 }
             }
         }

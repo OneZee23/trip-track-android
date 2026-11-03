@@ -1,17 +1,22 @@
 // iOS: TrackingView.stopConfirmSheet, VehiclePickerSheet.swift, RecoveryPromptSheet.swift.
 package com.onezee.triptrack.recording
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -44,23 +49,64 @@ fun StopConfirmationContent(preview: RecordingFinishPreview, paused: Boolean, bu
     val reason = preview.discardReason
     val title = if (reason == null) strings.stopConfirmTitle() else strings.recordingDiscardTitle()
     val unit = LocalDistanceUnit.current
-    Column(Modifier.fillMaxWidth().background(Color(0xFF1C1C1E), RoundedCornerShape(26.dp))
-        .border(1.dp, Color.White.copy(alpha = .1f), RoundedCornerShape(26.dp)).verticalScroll(rememberScrollState())
-        .padding(horizontal = 18.dp).padding(top = 22.dp, bottom = 10.dp).semantics { paneTitle = title }.testTag("stop_confirmation"),
+    val card = RoundedCornerShape(26.dp)
+    // iOS: Color(28, 28, 30), a hairline of white at .1 and a shadow of black at .45, radius 24, y 8.
+    Column(Modifier.fillMaxWidth().testTag("stop_confirmation").iosShadow(card, Color.Black.copy(alpha = .45f), 24.dp, y = 8.dp).background(Color(0xFF1C1C1E), card)
+        .border(1.dp, Color.White.copy(alpha = .1f), card).verticalScroll(rememberScrollState())
+        .padding(horizontal = 18.dp).padding(top = 22.dp, bottom = 10.dp).semantics { paneTitle = title },
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(title, Modifier.testTag("stop_confirm_title"), style = interScaled(20f, InterWeight.heavy), color = Color.White, textAlign = TextAlign.Center)
             Text(reason?.let(strings::recordingDiscardReason) ?: strings.stopConfirmBody(), Modifier.testTag("stop_confirm_explanation"),
                 style = interScaled(13.5f), color = Color.White.copy(alpha = .75f), textAlign = TextAlign.Center)
         }
-        StatusPill("${Measure.distance(preview.distance, unit, strings.language.code, strings, Measure.Style.tenths)} · ${formattedDuration(preview.duration)}", fill = Color.White.copy(alpha = .08f))
+        // The recording the question is about: the distance, a dot at .3 and the time, three texts 8 apart (iOS: 14 semibold at .75).
+        Row(Modifier.testTag("stop_confirm_pill").background(Color.White.copy(alpha = .08f), CircleShape).padding(horizontal = 14.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            val pill = interScaled(14f, InterWeight.semibold)
+            Text(Measure.distance(preview.distance, unit, strings.language.code, strings, Measure.Style.tenths), style = pill, color = Color.White.copy(alpha = .75f))
+            Text("·", style = pill, color = Color.White.copy(alpha = .3f))
+            Text(formattedDuration(preview.duration), style = pill, color = Color.White.copy(alpha = .75f))
+        }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            TrackingButton(if (reason == null) strings.stopConfirmAction() else strings.recordingDiscardAction(),
-                if (reason == null) AppGlyph.checkmark else AppGlyph.trash, onFinish, "stop_confirm_finish", fill = AppTheme.red, enabled = !busy)
-            if (!paused) TrackingButton(strings.stopConfirmPause(), AppGlyph.pause, onPause, "stop_confirm_pause", fill = Color.White.copy(alpha = .1f), enabled = !busy)
-            TrackingButton(strings.recordingReturn(), null, onDismiss, "stop_confirm_cancel", fill = Color.Transparent, ink = Color.White.copy(alpha = .75f), height = 50.dp, enabled = !busy)
+            ConfirmButton(if (reason == null) strings.stopConfirmAction() else strings.recordingDiscardAction(), "stop_confirm_finish", AppTheme.red, !busy, onFinish) {
+                if (reason == null) Glyph(AppGlyph.checkmark, null, tint = Color.White, size = 18.3.dp, modifier = Modifier.testTag("stop_confirm_finish_glyph"))
+                else Glyph(AppGlyph.trash, null, tint = Color.White, size = 18.4.dp, modifier = Modifier.testTag("stop_confirm_finish_glyph"))
+            }
+            if (!paused) ConfirmButton(strings.stopConfirmPause(), "stop_confirm_pause", Color.White.copy(alpha = .1f), !busy, onPause) {
+                RecordingShape(RecordingMark.pause, 10.88f, 14f, Color.White, Modifier.testTag("stop_confirm_pause_glyph"))
+            }
+            // «Вернуться к записи»: Inter 16 semibold at .75 in a row of 50 with 6 above and below, no fill.
+            val interaction = remember { MutableInteractionSource() }
+            val haptics = rememberHaptics()
+            Box(Modifier.testTag("stop_confirm_cancel").fillMaxWidth().alpha(if (busy) .45f else 1f).plainPressFeedback(interaction)
+                .clickable(interactionSource = interaction, indication = null, enabled = !busy, role = Role.Button) { haptics.tap(); onDismiss() }
+                .padding(vertical = 6.dp).heightIn(min = 50.dp), contentAlignment = Alignment.Center) {
+                Text(strings.recordingReturn(), style = interScaled(16f, InterWeight.semibold), color = Color.White.copy(alpha = .75f), textAlign = TextAlign.Center)
+            }
         }
     }
+}
+
+/** iOS confirmButton: the symbol 15 bold and the word in Inter 16 bold, padding 12 / 14, at least 52 tall, radius 14. */
+@Composable
+private fun ConfirmButton(label: String, tag: String, fill: Color, enabled: Boolean, onClick: () -> Unit, glyph: @Composable () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val haptics = rememberHaptics()
+    Row(Modifier.testTag(tag).fillMaxWidth().heightIn(min = 52.dp).alpha(if (enabled) 1f else .45f).plainPressFeedback(interaction)
+        .background(fill, RoundedCornerShape(14.dp)).clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button) { haptics.tap(); onClick() }
+        .padding(horizontal = 12.dp, vertical = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
+        glyph()
+        Text(label, style = interScaled(16f, InterWeight.bold), color = Color.White, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+private fun RecordingSpinner(color: Color, modifier: Modifier = Modifier) {
+    val rotation = if (LocalReduceMotion.current) 0f else rememberInfiniteTransition(label = "recording_wait")
+        .animateFloat(0f, 360f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "rotation").value
+    Canvas(modifier.progressSemantics()) { drawArc(color, rotation, 270f, false, style = Stroke(width = 2.dp.toPx())) }
 }
 
 @Composable
@@ -121,6 +167,18 @@ fun RecoveryPromptSheet(recovery: RecoverableRecording, busy: Boolean, onContinu
     }
 }
 
+/** iOS RecoveryPromptSheet's two buttons: a fixed height, radius 14, the word centred. «Продолжить» is Inter 16 bold on accent; «Завершить и сохранить» 15 semibold on the card tone. */
+@Composable
+private fun RecoveryButton(label: String, tag: String, fill: Color, ink: Color, height: Dp, size: Float, weight: InterWeight, enabled: Boolean, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val haptics = rememberHaptics()
+    // The height is a floor, not a fixed number: at a large font the word wraps and the button grows with it.
+    Box(Modifier.fillMaxWidth().heightIn(min = height).alpha(if (enabled) 1f else .45f).plainPressFeedback(interaction).background(fill, RoundedCornerShape(14.dp))
+        .clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button) { haptics.tap(); onClick() }.testTag(tag), contentAlignment = Alignment.Center) {
+        Text(label, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = interScaled(size, weight), color = ink, textAlign = TextAlign.Center)
+    }
+}
+
 @Composable
 fun RecoveryPromptContent(recovery: RecoverableRecording, busy: Boolean, onContinue: () -> Unit, onFinish: () -> Unit) {
     val strings = appStrings
@@ -134,11 +192,16 @@ fun RecoveryPromptContent(recovery: RecoverableRecording, busy: Boolean, onConti
         }
         Text(strings.recoveryTitle(), Modifier.padding(top = 16.dp, bottom = 8.dp), style = inter(19f, InterWeight.bold), color = AppTheme.colors.text, textAlign = TextAlign.Center)
         Text(strings.recoveryBody(), Modifier.padding(horizontal = 8.dp).padding(bottom = 14.dp), style = inter(14f), color = AppTheme.colors.textSecondary, textAlign = TextAlign.Center)
-        StatusPill("${strings.recoveryChip()} · ${Measure.distance(recovery.orphan.distance, unit, strings.language.code, strings, Measure.Style.tenths)} · $time",
-            fill = AppTheme.accent.copy(alpha = .1f), ink = AppTheme.accent)
+        // «Восстановлено · 12.4 км · 0:23»: the check mark at 13, the line 13 semibold with fixed-width digits, accent at .1 under it.
+        Row(Modifier.testTag("recovery_chip").background(AppTheme.accent.copy(alpha = .1f), CircleShape).padding(horizontal = 14.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+            Glyph(AppGlyph.checkmarkCircleFill, null, tint = AppTheme.accent, size = 15.4.dp, modifier = Modifier.testTag("recovery_chip_check"))
+            Text("${strings.recoveryChip()} · ${Measure.distance(recovery.orphan.distance, unit, strings.language.code, strings, Measure.Style.tenths)} · $time",
+                style = inter(13f, InterWeight.semibold, monospacedDigits = true), color = AppTheme.accent)
+        }
         Spacer(Modifier.height(22.dp))
-        TrackingButton(strings.recoveryContinue(), null, onContinue, "recovery_continue", enabled = !busy)
+        RecoveryButton(strings.recoveryContinue(), "recovery_continue", AppTheme.accent, Color.White, 52.dp, 16f, InterWeight.bold, !busy, onContinue)
         Spacer(Modifier.height(10.dp))
-        TrackingButton(strings.recoveryFinish(), null, onFinish, "recovery_finish", fill = AppTheme.colors.cardAlt, ink = AppTheme.colors.text, height = 48.dp, enabled = !busy)
+        RecoveryButton(strings.recoveryFinish(), "recovery_finish", AppTheme.colors.cardAlt, AppTheme.colors.text, 48.dp, 15f, InterWeight.semibold, !busy, onFinish)
     }
 }

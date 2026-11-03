@@ -72,6 +72,9 @@ fun WorldGlyphIcon(
 
 private const val GRID = 24f
 
+/** 2 pt of the iPhone's stroke on the map controls, in the units of a 21.6 box (0.9 dp each). */
+private const val LAYERS_STROKE = 2.2f
+
 private fun line(width: Float = 1.9f) = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
 private fun path(vararg points: Float, close: Boolean = false): Path = Path().apply {
@@ -96,14 +99,20 @@ private fun pinPath(): Path = Path().apply {
 
 private fun DrawScope.drawWorldGlyph(glyph: WorldGlyph, tint: Color) {
     when (glyph) {
+        // square.3.layers.3d at 18 medium (18.2 × 20.0 of ink, 2 pt of stroke), traced from the iPhone's render at a 21.6 box
+        // (0.9 dp a unit): THREE equal diamonds 4.6 units apart, each hiding the top of the one under it, so the first is
+        // whole and the two below show their lower V with a short stub going up to where it meets the layer above. The first
+        // drawing squeezed them into 17 × 16 with unequal steps (AT-02).
         WorldGlyph.layers -> {
-            drawPath(path(12f, 3.6f, 21f, 8.2f, 12f, 12.8f, 3f, 8.2f, close = true), tint, style = line(1.8f))
-            drawPath(path(3f, 12.2f, 12f, 16.8f, 21f, 12.2f), tint, style = line(1.8f))
-            drawPath(path(3f, 16f, 12f, 20.6f, 21f, 16f), tint, style = line(1.8f))
+            drawPath(path(12f, 2f, 21f, 7.37f, 12f, 12.74f, 3f, 7.37f, close = true), tint, style = line(LAYERS_STROKE))
+            drawPath(path(6.9f, 9.69f, 3f, 12f, 12f, 17.37f, 21f, 12f, 17.1f, 9.69f), tint, style = line(LAYERS_STROKE))
+            drawPath(path(6.9f, 14.33f, 3f, 16.67f, 12f, 22f, 21f, 16.67f, 17.1f, 14.33f), tint, style = line(LAYERS_STROKE))
         }
+        // location at 18 medium (17.25 square of ink, 2 pt of stroke), traced the same way: the tip, the left wing, the notch
+        // under the wing (straight above the tail) and the tail.
         WorldGlyph.location, WorldGlyph.locationSlash -> {
-            drawPath(path(20.4f, 3.6f, 3.6f, 10.8f, 11.2f, 12.8f, 13.2f, 20.4f, close = true), tint, style = line(1.8f))
-            if (glyph == WorldGlyph.locationSlash) drawLine(tint, Offset(3.4f, 3.4f), Offset(20.6f, 20.6f), 1.9f, StrokeCap.Round)
+            drawPath(path(20.47f, 3.53f, 3.53f, 11.12f, 12.1f, 11.7f, 12.3f, 20.56f, close = true), tint, style = line(LAYERS_STROKE))
+            if (glyph == WorldGlyph.locationSlash) drawLine(tint, Offset(3.4f, 3.4f), Offset(20.6f, 20.6f), LAYERS_STROKE, StrokeCap.Round)
         }
         WorldGlyph.mappin -> {
             drawCircle(tint, 4.2f, Offset(12f, 7.4f))

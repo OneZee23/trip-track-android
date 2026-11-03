@@ -131,7 +131,9 @@ class RecordingInteractionTests : RecordingScreenTest() {
         compose.onNodeWithText("1 115").assertExists()
     }
 
-    @Test fun controlsClearTheStatusAndGestureBars() {
+    // iOS docks the blocks 24 above the physical bottom (RC-09): a gesture bar takes no touches, so it is not cleared;
+    // the status bar is, and a tappable bar is (RecordingDesignTests).
+    @Test fun controlsClearTheStatusBarAndStandOnTheIphonesDock() {
         show { TrackingScreen(fixture.recording, fixture.car, false, TrackingActions(), fixture.now,
             contentInsets = WindowInsets(top = 28.dp, bottom = 34.dp)) }
         val root = compose.onRoot().fetchSemanticsNode().boundsInRoot
@@ -139,7 +141,8 @@ class RecordingInteractionTests : RecordingScreenTest() {
         val stop = compose.onNodeWithTag("tracking_stop").fetchSemanticsNode().boundsInRoot
         val density = compose.activity.resources.displayMetrics.density
         assertTrue(back.top >= 28 * density)
-        assertTrue(stop.bottom <= root.bottom - (34 + 24) * density + 1)
+        assertTrue(stop.bottom <= root.bottom - 24 * density + 1)
+        assertTrue(stop.bottom >= root.bottom - 24 * density - 1, "and no higher than the dock")
     }
 
     @Test fun recoveryCannotBeDismissedByTheScrimOrADrag() {

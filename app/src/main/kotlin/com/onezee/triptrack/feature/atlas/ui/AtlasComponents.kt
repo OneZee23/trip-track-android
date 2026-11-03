@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -94,12 +95,16 @@ fun AtlasBetaChip(onClick: () -> Unit, testTag: String = "atlas_beta_chip") {
     ) {
         Box(Modifier.heightIn(min = 44.dp), contentAlignment = Alignment.Center) {
             Row(
-                Modifier.background(atlas.accentSoft, CapsuleShape).padding(horizontal = 9.dp, vertical = 5.dp),
+                Modifier.testTag("${testTag}_pill").background(atlas.accentSoft, CapsuleShape).padding(horizontal = 9.dp, vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Text(strings.atlasBetaChip(), style = inter(11f, InterWeight.bold), color = atlas.accentInk, maxLines = 1)
-                Glyph(AppGlyph.chevronRight, contentDescription = null, tint = atlas.accentInk, size = 9.dp)
+                // chevron.right at 8 bold: 4.3 × 7.3 of ink in a layout box 7 wide. A 9 square box left 2.5 empty on the
+                // pill's end, so the pill ran 2 dp wider than the iPhone's (AT-03).
+                Box(Modifier.size(width = 7.dp, height = 9.dp), contentAlignment = Alignment.Center) {
+                    Glyph(AppGlyph.chevronRight, contentDescription = null, tint = atlas.accentInk, size = 10.dp, modifier = Modifier.requiredSize(10.dp))
+                }
             }
         }
     }
@@ -168,7 +173,7 @@ fun CircleButton(
     ) {
         Box(Modifier.size(44.dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size(diameter).background(fill, CircleShape), contentAlignment = Alignment.Center) {
-                Glyph(glyph, contentDescription = null, tint = tint, size = glyphSize)
+                Glyph(glyph, contentDescription = null, tint = tint, size = glyphSize, modifier = Modifier.testTag("${testTag}_glyph"))
             }
         }
     }
@@ -185,7 +190,7 @@ data class StatColumn(val id: String, val value: String, val unit: String?, val 
 fun AtlasStatTrio(columns: List<StatColumn>, modifier: Modifier = Modifier) {
     val atlas = AtlasTheme.colors
     val stacked = isAccessibilityFontScale()
-    val card = modifier.fillMaxWidth().background(atlas.card, RoundedCornerShape(AtlasTheme.cardRadius)).padding(16.dp)
+    val card = modifier.fillMaxWidth().testTag("atlas_stats_card").background(atlas.card, RoundedCornerShape(AtlasTheme.cardRadius)).padding(16.dp)
     if (stacked) {
         Column(card, verticalArrangement = Arrangement.spacedBy(14.dp)) { columns.forEach { StatTrioColumn(it, Modifier) } }
     } else {
@@ -300,6 +305,31 @@ fun AtlasTripRow(title: String, subtitle: String, trip: MapTripPin, onOpen: () -
     }
 }
 
+/**
+ * iOS: MyMapSheet.tripRow, the row of the ROAD card (it has its own, not the region's): a 40 thumbnail, 16 from the
+ * side, 6 above and under (52 tall), the title and the line 3 apart, the line Inter 12, and the chevron at 12
+ * semibold in the full secondary colour (AT-14).
+ */
+@Composable
+fun AtlasRoadRow(title: String, subtitle: String, trip: MapTripPin, onOpen: () -> Unit) {
+    val atlas = AtlasTheme.colors
+    val haptics = rememberHaptics()
+    PressableCard(onClick = { haptics.tap(); onOpen() }, modifier = Modifier.fillMaxWidth().testTag("mymap_road_trip")) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            MapTripThumb(trip, 40.dp)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(title, style = AppType.itemTitle, color = atlas.ink, maxLines = 1)
+                Text(subtitle, style = inter(12f), color = atlas.secondary, maxLines = 1)
+            }
+            Glyph(AppGlyph.chevronRight, contentDescription = null, tint = atlas.secondary, size = 14.4.dp, modifier = Modifier.testTag("mymap_road_chevron"))
+        }
+    }
+}
+
 /** What the 44 tile of [AtlasPlaceCard] draws: a pin for a place, the house for home. */
 enum class PlaceCardTile { place, home }
 
@@ -314,34 +344,47 @@ fun AtlasPlaceCard(tile: PlaceCardTile, name: String, line: String, actionTitle:
     val strings = appStrings
     val shape = ContinuousRoundedRectangle(AtlasTheme.cardRadius)
     val shadow = Color.Black.copy(alpha = if (AppTheme.isDark) 0.45f else 0.16f)
-    Row(
+    // `.padding(12).frame(height: 96)` centres the content in the frame: the tile stands 16 under the card's top, and the
+    // name, the line and the action at 20, 41 and 62 (AT-08), not at the top edge of the padding.
+    Box(
         modifier.fillMaxWidth().height(PLACE_CARD_HEIGHT).iosShadow(shape, shadow, radius = 12.dp, y = 8.dp)
-            .background(atlas.card, shape).padding(12.dp).testTag(testTag),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
+            .background(atlas.card, shape).testTag(testTag),
+        contentAlignment = Alignment.CenterStart,
     ) {
-        Box(Modifier.size(44.dp).background(atlas.accentSoft, RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
-            if (tile == PlaceCardTile.home) Glyph(AppGlyph.houseFill, contentDescription = null, tint = atlas.accentInk, size = 22.dp)
-            else WorldGlyphIcon(WorldGlyph.mappin, contentDescription = null, tint = atlas.accentInk, size = 22.dp)
-        }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(name, style = AppType.itemTitle, color = atlas.ink, maxLines = 2)
-            Text(line, style = AppType.meta, color = atlas.secondary, maxLines = 1)
-            val interaction = remember { MutableInteractionSource() }
-            Row(
-                Modifier.height(24.dp).plainPressFeedback(interaction)
-                    .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onOpen)
-                    .testTag("atlas_place_open"),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-            ) {
-                Text(actionTitle, style = AppType.button, color = atlas.accent, maxLines = 1)
-                Glyph(AppGlyph.chevronRight, contentDescription = null, tint = atlas.accent, size = 13.dp)
+        Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+            Box(Modifier.testTag("atlas_place_tile").size(44.dp).background(atlas.accentSoft, RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
+                // house.fill at 18 semibold is 21.1 × 19.1 of ink (AT-09); mappin 7.3 × 19.3.
+                if (tile == PlaceCardTile.home) Glyph(AppGlyph.houseFill, contentDescription = null, tint = atlas.accentInk, size = HOUSE_TILE_GLYPH, modifier = Modifier.testTag("atlas_place_tile_glyph"))
+                else WorldGlyphIcon(WorldGlyph.mappin, contentDescription = null, tint = atlas.accentInk, size = 22.dp, modifier = Modifier.testTag("atlas_place_tile_glyph"))
             }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(name, Modifier.testTag("atlas_place_name"), style = AppType.itemTitle, color = atlas.ink, maxLines = 2)
+                Text(line, Modifier.testTag("atlas_place_line"), style = AppType.meta, color = atlas.secondary, maxLines = 1)
+                val interaction = remember { MutableInteractionSource() }
+                Row(
+                    Modifier.height(24.dp).plainPressFeedback(interaction)
+                        .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onOpen)
+                        .testTag("atlas_place_open"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                ) {
+                    Text(actionTitle, style = AppType.button, color = atlas.accent, maxLines = 1)
+                    Glyph(AppGlyph.chevronRight, contentDescription = null, tint = atlas.accent, size = 13.dp)
+                }
+            }
+            CircleButton(AppGlyph.xmark, strings.close(), "atlas_place_close", tint = atlas.secondary, glyphSize = CLOSE_CROSS_GLYPH, onClick = onClose)
         }
-        CircleButton(AppGlyph.xmark, strings.close(), "atlas_place_close", tint = atlas.secondary, glyphSize = 15.dp, onClick = onClose)
     }
 }
+
+/**
+ * The house in the 44 tile (iOS house.fill, 18 semibold: 21.7 × 19.0 of ink). The house artwork is wider for its height than
+ * the symbol, so the box (1.2 × 18 = 21.6) is cut to 21 to be 0.5 off in both, and the same size in area (AT-09).
+ */
+internal val HOUSE_TILE_GLYPH: Dp = 21.dp
+
+/** iOS: xmark 13 bold in a 36 disc (the place card, the sheet headers): its box, so that its ink is the symbol's 10.6. */
+internal val CLOSE_CROSS_GLYPH: Dp = 16.dp
 
 /** iOS AtlasPlaceCard.height. */
 val PLACE_CARD_HEIGHT: Dp = 96.dp
@@ -379,7 +422,7 @@ private fun ControlButton(glyph: WorldGlyph, label: String, testTag: String, tin
             .clickable(interactionSource = interaction, indication = null, role = Role.Button, enabled = enabled, onClick = onClick)
             .semantics { contentDescription = label }.testTag(testTag),
         contentAlignment = Alignment.Center,
-    ) { WorldGlyphIcon(glyph, contentDescription = null, tint = tint, size = 21.dp) }
+    ) { WorldGlyphIcon(glyph, contentDescription = null, tint = tint, size = 21.6.dp, modifier = Modifier.testTag("${testTag}_glyph")) }
 }
 
 /** iOS SkeletonPlaceholder: breathes between 0.55 and 1 with [periodMillis]; still under «Remove animations». */
@@ -391,8 +434,9 @@ fun skeletonAlpha(periodMillis: Int = 900): Float {
 }
 
 /**
- * iOS: SkeletonPlaceholder(.atlasStats, period 1.2). Three pairs of bars where the three numbers will
- * be: a spinner says nothing about the shape of what is coming, this row does.
+ * iOS: SkeletonPlaceholder(.atlasStats, period 1.2). Three pairs of bars (64 × 20 over 48 × 10, 6 apart) where the
+ * three numbers will be, lying directly on the sheet at x 16 / 139 / 262: three equal columns with 8 between, no card
+ * round them (the card comes with the numbers). A spinner says nothing about the shape of what is coming, this row does.
  */
 @Composable
 fun AtlasStatsSkeleton() {
@@ -400,14 +444,13 @@ fun AtlasStatsSkeleton() {
     val fill = AppTheme.colors.cardAlt
     val label = appStrings.loadingGeneric()
     Row(
-        Modifier.fillMaxWidth().background(AtlasTheme.colors.card, RoundedCornerShape(AtlasTheme.cardRadius)).padding(16.dp)
-            .alpha(alpha).semantics(mergeDescendants = true) { contentDescription = label }.testTag("atlas_stats_skeleton"),
+        Modifier.fillMaxWidth().alpha(alpha).semantics(mergeDescendants = true) { contentDescription = label }.testTag("atlas_stats_skeleton"),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         repeat(3) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Box(Modifier.width(64.dp).height(20.dp).background(fill, CapsuleShape))
-                Box(Modifier.width(48.dp).height(10.dp).background(fill, CapsuleShape))
+                Box(Modifier.width(64.dp).height(20.dp).background(fill, ContinuousRoundedRectangle(10.dp)))
+                Box(Modifier.width(48.dp).height(10.dp).background(fill, ContinuousRoundedRectangle(5.dp)))
             }
         }
     }
