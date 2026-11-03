@@ -38,6 +38,8 @@ data class PublicProfileState(
     val isBlocked: Boolean = false,
     val isTogglingBlock: Boolean = false,
     val garage: List<PublicVehicle> = emptyList(),
+    /** The catalogue power (hp) of each garage car's variant, for the hero's caption (iOS VehicleCatalogCaption). */
+    val garagePower: Map<UUID, Double> = emptyMap(),
     val journeys: List<PublicJourneyDto> = emptyList(),
     /** Every badge of the account (`/users/:id/badges`); null until it came, and the card stays a preview. */
     val allBadgeIds: List<String>? = null,
@@ -66,6 +68,7 @@ class PublicProfileViewModel(
     private var journalJob: Job? = null
     private var garageGeneration = 0
     private var generation = 0
+    private val catalog by lazy { com.onezee.triptrack.logic.CarCatalog() }
 
     val isOwnProfile: Boolean get() = social.accountId == accountId
 
@@ -144,7 +147,14 @@ class PublicProfileViewModel(
                 catch (cancelled: CancellationException) { throw cancelled }
                 catch (_: Exception) { null }
             if (generation != garageGeneration || (force && vehicles == null)) return@launch
-            mutable.update { it.copy(garage = vehicles.orEmpty()) }
+            // iOS VehicleCatalogCaption resolves the variant in its own task; the catalogue is read on the worker, not in the draw.
+            val power = withContext(worker) {
+                vehicles.orEmpty().mapNotNull { car ->
+                    catalog.resolve(car.catalogModelId, car.catalogGenerationId, car.catalogVariantId)?.powerHp?.let { car.id to it }
+                }.toMap()
+            }
+            if (generation != garageGeneration) return@launch
+            mutable.update { it.copy(garage = vehicles.orEmpty(), garagePower = power) }
         }
     }
 

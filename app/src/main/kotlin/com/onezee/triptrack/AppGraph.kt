@@ -221,6 +221,22 @@ class AppGraph(
             nameCheckpoint = location.checkpointNamer::name,
         ).also { feature ->
             feature.openPlace = { world.openPlace(it) }
+            feature.pins = object : com.onezee.triptrack.feature.TripPins {
+                // A getter: the Я features are built when the menu first asks, not with the trip screens.
+                override val pinnedIds get() = me.identity.identity.map { it.pinnedTripIds }
+                override suspend fun toggle(id: java.util.UUID): Boolean {
+                    val pins = me.identity.identity.value.pinnedTripIds
+                    if (id in pins) { me.identity.setPinnedTrips(pins - id); return true }
+                    // iOS: the showcase holds three; the fourth asks to free a place.
+                    if (pins.size >= 3) return false
+                    me.identity.setPinnedTrips(pins + id)
+                    return true
+                }
+            }
+            feature.openVehicle = { id ->
+                tabStore.select(com.onezee.triptrack.designsystem.navigation.AppTab.profile)
+                me.navigator.push(com.onezee.triptrack.feature.me.MeRoute.Passport(id))
+            }
             // The social half of the trip screens reaches the server through the signed-in session.
             feature.accountId = { auth.state.value.signedInAccountId }
             feature.socialApi = com.onezee.triptrack.feature.feed.ApiTripSocial(apiClient) { auth.state.value.isSignedIn }
@@ -242,6 +258,7 @@ class AppGraph(
             preferences = preferences,
             sharePage = { path -> websitePage(path) },
             ownAvatar = { me.identity.identity.value.avatarEmoji },
+            ownCountry = { me.identity.identity.value.country },
             ownAuthor = { auth.state.value.signedInAccountId?.let { id ->
                 val identity = me.identity.identity.value
                 com.onezee.triptrack.model.SocialAuthor(id, identity.name, identity.avatarEmoji, identity.level)

@@ -103,6 +103,16 @@ class TripsFeature(
 
     @Volatile var openPlace: (UUID) -> Unit = {}
 
+    /**
+     * iOS `openVehicleId`: the passport of one's own car, from the car chip of a trip. The passport
+     * belongs to the Я stack, so the app graph switches to that tab and pushes it (the trip itself
+     * may be open in the feed's stack).
+     */
+    @Volatile var openVehicle: (UUID) -> Unit = {}
+
+    /** iOS `SettingsManager.pinnedTripIds`: set by the app graph from the profile identity; null leaves «Закрепить» out. */
+    @Volatile var pins: TripPins? = null
+
     val signedIn: () -> Boolean = { accountId() != null }
 
     val journeys = JourneyManager(repository, syncSink, signedIn, { cloudSyncEnabled() })
@@ -200,6 +210,17 @@ class TripsFeature(
     private companion object {
         const val FEED_FOLLOWING_KEY = "feedSegmentFollowingV2"
     }
+}
+
+/**
+ * iOS: SettingsManager.pinnedTripIds and togglePinnedTrip. The showcase of a profile holds three trips;
+ * the trip screen's «…» menu pins and unpins the one it shows.
+ */
+interface TripPins {
+    val pinnedIds: Flow<List<UUID>>
+
+    /** Pins [id], or unpins it when it is pinned. False when the three places are taken. */
+    suspend fun toggle(id: UUID): Boolean
 }
 
 /** What a tab of the trip screens can push (iOS: FeedView's destinations and `MeDest.drafts`). */

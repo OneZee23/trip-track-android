@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -101,7 +102,15 @@ import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.ui.LoadingMoreRow
 import com.onezee.triptrack.ui.PullToRefresh
+import com.onezee.triptrack.feature.account.SignInAction
+import com.onezee.triptrack.feature.account.SignInPromptSheet
 import com.onezee.triptrack.feature.social.LocalSocial
+import com.onezee.triptrack.feature.social.ReportTarget
+import com.onezee.triptrack.feature.social.ui.ReportSheet
+import com.onezee.triptrack.feature.social.ui.SharedTripLinkSheet
+import com.onezee.triptrack.feature.social.ui.SocialGlyph
+import com.onezee.triptrack.feature.social.ui.SocialGlyphIcon
+import com.onezee.triptrack.feature.social.ui.TripLinkShare
 import com.onezee.triptrack.feature.social.ui.ReactionsListSheet
 import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
 import com.onezee.triptrack.ui.EmptyStateIllustration
@@ -119,9 +128,11 @@ import kotlinx.coroutines.withContext
  * sideways under a fixed switcher. One's own trips live in Я (iOS retired the «Мои» segment); they
  * reach this feed when public, with their own card menu.
  *
- * [offline] decides the strip under the title; [onSignIn] is the sign-in door of the account wave,
- * and every control that needs it stays hidden while it is null (a press that does nothing is worse
- * than no button). [onOpenRecord] switches to the record tab from the recording banner.
+ * [offline] decides the strip under the title; [onSignIn] is a host's own sign-in door. Without one the
+ * house sheet opens from the account services (`LocalSocial.auth`); with neither, every control that
+ * needs a door stays hidden (a press that does nothing is worse than no button). A guest who reacts,
+ * shares or reports is asked to sign in and what they tapped is done once the session exists.
+ * [onOpenRecord] switches to the record tab from the recording banner.
  */
 @Composable
 fun FeedScreen(
@@ -140,6 +151,9 @@ fun FeedScreen(
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
     val scope = rememberCoroutineScope()
+    val services = LocalSocial.current
+    // The session is read where it is drawn: a sign-in from the sheet below recomposes the header.
+    @Suppress("UNUSED_VARIABLE") val session = services?.auth?.state?.collectAsState()?.value
     val signedIn = feature.signedIn()
     val navigator = feature.feedNavigator
 
@@ -163,6 +177,12 @@ fun FeedScreen(
     var pendingPrivate by remember { mutableStateOf<SocialCardState?>(null) }
     var pendingDelete by remember { mutableStateOf<SocialCardState?>(null) }
     var pickerFor by remember { mutableStateOf<SocialCardState?>(null) }
+    // iOS signInPrompt / pendingSocialAction / resumeAfterAuth: what a guest tapped is kept while the sheet is up
+    // and done once, after a real sign-in. The sheet closing with no session drops it.
+    var signInFor by remember { mutableStateOf<SignInAction?>(null) }
+    val pending = remember { PendingSocialActions() }
+    var linkShare by remember { mutableStateOf<TripLinkShare?>(null) }
+    var reportFor by remember { mutableStateOf<SocialCardState?>(null) }
     // iOS reactorsPeek: the card whose pill was held, and that pill's emoji.
     var peek by remember { mutableStateOf<Pair<SocialCardState, String>?>(null) }
     var toast by remember { mutableStateOf<ToastItem?>(null) }
@@ -178,13 +198,42 @@ fun FeedScreen(
         navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id)))
     }
 
+    /** A card's share: the link is minted (a refused `/social/share` still opens the sheet, link-less) and the compact sheet shown. */
+    fun share(card: SocialCardState) {
+        val api = services?.api ?: return
+        val item = vm.socialTrip(card.trip.id) ?: return
+        scope.launch {
+            val url = try { withContext(feature.worker) { api.shareTrip(card.trip.id).shareUrl } }
+                catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+                catch (_: Exception) { null }
+            linkShare = TripLinkShare(item, url)
+        }
+    }
+
+    /**
+     * The sign-in door. The host's own door ([onSignIn]) wins; otherwise the house sheet, which needs the
+     * account services; with neither, the old toast says why.
+     */
+    fun requestSignIn(action: SignInAction, then: PendingSocialAction? = null) {
+        pending.hold(then)
+        when {
+            onSignIn != null -> onSignIn()
+            services?.auth != null -> signInFor = action
+            else -> toast = ToastItem(ToastType.info, action.headline(strings))
+        }
+    }
+    val openSignIn: (() -> Unit)? = if (onSignIn != null || services?.auth != null) ({ requestSignIn(SignInAction.generic) }) else null
+
     HideAppTabBar(pendingPrivate != null || pendingDelete != null)
 
     Box(modifier.fillMaxSize().background(colors.bg).testTag("screen_feed")) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
             FeedHeader(
                 onTitle = { scope.launch { toTop() } },
-                onSignIn = if (!signedIn) onSignIn else null,
+                // iOS: one corner control for the guest («Войти»), the bell for a signed-in person. The search
+                // circle before them opens Discover, which is not ported: no control that opens nothing.
+                onSignIn = if (!signedIn) openSignIn else null,
+                onBell = if (signedIn && services != null) ({ navigator.push(TripsDestination.Inbox) }) else null,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 10.dp),
             )
             AnimatedVisibility(offline, enter = slideInVertically { -it } + fadeIn(), exit = slideOutVertically { -it } + fadeOut()) {
@@ -213,7 +262,7 @@ fun FeedScreen(
                         body = strings.followingGuestBody(),
                         tag = "feed_following_guest",
                     ) {
-                        if (onSignIn != null) AccentButton(strings.signInShort(), null, Modifier.testTag("feed_following_sign_in")) { haptics.tap(); onSignIn() }
+                        if (openSignIn != null) AccentButton(strings.signInShort(), null, Modifier.testTag("feed_following_sign_in")) { haptics.tap(); openSignIn() }
                     }
                 } else {
                     FeedPage(
@@ -228,19 +277,32 @@ fun FeedScreen(
                         onComments = { card -> navigator.push(TripsDestination.TripDetail(card.trip.id, preview = card.trip.asPreviewTrip(), social = vm.socialTrip(card.trip.id), focus = com.onezee.triptrack.model.TripFocus.Comments)) },
                         onOpenJourney = { navigator.push(TripsDestination.SocialJourney(it)) },
                         onReact = { card, emoji ->
-                            if (signedIn) vm.toggleReaction(card.trip.id, emoji, pageMode)
-                            else toast = ToastItem(ToastType.info, strings.signInPromptReact())
+                            if (feature.signedIn()) vm.toggleReaction(card.trip.id, emoji, pageMode)
+                            else requestSignIn(SignInAction.react, PendingSocialAction.React(card, emoji, pageMode))
                         },
                         onOpenPicker = { card ->
-                            if (signedIn) pickerFor = card else toast = ToastItem(ToastType.info, strings.signInPromptReact())
+                            if (feature.signedIn()) pickerFor = card else requestSignIn(SignInAction.react, PendingSocialAction.Picker(card))
                         },
                         onPeekReactors = { card, emoji -> peek = card to emoji },
+                        // iOS menuItems: Редактировать (opens the trip, where it is edited), Поделиться, then
+                        // Сделать приватной and Удалить on one's own card or Пожаловаться on anyone else's.
                         menu = { card ->
-                            if (!isOwn(card)) emptyList() else listOf(
-                                ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "feed_card_action_edit") { open(card) },
-                                ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "feed_card_action_private") { pendingPrivate = card },
-                                ActionPopoverItem(strings.delete(), AppGlyph.trash, isDestructive = true, testTag = "feed_card_action_delete") { pendingDelete = card },
-                            )
+                            val own = isOwn(card)
+                            buildList {
+                                if (own) add(ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "feed_card_action_edit") { open(card) })
+                                if (services != null) add(ActionPopoverItem(strings.share(), AppGlyph.squareAndArrowUp, testTag = "feed_card_action_share") {
+                                    if (feature.signedIn()) share(card) else requestSignIn(SignInAction.share, PendingSocialAction.Share(card))
+                                })
+                                if (own) {
+                                    add(ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "feed_card_action_private") { pendingPrivate = card })
+                                    add(ActionPopoverItem(strings.delete(), AppGlyph.trash, isDestructive = true, testTag = "feed_card_action_delete") { pendingDelete = card })
+                                } else if (services != null) {
+                                    // A guest cannot report: the endpoint needs an account, so the sheet that would 401 is not opened.
+                                    add(ActionPopoverItem(strings.reportProfileAction(), AppGlyph.flag, testTag = "feed_card_action_report") {
+                                        if (feature.signedIn()) reportFor = card else requestSignIn(SignInAction.generic)
+                                    })
+                                }
+                            }
                         },
                         onPublishOwn = onOpenProfileTab,
                     )
@@ -256,18 +318,34 @@ fun FeedScreen(
             )
         }
         peek?.let { (card, emoji) ->
-            val social = LocalSocial.current
             ReactionsListSheet(
                 tripId = card.trip.id,
                 initialEmoji = emoji,
                 load = { id -> withContext(feature.worker) { feature.social.reactions(id) } },
                 ownId = feature.accountId(),
-                showsOwnBadge = social?.showsOwnBadge?.invoke() ?: true,
+                showsOwnBadge = services?.showsOwnBadge?.invoke() ?: true,
                 onSelectUser = { author -> navigator.push(TripsDestination.PublicProfile(author.id, author)) },
                 onDismissRequest = { peek = null },
             )
         }
         ToastHost(toast, onDismiss = { toast = null })
+    }
+
+    linkShare?.let { share -> SharedTripLinkSheet(share.trip, share.url, onDismiss = { linkShare = null }) }
+    if (services != null) reportFor?.let { card -> ReportSheet(ReportTarget.Trip(card.trip.id), services) { reportFor = null } }
+    signInFor?.let { action ->
+        services?.auth?.let { auth ->
+            SignInPromptSheet(action, auth, onAuthenticated = pending::authenticated, onDismissRequest = {
+                signInFor = null
+                // Resumed after the sheet is gone, and only on a real session.
+                when (val next = pending.release(feature.signedIn())) {
+                    is PendingSocialAction.React -> vm.toggleReaction(next.card.trip.id, next.emoji, next.mode)
+                    is PendingSocialAction.Picker -> pickerFor = next.card
+                    is PendingSocialAction.Share -> share(next.card)
+                    null -> Unit
+                }
+            })
+        }
     }
 
     AppConfirm(
@@ -307,9 +385,52 @@ fun FeedScreen(
     )
 }
 
-/** iOS feedHeader: «Лента» in the screen-title role; a tap scrolls back to the top. */
+/** What a guest tapped before the sign-in sheet (iOS PendingSocialAction): done once, after a real sign-in. */
+internal sealed interface PendingSocialAction {
+    class React(val card: SocialCardState, val emoji: String, val mode: FeedMode) : PendingSocialAction
+    class Picker(val card: SocialCardState) : PendingSocialAction
+    class Share(val card: SocialCardState) : PendingSocialAction
+}
+
+/**
+ * iOS: FeedView.pendingSocialAction, resumeAfterAuth and resumePendingSocialAction. What a guest tapped
+ * is held while the sign-in sheet is up and replayed once, after a real session. A sheet that closes
+ * without one, or a success flag left over from an earlier prompt, drops it: an action that needs an
+ * account must never be replayed for a guest, it would only fail on the server.
+ */
+internal class PendingSocialActions {
+    private var pending: PendingSocialAction? = null
+    private var authenticated = false
+
+    /** A new prompt: what was tapped, and no memory of an earlier prompt's success (iOS `.onChange(of: signInPrompt)`). */
+    fun hold(action: PendingSocialAction?) { pending = action; authenticated = false }
+
+    /** The sheet reported a successful sign-in, right before it closes. */
+    fun authenticated() { authenticated = true }
+
+    /** The sheet closed: the action to run, once, and only when a sign-in really happened and the session is there. */
+    fun release(signedIn: Boolean): PendingSocialAction? {
+        val next = pending
+        val replay = authenticated && signedIn
+        pending = null
+        authenticated = false
+        return next.takeIf { replay }
+    }
+}
+
+/**
+ * iOS feedHeader: «Лента» in the screen-title role (a tap scrolls back to the top), then the corner:
+ * a 34 search circle in every state (Discover), the bell for a signed-in person, «Войти» for a guest.
+ * [onSearch] is null until Discover is ported: the circle is drawn only when it has somewhere to go.
+ */
 @Composable
-private fun FeedHeader(onTitle: () -> Unit, onSignIn: (() -> Unit)?, modifier: Modifier = Modifier) {
+internal fun FeedHeader(
+    onTitle: () -> Unit,
+    onSignIn: (() -> Unit)?,
+    onBell: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    onSearch: (() -> Unit)? = null,
+) {
     val strings = appStrings
     val haptics = rememberHaptics()
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -324,6 +445,12 @@ private fun FeedHeader(onTitle: () -> Unit, onSignIn: (() -> Unit)?, modifier: M
                 .testTag("feed_title"),
         )
         Spacer(Modifier.weight(1f))
+        if (onSearch != null) HeaderCircle(strings.discoverSearchByName(), "feed_search", onSearch) {
+            Glyph(AppGlyph.magnifyingglass, contentDescription = null, tint = AppTheme.colors.text, size = 18.dp)
+        }
+        if (onBell != null) HeaderCircle(strings.settingsNotifications(), "feed_bell", onBell) {
+            SocialGlyphIcon(SocialGlyph.bell, contentDescription = null, tint = AppTheme.colors.text, size = 22.dp)
+        }
         if (onSignIn != null) {
             val interaction = remember { MutableInteractionSource() }
             Text(
@@ -339,6 +466,24 @@ private fun FeedHeader(onTitle: () -> Unit, onSignIn: (() -> Unit)?, modifier: M
             )
         }
     }
+}
+
+/** iOS headerCircleButton: a 34 circle on the card fill with the 3 % shadow, the glyph in ink. */
+@Composable
+private fun HeaderCircle(label: String, tag: String, onClick: () -> Unit, glyph: @Composable () -> Unit) {
+    val haptics = rememberHaptics()
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        Modifier
+            .size(34.dp)
+            .plainPressFeedback(interaction)
+            .iosShadow(CircleShape, Color.Black.copy(alpha = 0.03f), radius = 2.dp, y = 1.dp)
+            .background(AppTheme.colors.card, CircleShape)
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button) { haptics.tap(); onClick() }
+            .semantics { contentDescription = label }
+            .testTag(tag),
+        contentAlignment = Alignment.Center,
+    ) { glyph() }
 }
 
 /** iOS offlineStrip: a statement about the app, above both pages, not about one feed. */

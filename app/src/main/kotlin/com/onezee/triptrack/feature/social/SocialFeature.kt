@@ -41,6 +41,8 @@ class SocialFeature(
     val clock: () -> Instant = Instant::now,
     /** The viewer's avatar, for the comment composer (iOS SettingsManager.avatarEmoji). */
     val ownAvatar: () -> String = { "🚗" },
+    /** The viewer's flag as stored (iOS SettingsManager.profileCountry): a code, WORLD, NEUTRAL or empty. */
+    val ownCountry: () -> String = { "" },
     val ownAuthor: () -> com.onezee.triptrack.model.SocialAuthor? = {
         accountIdSource()?.let { com.onezee.triptrack.model.SocialAuthor(it, auth?.state?.value?.userName, ownAvatar(), 1) }
     },

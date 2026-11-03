@@ -37,7 +37,8 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
         compose.onNodeWithTag("profile_layout_list").performClick()
         compose.onAllNodesWithTag("profile_month_header")[0].performScrollTo();shot("profile_journal")
     }
-    @Test fun profileCoverAndViewer() {
+    /** A flat teal cover with a sun, the size of the app's own cover shots. */
+    private fun cover() {
         val bmp=android.graphics.Bitmap.createBitmap(800,450,android.graphics.Bitmap.Config.ARGB_8888)
         val canvas=android.graphics.Canvas(bmp);canvas.drawColor(android.graphics.Color.rgb(66,115,130))
         val paint=android.graphics.Paint().apply { color=android.graphics.Color.rgb(232,180,105) }
@@ -45,8 +46,27 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
         val bytes=java.io.ByteArrayOutputStream().apply { bmp.compress(android.graphics.Bitmap.CompressFormat.PNG,100,this) }.toByteArray()
         feature.remotePhotoBytes={bytes}
         api.profileValue=api.profileValue.copy(photos=listOf(ProfilePhotoDTO(UUID.randomUUID(),originalUrl="https://fixture.invalid/cover.png")))
+    }
+    @Test fun profileCoverAndViewer() {
+        cover()
         profile();shot("profile_cover")
         compose.onNodeWithTag("profile_cover_photo").performClick();window("profile_photo_viewer")
+    }
+    /** SO-01, SO-02: their active car stands on the cover's edge, the numbers are 19 heavy. */
+    @Test fun profileCoverWithCar() {
+        cover()
+        val car=SocialFixtures.car.copy(name="Jolion",make="Haval",model="Jolion",year=2022,avatarEmoji="pixel_car_red",
+            catalogModelId="haval-jolion",catalogGenerationId="haval-jolion-2021",catalogVariantId="haval-jolion-2021-15t-143-mt6")
+        api.cars=listOf(car)
+        api.profileValue=api.profileValue.copy(activeVehicle=SocialActiveVehicle(car.id,car.name,car.level,car.odometerKm,car.avatarEmoji))
+        profile();compose.onNodeWithTag("garage_header_vehicle").assertExists();shot("profile_cover_car")
+    }
+    /** SO-05, SO-06: one's own preview, a free hero 10 below the bar, the country under the level. */
+    @Test fun ownPreviewWithCountry() {
+        ownCountryValue="RU"
+        api.profileValue=api.profileValue.copy(id=owner,profileBackground=null,hasPlus=false)
+        showDestination(TripsDestination.PublicProfile(owner,SocialFixtures.author),dark)
+        compose.onNodeWithTag("profile_country").assertExists();shot("profile_own_preview")
     }
     @Test fun blockHouseDialog() {
         profile();compose.onNodeWithTag("profile_more").performClick();compose.onNodeWithTag("profile_block").performClick()
@@ -133,6 +153,18 @@ class SocialScreenshotTests(private val dark:Boolean) : SocialScreenTest() {
     @Test fun report() {
         show(dark) { ReportSheet(ReportTarget.User(SocialFixtures.account),services) {} }
         window("report")
+    }
+    /** TD-09: the discussion of a trip as a section of the details column. */
+    @Test fun tripDiscussion() {
+        val trip=SocialFixtures.trip(0).copy(commentCountRaw=3,reactionCount=2,reactionBreakdown=listOf(ReactionTally("🔥",2)))
+        social.remoteTrip={SocialTripResponse(trip)}
+        social.commentsPage={TripCommentsResponse(listOf(
+            TripComment(UUID.fromString("77777777-7777-4777-8777-777777777771"),SocialFixtures.author,"Красивая дорога!",SocialFixtures.now.minusSeconds(7200),false),
+            TripComment(UUID.fromString("77777777-7777-4777-8777-777777777772"),SocialFixtures.author,"Спасибо за маршрут, обязательно проедем в выходные и посмотрим",SocialFixtures.now.minusSeconds(120),false)))}
+        showDestination(TripsDestination.TripDetail(trip.id,social=trip),dark)
+        compose.onNodeWithTag("discussion_see_all").performScrollTo()
+        compose.onNodeWithTag("discussion_cta_row").assertExists()
+        shot("trip_discussion")
     }
     @Test fun commentsEmpty() {
         show(dark) { TripCommentsSheet(SocialFixtures.trip(0).id,false,true,0,false,services,feature.feedNavigator) {} }
