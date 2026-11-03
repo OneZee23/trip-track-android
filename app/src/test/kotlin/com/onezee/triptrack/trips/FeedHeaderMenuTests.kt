@@ -3,7 +3,9 @@
 package com.onezee.triptrack.trips
 
 import android.content.Context
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -204,4 +206,26 @@ class FeedHeaderMenuTests : TripsScreenTest() {
         pending.hold(PendingSocialAction.Picker(card()))
         assertNull(pending.release(signedIn = true))
     }
+    // ---- FD-03: the PRO frame around the author's avatar
+
+    /** What the screen shows a pixel in from the left edge of the avatar, in the middle row: the ring runs there. */
+    private fun ring(index: Int): Int {
+        val image = compose.onAllNodesWithTag("feed_card_avatar")[index].captureToImage().asAndroidBitmap()
+        return image.getPixel(2, image.height / 2)
+    }
+
+    private fun warmth(pixel: Int) = android.graphics.Color.red(pixel) - android.graphics.Color.blue(pixel)
+
+    @Test fun aFramedAuthorsAvatarCarriesTheRingAndAnUnknownFrameNone() {
+        signIn()
+        val cards = socialCards().toMutableList()
+        cards[0] = cards[0].copy(author = cards[0].author.copy(avatarFrame = "frame_gold"))
+        // The audit's fixture wrote the short «gold»: no build knows it, and iOS draws nothing for it.
+        cards[1] = cards[1].copy(author = cards[1].author.copy(avatarFrame = "gold"))
+        social.feedPage = { SocialFeedResponse(cards) }
+        showFeed()
+        assertTrue(warmth(ring(0)) > 60, "gold ring expected, got #%08x".format(ring(0)))
+        assertTrue(warmth(ring(1)) < 25, "no ring expected, got #%08x".format(ring(1)))
+    }
+
 }

@@ -424,6 +424,22 @@ class TripScreenDesignTests : TripsScreenTest() {
         (inner.right - label.right).near(0f, 1f)
     }
 
+    @Test fun thePhotosHeadingRowIsAsTallAsItsText() {
+        showMe()
+        openTrip(latest())
+        compose.onNodeWithTag("detail_photos").performScrollTo()
+        val heading = compose.onNodeWithText(ru.photos() + " · ", substring = true).getUnclippedBoundsInRoot()
+        val strip = bounds("detail_photos")
+        val plus = bounds("detail_add_photo")
+        // iOS: the «+» keeps its 44-point target through a −12 padding, so the row is as tall as the heading's line and the strip
+        // starts 10 below it; a 44-high box in the row made the distance 54 and left air around «Фото · N».
+        val rowAndGap = (strip.top - heading.top).value
+        assertTrue(rowAndGap in 28f..36f, "heading top to strip top is $rowAndGap, expected the line plus 10")
+        // The «+» is the 20-point button of iOS, centred on the heading's line.
+        plus.width.near(20f); plus.height.near(20f)
+        assertEquals((heading.top + heading.height / 2).value, (plus.top + plus.height / 2).value, 1.5f)
+    }
+
     // ---- TD-13: the trip that failed to load
 
     @Test fun theLoadFailedStateHasItsHeaderItsRingAndTheRetry() {
