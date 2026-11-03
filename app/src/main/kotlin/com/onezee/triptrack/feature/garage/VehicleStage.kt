@@ -72,13 +72,13 @@ internal fun PixelAsset(name: String, modifier: Modifier) {
 
 // iOS: VehicleSpritePlate.swift. Uniform list plates use the tallest silhouette's ink, not its canvas.
 @Composable
-internal fun VehicleSpritePlate(vehicle: Vehicle, width: Dp = 52.dp) {
+internal fun VehicleSpritePlate(vehicle: Vehicle, width: Dp = 52.dp, cornerRadius: Dp = 12.dp) {
     val style = vehicle.avatarStyle.takeIf { it in VehicleAvatar.styles(vehicle.type) } ?: VehicleAvatar.styles(vehicle.type).first()
     val spriteWidth = width * .86f
     val spriteHeight = spriteWidth * .7976f
     val height = spriteHeight * .986f + width * .20f
     val (top, bottom) = VehicleAvatar.bounds(style)
-    Box(Modifier.size(width, height).clip(RoundedCornerShape(12.dp)).background(Brush.verticalGradient(listOf(AppTheme.spritePlateTop, AppTheme.spritePlateBottom)))) {
+    Box(Modifier.size(width, height).clip(RoundedCornerShape(cornerRadius)).background(Brush.verticalGradient(listOf(AppTheme.spritePlateTop, AppTheme.spritePlateBottom)))) {
         val asset = VehicleAvatar.asset(vehicle)
         if (asset != null) PixelAsset(asset, Modifier.size(spriteWidth, spriteHeight).offset(x = width * .07f, y = height * .5f - spriteHeight * ((top + bottom) / 2).toFloat()))
         else Text(vehicle.avatarEmoji, Modifier.align(Alignment.Center), style = inter(width.value * .42f))

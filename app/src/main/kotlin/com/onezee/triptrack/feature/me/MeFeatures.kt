@@ -46,7 +46,7 @@ class MeFeatures(graph: AppGraph, private val preferences: PresentationPreferenc
     private val unit = graph.settingsManager.state.map { it.distanceUnit }.stateIn(scope, SharingStarted.Eagerly, DistanceUnit.km)
     private val selected = graph.settingsManager.state.map { it.selectedVehicleId }.stateIn(scope, SharingStarted.Eagerly, null)
     val profile by lazy { MeViewModel(graph.trips, graph.vehicles, identity, preferences, Dispatchers.Default, changes,
-        locale = graph.strings.language.locale, localizedRegion = { ProfileRegionDisplay.localized(it, graph.strings.language.code) }) }
+        locale = graph.strings.language.locale, localizedRegion = { ProfileRegionDisplay.localized(it, graph.strings.language.code) }, catalog = catalog) }
     val garage by lazy { GarageViewModel(graph.vehicles, photos, graph.trips, Dispatchers.Default, selected, changes) }
     val vehiclePhotos = photos
     private val vehicleStore = graph.vehicles

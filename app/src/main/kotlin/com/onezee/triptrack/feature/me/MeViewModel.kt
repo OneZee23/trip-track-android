@@ -45,8 +45,9 @@ interface ProfileIdentitySource {
     suspend fun setPinnedTrips(ids: List<UUID>)
 }
 
-// iOS: VehicleStage.swift / ProfileGarageHeader.swift.
-data class HeroCarStage(val vehicle: Vehicle, val photoFilename: String?, val stage: VehicleStageState, val remoteURL: String? = null)
+// iOS: VehicleStage.swift / ProfileGarageHeader.swift. [powerHp] is the catalogue's power of the chosen
+// variant, which VehicleCatalogCaption appends to the caption («Volkswagen Polo · 2018 · 110 л.с.»).
+data class HeroCarStage(val vehicle: Vehicle, val photoFilename: String?, val stage: VehicleStageState, val remoteURL: String? = null, val powerHp: Double? = null)
 
 // iOS: ProfileHeroCard.swift.
 data class ProfileHeroState(
@@ -57,6 +58,8 @@ data class ProfileHeroState(
     val tripCount: Int = 0,
     val distanceMetres: Double = 0.0,
     val regionCount: Int = 0,
+    /** iOS: auth.isSignedIn. A signed-in account with no name shows the dimmed prompt «Добавьте имя». */
+    val signedIn: Boolean = false,
 )
 
 // iOS: BadgesView.swift. Words and art resolve from generated resources by ID.
@@ -84,6 +87,8 @@ data class MeState(
     val expandedRoutines: Set<UUID> = emptySet(),
     val achievements: List<AchievementRow> = emptyList(),
     val drafts: List<Trip> = emptyList(),
+    /** iOS: settings.vehicles, sold ones included: a card names the car of its trip, and the garage section its main one. */
+    val vehicles: List<Vehicle> = emptyList(),
     val showcaseElsewhere: List<UUID> = emptyList(),
     val destination: MeDestination? = null,
     val pinLimitReached: Boolean = false,
@@ -102,6 +107,7 @@ class MeViewModel(
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val now: () -> Instant = Instant::now,
     private val localizedRegion: (String?) -> String? = { it },
+    private val catalog: com.onezee.triptrack.logic.CarCatalog? = null,
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val mutableState = MutableStateFlow(MeState(mode = preferences.string("profileHistoryMode")?.let { raw -> HistoryMode.entries.firstOrNull { it.name == raw } } ?: HistoryMode.list))
     private val pinEdits = Mutex()
@@ -131,7 +137,7 @@ class MeViewModel(
                 library = next
                 journeys = loadedJourneys
                 vehicles = loadedVehicles
-                mutableState.update { it.copy(loaded = true, calendar = HistoryCalendar(days, days.values.maxOrNull() ?: 0.0), drafts = drafts, failed = false) }
+                mutableState.update { it.copy(loaded = true, calendar = HistoryCalendar(days, days.values.maxOrNull() ?: 0.0), drafts = drafts, vehicles = loadedVehicles, failed = false) }
                 // Missing local trips may be pins from a second phone. Only known invalid trips are removed.
                 val byId = trips.associateBy { it.id }
                 val pins = identitySource.identity.value.pinnedTripIds
@@ -188,7 +194,8 @@ class MeViewModel(
     private fun refreshHero() {
         val identity = identitySource.identity.value
         val cars = vehicles.filter { it.soldAt == null }.sortedBy { if (it.id == identity.selectedVehicleId) 0 else 1 }
-            .map { HeroCarStage(it, identity.mainVehiclePhotos[it.id], VehicleStageState.build(it, identity.mainVehiclePhotos[it.id], identity.isPlus), identity.mainVehiclePhotoUrls[it.id]) }
+            .map { HeroCarStage(it, identity.mainVehiclePhotos[it.id], VehicleStageState.build(it, identity.mainVehiclePhotos[it.id], identity.isPlus), identity.mainVehiclePhotoUrls[it.id],
+                catalog?.resolve(it.catalogModelId, it.catalogGenerationId, it.catalogVariantId)?.powerHp) }
         val badges = BadgeDefinitions.all.filter { !it.isHidden || it.id in identity.unlockedBadgeIds }.map {
             AchievementRow(it.id, it.category, it.rarity, it.id in identity.unlockedBadgeIds, identity.badgeEarnCounts[it.id] ?: 0)
         }
