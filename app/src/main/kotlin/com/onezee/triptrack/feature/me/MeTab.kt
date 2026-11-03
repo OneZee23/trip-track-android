@@ -205,7 +205,7 @@ internal fun ClubsContent(waitlist: GroupsWaitlistState?, busy: Boolean, failed:
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("clubs_screen")) {
-        MeNavBar(strings.clubsTitle(), onBack)
+        CustomNavBar(strings.clubsTitle(), onBack)
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
             Column(
                 Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)

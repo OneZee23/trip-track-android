@@ -31,7 +31,6 @@ import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.me.RoutePreview
 import com.onezee.triptrack.feature.social.ui.SocialGlyph
 import com.onezee.triptrack.feature.social.ui.SocialGlyphIcon
-import com.onezee.triptrack.feature.social.ui.SocialNavBar
 import com.onezee.triptrack.feature.social.ui.SocialSectionLabel
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
@@ -56,7 +55,7 @@ fun StatsScreen(vm: StatsViewModel, ownerName: String?, onBack: () -> Unit, onOp
     val state by vm.state.collectAsState()
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("stats_screen")) {
-        SocialNavBar(strings.stats(), onBack = onBack, subtitle = ownerName)
+        CustomNavBar(strings.stats(), onBack = onBack, subtitle = ownerName, largeTitle = true)
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 10.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             val aggregates = state.aggregates

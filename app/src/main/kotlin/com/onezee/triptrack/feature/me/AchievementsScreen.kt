@@ -59,8 +59,8 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
     val displayed = when (filter) { 1 -> badges.filter { it.unlocked }; 2 -> badges.filter { it.id in hidden }; else -> badges }
     val total = badges.count { it.id !in hidden || it.unlocked }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("achievements_screen")) {
-        MeNavBar(strings.achievementsSection(), onBack)
-        if (!ownerName.isNullOrBlank()) Text(ownerName, Modifier.padding(horizontal = 16.dp), style = AppType.caption, color = AppTheme.colors.textSecondary)
+        // iOS AchievementsView: the display title, and someone else's name under it.
+        CustomNavBar(strings.achievementsSection(), onBack, subtitle = ownerName, largeTitle = true)
         Text(strings.achievementsOpenedOf(badges.count { it.unlocked }, total), Modifier.padding(16.dp), style = AppType.meta, color = AppTheme.colors.textSecondary)
         if (ownerName != null) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(strings.achievementsFilterAll(), strings.achievementsFilterUnlocked(), strings.achievementsFilterSecret()).forEachIndexed { index, title ->
@@ -93,7 +93,7 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
 internal fun BadgeDetailScreen(badge: AchievementRow?, onBack: () -> Unit, unit: DistanceUnit = DistanceUnit.km) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
-        MeNavBar(badge?.id?.let { MeArtwork.badgeTitles[it] }?.let { strings.tr(it) } ?: strings.badges(), onBack)
+        CustomNavBar(badge?.id?.let { MeArtwork.badgeTitles[it] }?.let { strings.tr(it) } ?: strings.badges(), onBack)
         if (badge != null) {
             Spacer(Modifier.height(50.dp))
             BadgeArt(badge, 180.dp)

@@ -58,7 +58,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
         }
     }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding()) {
-        MeNavBar(strings.myProfileTitle(), onBack)
+        CustomNavBar(strings.myProfileTitle(), onBack)
         Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 40.dp)) {
             val colors = identity.effectiveBackground.colors()
             Box(Modifier.fillMaxWidth().height(112.dp).then(if (colors.isNotEmpty()) Modifier.background(Brush.linearGradient(colors)) else Modifier.background(AppTheme.accentBg)))

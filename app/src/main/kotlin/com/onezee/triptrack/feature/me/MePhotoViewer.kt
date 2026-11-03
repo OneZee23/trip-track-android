@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.onezee.triptrack.designsystem.theme.*
-import com.onezee.triptrack.feature.settings.MeNavBar
+import com.onezee.triptrack.designsystem.components.CustomNavBar
 import com.onezee.triptrack.network.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,7 +66,7 @@ internal fun MePhotoViewer(title: String, initialIndex: Int, count: Int, onDismi
     Dialog(onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false, dismissOnClickOutside = false)) {
         TripTrackTheme(isDark = true, language = language) {
             Column(Modifier.fillMaxSize().background(Color.Black).statusBarsPadding().navigationBarsPadding()) {
-                MeNavBar(title, onDismiss)
+                CustomNavBar(title, onDismiss)
                 HorizontalPager(pager, Modifier.weight(1f).fillMaxWidth(), userScrollEnabled = !zoomed) { index ->
                     ZoomableMePhoto(index == pager.currentPage, { zoomed = it }) { photo(index) }
                 }

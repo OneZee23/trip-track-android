@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -188,7 +189,7 @@ fun ContentSizedSheet(
                     .testTag("sheet"),
             ) {
                 val sheet = remember(this) { SheetColumnScope(this, dismiss) }
-                sheet.content()
+                CompositionLocalProvider(LocalNavBarInSheet provides true) { sheet.content() }
             }
         }
     }

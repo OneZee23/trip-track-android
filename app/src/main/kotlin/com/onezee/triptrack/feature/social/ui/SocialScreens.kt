@@ -73,7 +73,7 @@ fun FollowListScreen(dest: TripsDestination.FollowList, social: SocialFeature, n
     HideAppTabBar()
     val title = state.accountName?.takeIf { it.isNotEmpty() } ?: if (state.mode == FollowListMode.followers) strings.followListFollowers() else strings.feedSegmentFollowing()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("follow_list")) {
-        SocialNavBar(title, onBack = { navigator.pop() })
+        CustomNavBar(title, onBack = { navigator.pop() })
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item(key = "segment") {
                 Row(Modifier.fillMaxWidth().background(colors.cardAlt, RoundedCornerShape(12.dp)).padding(3.dp).testTag("follow_segment")) {
@@ -291,7 +291,7 @@ fun PublicGarageScreen(dest: TripsDestination.PublicGarage, social: SocialFeatur
     val state by vm.state.collectAsState()
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_garage")) {
-        SocialNavBar(strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name)
+        CustomNavBar(strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name)
         when {
             state.state == LoadState.loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { com.onezee.triptrack.feature.atlas.ui.CarLoading() }
             state.state == LoadState.failed -> SocialMessageState(strings.garageLoadFailed(), retry = { vm.load() }, tag = "public_garage_error")
@@ -343,7 +343,7 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
     var signIn by remember { mutableStateOf(false) }
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_vehicle")) {
-        SocialNavBar(state.vehicle?.name ?: strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name) {
+        CustomNavBar(state.vehicle?.name ?: strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name) {
             Box {
                 NavCircleButton(AppGlyph.ellipsis, strings.moreActions(), { actions = true }, Modifier.testTag("public_vehicle_more"))
                 ActionPopover(actions, { actions = false }, listOf(ActionPopoverItem(strings.reportProfileAction(), AppGlyph.flag, isDestructive = true, testTag = "public_vehicle_report") {
@@ -450,7 +450,7 @@ fun PublicJourneysScreen(dest: TripsDestination.PublicJourneys, social: SocialFe
     val state by vm.state.collectAsState()
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("public_journeys")) {
-        SocialNavBar(strings.journeysTitle(), onBack = { navigator.pop() }, subtitle = dest.name)
+        CustomNavBar(strings.journeysTitle(), onBack = { navigator.pop() }, subtitle = dest.name)
         when {
             state.state == LoadState.loading && state.journeys.isEmpty() -> com.onezee.triptrack.ui.cards.SkeletonCards(Modifier.padding(16.dp), count = 3)
             state.state == LoadState.failed && state.journeys.isEmpty() -> SocialMessageState(strings.publicDataLoadFailed(), retry = { vm.load() }, tag = "public_journeys_error")

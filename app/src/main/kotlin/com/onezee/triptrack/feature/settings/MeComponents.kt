@@ -31,16 +31,6 @@ import androidx.lifecycle.ViewModelStore
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
 
-@Composable
-internal fun MeNavBar(title: String, onBack: () -> Unit, trailing: @Composable RowScope.() -> Unit = {}) {
-    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        NavCircleButton(AppGlyph.chevronLeft, appStrings.back(), onBack)
-        Text(title, Modifier.weight(1f), style = interScaled(17f, InterWeight.semibold), color = AppTheme.colors.text)
-        trailing()
-    }
-}
-
 // iOS: GarageView.navRow / NavCircleIcon. Keep the house circle while drawing the missing plus glyph locally.
 @Composable
 internal fun MeNavAddButton(description: String, enabled: Boolean, onClick: () -> Unit) {

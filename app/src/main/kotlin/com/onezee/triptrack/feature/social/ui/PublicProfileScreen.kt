@@ -144,7 +144,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
 
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("public_profile")) {
         Column(Modifier.fillMaxSize()) {
-            if (!hasCover) Box(Modifier.statusBarsPadding()) { SocialNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) } }
+            if (!hasCover) Box(Modifier.statusBarsPadding()) { CustomNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) } }
             com.onezee.triptrack.ui.PullToRefresh(refreshing = state.isLoading && profile != null, onRefresh = { vm.refresh() }, modifier = Modifier.fillMaxSize()) {
             LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 if (isOwn) item(key = "preview") { PreviewBanner(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp)) }
@@ -205,7 +205,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
         }
         }
         if (hasCover && scrolled) Column(Modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
-            SocialNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) }
+            CustomNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) }
         }
         LaunchedEffect(profile?.id, state.garage.isEmpty()) { if (profile != null) { vm.loadGarage(); vm.loadJourneys() } }
         pickerFor?.let { trip -> ReactionPickerOverlay(trip.myReaction, onPick = { vm.toggleReaction(trip.id, it) }, onDismiss = { pickerFor = null }) }

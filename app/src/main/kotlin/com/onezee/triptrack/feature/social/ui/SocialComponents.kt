@@ -1,4 +1,4 @@
-// iOS: CustomNavBar.swift, PersonIdentity.swift (PersonAvatar, PersonName), AvatarFrame.swift
+// iOS: PersonIdentity.swift (PersonAvatar, PersonName), AvatarFrame.swift
 // (AvatarFrameRing), ProfileBackground.swift (gradients and patterns), SkeletonProfileView.swift
 package com.onezee.triptrack.feature.social.ui
 
@@ -47,29 +47,6 @@ import com.onezee.triptrack.model.ProfileBackground
 import com.onezee.triptrack.model.SocialAuthor
 import kotlin.math.max
 import kotlin.math.sin
-
-/**
- * iOS: CustomNavBar. The title centred over the whole width (18 pt heavy, an optional 11 pt
- * subtitle under it), the back circle at the leading edge and the screen's own actions trailing.
- */
-@Composable
-fun SocialNavBar(title: String, onBack: (() -> Unit)?, modifier: Modifier = Modifier, subtitle: String? = null,
-                 trailing: @Composable RowScope.() -> Unit = {}) {
-    val colors = AppTheme.colors
-    Box(modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 8.dp)) {
-        Column(Modifier.align(Alignment.Center).padding(horizontal = 56.dp), horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(1.dp)) {
-            Text(title, style = inter(18f, InterWeight.heavy), color = colors.text, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.semantics { heading() }.testTag("social_nav_title"))
-            if (!subtitle.isNullOrEmpty()) Text(subtitle, style = inter(11f, InterWeight.medium), color = colors.textTertiary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        }
-        Row(Modifier.fillMaxWidth().align(Alignment.Center), verticalAlignment = Alignment.CenterVertically) {
-            if (onBack != null) NavCircleButton(AppGlyph.chevronLeft, appStrings.back(), onBack, Modifier.testTag("social_back"))
-            Spacer(Modifier.weight(1f))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, content = trailing)
-        }
-    }
-}
 
 /** iOS PersonAvatar: the emoji on a disc, with the PRO frame the server sends for a live subscription. */
 @Composable

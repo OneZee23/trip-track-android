@@ -187,7 +187,7 @@ internal fun VehicleCatalogContent(state: VehicleCatalogState, onQuery: (String)
     onLegacy: (VehicleCatalog.Make, VehicleCatalog.Model) -> Unit = { _, _ -> }) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().testTag("vehicle_catalog_picker")) {
-        MeNavBar(when (state.step) { CatalogStep.model -> strings.vehicleMakeModel(); CatalogStep.generation -> strings.catalogGeneration(); CatalogStep.year -> strings.vehicleYear(); CatalogStep.variant -> strings.catalogVariant() }, onBack)
+        CustomNavBar(when (state.step) { CatalogStep.model -> strings.vehicleMakeModel(); CatalogStep.generation -> strings.catalogGeneration(); CatalogStep.year -> strings.vehicleYear(); CatalogStep.variant -> strings.catalogVariant() }, onBack)
         if (state.step == CatalogStep.model) MeField(strings.catalogSearchPlaceholder(), state.query, onQuery, tag = "catalog_query")
         LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             when (state.step) {

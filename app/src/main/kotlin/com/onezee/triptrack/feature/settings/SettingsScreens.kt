@@ -146,7 +146,7 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
 @Composable
 internal fun SettingsDetail(title: String, onBack: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxSize()) {
-        MeNavBar(title, onBack)
+        CustomNavBar(title, onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.surfaceCard(16.dp), content = content)
         }

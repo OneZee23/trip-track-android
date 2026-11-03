@@ -65,7 +65,8 @@ internal fun GarageScreen(state: GarageState, unit: DistanceUnit, onBack: () -> 
                           onVehicle: (UUID) -> Unit, onSelect: (UUID) -> Unit, onDelete: (UUID) -> Unit, onUnsell: (UUID) -> Unit = {}) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("garage_screen")) {
-        MeNavBar(strings.garage(), onBack) {
+        // iOS GarageView.navRow sets navBarInSheet whether the list is pushed or presented.
+        CustomNavBar(strings.garage(), onBack, inSheet = true) {
             MeNavAddButton(strings.addVehicleTitle(), state.vehicles.count { it.vehicle.soldAt == null } < 5, onAdd)
         }
         if (state.loaded && state.vehicles.isEmpty()) {
@@ -142,7 +143,7 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
     val strings = appStrings
     val vehicle = state.vehicle
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("vehicle_passport")) {
-        MeNavBar(vehicle?.name ?: strings.myVehicle(), onBack) {
+        CustomNavBar(vehicle?.name ?: strings.myVehicle(), onBack) {
             var actions by remember { mutableStateOf(false) }
             Box {
                 NavCircleButton(AppGlyph.ellipsis, strings.moreActions(), { actions = true }, Modifier.testTag("garage_vehicle_actions"))

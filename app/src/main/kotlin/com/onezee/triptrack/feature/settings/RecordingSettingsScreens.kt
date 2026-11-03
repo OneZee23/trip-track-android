@@ -77,7 +77,7 @@ internal fun AutoRecordSettingsScreen(
     val description = if (state.autoRecordTrigger == AutoRecordTrigger.stereoOnly)
         strings.autoRecordStereoOnlyDescription() else strings.autoRecordDescription()
     Column(Modifier.fillMaxSize().background(colors.bg)) {
-        MeNavBar(strings.autoRecord(), onBack)
+        CustomNavBar(strings.autoRecord(), onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)
             .padding(top = 8.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
             Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {

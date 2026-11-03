@@ -59,9 +59,8 @@ internal fun LevelsScreen(identity: ProfileIdentity, onBack: () -> Unit, ownerNa
         R.string.driver_rank_nomad, R.string.driver_rank_conqueror, R.string.driver_rank_cartographer, R.string.driver_rank_odysseus,
         R.string.driver_rank_roadSpirit, R.string.driver_rank_eternal)
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("levels_screen")) {
-        MeNavBar(strings.levelsTitle(), onBack)
-        // iOS LevelsView(other:): someone's level is subtitled with their name.
-        if (!ownerName.isNullOrEmpty()) Text(ownerName, Modifier.padding(horizontal = 16.dp).testTag("levels_owner"), style = AppType.meta, color = AppTheme.colors.textTertiary)
+        // iOS LevelsView(other:): the display title, and someone's level is subtitled with their name.
+        CustomNavBar(strings.levelsTitle(), onBack, subtitle = ownerName, largeTitle = true)
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp).padding(bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.surfaceCard(20.dp).padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -112,7 +111,7 @@ internal fun CountryScreen(selection: String, onSelect: (String) -> Unit, onBack
     val strings = appStrings
     fun choose(value: String) { if (value != selection) onSelect(value); onBack() }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("country_picker")) {
-        MeNavBar(strings.countryTitle(), onBack)
+        CustomNavBar(strings.countryTitle(), onBack)
         LazyVerticalGrid(GridCells.Fixed(5), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(17.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item(span = { GridItemSpan(maxLineSpan) }) { Text(strings.countryHint(), style = AppType.meta, color = AppTheme.colors.textSecondary) }
             item(span = { GridItemSpan(maxLineSpan) }) { Column(Modifier.surfaceCard(16.dp).clip(RoundedCornerShape(16.dp))) {
