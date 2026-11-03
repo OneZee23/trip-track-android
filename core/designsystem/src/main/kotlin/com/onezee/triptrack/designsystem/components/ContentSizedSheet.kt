@@ -33,6 +33,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -94,6 +98,11 @@ enum class SheetDetent {
  * in light) and the top corners are [AppRadius.sheet], a continuous curve. The Atlas sheets and the
  * sync sheet ask for a larger [cornerRadius] there too. A [CustomNavBar] inside it clears the
  * grabber's strip, as iOS `navBarInSheet` does.
+ *
+ * [grabber] is iOS `presentationDragIndicator(.visible)`: the system's handle, 34 × 5 at 8 from the
+ * top edge, in the ink at 18 % (measured on the iPhone's «Покрытие» sheet: (209, 209, 209) on
+ * white). iOS draws it over the first 10 pt and the content starts below it, so it takes no room
+ * here either. Sheets that iOS leaves at the default (one detent, no explicit indicator) show none.
  */
 @Composable
 fun ContentSizedSheet(
@@ -106,6 +115,8 @@ fun ContentSizedSheet(
     dismissible: Boolean = true,
     /** iOS `presentationCornerRadius`; the system's own, unless the screen sets one. */
     cornerRadius: Dp = AppRadius.sheet,
+    /** iOS `presentationDragIndicator(.visible)`. */
+    grabber: Boolean = false,
     content: @Composable SheetScope.() -> Unit,
 ) {
     val density = LocalDensity.current
@@ -161,6 +172,7 @@ fun ContentSizedSheet(
             )
             val navigation = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
             val shape = remember(cornerRadius) { ContinuousTopRoundedRectangle(cornerRadius) }
+            val grabberInk = (if (AppTheme.isDark) Color.White else Color.Black).copy(alpha = GrabberAlpha)
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -193,6 +205,14 @@ fun ContentSizedSheet(
                     )
                     .background(background, shape)
                     .padding(bottom = if (contentClearsNavigationBar) 0.dp else navigation)
+                    .then(
+                        if (grabber) Modifier.drawWithContent {
+                            drawContent()
+                            val width = GrabberWidth.toPx()
+                            val height = GrabberHeight.toPx()
+                            drawRoundRect(grabberInk, Offset((size.width - width) / 2, GrabberTop.toPx()), Size(width, height), CornerRadius(height / 2))
+                        } else Modifier,
+                    )
                     .testTag("sheet"),
             ) {
                 val sheet = remember(this) { SheetColumnScope(this, dismiss) }
@@ -201,3 +221,9 @@ fun ContentSizedSheet(
         }
     }
 }
+
+/** The system grabber of an iPhone sheet: 34 × 5, 8 below the top edge, the ink at 18 %. */
+internal val GrabberWidth = 34.dp
+internal val GrabberHeight = 5.dp
+internal val GrabberTop = 8.dp
+private const val GrabberAlpha = 0.18f
