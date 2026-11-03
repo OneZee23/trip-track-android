@@ -329,6 +329,8 @@ private fun PublicHero(
                     }
                 }
                 coverOverlay()
+                com.onezee.triptrack.feature.me.CoverPageCounter(pager.currentPage, photos.size,
+                    Modifier.align(Alignment.TopStart).padding(start = 16.dp, top = com.onezee.triptrack.feature.me.statusBarTop() + 54.dp))
             }
             Column(Modifier.fillMaxWidth().drawBehind { if (hasCover) { drawCover(background); drawRect(Color.Black.copy(alpha = .64f)) } }
                 .padding(horizontal = 16.dp).padding(bottom = 12.dp, top = if (vehicle != null) 0.dp else 18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -414,8 +416,8 @@ private fun ForeignCar(car: PublicVehicle, paid: Boolean, road: Boolean, ink: Co
 
 @Composable
 private fun RoadScene(time: RoadSceneTime, modifier: Modifier = Modifier.fillMaxWidth().height(211.dp)) {
-    val id = com.onezee.triptrack.feature.me.MeArtwork.drawables["road_${time.name}"] ?: return
-    androidx.compose.foundation.Image(androidx.compose.ui.res.painterResource(id), null, modifier, contentScale = androidx.compose.ui.layout.ContentScale.FillBounds)
+    // The same drawing as on «Я», with its 25 pt fade into the card colour over the foot of the band.
+    com.onezee.triptrack.feature.me.ProfileRoadScene(time, modifier)
 }
 
 /** The rank's name from the same table the Levels screen reads. */
