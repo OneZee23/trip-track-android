@@ -33,9 +33,9 @@ fun TripsDestinationScreen(dest: TripsDestination, feature: TripsFeature, naviga
 
 /** Лента with its own stack: the trip, the journey, someone else's journey, pushed over it. */
 @Composable
-fun FeedTab(feature: TripsFeature, scrollToTop: Int, offline: Boolean, onOpenRecord: () -> Unit, onOpenProfileTab: () -> Unit) {
+fun FeedTab(feature: TripsFeature, scrollToTop: Int, offline: Boolean, onOpenRecord: () -> Unit, onOpenProfileTab: () -> Unit, onSignIn: (() -> Unit)? = null) {
     val navigator = feature.feedNavigator
     TabNavHost(navigator, Modifier.fillMaxSize(), root = {
-        FeedScreen(feature, scrollToTop, offline, onOpenRecord, onOpenProfileTab, now = feature.clock)
+        FeedScreen(feature, scrollToTop, offline, onOpenRecord, onOpenProfileTab, onSignIn = onSignIn, now = feature.clock)
     }) { dest -> TripsDestinationScreen(dest, feature, navigator) }
 }

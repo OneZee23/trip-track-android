@@ -75,10 +75,12 @@ import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.points
 import com.onezee.triptrack.designsystem.theme.rememberHaptics
 import com.onezee.triptrack.feature.feed.SocialCardState
+import com.onezee.triptrack.feature.social.ui.avatarFrame
 import com.onezee.triptrack.feature.trip.TripSummary
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.logic.from
 import com.onezee.triptrack.logic.speedParts
+import com.onezee.triptrack.model.AvatarFrame
 import com.onezee.triptrack.model.DriverRank
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Measure
@@ -329,7 +331,10 @@ private fun SocialAuthorRow(card: SocialCardState, isOwn: Boolean, now: Instant,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val authorTap = if (onTapAuthor != null) Modifier.clickable(interactionSource = null, indication = null) { haptics.tap(); onTapAuthor() } else Modifier
-        Box(Modifier.size(36.dp).background(colors.cardAlt, CircleShape).then(authorTap), contentAlignment = Alignment.Center) {
+        // iOS: .avatarFrame(AvatarFrame.from(trip.author.avatarFrame), lineWidth: 2). The server sends the frame only for a live
+        // subscription, so nothing is re-checked here; a frame this build does not know reads as none.
+        Box(Modifier.size(36.dp).background(colors.cardAlt, CircleShape)
+            .avatarFrame(AvatarFrame.fromRawValue(author.avatarFrame.orEmpty()) ?: AvatarFrame.none, 2.dp).then(authorTap), contentAlignment = Alignment.Center) {
             Text(author.avatarEmoji ?: "🙂", style = inter(19f))
         }
         Column(Modifier.weight(1f).then(authorTap).testTag("feed_card_author"), verticalArrangement = Arrangement.spacedBy(2.dp)) {
