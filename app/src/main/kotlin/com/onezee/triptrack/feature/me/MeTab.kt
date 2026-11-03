@@ -50,6 +50,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var deleting by remember { mutableStateOf<UUID?>(null) }
     var mutationFailed by remember { mutableStateOf(false) }
     var mutating by remember { mutableStateOf(false) }
+    // iOS journalSignIn: the compact sign-in row on a journal that already has trips opens the prompt sheet.
+    var signInOpen by rememberSaveable { mutableStateOf(false) }
+    // iOS GroupsWaitlistStore: the row under the sections and the clubs screen read one answer.
+    var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     val scope = rememberCoroutineScope()
     val strings = appStrings
     fun mutate(action: suspend () -> Unit) {
@@ -69,14 +73,20 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         feature.identity.refreshRemote()
         feature.profilePhotos.requestSync()
     }
-    if (settingsOpen || profileEditor != null || photosOpen || editing != null || deleting != null) HideAppTabBar()
+    LaunchedEffect(settings.localUserId) {
+        val id = settings.localUserId ?: return@LaunchedEffect
+        try { waitlist = graph.apiClient.post(ApiEndpoint.groupsWaitlist, GroupsWaitlistStatusRequest(id), requiresAuth = false) }
+        catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { /* The row keeps «be the first» until the clubs screen reaches the server. */ }
+    }
+    if (settingsOpen || profileEditor != null || photosOpen || editing != null || deleting != null || signInOpen) HideAppTabBar()
     CompositionLocalProvider(LocalMeAverageSpeed provides settings.averageSpeed, LocalMePhotoClient provides graph.apiClient) {
     Box(Modifier.fillMaxSize()) {
         MeNavHost(graph.tripsFeature, navigator, root = {
             if (garageOnly) GarageScreen(garage, settings.distanceUnit, onGarageBack, { editing = "" },
                 onVehicle = { navigator.push(MeRoute.Passport(it)) }, onSelect = { graph.settingsManager.selectVehicle(it) }, onDelete = { deleting = it },
                 onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } })
-            else MeContent(state.copy(failed = state.failed || identityFailed, hero = state.hero.copy(roadTime = feature.roadTimeOverride ?: state.hero.roadTime)), settings.distanceUnit,
+            else MeContent(state.copy(failed = state.failed || identityFailed, hero = state.hero.copy(roadTime = feature.roadTimeOverride ?: state.hero.roadTime, signedIn = auth.isSignedIn)), settings.distanceUnit,
                 onSettings = { settingsOpen = true }, onGarage = { navigator.push(MeRoute.Garage) },
                 onVehicle = { navigator.push(MeRoute.Passport(it)) }, onAddVehicle = { editing = "" },
                 onAchievements = { navigator.push(MeRoute.Achievements) }, onClubs = { navigator.push(MeRoute.Clubs) },
@@ -88,7 +98,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 coverPromptHidden = feature.coverPromptHidden, onHideCoverPrompt = feature::hideCoverPrompt,
                 onComposeJourney = { composerOpening++; composerAnchor = it },
                 onUnpinElsewhere = { scope.launch { feature.identity.setPinnedTrips(state.hero.identity.pinnedTripIds - state.showcaseElsewhere.toSet()) } },
-                onStats = { navigator.push(MeRoute.Stats) })
+                onStats = { navigator.push(MeRoute.Stats) },
+                signedIn = auth.isSignedIn, needsReauth = auth.needsReauth, onSignIn = { signInOpen = true },
+                onBadge = { navigator.push(MeRoute.Badge(it)) }, onRecord = { graph.tabStore.select(com.onezee.triptrack.designsystem.navigation.AppTab.record) },
+                clubsSubtitle = waitlist?.let { clubsRowSubtitle(it.total, it.joined, strings) })
         }) { destination ->
             when (destination) {
                 MeRoute.Garage -> GarageScreen(garage, settings.distanceUnit, { navigator.pop() }, { editing = "" },
@@ -122,7 +135,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 }
                 MeRoute.Achievements -> AchievementsScreen(state.achievements, { navigator.pop() }) { navigator.push(MeRoute.Badge(it)) }
                 is MeRoute.Badge -> BadgeDetailScreen(state.achievements.firstOrNull { it.id == destination.id }, { navigator.pop() }, settings.distanceUnit)
-                MeRoute.Clubs -> ClubsScreen(graph, { navigator.pop() })
+                MeRoute.Clubs -> ClubsScreen(graph, waitlist, { waitlist = it }, { navigator.pop() })
                 MeRoute.Levels -> LevelsScreen(state.hero.identity, { navigator.pop() })
                 MeRoute.Country -> CountryScreen(state.hero.identity.country, feature.identity::setCountry, { navigator.pop() })
                 else -> Unit
@@ -137,6 +150,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         JourneyComposerSheet(model, onCreated = { profile.reload() }, onDismissRequest = { composerAnchor = null })
     }
     if (settingsOpen) SettingsRoute(graph) { settingsOpen = false }
+    if (signInOpen) com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, graph.auth, onDismissRequest = { signInOpen = false })
     profileEditor?.let { field -> ProfileTextEditor(field, if (field == ProfileTextField.displayName) state.hero.identity.name else state.hero.identity.bio,
         onSave = { value -> if (field == ProfileTextField.displayName) graph.auth.updateUserName(value) else feature.identity.setBio(value) },
         onClose = { profileEditor = null }) }
@@ -171,22 +185,22 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
 }
 
 @Composable
-private fun ClubsScreen(graph: AppGraph, onBack: () -> Unit) {
+private fun ClubsScreen(graph: AppGraph, initial: GroupsWaitlistState?, onChanged: (GroupsWaitlistState) -> Unit, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
-    var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
+    var waitlist by remember { mutableStateOf(initial) }
     var busy by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     val settings by graph.settingsManager.state.collectAsState()
     LaunchedEffect(settings.localUserId) {
         val id = settings.localUserId ?: return@LaunchedEffect
-        try { waitlist = graph.apiClient.post(ApiEndpoint.groupsWaitlist, GroupsWaitlistStatusRequest(id), requiresAuth = false) }
+        try { waitlist = graph.apiClient.post<GroupsWaitlistStatusRequest, GroupsWaitlistState>(ApiEndpoint.groupsWaitlist, GroupsWaitlistStatusRequest(id), requiresAuth = false); waitlist?.let(onChanged) }
         catch (cancelled: CancellationException) { throw cancelled }
         catch (_: Exception) { failed = true }
     }
     ClubsContent(waitlist, busy, failed, onBack, onToggle = { list ->
         settings.localUserId?.let { id -> scope.launch {
             busy = true
-            try { waitlist = graph.apiClient.post(if (list.joined) ApiEndpoint.groupsWaitlistLeave else ApiEndpoint.groupsWaitlistJoin, GroupsWaitlistRequest(id), requiresAuth = false) }
+            try { waitlist = graph.apiClient.post<GroupsWaitlistRequest, GroupsWaitlistState>(if (list.joined) ApiEndpoint.groupsWaitlistLeave else ApiEndpoint.groupsWaitlistJoin, GroupsWaitlistRequest(id), requiresAuth = false); waitlist?.let(onChanged) }
             catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { failed = true }
             finally { busy = false }
