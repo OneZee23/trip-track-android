@@ -158,6 +158,19 @@ class GlyphSizingTests(private val glyph: AppGlyph, private val symbol: Ink) {
             AppGlyph.trayFull to Ink(1.177f, 0.861f),
             AppGlyph.xmark to Ink(0.796f, 0.789f),
             AppGlyph.xmarkCircleFill to Ink(1.012f, 1.011f),
+            // The wave-3 set, drawn by eye; measured the same way (100 pt, semibold) for size only.
+            AppGlyph.antennaRadiowaves to Ink(1.080f, 0.910f),
+            AppGlyph.bellFill to Ink(0.960f, 1.040f),
+            AppGlyph.envelopeFill to Ink(1.220f, 0.860f),
+            AppGlyph.handRaisedFill to Ink(0.820f, 1.080f),
+            AppGlyph.icloudFill to Ink(1.250f, 0.870f),
+            AppGlyph.icloudSlash to Ink(1.250f, 0.990f),
+            AppGlyph.ladybugFill to Ink(1.150f, 1.180f),
+            AppGlyph.mappin to Ink(0.400f, 1.060f),
+            AppGlyph.musicNote to Ink(0.620f, 0.990f),
+            AppGlyph.ruler to Ink(1.250f, 0.550f),
+            AppGlyph.speakerWaveFill to Ink(1.170f, 0.870f),
+            AppGlyph.starFill to Ink(1.120f, 1.050f),
         )
     }
 }
