@@ -157,19 +157,23 @@ private fun StatsContent(vm: StatsViewModel, state: StatsState, aggregates: MeAg
             records.forEachIndexed { index, row ->
                 if (index > 0) RowDivider()
                 val tapped = row.tripId?.let { id -> { haptics.tap(); onOpenTrip(id, row.id) } }
-                Row(Modifier.fillMaxWidth().then(if (tapped != null) Modifier.clickable(role = Role.Button, onClick = tapped) else Modifier)
-                    .padding(horizontal = 16.dp, vertical = 12.dp).testTag("stats_record_row"), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(row.label, style = AppType.caption, color = colors.textSecondary, maxLines = 1)
-                        Text(row.subject, style = AppType.itemTitle, color = colors.text, maxLines = 1)
-                    }
-                    Text(row.value, style = AppType.itemValue.copy(fontFeatureSettings = "tnum"), color = colors.text, maxLines = 1)
-                    // The chevron's slot stays on a row without one, or the numbers would not line up.
-                    Box(Modifier.width(14.dp), contentAlignment = Alignment.Center) {
-                        if (loadingRecordId == row.id) com.onezee.triptrack.feature.account.Spinner(colors.textTertiary, size = 12.dp)
-                        else if (row.tripId != null) Glyph(AppGlyph.chevronRight, null, tint = colors.textTertiary, size = 12.dp)
+                val line = @Composable { modifier: Modifier ->
+                    Row(modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(row.label, style = AppType.caption, color = colors.textSecondary, maxLines = 1)
+                            Text(row.subject, style = AppType.itemTitle, color = colors.text, maxLines = 1)
+                        }
+                        Text(row.value, style = AppType.itemValue.copy(fontFeatureSettings = "tnum"), color = colors.text, maxLines = 1)
+                        // The chevron's slot stays on a row without one, or the numbers would not line up.
+                        Box(Modifier.width(14.dp), contentAlignment = Alignment.Center) {
+                            if (loadingRecordId == row.id) com.onezee.triptrack.feature.account.Spinner(colors.textTertiary, size = 12.dp)
+                            else if (row.tripId != null) Glyph(AppGlyph.chevronRight, null, tint = colors.textTertiary, size = 12.dp)
+                        }
                     }
                 }
+                // iOS: the row is a Button in PressableCardStyle; a row without a trip is plain text.
+                if (tapped != null) PressableCard(onClick = tapped, modifier = Modifier.fillMaxWidth().testTag("stats_record_row")) { line(Modifier) }
+                else line(Modifier.testTag("stats_record_row"))
             }
         }
     }

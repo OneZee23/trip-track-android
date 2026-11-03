@@ -8,6 +8,7 @@ import android.provider.Settings
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -21,6 +22,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import com.onezee.triptrack.designsystem.components.HouseIndication
 import com.onezee.triptrack.designsystem.components.LocalContentColor
 import com.onezee.triptrack.designsystem.components.LocalTextStyle
 import com.onezee.triptrack.designsystem.strings.AppLanguage
@@ -81,6 +83,9 @@ fun TripTrackTheme(
         LocalReduceMotion provides (reduceMotion ?: systemReduceMotion),
         LocalAppStrings provides strings,
         LocalContentColor provides colors.text,
+        // No Material theme here, so nothing else would answer a press: without this every
+        // clickable that names no indication draws the foundation's grey rectangle.
+        LocalIndication provides HouseIndication,
     ) {
         val body: TextStyle = AppType.body
         CompositionLocalProvider(LocalTextStyle provides body, content = content)

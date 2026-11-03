@@ -3,10 +3,12 @@ package com.onezee.triptrack.feature.social.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +31,7 @@ fun PublicBadgeOverlay(row: AchievementRow, onDismiss: () -> Unit) {
     val secret = definition.isHidden && !row.unlocked
     Dialog(onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Box(Modifier.matchParentSize().background(Color.Black.copy(alpha = .4f)).clickable(onClick = onDismiss).clearAndSetSemantics {})
+            Box(Modifier.matchParentSize().background(Color.Black.copy(alpha = .4f)).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onDismiss).clearAndSetSemantics {})
             Box(Modifier.widthIn(max = 300.dp).padding(horizontal = 12.dp).background(AppTheme.colors.bg, RoundedCornerShape(24.dp)).testTag("public_badge_overlay")) {
                 Column(Modifier.padding(24.dp).padding(top = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     // iOS: a hidden badge is a padlock on a folded map, not a bare glyph that reads as a

@@ -139,4 +139,5 @@ fun Modifier.plainPressFeedback(interactionSource: InteractionSource): Modifier 
     graphicsLayer { this.alpha = alpha }
 }
 
-private const val PLAIN_ALPHA = 0.55f
+/** How far `.plain` dims its label: [plainPressFeedback] and [HouseIndication] both. */
+internal const val PLAIN_ALPHA = 0.55f
