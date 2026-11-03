@@ -23,7 +23,7 @@ import com.onezee.triptrack.designsystem.theme.InterWeight
 import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.feature.trip.TripSummary
-import com.onezee.triptrack.ui.LightRoutePreview
+import com.onezee.triptrack.ui.MapSnapshotPreview
 import com.onezee.triptrack.ui.RegionDisplay
 import com.onezee.triptrack.ui.TripAutoTitle
 import com.onezee.triptrack.ui.cards.dayMonth
@@ -115,7 +115,7 @@ fun JourneyLegRow(
 fun LegThumbnail(trip: TripSummary) {
     val shape = RoundedCornerShape(8.dp)
     if (trip.coordinates.size > 1) {
-        LightRoutePreview(listOf(trip.coordinates), Modifier.size(56.dp, 44.dp).clip(shape), padding = 6.dp)
+        MapSnapshotPreview(trip.coordinates, trip.id, Modifier.size(56.dp, 44.dp).clip(shape), height = 44.dp, width = 56.dp, cornerRadius = 8.dp)
     } else {
         Box(Modifier.size(56.dp, 44.dp).clip(shape).background(AppTheme.colors.card), contentAlignment = Alignment.Center) {
             Glyph(AppGlyph.mapSlash, contentDescription = null, tint = AppTheme.colors.textTertiary, size = 15.dp)

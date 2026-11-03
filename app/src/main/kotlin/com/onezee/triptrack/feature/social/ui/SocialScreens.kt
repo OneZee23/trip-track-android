@@ -39,7 +39,6 @@ import com.onezee.triptrack.feature.me.AchievementRow
 import com.onezee.triptrack.feature.me.AchievementsScreen
 import com.onezee.triptrack.feature.me.BadgeDetailScreen
 import com.onezee.triptrack.feature.me.ProfileIdentity
-import com.onezee.triptrack.feature.me.ProfileMapPreview
 import com.onezee.triptrack.feature.me.LevelsScreen
 import com.onezee.triptrack.feature.settings.MeRow
 import com.onezee.triptrack.feature.settings.MeSection
