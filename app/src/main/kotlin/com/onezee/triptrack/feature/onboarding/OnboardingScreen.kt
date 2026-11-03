@@ -426,8 +426,8 @@ private fun androidx.compose.foundation.layout.RowScope.Metric(value: String, un
 
 /** Parchment, faint roads, a speed-gradient route from the start (red dot) to the finish (green). */
 @Composable
-private fun MockMap(strings: AppStrings) {
-    BoxWithConstraints(Modifier.fillMaxWidth().height(150.dp).background(Color(0xFFE8E1D3))) {
+internal fun MockMap(strings: AppStrings) {
+    BoxWithConstraints(Modifier.fillMaxWidth().height(150.dp).background(Color(0xFFE8E1D3)).testTag("onboarding_mock_map")) {
         val w = maxWidth
         Canvas(Modifier.fillMaxSize()) {
             val width = size.width
@@ -445,9 +445,10 @@ private fun MockMap(strings: AppStrings) {
             }
             drawPath(route, Brush.linearGradient(listOf(AppTheme.green, AppTheme.yellow, AppTheme.red), Offset(0f, height), Offset(width, 0f)),
                 style = Stroke(4.dp.toPx(), cap = StrokeCap.Round))
+            // iOS mockEndpointDot: a 9 pt disc with a 2 pt white stroke centred on its edge, 11 pt across with 7 pt of colour.
             for ((point, color) in listOf(Offset(width * 0.11f, height * 0.83f) to AppTheme.red, Offset(width * 0.72f, height * 0.11f) to AppTheme.green)) {
-                drawCircle(Color.White, 6.5.dp.toPx(), point)
-                drawCircle(color, 4.5.dp.toPx(), point)
+                drawCircle(Color.White, 5.5.dp.toPx(), point)
+                drawCircle(color, 3.5.dp.toPx(), point)
             }
         }
         Image(

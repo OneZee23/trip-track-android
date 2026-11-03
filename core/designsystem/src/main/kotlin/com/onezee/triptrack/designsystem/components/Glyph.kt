@@ -85,6 +85,20 @@ enum class AppGlyph {
     trayFull,
     faceSmiling,
     faceDashed,
+    starFill,
+    bellFill,
+    handRaisedFill,
+    envelopeFill,
+    ruler,
+    ladybugFill,
+    antennaRadiowaves,
+    antennaRadiowavesSlash,
+    musicNote,
+    speakerWaveFill,
+    icloudFill,
+    icloudSlash,
+    mappin,
+    clipboard,
     tabHome,
     tabMaps,
     tabRecord,
@@ -161,6 +175,20 @@ private val AppGlyph.vectorResource: Int
         AppGlyph.trayFull -> R.drawable.glyph_tray_full
         AppGlyph.faceSmiling -> R.drawable.glyph_face_smiling
         AppGlyph.faceDashed -> R.drawable.glyph_face_dashed
+        AppGlyph.starFill -> R.drawable.glyph_star_fill
+        AppGlyph.bellFill -> R.drawable.glyph_bell_fill
+        AppGlyph.handRaisedFill -> R.drawable.glyph_hand_raised_fill
+        AppGlyph.envelopeFill -> R.drawable.glyph_envelope_fill
+        AppGlyph.ruler -> R.drawable.glyph_ruler
+        AppGlyph.ladybugFill -> R.drawable.glyph_ladybug_fill
+        AppGlyph.antennaRadiowaves -> R.drawable.glyph_antenna_radiowaves
+        AppGlyph.antennaRadiowavesSlash -> R.drawable.glyph_antenna_radiowaves_slash
+        AppGlyph.musicNote -> R.drawable.glyph_music_note
+        AppGlyph.speakerWaveFill -> R.drawable.glyph_speaker_wave_fill
+        AppGlyph.icloudFill -> R.drawable.glyph_icloud_fill
+        AppGlyph.icloudSlash -> R.drawable.glyph_icloud_slash
+        AppGlyph.mappin -> R.drawable.glyph_mappin
+        AppGlyph.clipboard -> R.drawable.glyph_clipboard
         AppGlyph.tabHome -> R.drawable.glyph_tab_home
         AppGlyph.tabMaps -> R.drawable.glyph_tab_maps
         AppGlyph.tabRecord -> R.drawable.glyph_tab_record
@@ -198,11 +226,14 @@ internal val AppGlyph.opticalScale: Float
         AppGlyph.photo, AppGlyph.squareAndPencil, AppGlyph.xmark -> 1.15f
         AppGlyph.bubbleRight, AppGlyph.car, AppGlyph.checkmark, AppGlyph.houseFill,
         AppGlyph.mappinAndEllipse, AppGlyph.pencil, AppGlyph.play, AppGlyph.tablecells, AppGlyph.tray,
-        AppGlyph.trayFull -> 1.2f
+        AppGlyph.trayFull, AppGlyph.envelopeFill, AppGlyph.ladybugFill, AppGlyph.speakerWaveFill -> 1.2f
+        AppGlyph.bellFill, AppGlyph.ruler, AppGlyph.starFill -> 1.15f
+        AppGlyph.icloudSlash -> 1.1f
+        AppGlyph.icloudFill -> 1.25f
         AppGlyph.arrowTriangleSwap, AppGlyph.cameraFill, AppGlyph.fuelpump, AppGlyph.mountain,
         AppGlyph.squareAndArrowDown, AppGlyph.suitcase, AppGlyph.suitcaseFill, AppGlyph.trash -> 1.25f
         AppGlyph.roadLanes -> 1.35f
-        AppGlyph.squareAndArrowUp -> 1.3f
+        AppGlyph.squareAndArrowUp, AppGlyph.clipboard -> 1.3f
         else -> 1f
     }
 

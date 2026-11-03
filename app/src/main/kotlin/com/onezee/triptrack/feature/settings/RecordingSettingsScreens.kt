@@ -11,10 +11,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.heading
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +26,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +43,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
+import com.onezee.triptrack.feature.account.HouseSwitch
+import com.onezee.triptrack.feature.me.ProfileSectionLabel
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.map.MapHost
 import com.onezee.triptrack.map.MapHostState
@@ -50,13 +57,11 @@ import kotlinx.coroutines.withContext
 @Composable
 internal fun AutoRecordSettingsContent(graph: AppGraph, state: SettingsState, onBack: () -> Unit, vehicleId: UUID? = null, onStereo: (() -> Unit)? = null) {
     val manager = graph.settingsManager
-    val context = LocalContext.current
     AutoRecordSettingsScreen(state, onBack, manager::setAutoRecordTrigger,
         onMode = { manager.setAutoRecord(it) },
         onTimeout = { manager.setAutoRecord(state.autoRecordMode, it) },
         onUnlink = { manager.removeStereo(it) },
-        onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId,
-        onSettings = { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:${context.packageName}"))) })
+        onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId)
 }
 
 // iOS: AutoRecordSettingsView.swift. State and callbacks also drive the screenshot fixtures.
@@ -70,37 +75,51 @@ internal fun AutoRecordSettingsScreen(
     onUnlink: (String) -> Unit,
     onStereo: () -> Unit,
     vehicleId: UUID? = null,
-    onSettings: (() -> Unit)? = null,
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
+    val on = state.autoRecordMode != AutoRecordMode.off
     val description = if (state.autoRecordTrigger == AutoRecordTrigger.stereoOnly)
         strings.autoRecordStereoOnlyDescription() else strings.autoRecordDescription()
     Column(Modifier.fillMaxSize().background(colors.bg)) {
         CustomNavBar(strings.autoRecord(), onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)
             .padding(top = 8.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-            Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {
-                MeToggle(strings.autoRecord(), state.autoRecordMode != AutoRecordMode.off,
-                    { onMode(if (it) AutoRecordMode.remind else AutoRecordMode.off) }, tag = "auto_record_toggle")
-                Box(Modifier.padding(horizontal = 14.dp).fillMaxWidth().height(1.dp).background(colors.border))
-                Text(description, Modifier.padding(14.dp), style = inter(13f), color = colors.textSecondary)
+            // iOS toggleCard: the antenna (accent while it is on), the title and a full-size switch over a hairline
+            // and the description, 14 inside a card of 16.
+            Column(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(Modifier.fillMaxWidth().testTag("auto_record_toggle")
+                    .toggleable(on, role = Role.Switch) { onMode(if (it) AutoRecordMode.remind else AutoRecordMode.off) },
+                    horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Glyph(AppGlyph.antennaRadiowaves, null, tint = if (on) AppTheme.accent else colors.textTertiary, size = 21.6.dp)
+                    Text(strings.autoRecord(), Modifier.weight(1f), style = interScaled(15f, InterWeight.semibold), color = colors.text)
+                    Box(Modifier.clearAndSetSemantics {}) { HouseSwitch(on, { onMode(if (it) AutoRecordMode.remind else AutoRecordMode.off) }) }
+                }
+                Box(Modifier.fillMaxWidth().height(1.dp).background(colors.border))
+                Text(description, style = inter(13f), color = colors.textSecondary)
             }
-            if (state.autoRecordMode != AutoRecordMode.off) {
+            if (on) {
                 AutoRecordSectionLabel(strings.stereoSection())
                 Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {
                     state.stereos.filter { vehicleId == null || it.vehicleId == vehicleId }.forEach { stereo ->
-                        Row(Modifier.fillMaxWidth().padding(start = 14.dp, end = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(Modifier.fillMaxWidth().padding(start = 14.dp, end = 6.dp, top = 3.dp, bottom = 3.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Glyph(AppGlyph.musicNote, null, tint = AppTheme.accent, size = 20.4.dp)
                             Text(stereo.name, Modifier.weight(1f), style = inter(14f, InterWeight.medium), color = colors.text, maxLines = 1)
-                            Text(strings.linked(), Modifier.padding(horizontal = 8.dp), style = inter(11f, InterWeight.bold), color = AppTheme.green)
+                            LinkedCapsule(strings.linked())
                             Box(Modifier.size(40.dp).clickable(role = Role.Button) { onUnlink(stereo.uuid) }
                                 .semantics { contentDescription = strings.delete() }.testTag("auto_record_unlink_${stereo.uuid}"), contentAlignment = Alignment.Center) {
-                                Glyph(AppGlyph.xmarkCircleFill, null, tint = colors.textTertiary, size = 17.dp)
+                                Glyph(AppGlyph.xmarkCircleFill, null, tint = colors.textTertiary, size = 20.4.dp)
                             }
                         }
                         Box(Modifier.padding(start = 14.dp).fillMaxWidth().height(1.dp).background(colors.cardAlt))
                     }
-                    MeRow(strings.linkStereo(), tag = "auto_record_stereo", glyph = AppGlyph.plus, onClick = onStereo)
+                    // iOS: an accent text button, «+» and the words, no tile and no chevron.
+                    val haptics = rememberHaptics()
+                    Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { haptics.tap(); onStereo() }.padding(horizontal = 14.dp, vertical = 13.dp).testTag("auto_record_stereo"),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Glyph(AppGlyph.plus, null, tint = AppTheme.accent, size = 16.8.dp)
+                        Text(strings.linkStereo(), style = inter(14f, InterWeight.semibold), color = AppTheme.accent)
+                    }
                 }
                 AutoRecordSectionLabel(strings.autoRecordTriggerSection())
                 Row(Modifier.fillMaxWidth().selectableGroup().background(colors.cardAlt, RoundedCornerShape(12.dp)).padding(3.dp),
@@ -135,15 +154,21 @@ internal fun AutoRecordSettingsScreen(
                     AutoRecordStep(true, state.autoStopTimeout < 10, strings.autoStopMinutes((state.autoStopTimeout + 1).coerceAtMost(10))) { onTimeout((state.autoStopTimeout + 1).coerceAtMost(10)) }
                 }
                 AutoRecordCaption(strings.autoStopDescription())
-                if (onSettings != null) MeRow(strings.openSettings(), onClick = onSettings)
             }
         }
     }
 }
 
+/** iOS: the heading of a section of the auto-record screen is `GarageSectionLabel`, the heading of «Я»: 16 bold ink. */
 @Composable
 private fun AutoRecordSectionLabel(text: String) {
-    Text(text, Modifier.padding(top = 6.dp, start = 2.dp), style = inter(12f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+    ProfileSectionLabel(text, Modifier.padding(top = 6.dp, start = 2.dp, end = 2.dp))
+}
+
+/** iOS: the green «Привязана» / «Добавлена» capsule: 11 bold green on green at 14 %, 8 and 4 of padding. */
+@Composable
+internal fun LinkedCapsule(text: String) {
+    Text(text, Modifier.background(AppTheme.green.copy(alpha = 0.14f), CircleShape).padding(horizontal = 8.dp, vertical = 4.dp), style = inter(11f, InterWeight.bold), color = AppTheme.green, maxLines = 1)
 }
 
 @Composable
@@ -182,7 +207,6 @@ private fun AutoRecordStep(plus: Boolean, enabled: Boolean, label: String, onCli
 @Composable
 internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? = null) {
     val context = LocalContext.current
-    val strings = appStrings
     val state by graph.settingsManager.state.collectAsState()
     val garage by graph.me.garage.state.collectAsState()
     var selected by remember { mutableStateOf(vehicleId ?: state.selectedVehicleId) }
@@ -211,30 +235,142 @@ internal fun StereoPicker(graph: AppGraph, onBack: () -> Unit, vehicleId: UUID? 
             value = withContext(Dispatchers.IO) { graph.location.carStereos.outputs() }
         }
     }
-    val linkable = (outputs + devices).distinctBy { it.uuid.uppercase(java.util.Locale.ROOT) }
-    SettingsDetail(strings.linkStereo(), onBack) {
-        garage.vehicles.filter { it.vehicle.soldAt == null }.forEach { item ->
-            MeRow(item.vehicle.name, if (selected == item.vehicle.id) "✓" else "", onClick = { selected = item.vehicle.id })
+    // iOS: «Текущий аудиовыход» is what the phone plays through now, «Устройства рядом» what it could pair with.
+    val currentIds = outputs.mapTo(mutableSetOf()) { it.uuid.uppercase(java.util.Locale.ROOT) }
+    StereoPickerContent(
+        // A stereo belongs to one vehicle: from a vehicle's own screen it is that one; from the recording screen
+        // the person says which (the iPhone's sheet is always opened for one).
+        vehicles = if (vehicleId == null) garage.vehicles.map { it.vehicle }.filter { it.soldAt == null } else null,
+        selected = selected, onSelect = { selected = it },
+        allowed = allowed, onAllow = { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) },
+        outputs = outputs, nearby = devices.filter { it.uuid.uppercase(java.util.Locale.ROOT) !in currentIds },
+        isLinked = { device -> state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected } },
+        onLink = { device -> selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() } },
+        onRefresh = { refresh++ },
+        // Android pairs a car stereo in the system's Bluetooth settings; the phone cannot find classic devices itself.
+        onOpenSettings = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ },
+        onBack = onBack,
+    )
+}
+
+/**
+ * iOS BluetoothScanSheet.scanContent: «Привязать магнитолу» 17 bold with the grey close disc (16 from the sides and the top, 8
+ * below), then 8 above the cards, 10 between them and 32 under the last. [vehicles] is null on a vehicle's own screen, where the
+ * stereo is that vehicle's; elsewhere the person says which. Nothing here reads the phone: the picker above gathers the state.
+ */
+@Composable
+internal fun StereoPickerContent(
+    vehicles: List<Vehicle>?, selected: UUID?, onSelect: (UUID) -> Unit,
+    allowed: Boolean, onAllow: () -> Unit,
+    outputs: List<SavedBluetoothDevice>, nearby: List<SavedBluetoothDevice>,
+    isLinked: (SavedBluetoothDevice) -> Boolean, onLink: (SavedBluetoothDevice) -> Unit,
+    onRefresh: () -> Unit, onOpenSettings: () -> Unit, onBack: () -> Unit,
+) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Column(Modifier.fillMaxSize().testTag("stereo_picker")) {
+        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(strings.linkStereo(), Modifier.weight(1f).semantics { heading() }, style = inter(17f, InterWeight.bold), color = colors.text)
+            SheetCloseCircle(onClick = onBack)
         }
-        if (!allowed) MeAction(strings.continueButton(), { if (Build.VERSION.SDK_INT >= 31) permission.launch(Manifest.permission.BLUETOOTH_CONNECT) })
-        if (linkable.isEmpty()) MeRow(strings.noDevicesFound(), subtitle = strings.scanHint())
-        linkable.forEach { device ->
-            StereoOutputRow(device, state.stereos.any { it.uuid.equals(device.uuid, ignoreCase = true) && it.vehicleId == selected },
-                enabled = selected != null) {
-                selected?.let { id -> graph.settingsManager.addStereo(device.copy(vehicleId = id)); onBack() }
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (vehicles != null) StereoSection(strings.myVehicle()) {
+                vehicles.forEachIndexed { index, vehicle ->
+                    if (index > 0) StereoDivider()
+                    Row(Modifier.fillMaxWidth().clickable(role = Role.RadioButton) { haptics.selection(); onSelect(vehicle.id) }.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(vehicle.name, Modifier.weight(1f), style = inter(14f, InterWeight.semibold), color = colors.text, maxLines = 1)
+                        if (selected == vehicle.id) Glyph(AppGlyph.checkmark, null, tint = AppTheme.accent, size = 18.dp)
+                    }
+                }
             }
+            if (!allowed) MeAction(strings.continueButton(), onAllow)
+            if (outputs.isNotEmpty()) StereoSection(strings.currentAudioOutput()) {
+                outputs.forEachIndexed { index, device ->
+                    if (index > 0) StereoDivider()
+                    StereoOutputRow(device, isLinked(device), enabled = selected != null) { onLink(device) }
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                    ProfileSectionLabel(strings.nearbyDevices(), Modifier.weight(1f))
+                    Box(Modifier.size(24.dp).clickable(role = Role.Button) { haptics.tap(); onRefresh() }.semantics { contentDescription = strings.tryAgain() }, contentAlignment = Alignment.Center) {
+                        Glyph(AppGlyph.arrowClockwise, null, tint = AppTheme.accent, size = 15.6.dp)
+                    }
+                }
+                StereoCard {
+                    if (nearby.isEmpty()) Column(Modifier.fillMaxWidth().padding(vertical = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Glyph(AppGlyph.antennaRadiowaves, null, tint = colors.textTertiary, size = 24.dp)
+                        Text(strings.noDevicesFound(), style = inter(13f), color = colors.textTertiary)
+                    }
+                    nearby.forEachIndexed { index, device ->
+                        if (index > 0) StereoDivider()
+                        NearbyDeviceRow(device, isLinked(device), enabled = selected != null) { onLink(device) }
+                    }
+                }
+            }
+            Text(strings.scanHint(), Modifier.fillMaxWidth().padding(top = 4.dp), style = inter(12f), color = colors.textTertiary, textAlign = TextAlign.Center)
+            Text(strings.openSettings(), Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onOpenSettings).padding(vertical = 12.dp).testTag("stereo_open_settings"),
+                style = inter(14f, InterWeight.semibold), color = AppTheme.accent, textAlign = TextAlign.Center)
         }
-        MeRow(strings.openSettings(), onClick = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); refresh++ })
     }
 }
 
+/** iOS: a labelled card of the stereo sheet. */
+@Composable
+private fun StereoSection(title: String, content: @Composable ColumnScope.() -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ProfileSectionLabel(title, Modifier.padding(horizontal = 2.dp))
+        StereoCard(content)
+    }
+}
+
+/** iOS: the card of this sheet is white with a 1 pt border, not the shadowed `surfaceCard` of the settings. */
+@Composable
+private fun StereoCard(content: @Composable ColumnScope.() -> Unit) {
+    val shape = RoundedCornerShape(16.dp)
+    Column(Modifier.fillMaxWidth().background(AppTheme.colors.card, shape).border(1.dp, AppTheme.colors.border, shape).clip(shape), content = content)
+}
+
+/** iOS rowDivider: the card-alt hairline inset 14 from the leading edge. */
+@Composable
+private fun StereoDivider() = Box(Modifier.padding(start = 14.dp).fillMaxWidth().height(1.dp).background(AppTheme.colors.cardAlt))
+
 // iOS: BluetoothScanSheet.swift, audioOutputSection. A Bluetooth output may be headphones.
+// The speaker, the name over «Bluetooth-аудио» (or «Android Auto», as CarPlay is named there), and either an accent
+// «+» or the green «Добавлена» capsule.
 @Composable
 internal fun StereoOutputRow(device: SavedBluetoothDevice, linked: Boolean, enabled: Boolean, onClick: () -> Unit) {
     val strings = appStrings
-    MeRow(device.name, if (linked) strings.linked() else "",
-        subtitle = if (device.uuid == com.onezee.triptrack.location.auto.AutoTripController.ANDROID_AUTO) strings.androidAuto() else strings.bluetoothAudio(),
-        enabled = enabled, tag = "stereo_${device.name}", onClick = onClick)
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Row(Modifier.fillMaxWidth().testTag("stereo_${device.name}").alpha(if (enabled) 1f else 0.5f)
+        .clickable(enabled = enabled && !linked, role = Role.Button) { haptics.tap(); onClick() }.padding(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Glyph(AppGlyph.speakerWaveFill, null, tint = AppTheme.accent, size = 19.2.dp)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(device.name, style = inter(14f, InterWeight.semibold), color = colors.text, maxLines = 1)
+            Text(if (device.uuid == com.onezee.triptrack.location.auto.AutoTripController.ANDROID_AUTO) strings.androidAuto() else strings.bluetoothAudio(), style = inter(12f), color = colors.textTertiary)
+        }
+        if (linked) LinkedCapsule(strings.added())
+        else Glyph(AppGlyph.plus, null, tint = AppTheme.accent, size = 24.dp)
+    }
+}
+
+/** iOS DeviceRow: a small quiet note, the name, and the green capsule once it is linked. */
+@Composable
+private fun NearbyDeviceRow(device: SavedBluetoothDevice, saved: Boolean, enabled: Boolean, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    val haptics = rememberHaptics()
+    Row(Modifier.fillMaxWidth().testTag("stereo_nearby_${device.name}").alpha(if (enabled) 1f else 0.5f)
+        .clickable(enabled = enabled && !saved, role = Role.Button) { haptics.tap(); onClick() }.padding(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.width(18.dp), contentAlignment = Alignment.Center) {
+            Glyph(AppGlyph.musicNote, null, tint = if (saved) AppTheme.green else colors.textSecondary, size = 15.6.dp)
+        }
+        Text(device.name, Modifier.weight(1f), style = inter(14f, InterWeight.semibold), color = if (saved) colors.textTertiary else colors.text, maxLines = 1)
+        if (saved) LinkedCapsule(appStrings.added())
+    }
 }
 
 @Composable

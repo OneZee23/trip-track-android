@@ -132,9 +132,7 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun settings() = shot("settings") {
         SettingsContent(SettingsState(loaded = true), if (dark) ThemeMode.dark else ThemeMode.light, AppLanguage.ru, true,
             NotificationPreferencesState(loaded = true), {}, {}, {}, {}, {}, account = {
-                com.onezee.triptrack.feature.account.AccountSettingsRow(icon = com.onezee.triptrack.feature.account.AccountGlyph.cloudFill, iconColor = AppTheme.accent, title = appStrings.accountSyncTitle(), onClick = {}) {
-                    Glyph(AppGlyph.chevronRight, null, tint = AppTheme.colors.textTertiary, size = 18.dp)
-                }
+                SettingsAccountRow(cloudSyncEnabled = true, state = com.onezee.triptrack.feature.account.SyncState.Off, onClick = {})
             })
     }
     @Test fun achievements() = shot("achievements") {

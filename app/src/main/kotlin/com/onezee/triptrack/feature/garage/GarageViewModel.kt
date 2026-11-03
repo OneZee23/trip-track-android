@@ -100,7 +100,7 @@ data class VehiclePassport(
     val maxDayDurationSeconds: Double = 0.0,
 )
 // iOS: VehicleDetailView.swift.
-enum class VehicleSheet { edit, drive2, dashboardUnits, photos, tripPhotos, trips, map, privacy, autoRecord, level, delete }
+enum class VehicleSheet { edit, drive2, dashboardUnits, photos, tripPhotos, trips, map, autoRecord, level, delete }
 // iOS: VehicleDetailView.swift.
 data class VehiclePassportState(
     val vehicle: Vehicle? = null,

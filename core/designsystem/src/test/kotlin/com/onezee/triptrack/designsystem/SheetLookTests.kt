@@ -38,10 +38,12 @@ class SheetLookTests(private val dark: Boolean) {
     @get:Rule
     val rules: RuleChain = RuleChain.outerRule(RegisterComponentActivity()).around(compose)
 
-    private fun show(radius: Dp = AppRadius.sheet) {
+    private fun show(radius: Dp = AppRadius.sheet, grabber: Boolean = false) {
         compose.setContent {
             Themed(dark) {
-                ContentSizedSheet(onDismissRequest = {}, cornerRadius = radius) { Box(Modifier.fillMaxWidth().height(120.dp)) }
+                ContentSizedSheet(onDismissRequest = {}, cornerRadius = radius, grabber = grabber) {
+                    Box(Modifier.fillMaxWidth().height(120.dp))
+                }
             }
         }
         compose.waitForIdle()
@@ -67,6 +69,35 @@ class SheetLookTests(private val dark: Boolean) {
         assertTrue(first in 3f..12f, "the sheet starts $first dp in on its top row")
         val down = (0 until sheet.height).first { android.graphics.Color.alpha(sheet.getPixel(1, it)) > 128 } / density
         assertTrue(down in 4f..12f, "the left edge starts $down dp down")
+    }
+
+    /** SE-02: a sheet that iOS gives `presentationDragIndicator(.visible)` shows the 34 × 5 handle, 8 from the edge, at 18 % ink. */
+    @Test fun aSheetCanShowTheSystemGrabber() {
+        show(grabber = true)
+        val sheet = compose.onNodeWithTag("sheet").captureToImage().asAndroidBitmap()
+        val density = sheet.width / 360f
+        val middle = sheet.width / 2
+        fun red(x: Int, y: Int) = android.graphics.Color.red(sheet.getPixel(x, y))
+        val ground = red(middle, (25 * density).toInt())
+        val rows = (0 until (22 * density).toInt()).filter { kotlin.math.abs(red(middle, it) - ground) > 6 }
+        assertTrue(rows.isNotEmpty(), "the grabber is drawn")
+        assertEquals(8f, rows.first() / density, 0.6f, "it starts 8 dp below the edge")
+        assertEquals(5f, (rows.last() - rows.first() + 1) / density, 0.6f, "it is 5 dp thick")
+        val y = rows[rows.size / 2]
+        val cols = (0 until sheet.width).filter { kotlin.math.abs(red(it, y) - ground) > 6 }
+        assertEquals(34f, (cols.last() - cols.first() + 1) / density, 1f, "it is 34 dp wide")
+        assertEquals(sheet.width / 2f, (cols.first() + cols.last()) / 2f, 2f, "it is centred")
+        // 18 % of the ink over the ground: (209, 209, 209) over white in light, the ground lifted by 18 % of white in dark.
+        val want = if (dark) ground + ((255 - ground) * 0.18f).toInt() else (ground * 0.82f).toInt()
+        assertTrue(kotlin.math.abs(want - red(middle, y)) <= 4, "the ink is the iPhone's: wanted $want, got ${red(middle, y)}")
+    }
+
+    @Test fun aSheetWithoutTheGrabberDrawsNone() {
+        show()
+        val sheet = compose.onNodeWithTag("sheet").captureToImage().asAndroidBitmap()
+        val density = sheet.width / 360f
+        val ground = android.graphics.Color.red(sheet.getPixel(sheet.width / 2, (25 * density).toInt()))
+        assertTrue((0 until (22 * density).toInt()).all { android.graphics.Color.red(sheet.getPixel(sheet.width / 2, it)) == ground || it < 2 * density }, "no handle")
     }
 
     @Test fun aScreenCanAskForTheAtlasRadius() {

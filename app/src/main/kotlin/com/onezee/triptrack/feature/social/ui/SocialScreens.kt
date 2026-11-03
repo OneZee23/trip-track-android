@@ -341,11 +341,16 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
     var report by remember { mutableStateOf<ReportTarget?>(null) }
     var gallery by remember { mutableStateOf<PublicPhotoSelection?>(null) }
     var signIn by remember { mutableStateOf(false) }
+    var tripPhotoGrid by remember { mutableStateOf(false) }
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_vehicle")) {
-        CustomNavBar(state.vehicle?.name ?: strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name) {
+        // iOS PublicVehicleView.nav: its own 48 bar, a bare chevron and a bare «…» in 44 frames, the car's name in 17 bold
+        // over the owner's in 11. The circle controls of the pushed screens are not drawn here.
+        com.onezee.triptrack.feature.garage.GaragePageBar(state.vehicle?.name.orEmpty(), dest.name, onBack = { navigator.pop() }) {
             Box {
-                NavCircleButton(AppGlyph.ellipsis, strings.moreActions(), { actions = true }, Modifier.testTag("public_vehicle_more"))
+                Box(Modifier.size(44.dp).clickable(role = androidx.compose.ui.semantics.Role.Button, onClickLabel = strings.moreActions()) { actions = true }.testTag("public_vehicle_more"), contentAlignment = Alignment.Center) {
+                    Glyph(AppGlyph.ellipsis, null, tint = colors.textSecondary, size = 18.dp)
+                }
                 ActionPopover(actions, { actions = false }, listOf(ActionPopoverItem(strings.reportProfileAction(), AppGlyph.flag, isDestructive = true, testTag = "public_vehicle_report") {
                     if (social.signedIn) report = ReportTarget.Vehicle(dest.vehicleId) else signIn = true
                 }))
@@ -353,83 +358,56 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
         }
         val car = state.vehicle
         when {
-            car != null -> Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Column(Modifier.fillMaxWidth().surfaceCard(24.dp).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    val mainShot = car.photos.orEmpty().firstOrNull { it.isMain } ?: car.photos.orEmpty().firstOrNull()
-                    val photo = mainShot?.url ?: mainShot?.thumbUrl ?: car.mainPhoto?.takeIf { it.isNotEmpty() }
-                    val pages = car.photos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }
-                    val mainIndex = pages.indexOfFirst { it.id == mainShot?.id }.coerceAtLeast(0)
-                    if (pages.isNotEmpty()) PressableCard(onClick = { gallery = PublicPhotoSelection(pages, mainIndex) }, modifier = Modifier.testTag("public_vehicle_cover")) {
-                        if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1440, Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(16.dp)))
-                        else VehicleStage(car.asVehicle(), isPlus = true)
-                    } else VehicleStage(car.asVehicle(), isPlus = true)
-                    Text(car.name, style = interScaled(19f, InterWeight.bold), color = colors.text)
-                    val line = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
-                    if (line.isNotEmpty()) Text(line, Modifier.padding(top = 7.dp), style = AppType.meta, color = colors.textSecondary)
-                    state.catalogVariant?.let { variant ->
-                        val specs = listOfNotNull(variant.powerHp?.let { strings.garagePower(UnitNumber.upToTenth(it, strings.language.code)) },
-                            variant.zeroToHundredS?.let { strings.garageAcceleration(UnitNumber.upToTenth(it, strings.language.code)) },
-                            variant.topSpeedKmh?.let { Measure.speed(it / 3.6, unit, strings.language.code, strings) })
-                        if (specs.isNotEmpty()) Text(specs.joinToString(" · "), Modifier.padding(top = 8.dp), style = AppType.caption, color = colors.textSecondary)
+            car != null -> Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                val shots = car.photos.orEmpty()
+                val mainShot = shots.firstOrNull { it.isMain } ?: shots.firstOrNull()
+                val photo = mainShot?.url ?: mainShot?.thumbUrl ?: car.mainPhoto?.takeIf { it.isNotEmpty() }
+                val pages = shots.mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }
+                val mainIndex = pages.indexOfFirst { it.id == mainShot?.id }.coerceAtLeast(0)
+                val bio = state.biography
+                val shows = car.mapVisible == true && (bio?.aggregates?.tripCount ?: 0) > 0
+                val stageWidth = com.onezee.triptrack.feature.garage.vehicleStageWidth()
+                com.onezee.triptrack.feature.garage.VehicleHeroCard(
+                    name = car.name, make = car.make.orEmpty(), model = car.model.orEmpty(), year = car.year ?: 0, bodyType = car.bodyType.orEmpty(), variant = state.catalogVariant,
+                    tags = VehicleModTags.effective(car.modTags.orEmpty(), isPlus = true), soldLine = if (car.soldAt != null) strings.publicVehicleSold() else null, plate = car.plate,
+                    level = car.level,
+                    // Someone else's numbers appear only when there is something to fill them with: a hidden map sends no geometry, and
+                    // «0 поездок · 0 регионов» beside a six-figure odometer would tell on whoever hides it.
+                    stats = if (shows && bio != null) com.onezee.triptrack.feature.garage.VehicleHeroStats(bio.aggregates.tripCount, bio.regions, bio.trips.map { it.startDate.atZone(strings.zone).toLocalDate() }.toSet().size) else null,
+                    since = car.createdAt?.let { com.onezee.triptrack.feature.stats.StatsPeriodFormat.monthYearGenitive(it, strings.language, strings.zone) }, foreign = true,
+                ) {
+                    PressableCard(onClick = { gallery = PublicPhotoSelection(pages, mainIndex) }, enabled = pages.isNotEmpty(), modifier = Modifier.testTag("public_vehicle_cover")) {
+                        if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1440, Modifier.size(stageWidth, stageWidth * .60f).clip(RoundedCornerShape(20.dp)))
+                        else VehicleStage(car.asVehicle(), width = stageWidth, isPlus = true)
                     }
-                    val tags = VehicleModTags.effective(car.modTags.orEmpty(), isPlus = true)
-                    if (tags.isNotEmpty()) Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        tags.forEach { Text(it, Modifier.background(AppTheme.accentBg, CapsuleShape).padding(horizontal = 8.dp, vertical = 4.dp), style = AppType.caption, color = AppTheme.accent) }
-                        ProBadge(height = 14.dp)
-                    }
-                    if (car.soldAt != null) Text(strings.publicVehicleSold(), Modifier.padding(top = 6.dp), style = AppType.caption, color = AppTheme.accent)
-                    if (!car.plate.isNullOrBlank()) Text(car.plate!!, Modifier.padding(top = 8.dp).background(colors.cardAlt, RoundedCornerShape(5.dp)).padding(horizontal = 8.dp, vertical = 5.dp), style = AppType.chip, color = colors.text)
-                    Text("LVL ${car.level}", Modifier.padding(top = 12.dp).background(colors.goldBg, CircleShape).padding(horizontal = 12.dp, vertical = 8.dp), style = interScaled(11f, InterWeight.semibold), color = AppTheme.gold)
-                    state.biography?.takeIf { car.mapVisible == true && it.trips.isNotEmpty() }?.let { bio ->
-                        Spacer(Modifier.height(18.dp))
-                        Row(Modifier.fillMaxWidth()) {
-                            val days = bio.trips.map { it.startDate.atZone(strings.zone).toLocalDate() }.toSet().size
-                            listOf("${bio.trips.size}" to strings.nounTrips(bio.trips.size), "${bio.regions}" to strings.nounRegions(bio.regions), "$days" to strings.nounDays(days)).forEach { (value, label) ->
-                                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                    Text(value, style = interScaled(23f, InterWeight.semibold), color = colors.text)
-                                    Text(label, style = interScaled(11f), color = colors.textSecondary)
-                                }
-                            }
-                        }
-                    }
-                    car.createdAt?.let { Text(strings.inGarageSince(com.onezee.triptrack.feature.stats.StatsPeriodFormat.monthYearGenitive(it, strings.language, strings.zone)), Modifier.fillMaxWidth().padding(top = 12.dp), style = AppType.caption, color = colors.textTertiary) }
                 }
                 com.onezee.triptrack.feature.garage.Drive2LogbookRow(car.drive2Url)
-                GarageMileageCard(car.odometerKm, state.biography?.aggregates?.totalKm ?: 0.0,
-                    vehicleYearDistances(state.biography?.trips.orEmpty(), car.id, strings.zone), unit, editable = false) {}
-                val routes = state.biography?.routes.orEmpty()
-                if (car.mapVisible == true && routes.isNotEmpty()) MeSection(strings.vehicleWhereWas()) {
-                    MeRow(strings.vehicleWhereWas(), "${state.biography?.regions ?: 0} ${strings.nounRegions(state.biography?.regions ?: 0)} · ${state.biography?.cities ?: 0} ${strings.nounCities(state.biography?.cities ?: 0)}",
-                        onClick = { navigator.push(TripsDestination.PublicMap(dest.id, dest.name, PublicMapStart.coveringRoutes(routes), dest.vehicleId)) })
-                    ProfileMapPreview(routes, Modifier.fillMaxWidth().height(130.dp).padding(horizontal = 14.dp)
-                        .clickable { navigator.push(TripsDestination.PublicMap(dest.id, dest.name, PublicMapStart.coveringRoutes(routes), dest.vehicleId)) })
-                }
-                val tripPhotos = car.tripPhotos.orEmpty().mapNotNull { (it.thumbUrl ?: it.url)?.let { url -> it.id to url } }
-                if (tripPhotos.isNotEmpty()) MeSection(strings.garageTripPhotos()) {
-                    Row(Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        tripPhotos.take(4).forEachIndexed { index, (_, url) -> PressableCard(onClick = { gallery = PublicPhotoSelection(car.tripPhotos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }, index, reportable = false) }, modifier = Modifier.testTag("public_vehicle_trip_photo")) {
-                            PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)))
-                        } }
+                GarageMileageCard(car.odometerKm, bio?.aggregates?.totalKm ?: 0.0,
+                    vehicleYearDistances(bio?.trips.orEmpty(), car.id, strings.zone), unit, editable = false) {}
+                val routes = bio?.routes.orEmpty()
+                if (car.mapVisible == true && routes.isNotEmpty() && bio != null) com.onezee.triptrack.feature.garage.VehicleWhereWasCard(routes, bio.regionStats, bio.regions, bio.cities, wholeCardOpens = true,
+                    onOpen = { navigator.push(TripsDestination.PublicMap(dest.id, dest.name, PublicMapStart.coveringRoutes(routes), dest.vehicleId)) })
+                val tripPhotos = car.tripPhotos.orEmpty().mapNotNull { p -> (p.thumbUrl ?: p.url)?.let { url -> com.onezee.triptrack.feature.garage.GaragePhoto.Remote(p.id.toString(), url) } }
+                com.onezee.triptrack.feature.garage.GarageTripPhotos(tripPhotos, onOpen = { tripPhotoGrid = true })
+                car.about?.takeIf { it.isNotBlank() }?.let { about -> com.onezee.triptrack.feature.garage.VehicleAboutCard(about, onEdit = null, by = strings.publicAboutBy(dest.name ?: strings.publicProfileDriver())) }
+                // The main photo stands as the hero above; the others are a bare strip, with no heading and no card.
+                if (car.photosVisible != false) com.onezee.triptrack.feature.garage.ForeignPhotoStrip(
+                    shots.filterNot { it.id == mainShot?.id }.mapNotNull { p -> (p.thumbUrl ?: p.url)?.let { com.onezee.triptrack.feature.garage.GaragePhoto.Remote(p.id.toString(), it) } },
+                    onOpen = { index -> val picked = shots.filterNot { it.id == mainShot?.id }.getOrNull(index); gallery = PublicPhotoSelection(pages, pages.indexOfFirst { it.id == picked?.id }.coerceAtLeast(0)) })
+                bio?.aggregates?.takeIf { it.tripCount > 0 }?.let { agg ->
+                    val records = buildList {
+                        add(com.onezee.triptrack.feature.garage.VehicleRecord(strings.recordLongest(), agg.longestTripTitle ?: agg.longestTripRegion ?: "—", Measure.distanceKm(agg.longestTripKm, unit, strings.language.code, strings)) to AppTheme.green)
+                        bio.trips.maxByOrNull { it.elevation }?.takeIf { it.elevation > 0 }?.let { peak ->
+                            add(com.onezee.triptrack.feature.garage.VehicleRecord(strings.recordHighest(), peak.title ?: peak.region ?: "—", Measure.elevation(peak.elevation, unit, strings.language.code, strings)) to AppTheme.accent)
+                        }
                     }
+                    com.onezee.triptrack.feature.garage.ForeignRecordCards(records)
+                    Text(strings.publicRecordsNote(), Modifier.fillMaxWidth(), style = inter(11f), color = colors.textTertiary)
                 }
-                car.about?.takeIf { it.isNotBlank() }?.let { about -> MeSection(strings.publicAboutBy(dest.name ?: strings.publicProfileDriver())) { MeRow(about) } }
-                val main = car.photos.orEmpty().firstOrNull { it.isMain } ?: car.photos.orEmpty().firstOrNull()
-                val allPhotos = car.photos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }
-                val photos = car.photos.orEmpty().filterNot { it.id == main?.id }.mapNotNull { (it.thumbUrl ?: it.url)?.let { url -> it.id to url } }
-                if (car.photosVisible != false && photos.isNotEmpty()) MeSection(strings.vehiclePhotos()) {
-                    Row(Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        photos.take(4).forEachIndexed { index, (_, url) -> PressableCard(onClick = { gallery = PublicPhotoSelection(allPhotos, allPhotos.indexOfFirst { it.id == photos[index].first }.coerceAtLeast(0)) }, modifier = Modifier.testTag("public_vehicle_photo")) {
-                            PhotoImage(PhotoSource.Remote(url), 300, Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)))
-                        } }
-                    }
-                }
-                state.biography?.aggregates?.takeIf { it.tripCount > 0 }?.let { agg ->
-                    MeSection(strings.statsRecords()) {
-                        MeRow(strings.recordLongest(), Measure.distanceKm(agg.longestTripKm, unit, strings.language.code, strings), subtitle = agg.longestTripTitle ?: agg.longestTripRegion)
-                    }
-                    Text(strings.publicRecordsNote(), style = inter(11f), color = colors.textTertiary)
-                }
-                if (state.failed) Text(strings.garageLoadFailed(), style = inter(12f), color = colors.textTertiary)
+                if (state.failed) Text(strings.garageLoadFailed(), Modifier.fillMaxWidth(), style = inter(12f), color = colors.textTertiary)
+                if (tripPhotoGrid) com.onezee.triptrack.feature.garage.GaragePhotoGridCover(strings.garageTripPhotos(), tripPhotos, { tripPhotoGrid = false }, onOpen = { index ->
+                    gallery = PublicPhotoSelection(car.tripPhotos.orEmpty().mapNotNull { p -> (p.url ?: p.thumbUrl)?.let { PublicPhotoPage(p.id, it) } }, index, reportable = false)
+                })
             }
             state.failed || state.gone -> SocialMessageState(strings.publicVehicleUnavailable(), tag = "public_vehicle_unavailable")
             else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { com.onezee.triptrack.feature.atlas.ui.CarLoading() }

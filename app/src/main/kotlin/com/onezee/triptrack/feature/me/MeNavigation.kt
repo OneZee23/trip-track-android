@@ -19,6 +19,11 @@ internal sealed interface MeRoute : NavDestination {
     data object Garage : MeRoute
     data object Profile : MeRoute
     data class Passport(val id: UUID) : MeRoute
+    /** iOS: the pages the vehicle page pushes: the level, the full list of its trips, its map and its photos. */
+    data class VehicleLevel(val id: UUID) : MeRoute
+    data class VehicleTrips(val id: UUID) : MeRoute
+    data class VehicleMap(val id: UUID) : MeRoute
+    data class VehiclePhotos(val id: UUID) : MeRoute
     data object Achievements : MeRoute
     data class Badge(val id: String) : MeRoute
     data object Clubs : MeRoute
@@ -37,6 +42,7 @@ internal sealed interface MeRoute : NavDestination {
         Garage -> "garage"; Profile -> "profile"; Achievements -> "achievements"; Clubs -> "clubs"
         Levels -> "levels"; Country -> "country"; Drafts -> "drafts"; Stats -> "stats"
         is Passport -> "passport:$id"; is Badge -> "badge:$id"
+        is VehicleLevel -> "vehicle-level:$id"; is VehicleTrips -> "vehicle-trips:$id"; is VehicleMap -> "vehicle-map:$id"; is VehiclePhotos -> "vehicle-photos:$id"
         is Trip -> "trip:$id"; is Journey -> "journey:$id"; is SocialJourney -> "social-journey:$id"
         is Social -> "social|${destination.key}"
     }
@@ -78,6 +84,10 @@ internal class MeNavigator(initial: List<MeRoute> = emptyList()) : DestinationNa
                 "clubs" -> MeRoute.Clubs; "levels" -> MeRoute.Levels; "country" -> MeRoute.Country; "drafts" -> MeRoute.Drafts
                 "stats" -> MeRoute.Stats
                 "passport" -> MeRoute.Passport(UUID.fromString(value.substringAfter(':')))
+                "vehicle-level" -> MeRoute.VehicleLevel(UUID.fromString(value.substringAfter(':')))
+                "vehicle-trips" -> MeRoute.VehicleTrips(UUID.fromString(value.substringAfter(':')))
+                "vehicle-map" -> MeRoute.VehicleMap(UUID.fromString(value.substringAfter(':')))
+                "vehicle-photos" -> MeRoute.VehiclePhotos(UUID.fromString(value.substringAfter(':')))
                 "trip" -> MeRoute.Trip(UUID.fromString(value.substringAfter(':')))
                 "journey" -> MeRoute.Journey(UUID.fromString(value.substringAfter(':')))
                 "social-journey" -> MeRoute.SocialJourney(UUID.fromString(value.substringAfter(':')))
@@ -101,12 +111,12 @@ private fun socialRoute(key: String): MeRoute? {
 
 /**
  * Whether the floating tab bar stays under this screen. iOS keeps it on the garage, the vehicle
- * page, the drafts and the clubs (their content ends at `CustomTabBar.clearanceAboveSafeArea`);
+ * page and the pages it pushes, the drafts and the clubs (their content ends at `CustomTabBar.clearanceAboveSafeArea`);
  * every other screen pushed from Я hides it with `.hideAppTabBar()`: the trip, the statistics, the
  * profile and its pickers, the achievements, the journeys and everyone else's screens.
  */
 internal val MeRoute.keepsTabBar: Boolean get() = when (this) {
-    MeRoute.Garage, is MeRoute.Passport, MeRoute.Clubs, MeRoute.Drafts -> true
+    MeRoute.Garage, is MeRoute.Passport, MeRoute.Clubs, MeRoute.Drafts, is MeRoute.VehicleLevel, is MeRoute.VehicleTrips, is MeRoute.VehicleMap, is MeRoute.VehiclePhotos -> true
     else -> false
 }
 

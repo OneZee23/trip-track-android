@@ -19,17 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
+import com.onezee.triptrack.feature.account.HouseSwitch
 
 // iOS: GarageView.navRow / NavCircleIcon. Keep the house circle while drawing the missing plus glyph locally.
 @Composable
@@ -44,9 +47,17 @@ internal fun MeNavAddButton(description: String, enabled: Boolean, onClick: () -
     }
 }
 
+/**
+ * iOS navRow of the settings sheets: the title 22 bold at the leading edge and the grey 30 pt close disc at the
+ * trailing one, 18 from the sides and from the top (the system grabber sits in the first 10). [bottom] is the gap
+ * to the content: 12 under the settings sheets, 18 where a screen has not set its own.
+ */
 @Composable
-internal fun MeSheetHeader(title: String, onClose: () -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+internal fun MeSheetHeader(title: String, onClose: () -> Unit) = MeSheetHeader(title, 18.dp, onClose)
+
+@Composable
+internal fun MeSheetHeader(title: String, bottom: Dp, onClose: () -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 18.dp, bottom = bottom), verticalAlignment = Alignment.CenterVertically) {
         Text(title, Modifier.weight(1f), style = interScaled(22f, InterWeight.bold), color = AppTheme.colors.text)
         SheetCloseCircle(onClick = onClose)
     }
@@ -89,10 +100,8 @@ internal fun MeToggle(title: String, checked: Boolean, onChange: (Boolean) -> Un
             Text(title, style = interScaled(14.5f, InterWeight.semibold), color = AppTheme.colors.text.copy(alpha = if (enabled) 1f else .5f))
             if (subtitle != null) Text(subtitle, style = interScaled(11.5f), color = AppTheme.colors.textSecondary)
         }
-        Box(Modifier.size(46.dp, 28.dp).background(if (checked) AppTheme.accent else AppTheme.colors.cardAlt, CircleShape)
-            .border(1.dp, AppTheme.colors.borderBright, CircleShape), contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart) {
-            Box(Modifier.padding(3.dp).size(22.dp).background(Color.White, CircleShape))
-        }
+        // iOS: the system Toggle, 51 × 31 with a large white knob and no outline; the row switches as a whole.
+        Box(Modifier.clearAndSetSemantics {}) { HouseSwitch(checked, onChange, enabled = enabled) }
     }
 }
 
