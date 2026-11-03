@@ -7,12 +7,29 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.captureScreenRoboImage
+import android.content.Context
+import com.onezee.triptrack.debug.TripsDemoSeed
+import com.onezee.triptrack.feature.TripPins
 import com.onezee.triptrack.feature.TripsDestination
+import com.onezee.triptrack.feature.social.SocialFeature
+import com.onezee.triptrack.social.FakeSocialApi
+import com.onezee.triptrack.social.MemoryCommentArchive
+import java.util.UUID
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.After
+import org.robolectric.RuntimeEnvironment
 import com.onezee.triptrack.model.SocialFeedResponse
 import com.onezee.triptrack.model.SocialTrackPoint
 import com.onezee.triptrack.model.SocialTripResponse
@@ -28,6 +45,38 @@ import org.robolectric.ParameterizedRobolectricTestRunner
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
     private val theme = if (dark) "dark" else "light"
+
+    // The account-side half of the screens (the share, the bell, the discussion) is part of every frame here, as in the app.
+    private var services: SocialFeature? = null
+    override fun socialServices(): SocialFeature = services ?: SocialFeature(
+        FakeSocialApi(), feature, null, { feature.accountId() },
+        RuntimeEnvironment.getApplication().getSharedPreferences("social-tests", Context.MODE_PRIVATE), { "" }, Dispatchers.Main, { NOW },
+        commentArchive = MemoryCommentArchive(),
+    ).also { services = it }
+
+    @After fun closeSocialServices() { services?.close() }
+
+    /** The showcase as a phone keeps it: three places, in memory. */
+    private val pinned = MutableStateFlow(emptyList<UUID>())
+    private fun withShowcase() {
+        feature.pins = object : TripPins {
+            override val pinnedIds = pinned
+            override suspend fun toggle(id: UUID): Boolean {
+                if (id in pinned.value) { pinned.value = pinned.value - id; return true }
+                if (pinned.value.size >= 3) return false
+                pinned.value = pinned.value + id
+                return true
+            }
+        }
+    }
+
+    /** What the badge ledger wrote on a trip when it finished: twelve engravings, four rows of three. */
+    private fun earnBadges(trip: com.onezee.triptrack.model.Trip) = onMain {
+        val ids = listOf("first_trip", "road_regular", "road_warrior", "first_km", "century", "thousand", "endurance", "weekend_warrior",
+            "midnight_rider", "vault_keeper", "early_tester", "marathon_42")
+        val entity = db.tripDao().trip(trip.id)!!
+        db.tripDao().upsertTrip(entity.copy(badgesJSON = ids.joinToString(",", "[", "]") { "\"$it\"" }))
+    }
 
     private fun shot(name: String) = compose.onRoot().captureRoboImage("src/test/screenshots/trips_${name}_$theme.png")
 
@@ -186,6 +235,116 @@ class TripsScreenshotTests(private val dark: Boolean) : TripsScreenTest() {
         compose.onAllNodesWithTag("draft_row")[1].performClick()
         compose.waitForIdle()
         shot("drafts_selecting")
+    }
+
+    /** TD-07: «Достижения поездки», four rows of three, after the photos. */
+    @Test fun tripAchievements() {
+        earnBadges(latest())
+        showMe(dark)
+        openTrip(latest())
+        compose.onNodeWithTag("trip_achievements").performScrollTo()
+        compose.onNodeWithTag("trip_achievement_first_trip").assertExists()
+        shot("trip_achievements")
+    }
+
+    /** TD-05: the dashed invitation on one's own trip with nothing written, and the sheet it opens. */
+    @Test fun tripDescriptionPrompt() {
+        showMe(dark)
+        openTrip(latest())
+        compose.onNodeWithTag("detail_add_description").performScrollTo()
+        shot("trip_description")
+        compose.onNodeWithTag("detail_add_description").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("description_sheet").assertExists()
+        screen("trip_description_sheet")
+    }
+
+    /** TD-10: «Закрепить в профиле» on a public, finished trip. */
+    @Test fun tripActionsPublic() {
+        withShowcase()
+        val road = trips().first { it.title == TripsDemoSeed.ROSTOV_CITY && !it.isPrivate }
+        showMe(dark)
+        openTrip(road)
+        compose.onNodeWithTag("detail_actions").performClick()
+        compose.onNodeWithTag("detail_action_profile_pin").assertExists()
+        screen("trip_actions_public")
+    }
+
+    /** TD-13: a trip whose data never arrived. */
+    @Test fun tripLoadFailed() {
+        showMe(dark)
+        push(TripsDestination.TripDetail(UUID.fromString("0b6f6a52-9999-4c8e-9a3e-5d2b7c9e0a01")))
+        compose.onNodeWithTag("trip_load_failed").assertExists()
+        shot("trip_load_failed")
+    }
+
+    /** TD-11, TD-02, TD-01: someone else's leg of a journey, its car with a chevron, share alone on the right. */
+    @Test fun foreignTripJourney() {
+        signIn()
+        val cards = socialCards()
+        val road = detail(trips().first { it.title == "Батуми → Кобулети" }.id)!!
+        social.feedPage = { SocialFeedResponse(cards) }
+        social.remoteTrip = { id ->
+            SocialTripResponse(cards.first { it.id == id }, road.trackPoints.map { SocialTrackPoint(it.latitude, it.longitude, it.speed, it.timestamp) })
+        }
+        showFeed(dark)
+        // The third card is below the fold: the list scrolls to it, and its title opens the trip.
+        compose.onNodeWithTag("feed_list_all").performScrollToIndex(2)
+        compose.onNodeWithText("Батуми → Кобулети").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("trip_detail").assertExists()
+        compose.onNodeWithTag("detail_journey_row").assertExists()
+        compose.onNodeWithTag("detail_share").assertExists()
+        shot("trip_foreign_journey")
+    }
+
+    /** FD-01, FD-02: the bell beside «Лента» and the «…» on every card. */
+    @Test fun feedMenus() {
+        signIn()
+        val cards = socialCards()
+        social.feedPage = { SocialFeedResponse(cards) }
+        showFeed(dark)
+        compose.onAllNodesWithTag("feed_card_menu")[0].performClick()
+        compose.onNodeWithTag("feed_card_action_share").assertExists()
+        compose.onNodeWithTag("feed_card_action_report").assertExists()
+        screen("feed_menu")
+    }
+
+    @Test fun feedOwnMenu() {
+        signIn()
+        val cards = socialCards()
+        social.feedPage = { SocialFeedResponse(cards) }
+        showFeed(dark)
+        compose.onAllNodesWithTag("feed_card_menu")[1].performClick()
+        compose.onNodeWithTag("feed_card_action_edit").assertExists()
+        compose.onNodeWithTag("feed_card_action_share").assertExists()
+        screen("feed_menu_own")
+    }
+
+    /** FD-01, FD-05: a guest has «Войти» in the corner and the same button on the «Подписки» page. */
+    @Test fun feedGuest() {
+        val cards = socialCards()
+        social.feedPage = { SocialFeedResponse(cards) }
+        showFeed(dark, signInDoor = {})
+        compose.onNodeWithTag("feed_sign_in").assertExists()
+        shot("feed_guest")
+        compose.onNodeWithTag("feed_segment_following").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("feed_following_sign_in").assertExists()
+        shot("feed_following_guest")
+    }
+
+    /** FD-01: the search circle, ready for Discover; the feed draws it only once there is somewhere to go. */
+    @Test fun feedHeaderWithSearch() {
+        show(dark) {
+            androidx.compose.foundation.layout.Column(androidx.compose.ui.Modifier.fillMaxSize()) {
+                com.onezee.triptrack.feature.feed.ui.FeedHeader({}, onSignIn = null, onBell = {}, onSearch = {},
+                    modifier = androidx.compose.ui.Modifier.statusBarsPadding().padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 10.dp))
+                com.onezee.triptrack.feature.feed.ui.FeedHeader({}, onSignIn = {}, onBell = null, onSearch = {},
+                    modifier = androidx.compose.ui.Modifier.padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 10.dp))
+            }
+        }
+        shot("feed_header_search")
     }
 
     companion object {

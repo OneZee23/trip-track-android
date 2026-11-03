@@ -113,6 +113,7 @@ abstract class TripsScreenTest {
     protected lateinit var repository: RoomTripRepository
     internal val meNavigator = MeNavigator()
     protected lateinit var feature: TripsFeature
+    protected lateinit var vehicles: RoomVehicleStore
     protected val owner: UUID = UUID.fromString("6f1c2d3e-4a5b-4c6d-8e7f-001122334455")
     protected val sink = TestSyncSink()
     protected val social = TestSocialApi()
@@ -138,7 +139,7 @@ abstract class TripsScreenTest {
         val files = DirectoryTripPhotoFiles(root.resolve("trips"))
         repository = RoomTripRepository(db, environment, files, sink)
         val photos = RoomVehiclePhotoStore(db, DirectoryVehiclePhotoFiles(root.resolve("cars")), sink)
-        val vehicles = RoomVehicleStore(db, repository, photos, environment, sink)
+        vehicles = RoomVehicleStore(db, repository, photos, environment, sink)
         val preferences = app.getSharedPreferences("trips-screens", Context.MODE_PRIVATE).also { it.edit().clear().commit() }
         val queue = object : DraftDecisionQueue {
             override suspend fun enqueue(id: UUID, decision: DraftDecision) { decisions += id to decision }
@@ -183,6 +184,12 @@ abstract class TripsScreenTest {
 
     protected fun signIn() { feature.accountId = { owner } }
 
+    /**
+     * The account-side services the screens read through LocalSocial (the share, the discussion, the bell). Null, the
+     * default, leaves them out, as a build before the account wave; a test that looks at that half supplies them.
+     */
+    protected open fun socialServices(): com.onezee.triptrack.feature.social.SocialFeature? = null
+
     /** The phone as the shell draws it: the theme, the locals the shell provides and, on a tab root, the bar. */
     protected fun show(dark: Boolean = false, tab: AppTab? = null, content: @Composable () -> Unit) {
         compose.setContent {
@@ -193,6 +200,7 @@ abstract class TripsScreenTest {
                     LocalDistanceUnit provides DistanceUnit.km,
                     LocalLiveMaps provides false,
                     LocalClock provides java.time.Clock.fixed(NOW, ZoneId.of(ZONE)),
+                    com.onezee.triptrack.feature.social.LocalSocial provides socialServices(),
                 ) {
                     Box(Modifier.fillMaxSize().background(AppTheme.colors.bg)) {
                         content()
@@ -207,8 +215,9 @@ abstract class TripsScreenTest {
         compose.waitForIdle()
     }
 
-    protected fun showFeed(dark: Boolean = false) = show(dark, AppTab.home) {
-        FeedTab(feature, scrollToTop = 0, offline = false, onOpenRecord = {}, onOpenProfileTab = {})
+    /** [signInDoor] is the host's own sign-in (a guest's «Войти» and the guest page's button draw only with one, or with an account service). */
+    protected fun showFeed(dark: Boolean = false, signInDoor: (() -> Unit)? = null) = show(dark, AppTab.home) {
+        FeedTab(feature, scrollToTop = 0, offline = false, onOpenRecord = {}, onOpenProfileTab = {}, onSignIn = signInDoor)
     }
 
     /** The same journal and destination host as the real Me tab, on the deterministic Room library. */
@@ -283,6 +292,7 @@ abstract class TripsScreenTest {
                 title = "Батуми → Кобулети", startDate = NOW.minus(Duration.ofDays(5)), distance = 24_800.0, duration = 2_400, region = "Adjara",
                 isPrivate = false, previewPolyline = preview("Батуми → Кобулети"), photoCount = 0, reactionCount = 0,
                 reactionBreakdown = emptyList(), badgeIds = emptyList(), commentCountRaw = 1,
+                vehicle = SocialFeedVehicle(id = UUID.fromString("0b6f6a52-6666-4c8e-9a3e-5d2b7c9e0a01"), name = "Jolion", avatarEmoji = "🚙"),
                 journey = SocialFeedTripJourney(UUID.fromString("0b6f6a52-5555-4c8e-9a3e-5d2b7c9e0a01"), title = "Грузия",
                     startDate = NOW.minus(Duration.ofDays(8)), endDate = NOW.minus(Duration.ofDays(2))),
             ),
