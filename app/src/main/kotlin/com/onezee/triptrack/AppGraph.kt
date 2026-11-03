@@ -258,6 +258,7 @@ class AppGraph(
             preferences = preferences,
             sharePage = { path -> websitePage(path) },
             ownAvatar = { me.identity.identity.value.avatarEmoji },
+            ownCountry = { me.identity.identity.value.country },
             ownAuthor = { auth.state.value.signedInAccountId?.let { id ->
                 val identity = me.identity.identity.value
                 com.onezee.triptrack.model.SocialAuthor(id, identity.name, identity.avatarEmoji, identity.level)

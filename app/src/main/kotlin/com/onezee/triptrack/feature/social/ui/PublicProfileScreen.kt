@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -146,13 +147,18 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
         Column(Modifier.fillMaxSize()) {
             if (!hasCover) Box(Modifier.statusBarsPadding()) { CustomNavBar(name, onBack = { navigator.pop() }) { MoreButton(onCover = false) } }
             com.onezee.triptrack.ui.PullToRefresh(refreshing = state.isLoading && profile != null, onRefresh = { vm.refresh() }, modifier = Modifier.fillMaxSize()) {
-            LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                if (isOwn) item(key = "preview") { PreviewBanner(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp)) }
+            // iOS: 16 between the hero, the pinned cards (12 apart), the sections and the journeys; inside «Поездки» the header
+            // is 10 above its content and chapter headers and cards are 12 apart. One uniform spacing could say only one of those,
+            // so every item carries the gap that precedes it.
+            LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 120.dp)) {
+                if (isOwn) item(key = "preview") { PreviewBanner(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp, bottom = 8.dp)) }
                 when {
                     profile != null -> {
                         item(key = "hero") {
                             PublicHero(profile, state.garage.firstOrNull { it.id == profile.activeVehicle?.id }
                                 ?: profile.activeVehicle?.let { PublicVehicle(it.id, it.name, it.avatarEmoji, avatarStyle = it.avatarStyle, level = it.level, odometerKm = it.odometerKm) }, name, isOwn,
+                                // iOS countryGlyph: the country is this device's setting and the profile DTO carries none, so only one's own preview prints it.
+                                country = if (isOwn) countryLine(social.ownCountry(), strings) else null,
                                 followBusy = state.isTogglingFollow, now = now,
                                 onFollow = {
                                     if (!isOwn) {
@@ -173,19 +179,19 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                                 } })
                         }
                         val journal = state.journal
-                        if (journal != null && journal.history.pinned.isNotEmpty()) items(journal.history.pinned, key = { "pin_${it.id}" }) { trip ->
+                        if (journal != null && journal.history.pinned.isNotEmpty()) itemsIndexed(journal.history.pinned, key = { _, it -> "pin_${it.id}" }) { index, trip ->
                             ProfileTripCard(TripSummary.from(trip), onTap = { journal.originals[trip.id]?.let { openTrip(it) } }, level = profile.profileLevel,
-                                isPinned = true, mapHeight = 118.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                                isPinned = true, mapHeight = 118.dp, modifier = Modifier.padding(horizontal = 16.dp).padding(top = if (index == 0) 16.dp else 12.dp))
                         }
                         item(key = "sections") {
-                            SectionsRow(profile, state, Modifier.padding(horizontal = 16.dp),
+                            SectionsRow(profile, state, Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
                                 onStats = { navigator.push(TripsDestination.PublicStats(dest.id, name)) },
                                 onMap = { navigator.push(TripsDestination.PublicMap(dest.id, name, PublicMapStart.bounds(state.tripCards.take(PublicMapStart.TRIP_LIMIT).map { it.asTrip() }))) },
                                 onAchievements = { state.allBadgeIds?.let { navigator.push(TripsDestination.PublicAchievements(dest.id, name, it)) } },
                                 onGarage = { navigator.push(TripsDestination.PublicGarage(dest.id, name)) })
                         }
                         if (state.journeys.isNotEmpty()) item(key = "journeys") {
-                            JourneysEntryCard(state.journeys, dest.id, Modifier.padding(horizontal = 16.dp),
+                            JourneysEntryCard(state.journeys, dest.id, Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
                                 onAll = { navigator.push(TripsDestination.PublicJourneys(dest.id, name)) },
                                 onJourney = { navigator.push(TripsDestination.SocialJourney(it)) })
                         }
@@ -199,7 +205,7 @@ fun PublicProfileScreen(dest: TripsDestination.PublicProfile, social: SocialFeat
                             onAppear = { index, count -> vm.loadMoreIfNeeded(index, count) }, isOwnTrip = { it.author.id == social.accountId })
                     }
                     state.unavailable != null -> item(key = "unavailable") { UnavailableProfile(state.unavailable!!, onRetry = vm::retry) }
-                    else -> item(key = "skeleton") { SkeletonProfile(Modifier.padding(horizontal = 16.dp)) }
+                    else -> item(key = "skeleton") { SkeletonProfile(Modifier.padding(horizontal = 16.dp).padding(top = 6.dp)) }
                 }
             }
         }
@@ -261,7 +267,7 @@ private fun PreviewBanner(modifier: Modifier = Modifier) {
  */
 @Composable
 private fun PublicHero(
-    profile: SocialProfile, vehicle: PublicVehicle?, name: String, isOwn: Boolean, followBusy: Boolean, now: java.time.Instant,
+    profile: SocialProfile, vehicle: PublicVehicle?, name: String, isOwn: Boolean, country: String?, followBusy: Boolean, now: java.time.Instant,
     onFollow: () -> Unit, onFollowers: () -> Unit, onFollowing: () -> Unit, onCopyName: () -> Unit, onVehicle: (UUID) -> Unit,
     onLevel: () -> Unit, onStats: () -> Unit, onPhoto: (List<PublicPhotoPage>, Int) -> Unit, coverOverlay: @Composable BoxScope.() -> Unit,
 ) {
@@ -284,17 +290,20 @@ private fun PublicHero(
                 Text(profile.avatarEmoji ?: "🚗", style = inter(if (photos.isEmpty()) 32f else 26f))
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(Modifier.combinedClickable(role = Role.Button, onClick = onCopyName, onLongClick = onCopyName).testTag("profile_display_name"),
+                // iOS identityText: the name is at least 26 tall under a cover photo and 32 on the card, the level row 18 and 26; the
+                // 44-point targets iOS takes back out of the layout are Compose's own minimum touch size, so no padding grows the rows.
+                Row(Modifier.heightIn(min = if (photos.isEmpty()) 32.dp else 26.dp).combinedClickable(role = Role.Button, onClick = onCopyName, onLongClick = onCopyName).testTag("profile_display_name"),
                     horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(name, style = interScaled(21f, InterWeight.bold), letterSpacing = points(-.3f), color = ink, modifier = Modifier.weight(1f, fill = false))
                     if (showsBadge) ProBadge(height = 16.dp)
                 }
-                Row(Modifier.clickable(role = Role.Button, onClick = onLevel).padding(vertical = 6.dp).testTag("public_lvl_pill"),
+                Row(Modifier.heightIn(min = if (photos.isEmpty()) 26.dp else 18.dp).clickable(role = Role.Button, onClick = onLevel).testTag("public_lvl_pill"),
                     horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("LVL ${profile.profileLevel}", style = handjet(17f), color = if (hasCover) Color.White else AppTheme.colors.roadHeroAccent)
                     Text(rankTitle(DriverRank.from(profile.profileLevel)), style = interScaled(12f, InterWeight.medium), color = secondary)
                     Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 9.dp)
                 }
+                if (country != null) Text(country, style = inter(12f), color = secondary, modifier = Modifier.testTag("profile_country"))
             }
             FollowButton(followTitle, followBusy, enabled = !isOwn, onClick = onFollow)
         }
@@ -311,14 +320,14 @@ private fun PublicHero(
     val bio = profile.bio?.trim()?.takeIf { it.isNotEmpty() }
     val stats = @Composable {
         if (profile.openBlocks.counters) Row(Modifier.fillMaxWidth().clickable(enabled = !privacy && profile.openBlocks.stats, role = Role.Button, onClick = onStats).testTag("profile_stats_strip")) {
-            StatColumn(if (privacy) "••••" else "${profile.stats.tripCount}", strings.trips(), ink, secondary)
+            StatColumn(if (privacy) "••••" else "${profile.stats.tripCount}", strings.trips(), ink, secondary, photos.isNotEmpty())
             Spacer(Modifier.weight(1f))
-            StatColumn(if (privacy) "••••" else Measure.distanceValueKm(profile.stats.totalKm, LocalDistanceUnit.current, strings.language.code), strings.statsKmTotal(LocalDistanceUnit.current), ink, secondary)
+            StatColumn(if (privacy) "••••" else Measure.distanceValueKm(profile.stats.totalKm, LocalDistanceUnit.current, strings.language.code), strings.statsKmTotal(LocalDistanceUnit.current), ink, secondary, photos.isNotEmpty())
             Spacer(Modifier.weight(1f))
-            StatColumn(if (privacy) "••••" else "${profile.stats.regionsCount}", strings.statsRegions(), ink, secondary)
+            StatColumn(if (privacy) "••••" else "${profile.stats.regionsCount}", strings.statsRegions(), ink, secondary, photos.isNotEmpty())
         }
     }
-    val garage = @Composable { car: PublicVehicle?, road: Boolean -> if (car != null) ForeignCar(car, paid, road, ink, secondary, onVehicle) else if (road) RoadScene(roadTime) }
+    val garage = @Composable { car: PublicVehicle?, road: Boolean, onCoverEdge: Boolean -> if (car != null) ForeignCar(car, paid, road, onCoverEdge, ink, secondary, onVehicle) else if (road) RoadScene(roadTime) }
     Column(Modifier.fillMaxWidth().testTag("profile_hero")) {
         if (photos.isNotEmpty()) {
             Box {
@@ -332,7 +341,7 @@ private fun PublicHero(
             }
             Column(Modifier.fillMaxWidth().drawBehind { if (hasCover) { drawCover(background); drawRect(Color.Black.copy(alpha = .64f)) } }
                 .padding(horizontal = 16.dp).padding(bottom = 12.dp, top = if (vehicle != null) 0.dp else 18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                garage(vehicle, false)
+                garage(vehicle, false, true)
                 identity()
                 followers()
                 if (bio != null) Text(bio, style = interScaled(15f), color = ink, modifier = Modifier.testTag("profile_bio"))
@@ -340,7 +349,8 @@ private fun PublicHero(
             }
         } else {
             val shape = RoundedCornerShape(24.dp)
-            Column(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp).fillMaxWidth().clip(shape)
+            // iOS: the card's own 4 and heroSection's 6 below the bar (a cover hero starts at the very top).
+            Column(Modifier.padding(horizontal = 16.dp).padding(top = 10.dp).fillMaxWidth().clip(shape)
                 .background(if (hasCover) Color.Transparent else AppTheme.colors.roadHeroCard)
                 .drawBehind { if (hasCover) { drawCover(background); drawRect(Color.Black.copy(alpha = .64f)) } }
                 .border(1.dp, if (hasCover) Color.Transparent else AppTheme.accent.copy(alpha = .22f), shape)) {
@@ -348,7 +358,7 @@ private fun PublicHero(
                     identity()
                     if (bio != null) Text(bio, style = interScaled(14f), color = ink, modifier = Modifier.testTag("profile_bio"))
                 }
-                garage(vehicle, !hasCover)
+                garage(vehicle, !hasCover, false)
                 Column(Modifier.padding(horizontal = 20.dp).padding(top = 4.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                     followers()
                     if (profile.openBlocks.counters) {
@@ -365,10 +375,11 @@ private fun PublicHero(
     }
 }
 
+/** iOS column(value:label:): 22 bold, and 19 heavy under a cover photo, where the panel is tighter. */
 @Composable
-private fun RowScope.StatColumn(value: String, label: String, ink: Color, secondary: Color) {
+private fun RowScope.StatColumn(value: String, label: String, ink: Color, secondary: Color, withPhotos: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(value, style = interScaled(22f, InterWeight.bold, monospacedDigits = true), color = ink, maxLines = 1)
+        Text(value, style = if (withPhotos) interScaled(19f, InterWeight.heavy, monospacedDigits = true) else interScaled(22f, InterWeight.bold, monospacedDigits = true), color = ink, maxLines = 1)
         Text(label, style = interScaled(11f, InterWeight.medium), color = secondary)
     }
 }
@@ -385,30 +396,66 @@ private fun FollowButton(title: String, busy: Boolean, enabled: Boolean, onClick
     }
 }
 
-/** iOS ProfileGarageHeader.foreign: their active car on the road (or its photo filling the band), its name. */
+/**
+ * iOS ProfileGarageHeader.foreign: their active car on the road (or its photo filling the band), its
+ * name. On a cover's edge ([onCoverEdge]) the car stands pulled up 82 over the photo: the stage 250
+ * wide in a 155 frame, bottom aligned, and the name with the make, model and year on ONE centred line
+ * (the name 15 semibold, the rest 12 in the secondary ink), about 106 of panel instead of 270.
+ */
 @Composable
-private fun ForeignCar(car: PublicVehicle, paid: Boolean, road: Boolean, ink: Color, secondary: Color, onVehicle: (UUID) -> Unit) {
+private fun ForeignCar(car: PublicVehicle, paid: Boolean, road: Boolean, onCoverEdge: Boolean, ink: Color, secondary: Color, onVehicle: (UUID) -> Unit) {
     val vehicle = car.asVehicle()
     val style = vehicle.avatarStyle.takeIf { it in VehicleAvatar.styles(vehicle.type) } ?: VehicleAvatar.styles(vehicle.type).first()
     val photo = car.mainPhoto?.takeIf { it.isNotEmpty() }
-    BoxWithConstraints {
-        val width = if (road) minOf(maxWidth - 72.dp, 300.dp) else minOf(maxWidth * .67f, 300.dp)
+    val caption = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
+    BoxWithConstraints(if (onCoverEdge) Modifier.pulledUp(82.dp) else Modifier) {
+        val width = if (onCoverEdge) 250.dp else if (road) minOf(maxWidth - 72.dp, 300.dp) else minOf(maxWidth * .67f, 300.dp)
         Column(Modifier.fillMaxWidth().clickable(role = Role.Button) { onVehicle(car.id) }.testTag("garage_header_vehicle"),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             val stage = VehicleAvatar.stageHeight(style, width)
-            if (road && photo != null) PhotoImage(PhotoSource.Remote(photo), 1080, Modifier.fillMaxWidth().height(stage + 20.dp))
+            if (onCoverEdge) Box(Modifier.fillMaxWidth().height(155.dp), contentAlignment = Alignment.BottomCenter) {
+                if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1080, Modifier.size(width, width * .6f).clip(RoundedCornerShape(12.dp)))
+                // A stage taller than the frame stands on its bottom edge and rises over the photo, as it does in iOS.
+                else VehicleStage(vehicle, Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true), width, isPlus = paid)
+            }
+            else if (road && photo != null) PhotoImage(PhotoSource.Remote(photo), 1080, Modifier.fillMaxWidth().height(stage + 20.dp))
             else Box(Modifier.fillMaxWidth().height(stage + if (road) 20.dp else 0.dp), contentAlignment = Alignment.BottomCenter) {
                 if (road) RoadScene(RoadSceneTime.slot(java.time.Instant.now(), java.time.ZoneId.systemDefault()), Modifier.matchParentSize())
                 if (photo != null && !road) PhotoImage(PhotoSource.Remote(photo), 1080, Modifier.size(width, width * .6f).clip(RoundedCornerShape(12.dp)))
                 else VehicleStage(vehicle, Modifier.padding(vertical = if (road) 10.dp else 0.dp), width, isPlus = paid)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(car.name, style = interScaled(17f, InterWeight.semibold), color = ink)
+            if (onCoverEdge) Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(car.name, Modifier.weight(1f, fill = false), style = interScaled(15f, InterWeight.semibold), color = ink, maxLines = 1)
                 Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 11.dp)
+                if (caption.isNotEmpty()) Text(caption, Modifier.weight(1f, fill = false), style = interScaled(12f), color = secondary, maxLines = 1)
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(car.name, style = interScaled(17f, InterWeight.semibold), color = ink)
+                    Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 11.dp)
+                }
+                if (caption.isNotEmpty()) Text(caption, style = interScaled(12f), color = secondary, modifier = Modifier.padding(bottom = 14.dp))
             }
-            val caption = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
-            if (caption.isNotEmpty()) Text(caption, style = interScaled(12f), color = secondary, modifier = Modifier.padding(bottom = 14.dp))
         }
+    }
+}
+
+/**
+ * iOS `.padding(.top, -x)`: the content is placed [amount] higher and the layout is that much
+ * shorter, so what follows moves up with it. Offsetting alone would leave the gap behind.
+ */
+private fun Modifier.pulledUp(amount: androidx.compose.ui.unit.Dp): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    val pull = amount.roundToPx()
+    layout(placeable.width, (placeable.height - pull).coerceAtLeast(0)) { placeable.place(0, -pull) }
+}
+
+/** iOS countryPillText: the flag, then the country's name; the neutral flag stands alone, «no country» prints nothing. */
+internal fun countryLine(stored: String, strings: com.onezee.triptrack.designsystem.strings.AppStrings): String? {
+    val flag = com.onezee.triptrack.feature.me.ProfileIdentityChoices.flag(stored) ?: return null
+    return when (stored) {
+        "NEUTRAL" -> flag
+        "WORLD" -> "$flag ${strings.countryWorld()}"
+        else -> flag + " " + runCatching { java.util.Locale.Builder().setRegion(stored.uppercase()).build().getDisplayCountry(strings.language.locale) }.getOrDefault(stored)
     }
 }
 
@@ -497,7 +544,7 @@ private fun LazyListScope.recentTrips(
         val publicCount = profile.stats.publicTripCount
         val total = profile.stats.tripCount
         val head = "${strings.tripsTab()} · $publicCount" + if (total > publicCount) " · " + strings.publicProfileTripsTotal(total) else ""
-        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
             SocialSectionLabel(head, Modifier.weight(1f))
             LayoutToggle(grid, onGrid)
         }
@@ -507,17 +554,17 @@ private fun LazyListScope.recentTrips(
         journal.gridCards.chunked(2).forEachIndexed { index, pair ->
             item(key = "grid_$index") {
                 LaunchedEffect(journal.gridCards.size) { onAppear(index * 2 + 1, journal.gridCards.size) }
-                Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(Modifier.padding(horizontal = 16.dp).padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     pair.forEach { trip -> TripGridCell(trip, now, onTap = { onOpen(trip) }, modifier = Modifier.weight(1f)) }
                     if (pair.size == 1) Spacer(Modifier.weight(1f))
                 }
             }
         }
     } else {
-        journal.history.chapters.forEach { chapter ->
-            item(key = "chapter_${chapter.id}") { ChapterHeader(chapter, Modifier.padding(horizontal = 16.dp)) }
+        journal.history.chapters.forEachIndexed { chapterIndex, chapter ->
+            item(key = "chapter_${chapter.id}") { ChapterHeader(chapter, Modifier.padding(horizontal = 16.dp).padding(top = if (chapterIndex == 0) 10.dp else 12.dp)) }
             items(chapter.rows, key = { row -> when (row) { is HistoryRow.Trip -> "trip_${row.value.id}"; is HistoryRow.Journey -> "journey_${row.value1.id}"; is HistoryRow.Routine -> "routine_${row.value.trips.first().id}" } }) { row ->
-                Box(Modifier.padding(horizontal = 16.dp)) {
+                Box(Modifier.padding(horizontal = 16.dp).padding(top = 12.dp)) {
                     when (row) {
                         is HistoryRow.Trip -> journal.originals[row.value.id]?.let { trip ->
                             val own = isOwnTrip(trip)
@@ -538,16 +585,20 @@ private fun LazyListScope.recentTrips(
         // A footer that asks for the next page whenever the list grew, journeys folding cards included.
         item(key = "trips_footer") { LaunchedEffect(state.tripCards.size) { onAppear(journal.history.rows.size - 1, journal.history.rows.size) } }
     }
-    if (state.pager.isLoading) item(key = "trips_loading") { Box(Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) { com.onezee.triptrack.feature.atlas.ui.CarLoading() } }
+    if (state.pager.isLoading) item(key = "trips_loading") { Box(Modifier.fillMaxWidth().padding(top = 10.dp).padding(vertical = 12.dp), contentAlignment = Alignment.Center) { com.onezee.triptrack.feature.atlas.ui.CarLoading() } }
 }
 
-/** iOS layoutToggle: no plate under either half, the accent alone says which one is on. */
+/**
+ * iOS layoutToggle: no plate under either half, the accent alone says which one is on. Two 26 × 22
+ * frames 2 apart inside a 2 margin: the glyphs stand 28 apart and the list one 25 from the edge. The
+ * 44-point targets iOS takes back out of the layout are Compose's own minimum touch size here.
+ */
 @Composable
 private fun LayoutToggle(grid: Boolean, onGrid: (Boolean) -> Unit) {
     val haptics = rememberHaptics()
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Row(Modifier.padding(2.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
         listOf(true to SocialGlyph.squareGrid, false to SocialGlyph.listBullet).forEach { (value, glyph) ->
-            Box(Modifier.size(44.dp).clickable(role = Role.RadioButton) { haptics.selection(); onGrid(value) }.testTag(if (value) "profile_layout_grid" else "profile_layout_list"),
+            Box(Modifier.size(26.dp, 22.dp).clickable(role = Role.RadioButton) { haptics.selection(); onGrid(value) }.testTag(if (value) "profile_layout_grid" else "profile_layout_list"),
                 contentAlignment = Alignment.Center) {
                 SocialGlyphIcon(glyph, null, tint = if (grid == value) AppTheme.accent else AppTheme.colors.textTertiary, size = 18.dp)
             }
