@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -96,11 +97,11 @@ fun PlaceCard(item: PlaceListItem, compact: Boolean, onTap: () -> Unit, modifier
 
 /** iOS: PlaceChipLabel. Lowercase and grey: a CAPTION, not an award (places give no XP). */
 @Composable
-fun PlaceChipLabel(text: String) {
+fun PlaceChipLabel(text: String, modifier: Modifier = Modifier) {
     val atlas = AtlasTheme.colors
-    Box(Modifier.height(24.dp).background(atlas.chip, CapsuleShape).padding(horizontal = 9.dp), contentAlignment = Alignment.Center) {
-        Text(text, style = AppType.caption, color = atlas.secondary, maxLines = 1)
-    }
+    // One text with modifiers (not a box around it) so that its baseline reaches a row that aligns by baseline (PL-06).
+    Text(text, modifier.height(24.dp).background(atlas.chip, CapsuleShape).padding(horizontal = 9.dp).wrapContentHeight(Alignment.CenterVertically),
+        style = AppType.caption, color = atlas.secondary, maxLines = 1)
 }
 
 /**
