@@ -334,7 +334,7 @@ private fun SocialAuthorRow(card: SocialCardState, isOwn: Boolean, now: Instant,
         // iOS: .avatarFrame(AvatarFrame.from(trip.author.avatarFrame), lineWidth: 2). The server sends the frame only for a live
         // subscription, so nothing is re-checked here; a frame this build does not know reads as none.
         Box(Modifier.size(36.dp).background(colors.cardAlt, CircleShape)
-            .avatarFrame(AvatarFrame.fromRawValue(author.avatarFrame.orEmpty()) ?: AvatarFrame.none, 2.dp).then(authorTap), contentAlignment = Alignment.Center) {
+            .avatarFrame(AvatarFrame.fromRawValue(author.avatarFrame.orEmpty()) ?: AvatarFrame.none, 2.dp).then(authorTap).testTag("feed_card_avatar"), contentAlignment = Alignment.Center) {
             Text(author.avatarEmoji ?: "🙂", style = inter(19f))
         }
         Column(Modifier.weight(1f).then(authorTap).testTag("feed_card_author"), verticalArrangement = Arrangement.spacedBy(2.dp)) {
