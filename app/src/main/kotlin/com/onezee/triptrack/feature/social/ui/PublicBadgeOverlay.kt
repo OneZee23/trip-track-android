@@ -25,7 +25,16 @@ import com.onezee.triptrack.logic.BadgeDefinitions
 import com.onezee.triptrack.logic.shown
 
 @Composable
-fun PublicBadgeOverlay(row: AchievementRow, onDismiss: () -> Unit) {
+fun PublicBadgeOverlay(row: AchievementRow, onDismiss: () -> Unit) = PublicBadgeOverlay(row, null, onDismiss)
+
+/**
+ * [earnedAt] is the date iOS prints under an earned badge: «Получен 9 августа 2026», or for a repeatable
+ * badge earned more than once «5 раз · Последний раз: 9 августа 2026». Without it (a stranger's badge: no
+ * date to invent) the card stops at the description. The personal figure iOS adds above the date
+ * (`Badge.recordValue`) is not ported.
+ */
+@Composable
+fun PublicBadgeOverlay(row: AchievementRow, earnedAt: java.time.Instant?, onDismiss: () -> Unit) {
     val strings = appStrings
     val definition = BadgeDefinitions.all.first { it.id == row.id }
     val secret = definition.isHidden && !row.unlocked
@@ -51,6 +60,11 @@ fun PublicBadgeOverlay(row: AchievementRow, onDismiss: () -> Unit) {
                     val figures = definition.figures.map { it.shown(LocalDistanceUnit.current, strings.language.code, strings) }
                     Text(if (secret) strings.badgeDetailHiddenAchievement() else MeArtwork.badgeDescriptions[row.id]?.let { strings.tr(it, *figures.toTypedArray()) }.orEmpty(), style = inter(14f), color = AppTheme.colors.textSecondary, textAlign = TextAlign.Center)
                     if (!row.unlocked) Text(strings.badgeDetailLocked(), style = AppType.chip, color = AppTheme.colors.textTertiary)
+                    if (row.unlocked && earnedAt != null) {
+                        val repeated = definition.isRepeatable && row.earnCount > 1
+                        Text(if (repeated) "${strings.earnedTimes(row.earnCount)} · ${strings.badgeLastEarned(earnedAt)}" else strings.badgeEarnedOn(earnedAt, null),
+                            Modifier.testTag("public_badge_earned"), style = inter(12f), color = AppTheme.colors.textTertiary, textAlign = TextAlign.Center)
+                    }
                 }
                 NavCircleButton(AppGlyph.xmark, strings.closeSheet(), onDismiss, Modifier.align(Alignment.TopEnd).padding(8.dp).testTag("badge_close"))
             }
