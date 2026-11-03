@@ -91,7 +91,8 @@ internal fun VehicleStage(vehicle: Vehicle, modifier: Modifier = Modifier, width
     val style = vehicle.avatarStyle.takeIf { it in VehicleAvatar.styles(vehicle.type) } ?: VehicleAvatar.styles(vehicle.type).first()
     val height = VehicleAvatar.stageHeight(style, width)
     if (photoFilename != null) {
-        VehicleLocalPhoto(photoFilename, modifier.size(width, width * .60f), remoteURL = remoteURL)
+        // iOS: a main photo replaces the platform at 0.60 of the width and takes the card's radius of 20.
+        VehicleLocalPhoto(photoFilename, modifier.size(width, width * .60f).clip(RoundedCornerShape(20.dp)), remoteURL = remoteURL)
         return
     }
     val wheelY = height - width * (92f / 170) + width * (85f / 170 * .80f)
