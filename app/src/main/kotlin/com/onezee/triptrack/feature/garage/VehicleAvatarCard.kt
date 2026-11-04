@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -47,7 +48,9 @@ internal fun VehicleAvatarCard(vehicle: Vehicle, onAvatar: (color: String, style
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             val asset = VehicleAvatar.asset(vehicle)
             if (asset != null) Box(Modifier.size(208.dp, 130.dp).background(plate, RoundedCornerShape(18.dp)).testTag("vehicle_avatar_hero"), contentAlignment = Alignment.Center) {
-                PixelAsset(asset, Modifier.size(168.dp, 106.dp))
+                // Fitted, as iOS draws it (`scaledToFit` in 168 × 106): stretched to the box, the
+                // 256 × 204 sprite came out squashed (owner on his phone, 4 Nov 2026).
+                PixelAsset(asset, Modifier.size(168.dp, 106.dp), ContentScale.Fit)
             } else Text(vehicle.avatarEmoji, Modifier.height(88.dp), style = inter(56f))
         }
         if (styles.size > 1) {
@@ -62,7 +65,7 @@ internal fun VehicleAvatarCard(vehicle: Vehicle, onAvatar: (color: String, style
                             .clip12().clickable(role = Role.RadioButton, onClickLabel = label) { onAvatar(color, value) }
                             .semantics { selected = chosen; contentDescription = label }.testTag("vehicle_avatar_style_$value"), contentAlignment = Alignment.Center) {
                             // Drawn in the colour that is chosen now, so the row shows shapes and not a paint chart.
-                            PixelAsset("pixel_${value}_$color", Modifier.fillMaxSize().padding(horizontal = 5.dp, vertical = 7.dp))
+                            PixelAsset("pixel_${value}_$color", Modifier.fillMaxSize().padding(horizontal = 5.dp, vertical = 7.dp), ContentScale.Fit)
                         }
                     }
                     repeat(4 - row.size) { Spacer(Modifier.weight(1f)) }

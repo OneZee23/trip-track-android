@@ -65,9 +65,9 @@ internal object VehicleAvatar {
 }
 
 @Composable
-internal fun PixelAsset(name: String, modifier: Modifier) {
+internal fun PixelAsset(name: String, modifier: Modifier, scale: ContentScale = ContentScale.FillBounds) {
     val id = MeArtwork.drawables[name] ?: return
-    Image(ImageBitmap.imageResource(id), null, modifier, contentScale = ContentScale.FillBounds, filterQuality = FilterQuality.None)
+    Image(ImageBitmap.imageResource(id), null, modifier, contentScale = scale, filterQuality = FilterQuality.None)
 }
 
 // iOS: VehicleSpritePlate.swift. Uniform list plates use the tallest silhouette's ink, not its canvas.
