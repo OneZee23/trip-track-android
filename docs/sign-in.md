@@ -25,6 +25,10 @@ time into `BuildConfig.GOOGLE_WEB_CLIENT_ID`.
 
 ## What the owner has to do before it works on a phone
 
+Done on 4 November 2026 (report `docs/reports/w15-tester.md`): the Google Auth Platform project is in production with
+the Web client and the Android clients below, the backend is deployed with `GOOGLE_CLIENT_IDS`, and release builds
+take `GOOGLE_WEB_CLIENT_ID` from the machine-local configuration. The steps stay here for a new machine or a new key.
+
 ### 1. Google Auth Platform (Google Cloud Console)
 
 1. A Google Cloud project for TripTrack → Google Auth Platform → Get started: app name, support
