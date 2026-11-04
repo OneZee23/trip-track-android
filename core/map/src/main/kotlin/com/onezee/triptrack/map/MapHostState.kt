@@ -41,9 +41,16 @@ data class MapCamera(
  */
 data class MapTap(val coordinate: GeoPoint, val zoom: Double)
 
-/** OpenFreeMap: free vector tiles with the OpenMapTiles schema, no key and no account. */
+/**
+ * iOS draws every map with Apple Maps' standard map; TripTrack's two styles are drawn after it (tools/mapstyle) on
+ * OpenFreeMap's vector tiles, which stay free, keyless and accountless. The styles ship as assets; tiles, fonts and the
+ * shield sprite still come from OpenFreeMap.
+ */
 object MapStyles {
-    const val OPEN_FREE_MAP_LIBERTY = "https://tiles.openfreemap.org/styles/liberty"
+    const val LIGHT = "asset://maps/triptrack-light.json"
+    const val DARK = "asset://maps/triptrack-dark.json"
+
+    fun of(dark: Boolean): String = if (dark) DARK else LIGHT
 }
 
 /**

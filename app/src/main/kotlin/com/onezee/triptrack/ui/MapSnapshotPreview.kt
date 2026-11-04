@@ -63,8 +63,6 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.Style
 import org.maplibre.android.snapshotter.MapSnapshotter
-import org.maplibre.android.style.layers.Property
-import org.maplibre.android.style.layers.PropertyFactory
 import kotlin.coroutines.resume
 
 internal data class SnapshotRegion(val centreLat: Double, val centreLon: Double, val latitudeSpan: Double, val longitudeSpan: Double)
@@ -171,7 +169,6 @@ internal object SnapshotEngine {
             val snapshotter = MapSnapshotter(context, options)
             snapshotter.setObserver(object : MapSnapshotter.Observer {
                 override fun onDidFinishLoadingStyle() {
-                    POI_LAYER_IDS.forEach { id -> snapshotter.getLayer(id)?.setProperties(PropertyFactory.visibility(Property.NONE)) }
                     MapLabels.styleLabelLayers.forEach { id -> MapLabels.localize(snapshotter.getLayer(id), language) }
                 }
                 override fun onStyleImageMissing(imageName: String) = Unit
@@ -190,9 +187,6 @@ internal object SnapshotEngine {
             }
         }
     }
-
-    /** The point-of-interest layers of OpenFreeMap's liberty style; the dark style draws none (iOS `.excludingAll`). */
-    private val POI_LAYER_IDS = listOf("poi_r20", "poi_r7", "poi_r1", "poi_transit")
 }
 
 internal sealed interface Overlay {

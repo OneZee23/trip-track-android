@@ -238,7 +238,7 @@ fun AtlasMapLayer(
         onMarkerTap = onMarker,
         chromeInsets = chrome,
         systemInsets = WindowInsets.safeDrawing,
-        styleUri = MapStyles.OPEN_FREE_MAP_LIBERTY,
+        styleUri = MapStyles.LIGHT,
         onMapTap = onTap,
         showsUserLocation = state.locationPermission == com.onezee.triptrack.feature.atlas.AtlasLocationPermission.allowed,
         regionLabels = labels,

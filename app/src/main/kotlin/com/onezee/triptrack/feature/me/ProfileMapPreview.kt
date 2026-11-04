@@ -73,7 +73,7 @@ internal fun ProfileMapPreview(routes: List<List<GeoPoint>>, modifier: Modifier)
             (centreLat - latSpan / 2).coerceAtLeast(-85.0), (centreLon - lonSpan / 2).coerceAtLeast(-180.0))
         // Options are logical pixels; pixelRatio expands the result to the measured physical size.
         val options = MapSnapshotter.Options((size.width / density).roundToInt().coerceAtLeast(2), (size.height / density).roundToInt().coerceAtLeast(2)).withRegion(region).withPixelRatio(density)
-            .withStyleBuilder(Style.Builder().fromUri(MapStyles.OPEN_FREE_MAP_LIBERTY)).withLogo(false).withAttribution(true)
+            .withStyleBuilder(Style.Builder().fromUri(MapStyles.LIGHT)).withLogo(false).withAttribution(true)
         val snapshotter = MapSnapshotter(context, options)
         MapLabels.localizeOnLoad(snapshotter, language)
         var current = true

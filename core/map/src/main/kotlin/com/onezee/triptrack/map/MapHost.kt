@@ -58,7 +58,7 @@ fun MapHost(
      * build without naming them.
      */
     systemInsets: WindowInsets,
-    styleUri: String = MapStyles.OPEN_FREE_MAP_LIBERTY,
+    styleUri: String = MapStyles.LIGHT,
     /**
      * Render into a TextureView instead of a SurfaceView. For a map that lives inside moving UI (a
      * hero in a scrolling page, a layer that fades in, one map handed between two slots): a

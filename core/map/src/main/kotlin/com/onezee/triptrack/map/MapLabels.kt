@@ -14,15 +14,14 @@ import org.maplibre.android.style.layers.SymbolLayer
  * the app's language, falling back to the local name; road numbers (`ref`) stay as they are.
  */
 object MapLabels {
-    /** The labels of the two styles the app draws (liberty, dark), for the snapshotter, which cannot list its layers. */
+    /**
+     * The name labels of the app's styles (tools/mapstyle, laid out after OpenFreeMap Liberty), for the snapshotter,
+     * which cannot list its layers. Road shields print a number, not a name.
+     */
     val styleLabelLayers = listOf(
-        "waterway_line_label", "water_name_point_label", "water_name_line_label", "poi_r20", "poi_r7", "poi_r1",
-        "poi_transit", "highway-name-path", "highway-name-minor", "highway-name-major", "airport", "label_other",
-        "label_village", "label_town", "label_state", "label_city", "label_city_capital", "label_country_3",
-        "label_country_2", "label_country_1",
-        "water_name", "highway_name_other", "place_other", "place_suburb", "place_village", "place_town",
-        "place_city", "place_city_large", "place_state", "place_country_other", "place_country_minor",
-        "place_country_major",
+        "waterway_line_label", "water_name_point_label", "water_name_line_label", "highway-name-path",
+        "highway-name-minor", "highway-name-major", "label_other", "label_village", "label_town", "label_state",
+        "label_city", "label_city_capital", "label_country_3", "label_country_2", "label_country_1",
     )
 
     private val cyrillic = setOf("ru", "uk", "kk")

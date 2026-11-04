@@ -29,7 +29,7 @@ object MapSnapshots {
         widthPoints: Int,
         heightPoints: Int,
         scale: Float,
-        styleUri: String = MapStyles.OPEN_FREE_MAP_LIBERTY,
+        styleUri: String = MapStyles.LIGHT,
     ): MapPicture? = withContext(Dispatchers.Main) {
         MapLibre.getInstance(context.applicationContext)
         val options = MapSnapshotter.Options(widthPoints, heightPoints)

@@ -35,8 +35,8 @@ class MapLabelsTests {
     }
 
     @Test
-    fun bothStylesNameLabelsAreKnownToTheSnapshotter() {
-        for (id in listOf("highway-name-minor", "label_city", "highway_name_other", "place_city")) {
+    fun theStylesNameLabelsAreKnownToTheSnapshotter() {
+        for (id in listOf("highway-name-minor", "label_city", "label_other", "water_name_point_label")) {
             assertTrue(id, id in MapLabels.styleLabelLayers)
         }
     }

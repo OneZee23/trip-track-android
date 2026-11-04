@@ -15,9 +15,7 @@ object LiveMaps {
      * The trip map follows the app's theme (iOS «Trip detail first frame»: the explicit theme reaches
      * the map, a map that inherited the phone's style showed night inside a light app).
      */
-    fun style(dark: Boolean): String = if (dark) DARK_STYLE else MapStyles.OPEN_FREE_MAP_LIBERTY
-
-    private const val DARK_STYLE = "https://tiles.openfreemap.org/styles/dark"
+    fun style(dark: Boolean): String = MapStyles.of(dark)
 }
 
 /** False in screenshot tests and on devices without the map's native library. */
