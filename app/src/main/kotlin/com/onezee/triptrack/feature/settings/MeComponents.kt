@@ -147,7 +147,7 @@ private fun SettingsHintPopoverButton(text: String) {
 @Composable
 internal fun MeField(title: String, value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier,
                      keyboard: KeyboardType = KeyboardType.Text, singleLine: Boolean = true, tag: String = "") {
-    Column(modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+    Column(modifier.fillMaxWidth().revealOnFocus().padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Text(title, style = interScaled(11.5f, InterWeight.medium), color = AppTheme.colors.textSecondary)
         BasicTextField(value, onChange, Modifier.fillMaxWidth().heightIn(min = 30.dp).testTag(tag),
             textStyle = interScaled(16f).copy(color = AppTheme.colors.text), singleLine = singleLine,

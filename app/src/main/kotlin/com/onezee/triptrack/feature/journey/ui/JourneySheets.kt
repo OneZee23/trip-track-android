@@ -137,7 +137,9 @@ fun JourneyComposerSheet(vm: JourneyComposerViewModel, onCreated: (JourneyState)
                 }
             })
             Text(strings.journeyComposeHint(), style = inter(12f, InterWeight.medium), color = colors.textTertiary)
-            Column(Modifier.heightIn(max = 280.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // The list gives way to the keyboard: while the name is typed, the field and «Создать» stay
+            // in sight and the trips scroll in what is left.
+            Column(Modifier.weight(1f, fill = false).heightIn(max = 280.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val groups = state.candidates.groupBy { it.startDate.atZone(strings.zone).toLocalDate() }
                 groups.entries.forEachIndexed { index, (_, trips) ->
                     Text(JourneyFormat.dayDate(trips.first().startDate, strings).uppercased(strings.language), style = inter(11f, InterWeight.bold),

@@ -143,7 +143,9 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
     val reduceMotion = LocalReduceMotion.current
     var visibilityNoticeDismissed by rememberSaveable { mutableStateOf(socialFeature?.noticePreferences?.getBoolean("profile.visibility_notice_seen", false) ?: true) }
     Box(Modifier.fillMaxSize().background(colors.bg)) {
-        LazyColumn(Modifier.fillMaxSize().then(if (hasCover) Modifier else Modifier.statusBarsPadding()).testTag("screen_me"), state = listState,
+        // The history's search field lives in this list: with the keyboard up the list ends on the
+        // keyboard, so the field it focuses scrolls into view instead of staying under the keys.
+        LazyColumn(Modifier.fillMaxSize().then(if (hasCover) Modifier else Modifier.statusBarsPadding()).imePadding().testTag("screen_me"), state = listState,
             contentPadding = PaddingValues(bottom = tabBarContentClearance())) {
             item(key = "hero") {
                 Column(Modifier.padding(bottom = 12.dp)) {

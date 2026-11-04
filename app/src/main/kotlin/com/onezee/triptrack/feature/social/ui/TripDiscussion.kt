@@ -144,7 +144,7 @@ fun TripCommentsSheet(tripId: UUID, isOwner: Boolean, isOnServer: Boolean, initi
     LaunchedEffect(state.message) { state.message?.let { toast = strings.toast(it) } }
     ContentSizedSheet(onDismissRequest = onDismiss, background = colors.bg, detent = if (startFocused) SheetDetent.large else SheetDetent.content) {
         val sheet = this
-        Column(Modifier.fillMaxWidth().imePadding().testTag("comments_sheet")) {
+        Column(Modifier.fillMaxWidth().testTag("comments_sheet")) {
             Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                 val count = if (!state.hasLoadedOnce || state.loadFailed || state.nextCursor != null) maxOf(initialCount, state.comments.size) else state.comments.size
                 Text(strings.commentsTitleN(count), Modifier.weight(1f), style = inter(19f, InterWeight.bold), color = colors.text)

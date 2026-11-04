@@ -302,7 +302,7 @@ private fun NotesEditorSheet(initial: String, onSave: (String) -> Unit, onDismis
     ContentSizedSheet(onDismiss, background = colors.card, detent = SheetDetent.large) {
         val sheet = this
         LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
-        Column(Modifier.fillMaxSize().imePadding()) {
+        Column(Modifier.fillMaxSize()) {
             Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 18.dp)) {
                 Text(strings.descriptionSection(), Modifier.align(Alignment.Center), style = inter(16f, InterWeight.bold), color = colors.text)
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

@@ -74,7 +74,7 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     var currencyPicker by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().testTag("vehicle_edit_form")) {
         MeSheetHeader(if (isNew) strings.addVehicleTitle() else strings.editVehicleTitle(), onClose)
-        Column(Modifier.weight(1f).testTag("vehicle_edit_scroll").verticalScroll(rememberScrollState()).imePadding().padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.weight(1f).testTag("vehicle_edit_scroll").verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             VehicleAvatarCard(vehicle, onAvatar)
             MeSection(strings.vehicleNameSection()) { MeField(strings.vehicleNamePlaceholder(), vehicle.name, onName, tag = "vehicle_name") }
             MeSection(strings.vehicleWhatSection()) {

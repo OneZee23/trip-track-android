@@ -72,7 +72,8 @@ fun DiscoverScreen(social: SocialFeature, navigator: DestinationNavigator<TripsD
 
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("discover_screen")) {
         CustomNavBar(strings.findPeople(), onBack = { navigator.pop() })
-        LazyColumn(contentPadding = PaddingValues(bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        // Ends on the keyboard while it is up, so the last people found can still be scrolled to.
+        LazyColumn(Modifier.imePadding(), contentPadding = PaddingValues(bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item {
                 Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().background(colors.card, RoundedCornerShape(12.dp)).padding(horizontal = 14.dp, vertical = 11.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {

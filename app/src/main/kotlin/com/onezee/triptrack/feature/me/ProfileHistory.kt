@@ -101,7 +101,7 @@ private fun HistorySearchBar(query: String, onQuery: (String) -> Unit) {
     val focus = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
-    Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).background(colors.card, RoundedCornerShape(14.dp)).testTag("profile_history_search_bar")
+    Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).revealOnFocus().background(colors.card, RoundedCornerShape(14.dp)).testTag("profile_history_search_bar")
         .clickable(interactionSource = null, indication = null) { focus.requestFocus(); keyboard?.show() }.padding(start = 14.dp, end = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         Glyph(AppGlyph.magnifyingglass, null, tint = colors.textSecondary, size = symbolBox(17f))

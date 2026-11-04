@@ -14,13 +14,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -94,6 +97,15 @@ enum class SheetDetent {
  * A window, like the house dialog: it outranks the tab bar from any call site. The sheet slides in
  * on a spring, a drag down or the scrim closes it, and so does back.
  *
+ * The keyboard pushes the sheet up, as it pushes an iPhone sheet: the sheet stands on the
+ * keyboard, never under it, and a [SheetDetent.large] sheet gets shorter by its height. The
+ * window is edge to edge, and a Compose dialog drawn that way asks the system for no resize at
+ * all (`SOFT_INPUT_ADJUST_NOTHING` from Android 12), so nothing moves unless the sheet moves
+ * itself. Before it did, the keyboard covered every field in a sheet: a tester on build 13 opened
+ * «Имя» and saw only the keyboard (4 Nov 2026). The keyboard's inset already holds the navigation
+ * bar under it, so the bar's padding is consumed while the keyboard is up instead of added twice.
+ * Content needs no keyboard handling of its own.
+ *
  * It looks like the iPhone's system sheet: the page under it dims by [AtlasColors.sheetScrim] (12 %
  * in light) and the top corners are [AppRadius.sheet], a continuous curve. The Atlas sheets and the
  * sync sheet ask for a larger [cornerRadius] there too. A [CustomNavBar] inside it clears the
@@ -158,9 +170,7 @@ fun ContentSizedSheet(
         ),
     ) {
         PlainModalWindow()
-        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            val statusTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-            val maxSheet = maxHeight - statusTop - 10.dp
+        Box(Modifier.fillMaxSize()) {
             Box(
                 Modifier
                     .fillMaxSize()
@@ -170,53 +180,58 @@ fun ContentSizedSheet(
                     .semantics { hideFromAccessibility() }
                     .testTag("sheet_scrim"),
             )
-            val navigation = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            val shape = remember(cornerRadius) { ContinuousTopRoundedRectangle(cornerRadius) }
-            val grabberInk = (if (AppTheme.isDark) Color.White else Color.Black).copy(alpha = GrabberAlpha)
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .then(
-                        if (detent == SheetDetent.large) Modifier.heightIn(min = maxSheet, max = maxSheet)
-                        else Modifier.heightIn(min = minimumHeight, max = maxSheet),
-                    )
-                    .onSizeChanged { sheetHeight = it.height.toFloat() }
-                    // The layer's own height: the slide needs nothing measured from outside it.
-                    .graphicsLayer {
-                        translationY = (1f - presence.value) * size.height + drag.coerceAtLeast(0f)
-                    }
-                    .draggable(
-                        enabled = dismissible,
-                        state = rememberDraggableState { delta -> drag = (drag + delta).coerceAtLeast(0f) },
-                        orientation = Orientation.Vertical,
-                        onDragStopped = { velocity ->
-                            val threshold = with(density) { 120.dp.toPx() }
-                            if (drag > sheetHeight * 0.25f || drag > threshold || velocity > 1800f) {
-                                // Hand the dragged distance to the exit, so the sheet leaves from
-                                // where the finger let go instead of jumping back first.
-                                val from = 1f - drag / sheetHeight.coerceAtLeast(1f)
-                                drag = 0f
-                                presence.snapTo(from.coerceIn(0f, 1f))
-                                dismiss()
-                            } else {
-                                Animatable(drag).animateTo(0f, spring(stiffness = 600f)) { drag = value }
-                            }
-                        },
-                    )
-                    .background(background, shape)
-                    .padding(bottom = if (contentClearsNavigationBar) 0.dp else navigation)
-                    .then(
-                        if (grabber) Modifier.drawWithContent {
-                            drawContent()
-                            val width = GrabberWidth.toPx()
-                            val height = GrabberHeight.toPx()
-                            drawRoundRect(grabberInk, Offset((size.width - width) / 2, GrabberTop.toPx()), Size(width, height), CornerRadius(height / 2))
-                        } else Modifier,
-                    )
-                    .testTag("sheet"),
-            ) {
-                val sheet = remember(this) { SheetColumnScope(this, dismiss) }
-                CompositionLocalProvider(LocalNavBarInSheet provides true) { sheet.content() }
+            BoxWithConstraints(Modifier.fillMaxSize().imePadding(), contentAlignment = Alignment.BottomCenter) {
+                val statusTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                val maxSheet = maxHeight - statusTop - 10.dp
+                val shape = remember(cornerRadius) { ContinuousTopRoundedRectangle(cornerRadius) }
+                val grabberInk = (if (AppTheme.isDark) Color.White else Color.Black).copy(alpha = GrabberAlpha)
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (detent == SheetDetent.large) Modifier.heightIn(min = maxSheet, max = maxSheet)
+                            else Modifier.heightIn(min = minOf(minimumHeight, maxSheet), max = maxSheet),
+                        )
+                        .onSizeChanged { sheetHeight = it.height.toFloat() }
+                        // The layer's own height: the slide needs nothing measured from outside it.
+                        .graphicsLayer {
+                            translationY = (1f - presence.value) * size.height + drag.coerceAtLeast(0f)
+                        }
+                        .draggable(
+                            enabled = dismissible,
+                            state = rememberDraggableState { delta -> drag = (drag + delta).coerceAtLeast(0f) },
+                            orientation = Orientation.Vertical,
+                            onDragStopped = { velocity ->
+                                val threshold = with(density) { 120.dp.toPx() }
+                                if (drag > sheetHeight * 0.25f || drag > threshold || velocity > 1800f) {
+                                    // Hand the dragged distance to the exit, so the sheet leaves from
+                                    // where the finger let go instead of jumping back first.
+                                    val from = 1f - drag / sheetHeight.coerceAtLeast(1f)
+                                    drag = 0f
+                                    presence.snapTo(from.coerceIn(0f, 1f))
+                                    dismiss()
+                                } else {
+                                    Animatable(drag).animateTo(0f, spring(stiffness = 600f)) { drag = value }
+                                }
+                            },
+                        )
+                        .background(background, shape)
+                        // A modifier, not a number: the keyboard's padding above has consumed the
+                        // bar's inset, so with the keys up the content does not float a bar's height over them.
+                        .then(if (contentClearsNavigationBar) Modifier else Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
+                        .then(
+                            if (grabber) Modifier.drawWithContent {
+                                drawContent()
+                                val width = GrabberWidth.toPx()
+                                val height = GrabberHeight.toPx()
+                                drawRoundRect(grabberInk, Offset((size.width - width) / 2, GrabberTop.toPx()), Size(width, height), CornerRadius(height / 2))
+                            } else Modifier,
+                        )
+                        .testTag("sheet"),
+                ) {
+                    val sheet = remember(this) { SheetColumnScope(this, dismiss) }
+                    CompositionLocalProvider(LocalNavBarInSheet provides true) { sheet.content() }
+                }
             }
         }
     }
