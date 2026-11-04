@@ -40,6 +40,7 @@ import com.onezee.triptrack.feature.feed.*
 import com.onezee.triptrack.feature.social.*
 import com.onezee.triptrack.model.AvatarFrame
 import com.onezee.triptrack.model.SocialAuthor
+import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.DetailSectionHeader
 import com.onezee.triptrack.ui.navigation.DestinationNavigator
 import com.onezee.triptrack.ui.navigation.entryViewModel
@@ -256,7 +257,7 @@ private fun Composer(state: TripCommentsState, vm: TripCommentsViewModel, social
 /** iOS: the viewer's 30 disc on a 12 % accent wash with their emoji at 15. */
 @Composable
 private fun OwnAvatarDisc(emoji: String) {
-    Box(Modifier.size(30.dp).background(AppTheme.accent.copy(alpha = 0.12f), CircleShape), contentAlignment = Alignment.Center) { Text(emoji, style = inter(15f)) }
+    Box(Modifier.size(30.dp).background(AppTheme.accent.copy(alpha = 0.12f), CircleShape), contentAlignment = Alignment.Center) { AvatarGlyph(emoji, 15f) }
 }
 
 /** The hairline between the rows of the discussion card. */
@@ -311,7 +312,7 @@ private fun DiscussionRow(
             Modifier.size(34.dp).background(colors.cardAlt, CircleShape).avatarFrame(frame, 2.dp)
                 .clickable(role = Role.Button) { onAuthor(comment.author.id) }.testTag("comment_author"),
             contentAlignment = Alignment.Center,
-        ) { Text(comment.author.avatarEmoji ?: "🚗", style = inter(17f)) }
+        ) { AvatarGlyph(comment.author.avatarEmoji ?: "🚗", 17f) }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(comment.author.displayName ?: strings.companionsNoName(), Modifier.weight(1f, fill = false).alignBy(FirstBaseline)

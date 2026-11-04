@@ -45,6 +45,7 @@ import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.model.AvatarFrame
 import com.onezee.triptrack.model.ProfileBackground
 import com.onezee.triptrack.model.SocialAuthor
+import com.onezee.triptrack.ui.AvatarGlyph
 import kotlin.math.max
 import kotlin.math.sin
 
@@ -53,7 +54,7 @@ import kotlin.math.sin
 fun PersonAvatar(emoji: String?, frame: String?, modifier: Modifier = Modifier, size: Dp = 36.dp, fill: Color = AppTheme.colors.cardAlt) {
     Box(modifier.size(size).background(fill, CircleShape).avatarFrame(AvatarFrame.fromRawValue(frame.orEmpty()) ?: AvatarFrame.none, if (size >= 56.dp) 3.dp else 2.dp),
         contentAlignment = Alignment.Center) {
-        Text(emoji ?: "🚗", style = inter(size.value * .53f))
+        AvatarGlyph(emoji ?: "🚗", size.value * .53f)
     }
 }
 

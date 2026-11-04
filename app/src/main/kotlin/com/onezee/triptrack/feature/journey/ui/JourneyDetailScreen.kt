@@ -80,6 +80,7 @@ import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.SocialJourneyResponse
+import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.DetailSectionHeader
 import com.onezee.triptrack.ui.DetailStatCard
 import com.onezee.triptrack.ui.DetailTopBar
@@ -251,7 +252,7 @@ private fun AuthorRow(state: JourneyDetailState, dateRange: String, onClick: () 
     Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 16.dp, end = 16.dp, top = top + 68.dp, bottom = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(34.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) {
-            Text(author.avatarEmoji ?: "🚗", style = inter(18f))
+            AvatarGlyph(author.avatarEmoji ?: "🚗", 18f)
         }
         Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
             Text(author.displayName ?: strings.blockedListUser(), style = inter(14f, InterWeight.bold), color = colors.text, maxLines = 1)

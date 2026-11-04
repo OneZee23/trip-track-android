@@ -50,6 +50,7 @@ import com.onezee.triptrack.logic.UnitNumber
 import com.onezee.triptrack.logic.distanceValue
 import com.onezee.triptrack.logic.from
 import com.onezee.triptrack.model.Vehicle
+import com.onezee.triptrack.ui.AvatarGlyph
 import java.util.UUID
 
 /** The box a call site gives an SF Symbol of [pt] points: 1.2 × the point size, the convention of the glyph set. */
@@ -198,7 +199,7 @@ private fun HeroIdentityRow(state: ProfileHeroState, ink: HeroInk, actions: Hero
             val side = if (ink.hasPhotos) 46.dp else 60.dp
             PressableCard(onClick = actions.onProfile, onClickLabel = strings.myProfileTitle(), modifier = Modifier.testTag("profile_avatar")) {
                 Box(Modifier.size(side).background(ink.avatarFill, CircleShape), contentAlignment = Alignment.Center) {
-                    Text(state.identity.avatarEmoji, style = inter(if (ink.hasPhotos) 26f else 32f))
+                    AvatarGlyph(state.identity.avatarEmoji, if (ink.hasPhotos) 26f else 32f)
                 }
             }
             if (!accessibility) IdentityText(state, name, ink, actions, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))

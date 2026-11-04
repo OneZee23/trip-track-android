@@ -43,6 +43,7 @@ import com.onezee.triptrack.feature.trip.ReactorState
 import com.onezee.triptrack.feature.trip.TripDetailState
 import com.onezee.triptrack.model.ReactionEmoji
 import com.onezee.triptrack.model.ReactionTally
+import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.DetailSectionHeader
 import com.onezee.triptrack.ui.reactions.ReactionChipStyle
 import com.onezee.triptrack.ui.reactions.ReactionCountChip
@@ -180,7 +181,7 @@ private fun ReactorRow(entry: ReactorState, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.size(36.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) {
-            Text(entry.author.avatarEmoji ?: "🚗", style = inter(18f))
+            AvatarGlyph(entry.author.avatarEmoji ?: "🚗", 18f)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(entry.author.displayName ?: strings.blockedListUser(), style = inter(14f, InterWeight.semibold), color = colors.text, maxLines = 1)

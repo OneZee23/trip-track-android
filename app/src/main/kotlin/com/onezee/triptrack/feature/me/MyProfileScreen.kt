@@ -20,6 +20,7 @@ import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.model.ProfileBackground
+import com.onezee.triptrack.ui.AvatarGlyph
 import java.util.Locale
 import kotlinx.coroutines.*
 
@@ -64,13 +65,13 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
             Box(Modifier.fillMaxWidth().height(112.dp).then(if (colors.isNotEmpty()) Modifier.background(Brush.linearGradient(colors)) else Modifier.background(AppTheme.accentBg)))
             Column(Modifier.fillMaxWidth().offset(y = (-48).dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(Modifier.size(96.dp).background(AppTheme.colors.card, CircleShape).clickable(role = Role.Button) { avatars = !avatars }, contentAlignment = Alignment.Center) {
-                    Text(identity.avatarEmoji, style = inter(52f))
+                    AvatarGlyph(identity.avatarEmoji, 52f)
                 }
                 MeRow(strings.myProfileChangeAvatar(), tag = "profile_avatar_picker", onClick = { avatars = !avatars })
                 if (avatars) Column(Modifier.padding(horizontal = 16.dp)) {
                     ProfileIdentityChoices.avatars.chunked(4).forEach { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         row.forEach { emoji -> Box(Modifier.size(64.dp).background(if (identity.avatarEmoji == emoji) AppTheme.accentBg else AppTheme.colors.cardAlt, CircleShape)
-                            .clickable(enabled = !busy, role = Role.Button) { save { store.setAvatar(emoji) } }, contentAlignment = Alignment.Center) { Text(emoji, style = inter(32f)) } }
+                            .clickable(enabled = !busy, role = Role.Button) { save { store.setAvatar(emoji) } }, contentAlignment = Alignment.Center) { AvatarGlyph(emoji, 32f) } }
                     }; Spacer(Modifier.height(12.dp)) }
                     Text(strings.myProfileAvatarHint(), style = AppType.caption, color = AppTheme.colors.textSecondary)
                 }

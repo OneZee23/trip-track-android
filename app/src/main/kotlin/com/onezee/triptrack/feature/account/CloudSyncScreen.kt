@@ -48,6 +48,7 @@ import com.onezee.triptrack.designsystem.theme.InterWeight
 import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.rememberHaptics
+import com.onezee.triptrack.ui.AvatarGlyph
 
 /** «Account & Sync» with its view model; a house sheet from the settings row that opens it. */
 @Composable
@@ -276,7 +277,7 @@ private fun AccountCard(state: AccountScreenState) {
                 Image(
                 bitmap = ImageBitmap.imageResource(R.drawable.pixel_car), contentDescription = null, contentScale = ContentScale.Fit,
                     filterQuality = FilterQuality.None, modifier = Modifier.size(width = 32.dp, height = 20.dp))
-            } else Text(state.avatarEmoji, style = inter(24f))
+            } else AvatarGlyph(state.avatarEmoji, 24f)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(state.auth.userName ?: strings.profile(), style = inter(15f, InterWeight.bold), color = colors.text, maxLines = 1)

@@ -44,6 +44,7 @@ import com.onezee.triptrack.feature.account.SignInAction
 import com.onezee.triptrack.feature.account.SignInPromptSheet
 import com.onezee.triptrack.feature.feed.SocialCardState
 import com.onezee.triptrack.feature.feed.asTrip
+import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.reactions.ReactionPickerOverlay
 import com.onezee.triptrack.feature.garage.VehicleAvatar
 import com.onezee.triptrack.feature.garage.VehicleStage
@@ -288,7 +289,7 @@ private fun PublicHero(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
             Box(Modifier.size(if (photos.isEmpty()) 60.dp else 46.dp).background(if (hasCover) Color.White.copy(alpha = .16f) else AppTheme.colors.cardAlt, CircleShape)
                 .avatarFrame(frame, 3.dp), contentAlignment = Alignment.Center) {
-                Text(profile.avatarEmoji ?: "🚗", style = inter(if (photos.isEmpty()) 32f else 26f))
+                AvatarGlyph(profile.avatarEmoji ?: "🚗", if (photos.isEmpty()) 32f else 26f)
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 // iOS identityText: the name is at least 26 tall under a cover photo and 32 on the card, the level row 18 and 26; the
@@ -634,7 +635,7 @@ private fun UnavailableProfile(state: ProfileUnavailableState, onRetry: () -> Un
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         when (state) {
             is ProfileUnavailableState.Closed -> {
-                Box(Modifier.size(84.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) { Text(state.avatar ?: "🙂", style = inter(44f)) }
+                Box(Modifier.size(84.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) { AvatarGlyph(state.avatar ?: "🙂", 44f) }
                 Text(state.name, style = inter(20f, InterWeight.bold), color = colors.text)
                 Glyph(AppGlyph.lock, null, tint = colors.textTertiary, size = 18.dp)
                 Text(strings.closedProfileTitle(), style = inter(14f, InterWeight.bold), color = colors.text)
