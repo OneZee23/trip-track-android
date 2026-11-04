@@ -31,6 +31,12 @@ numbers, wire contract, strings and look. Read `docs/port-plan.md` before your f
   Android permission prompts stay native.
 - Android-specific behaviour (foreground service, notification channels, permissions, back
   gesture, battery restrictions) follows current Android guidance for target SDK 36.
+- A text field is done when it was seen on an emulator with the on-screen keyboard up. The AVDs on
+  this Mac have a hardware keyboard, and with one Android shows no on-screen keyboard: run
+  `adb shell settings put secure show_ime_with_hard_keyboard 1` first. A field in a house sheet is
+  handled by `ContentSizedSheet`; a field in a screen's own scroll needs that scroll to end on the
+  keyboard (`imePadding()`, as «Я» does). A tester found every sheet's fields under the keyboard
+  in build 13 (`docs/reports/w20-keyboard.md`).
 
 ## Building
 
