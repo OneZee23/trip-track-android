@@ -52,3 +52,19 @@ JDK 17 and offline Gradle were used. No emulator was started. The targeted scree
 A second recording pass covered Journey and photo viewer changes: `GRADLE_USER_HOME=/Users/onezee/.gradle JAVA_TOOL_OPTIONS=-Duser.home=/Users/onezee/.gradle JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/onezee/Library/Android/sdk ./gradlew --offline --project-cache-dir /Users/onezee/.gradle/caches/project-cache/w22-qa --no-daemon -Proborazzi.test.record=true :app:testDebugUnitTest --tests '*TripsScreenshotTests*' --tests '*SocialScreenshotTests*'`.
 
 Baselines re-recorded: `TripsScreenshotTests` (trip detail, Journey, photo viewer), `MeScreenshotTests` (achievements, country, profile), `SocialScreenshotTests` (social profile, garage, dialog, public Journey), and `ForeignHeroLookTests` (public hero), in light and dark themes where covered. The final full verification passed: 3,080 tests across `app` and all `core` modules, with no failures or errors. Exact command: `GRADLE_USER_HOME=/Users/onezee/.gradle JAVA_TOOL_OPTIONS=-Duser.home=/Users/onezee/.gradle JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/onezee/Library/Android/sdk ./gradlew --offline --project-cache-dir /Users/onezee/.gradle/caches/project-cache/w22-qa --no-daemon -Proborazzi.test.verify=true test`. The focused form/picker command passed: `GRADLE_USER_HOME=/Users/onezee/.gradle JAVA_TOOL_OPTIONS=-Duser.home=/Users/onezee/.gradle JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/onezee/Library/Android/sdk ./gradlew --offline --project-cache-dir /Users/onezee/.gradle/caches/project-cache/w22-qa --no-daemon :app:testDebugUnitTest --tests '*GarageScreenshotTests.newVehicleFormUsesAddFlowFields*' --tests '*GarageScreenshotTests.powertrainOptionsShowTheirHints*'`. The API 29–30 dialog-window check passed with `:core:designsystem:testDebugUnitTest --tests '*ModalBarsApi29Tests*'`.
+
+## Device check (POCO F1, Android 10, MIUI 12, three-button bar; 5 Nov 01:05–01:20)
+
+- The build from this branch closed the app on every house sheet: the Android 10 inset fallback in
+  `ContentSizedSheet` called the API 30 `WindowInsets.Type`. Fixed with a version guard (Android 10
+  reads `stableInsetBottom`); `SheetOnOldAndroidTests` opens a sheet on API 29 and 30 and fails with
+  NoSuchMethodError on the old code.
+- M3 was still there on the phone: the dialog window was letterboxed below the notch and the whole
+  status bar was black. `configurePlainModalWindow` now does what `enableEdgeToEdge` does for the
+  activity (short-edges cutout mode, `FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS`); the bar is the dimmed screen.
+- m1 was still there: short pickers let the footnote run under ■ ● ◀ (`contentClearsNavigationBar`).
+  The sheet now pads whatever part of the bar is taller than a gesture handle
+  (`contentClearedBottomPadding`).
+- Confirmed on the phone: M1 (Back from a trip opened in the Atlas returns to the region list), M2
+  (MapLibre logo and «i» above the Atlas summary, the region, Places and a place), M3, m1.
+- Full suite after the fixes: 3,083 tests, no failures.

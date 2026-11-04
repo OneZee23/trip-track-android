@@ -37,6 +37,11 @@ numbers, wire contract, strings and look. Read `docs/port-plan.md` before your f
   handled by `ContentSizedSheet`; a field in a screen's own scroll needs that scroll to end on the
   keyboard (`imePadding()`, as «Я» does). A tester found every sheet's fields under the keyboard
   in build 13 (`docs/reports/w20-keyboard.md`).
+- Code for old Android versions is tested on those versions: `@Config(sdk = [29, 30])` (their
+  Robolectric jars are cached), not only the suite's API 35. A fallback written for Android 10 once
+  called the API 30 `WindowInsets.Type` and closed the app on every sheet on the POCO F1, while all
+  tests stayed green. Window flags, cutouts and bar colours need the real phone as well
+  (`docs/reports/w22-qa.md`).
 
 ## Building
 
