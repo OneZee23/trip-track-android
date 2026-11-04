@@ -77,6 +77,6 @@ class MapStyleAssetsTests {
     fun theDarkLandIsAppleTeal() {
         val background = layers(style(MapStyles.DARK)).single { it.getString("id") == "background" }
         val colour = background.getJSONObject("paint").get("background-color").toString()
-        assertTrue(colour, "#3f6d69" in colour && "#4d7266" in colour)
+        assertTrue(colour, "#2b6f68" in colour && "#417365" in colour)
     }
 }

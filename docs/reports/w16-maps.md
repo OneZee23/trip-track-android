@@ -14,12 +14,16 @@ Colours were read from the Apple renders by pixel (forest and open land matched 
 
 | | light | dark |
 |---|---|---|
-| open land | `#eaefd0` | `#4d7266` |
-| forest | `#c0e0a3` | `#336a6b` |
-| lakes, rivers' water | `#a2daf5` | `#243882` |
-| sea | `#5eb5f3` | `#101d4c` |
-| country border | `#a26ab1` | `#7a3f8f` |
-| built-up city | `#f7f5ee` | `#3a485b` |
+| open land | `#e9efcd` | `#417365` |
+| forest | `#b8e19d` | `#156b6c` |
+| lakes | `#91dcf8` | `#1d3987` |
+| sea | `#36bbfa` | `#0c2051` |
+| country border | `#ac67b5` | `#7b2a8a` |
+| built-up city | `#f8f6ef` | `#37475d` |
+
+The renders carry the Mac display's colour profile; the first palette (build 10) read them raw and came out greyer than
+the phone. Converted to sRGB, the dark forest is `#156b6c`, the same value as in the owner's iPhone screenshot
+(build 11).
 
 ## What changed
 

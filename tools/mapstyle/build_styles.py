@@ -8,7 +8,8 @@ Android draws OpenFreeMap tiles; the stock Liberty and Dark styles looked like a
 
 Input:  tools/mapstyle/liberty.json, OpenFreeMap Liberty (layer structure, sources, fonts, sprite), as of 4 Nov 2026.
 Output: core/map/src/main/assets/maps/triptrack-light.json and triptrack-dark.json.
-The colours were sampled from MKMapSnapshotter renders of real feed routes (docs/reports/w16-maps.md).
+The colours were sampled from MKMapSnapshotter renders of real feed routes, converted from the Mac display's
+profile to sRGB (docs/reports/w16-maps.md).
 
 Data © OpenMapTiles © OpenStreetMap contributors; the attribution travels with the vector source.
 """
@@ -22,22 +23,22 @@ OUT = ROOT / 'core/map/src/main/assets/maps'
 
 PALETTES = {
     'light': {
-        'land': '#eaefd0', 'land_far': '#d5e7b8', 'forest': '#c0e0a3', 'grass': '#d4e8b6', 'park': '#cde5b1', 'urban': '#f7f5ee',
+        'land': '#e9efcd', 'land_far': '#d0e8b5', 'forest': '#b8e19d', 'grass': '#d0e9b3', 'park': '#c8e8ad', 'urban': '#f8f6ef',
         'commercial': '#f3ece9', 'hospital': '#f6e3e3', 'school': '#f4efdc', 'cemetery': '#d6e7c4',
         'ice': '#f6fafc', 'sand': '#f1ebcf', 'wetland': '#cfe6c6',
-        'water': '#a2daf5', 'sea': '#5eb5f3', 'river': '#78b7ec',
-        'border_country': '#a26ab1', 'border_state': '#c5a9c9',
+        'water': '#91dcf8', 'sea': '#36bbfa', 'river': '#6aa8e0',
+        'border_country': '#ac67b5', 'border_state': '#c9a6cd',
         'motorway': '#a3a3a6', 'motorway_casing': '#909094', 'trunk': '#bcbcbf', 'trunk_casing': '#a7a7aa',
         'major': '#ffffff', 'major_casing': '#cfcfcf', 'minor': '#ffffff', 'minor_casing': '#dedede',
         'path': '#d8d3c4', 'rail': '#c9c9c9', 'aeroway': '#e3e3e6', 'building': '#e9e6df', 'building_line': '#dcd8cf',
         'label': '#262626', 'label_soft': '#6e6e6e', 'halo': '#ffffff', 'water_label': '#3b7cc4',
     },
     'dark': {
-        'land': '#4d7266', 'land_far': '#3f6d69', 'forest': '#336a6b', 'grass': '#456f68', 'park': '#3f6758', 'urban': '#3a485b',
+        'land': '#417365', 'land_far': '#2b6f68', 'forest': '#156b6c', 'grass': '#2e6f63', 'park': '#316857', 'urban': '#37475d',
         'commercial': '#4a4567', 'hospital': '#5a4458', 'school': '#4d4a55', 'cemetery': '#3b6359',
         'ice': '#6f8a95', 'sand': '#5f6c62', 'wetland': '#3d6a66',
-        'water': '#243882', 'sea': '#101d4c', 'river': '#6f84bd',
-        'border_country': '#7a3f8f', 'border_state': '#7c6c8c',
+        'water': '#1d3987', 'sea': '#0c2051', 'river': '#7789a9',
+        'border_country': '#7b2a8a', 'border_state': '#7d6a8d',
         'motorway': '#9aa5c6', 'motorway_casing': '#7d88a8', 'trunk': '#8590ae', 'trunk_casing': '#6c7693',
         'major': '#6c7489', 'major_casing': '#56607a', 'minor': '#596277', 'minor_casing': '#4a5468',
         'path': '#53606a', 'rail': '#5d6676', 'aeroway': '#4a5568', 'building': '#46536a', 'building_line': '#3f4b60',
@@ -84,7 +85,8 @@ def restyle(layer, p):
         # zoom 8, so the far land takes the mean of forest and open land, and the near land the open colour.
         paint['background-color'] = ['interpolate', ['linear'], ['zoom'], 5, p['land_far'], 9, p['land']]
     elif lid == 'park':
-        layer['paint'] = {'fill-color': p['park'], 'fill-opacity': 1}
+        # A city's small parks recede at district scale on Apple's map and come forward close up.
+        layer['paint'] = {'fill-color': p['park'], 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.55, 14, 1]}
     elif lid == 'landuse_residential':
         layer['paint'] = {'fill-color': p['urban'], 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 6, 0.7, 10, 1]}
         layer.pop('maxzoom', None)
