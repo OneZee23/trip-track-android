@@ -306,7 +306,7 @@ fun PublicGarageScreen(dest: TripsDestination.PublicGarage, social: SocialFeatur
                             }
                             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    Text(car.name, Modifier.weight(1f, fill = false), style = inter(15f, InterWeight.semibold), color = colors.text, maxLines = 1)
+                                    Text(car.name, Modifier.weight(1f), style = inter(15f, InterWeight.semibold), color = colors.text, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                     if (car.soldAt != null) Text(strings.vehicleSoldBadge(), Modifier.background(colors.cardAlt, CapsuleShape).padding(horizontal = 7.dp, vertical = 3.dp),
                                         style = inter(10f, InterWeight.bold), color = colors.textTertiary)
                                     Spacer(Modifier.weight(1f))
@@ -314,7 +314,13 @@ fun PublicGarageScreen(dest: TripsDestination.PublicGarage, social: SocialFeatur
                                 }
                                 val line = listOfNotNull(car.make, car.model, car.year?.takeIf { it > 0 }?.toString()).filter { it.isNotEmpty() }.joinToString(" · ")
                                 if (line.isNotEmpty()) Text(line, style = inter(12f), color = colors.textTertiary, maxLines = 1)
-                                Text("LVL ${car.level} · " + Measure.odometer(car.odometerKm, LocalDistanceUnit.current, strings.language.code, strings), style = inter(11f), color = colors.textTertiary)
+                                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("LVL ${car.level}", Modifier.background(colors.cardAlt, CapsuleShape).padding(horizontal = 8.dp, vertical = 4.dp), style = handjet(13f), color = colors.textSecondary)
+                                    Box(Modifier.weight(1f).height(4.dp).background(colors.cardAlt, CapsuleShape)) {
+                                        Box(Modifier.fillMaxWidth(VehicleLevelSystem.progressToNext(car.odometerKm, car.level).toFloat()).fillMaxHeight().background(AppTheme.accent, CapsuleShape))
+                                    }
+                                    Text(Measure.odometer(car.odometerKm, LocalDistanceUnit.current, strings.language.code, strings), style = inter(11f), color = colors.textTertiary, maxLines = 1)
+                                }
                             }
                         }
                     }

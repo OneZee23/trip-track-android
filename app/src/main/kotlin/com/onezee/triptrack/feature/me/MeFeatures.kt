@@ -49,11 +49,14 @@ class MeFeatures(graph: AppGraph, private val preferences: PresentationPreferenc
         locale = graph.strings.language.locale, localizedRegion = { ProfileRegionDisplay.localized(it, graph.strings.language.code) }, catalog = catalog) }
     val garage by lazy { GarageViewModel(graph.vehicles, photos, graph.trips, Dispatchers.Default, selected, changes) }
     val vehiclePhotos = photos
+    var pinnedBadgeId: String
+        get() = preferences.string("com.triptrack.settings.pinnedBadgeId").orEmpty()
+        set(value) { preferences.set("com.triptrack.settings.pinnedBadgeId", value) }
     private val vehicleStore = graph.vehicles
     private val tripRepository = graph.trips
     private val apiClient = graph.apiClient
     private val presentationPreferences = preferences
-    fun passport(id: UUID) = VehiclePassportViewModel(id, vehicleStore, vehiclePhotos, tripRepository, catalog, Dispatchers.Default, unit, changes)
+    fun passport(id: UUID) = VehiclePassportViewModel(id, vehicleStore, vehiclePhotos, tripRepository, catalog, Dispatchers.Default, unit, changes, selectedVehicleId = selected)
     fun edit(vehicle: Vehicle?) = VehicleEditViewModel(vehicle, vehicleStore, unit.value, Dispatchers.Main.immediate)
     fun privacy() = PrivacySettingsViewModel(ApiProfilePrivacyService(apiClient), Dispatchers.Main.immediate)
     fun notificationPreferences() = NotificationPreferencesViewModel(ApiNotificationPreferencesService(apiClient), presentationPreferences, Dispatchers.Main.immediate)

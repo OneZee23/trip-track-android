@@ -50,6 +50,7 @@ internal fun VehicleEditSheet(model: VehicleEditViewModel, catalog: com.onezee.t
         } else {
             VehicleEditContent(state, appUnit, isNew, model::setName, model::setOdometer,
                 onCatalog = { model.showCatalog(true) }, onType = { typePicker = true }, onDashboard = { model.showDashboardPicker(true) },
+                onTypeSelect = model::setType,
                 onAvatar = model::setAvatar, onPlate = model::setPlate,
                 onPassport = model::setPassport, onVisibility = model::setVisibility,
                 onSave = model::save, onClose = { dismiss() }, onSold = onSold,
@@ -67,7 +68,8 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     onName: (String) -> Unit, onOdometer: (String) -> Unit, onCatalog: () -> Unit, onType: () -> Unit, onDashboard: () -> Unit,
     onAvatar: (String, String) -> Unit, onPlate: (String) -> Unit, onPassport: (String, String, Int, String, String) -> Unit,
     onVisibility: (Boolean, Boolean, Boolean, Boolean) -> Unit, onSave: () -> Unit, onClose: () -> Unit, onSold: (() -> Unit)? = null,
-    onPowertrain: (Powertrain) -> Unit = {}, onEnergy: (VehicleEnergyField, String) -> Unit = { _, _ -> }, onCurrency: (String) -> Unit = {}) {
+    onPowertrain: (Powertrain) -> Unit = {}, onEnergy: (VehicleEnergyField, String) -> Unit = { _, _ -> }, onCurrency: (String) -> Unit = {},
+    onTypeSelect: (VehicleType) -> Unit = {}) {
     val strings = appStrings
     val vehicle = state.vehicle
     var powertrainPicker by remember { mutableStateOf(false) }
@@ -75,21 +77,36 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     Column(Modifier.fillMaxSize().testTag("vehicle_edit_form")) {
         MeSheetHeader(if (isNew) strings.addVehicleTitle() else strings.editVehicleTitle(), onClose)
         Column(Modifier.weight(1f).testTag("vehicle_edit_scroll").verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            VehicleAvatarCard(vehicle, onAvatar)
+            if (!isNew) VehicleAvatarCard(vehicle, onAvatar)
             MeSection(strings.vehicleNameSection()) { MeField(null, vehicle.name, onName, tag = "vehicle_name", placeholder = strings.vehicleNamePlaceholder()) }
+            if (isNew) MeSection(strings.vehicleTypeSection()) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    VehicleType.entries.forEach { type ->
+                        Text(typeLabel(type, strings), Modifier.weight(1f).testTag("vehicle_type_tile_$type")
+                            .background(if (vehicle.type == type) AppTheme.accentBg else AppTheme.colors.cardAlt, CapsuleShape)
+                            .clickable(role = Role.Button) { onTypeSelect(type) }.padding(vertical = 12.dp), style = inter(11f, InterWeight.semibold), color = if (vehicle.type == type) AppTheme.accent else AppTheme.colors.textSecondary,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1)
+                    }
+                }
+            }
             MeSection(strings.vehicleWhatSection()) {
                 MeRow(strings.vehicleMakeModel(), listOf(vehicle.make, vehicle.model).filter(String::isNotBlank).joinToString(" "), tag = "vehicle_catalog", onClick = onCatalog)
-                MeRow(strings.vehicleTypeSection(), typeLabel(vehicle.type, strings), onClick = onType)
+                if (!isNew) MeRow(strings.vehicleTypeSection(), typeLabel(vehicle.type, strings), onClick = onType)
                 MeField(strings.vehicleYear(), vehicle.year.takeIf { it > 0 }?.toString().orEmpty(), {
                     onPassport(vehicle.make, vehicle.model, it.filter(Char::isDigit).take(4).toIntOrNull() ?: 0, vehicle.bodyType, vehicle.about)
-                }, keyboard = KeyboardType.Number, tag = "vehicle_year")
-                MeField(strings.vehicleAbout(), vehicle.about, { onPassport(vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, it) }, singleLine = false, tag = "vehicle_about",
+                }, keyboard = KeyboardType.Number, tag = "vehicle_year",
+                    placeholder = if (isNew) (java.time.Year.now().value - 5).toString() else null)
+                if (!isNew) MeField(strings.vehicleAbout(), vehicle.about, { onPassport(vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, it) }, singleLine = false, tag = "vehicle_about",
                     placeholder = strings.vehicleAboutPlaceholder())
             }
-            MeSection(strings.garageMileage()) {
+            if (isNew && vehicle.type.hasPlate) MeSection(strings.plateSection()) {
+                MeField(null, vehicle.plate, onPlate, tag = "vehicle_plate", placeholder = strings.platePlaceholder())
+            }
+            if (!isNew) MeSection(strings.garageMileage()) {
                 MeField(strings.odometerLabel() + " · " + strings.unitDistanceBadge(vehicle.dashboardUnit(appUnit)), state.odometerText, onOdometer, keyboard = KeyboardType.Number, tag = "vehicle_odometer")
                 MeRow(strings.vehicleDashboardTitle(), vehicle.dashboardUnits.label(strings.language.code, vehicle.type.hasPlate, strings), tag = "vehicle_dashboard", onClick = onDashboard)
             }
+            if (isNew) VehicleAvatarCard(vehicle, onAvatar)
             if (vehicle.type != VehicleType.bicycle) {
                 PowertrainCard(vehicle.powertrain, onClick = { powertrainPicker = true })
                 if (vehicle.powertrain != Powertrain.electric) MeSection(strings.fuelSectionLabel()) {
@@ -107,11 +124,11 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
                 }
                 MeRow(strings.currencyPickerTitle(), vehicle.fuelCurrency, tag = "vehicle_currency", onClick = { currencyPicker = true })
             }
-            if (vehicle.type.hasPlate) MeSection(strings.plateSection()) {
+            if (vehicle.type.hasPlate && !isNew) MeSection(strings.plateSection()) {
                 MeField(null, vehicle.plate, onPlate, tag = "vehicle_plate", placeholder = strings.platePlaceholder())
                 MeToggle(strings.plateShowToOthers(), vehicle.plateVisible, { onVisibility(vehicle.visibleToOthers, it, vehicle.mapVisible, vehicle.photosVisible) }, strings.plateVisibilityHint())
             }
-            MeSection(strings.vehicleWhoSees()) {
+            if (!isNew) MeSection(strings.vehicleWhoSees()) {
                 MeToggle(strings.showVehicleToggle(), vehicle.visibleToOthers, { onVisibility(it, vehicle.plateVisible, vehicle.mapVisible, vehicle.photosVisible) }, strings.showVehicleHint())
                 MeToggle(strings.vehicleShowMap(), vehicle.mapVisible, { onVisibility(vehicle.visibleToOthers, vehicle.plateVisible, it, vehicle.photosVisible) }, strings.vehicleShowMapHint())
                 MeToggle(strings.vehicleShowPhotos(), vehicle.photosVisible, { onVisibility(vehicle.visibleToOthers, vehicle.plateVisible, vehicle.mapVisible, it) }, strings.vehicleShowPhotosHint())
@@ -122,7 +139,13 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
         }
     }
     if (powertrainPicker) SettingsOptionPicker(strings.powertrainPickerTitle(), Powertrain.entries, vehicle.powertrain, strings.powertrainPickerFootnote(),
-        label = { powertrainLabel(it, strings) }, onSelect = onPowertrain, onDismissRequest = { powertrainPicker = false }, testTagPrefix = "vehicle_powertrain")
+        label = { powertrainLabel(it, strings) },
+        subtitle = { when (it) {
+            Powertrain.fuel -> strings.powertrainFuelHint()
+            Powertrain.electric -> strings.powertrainElectricHint()
+            Powertrain.pluginHybrid -> strings.powertrainHybridHint()
+        } },
+        onSelect = onPowertrain, onDismissRequest = { powertrainPicker = false }, testTagPrefix = "vehicle_powertrain")
     if (currencyPicker) SettingsOptionPicker(strings.currencyPickerTitle(), VehicleCurrency.entries, VehicleCurrency.entries.firstOrNull { it.symbol == vehicle.fuelCurrency } ?: VehicleCurrency.eur,
         strings.currencyPickerHint(), label = { java.util.Currency.getInstance(it.code).getDisplayName(strings.language.locale) + " · " + it.code }, badge = { it.symbol },
         onSelect = { onCurrency(it.symbol) }, onDismissRequest = { currencyPicker = false }, testTagPrefix = "vehicle_currency")
@@ -168,7 +191,7 @@ internal fun VehicleCatalogContent(state: VehicleCatalogState, onQuery: (String)
         LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             when (state.step) {
                 CatalogStep.model -> {
-                    items(state.hits, key = { it.model.id }) { hit -> MeRow(hit.make.name + " " + hit.model.name, listOfNotNull(hit.yearStart, hit.yearEnd).joinToString("–"), tag = "catalog_model_${hit.model.id}", onClick = { onModel(hit) }) }
+                    items(state.hits, key = { it.model.id }) { hit -> MeRow(hit.make.name + " " + hit.model.name, catalogYearRange(hit.yearStart, hit.yearEnd), tag = "catalog_model_${hit.model.id}", onClick = { onModel(hit) }) }
                     if (state.hits.isNotEmpty() && state.legacyMakes.isNotEmpty()) item { MeRow(strings.catalogOtherModels()) }
                     state.legacyMakes.forEach { make ->
                         item { Text(make.name, Modifier.padding(vertical = 8.dp), style = AppType.caption, color = AppTheme.colors.textSecondary) }
@@ -177,7 +200,7 @@ internal fun VehicleCatalogContent(state: VehicleCatalogState, onQuery: (String)
                     if (state.hits.isEmpty() && state.legacyMakes.isEmpty()) item { MeRow(strings.catalogNothingFound()) }
                     if (state.query.isNotBlank()) item { MeRow(strings.catalogUseTyped(), tag = "catalog_manual", onClick = onManual) }
                 }
-                CatalogStep.generation -> items(state.generations, key = { it.id }) { generation -> MeRow(generation.name, listOfNotNull(generation.yearStart, generation.yearEnd).joinToString("–"), onClick = { onGeneration(generation) }) }
+                CatalogStep.generation -> items(state.generations, key = { it.id }) { generation -> MeRow(generation.name, catalogYearRange(generation.yearStart, generation.yearEnd), onClick = { onGeneration(generation) }) }
                 CatalogStep.year -> items(state.years) { year -> MeRow(year.toString(), if (state.year == year) "✓" else "", tag = "catalog_year_$year", onClick = { onYear(year) }) }
                 CatalogStep.variant -> {
                     items(state.variants, key = { it.id }) { variant -> MeRow(variant.label.orEmpty(), variant.powerHp?.let { strings.garagePower(UnitNumber.upToTenth(it, strings.language.code)) }.orEmpty(), onClick = { onVariant(variant) }) }
@@ -186,6 +209,11 @@ internal fun VehicleCatalogContent(state: VehicleCatalogState, onQuery: (String)
             }
         }
     }
+}
+
+internal fun catalogYearRange(start: Int?, end: Int?, currentYear: Int = java.time.Year.now().value): String = when {
+    start == null -> ""
+    else -> "$start–${end ?: currentYear}"
 }
 
 internal fun typeLabel(type: VehicleType, strings: AppStrings): String = when (type) {

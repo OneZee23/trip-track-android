@@ -302,7 +302,7 @@ private fun PublicHero(
                     horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("LVL ${profile.profileLevel}", style = handjet(17f), color = if (hasCover) Color.White else AppTheme.colors.roadHeroAccent)
                     Text(rankTitle(DriverRank.from(profile.profileLevel)), style = interScaled(12f, InterWeight.medium), color = secondary)
-                    Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 9.dp)
+                    Glyph(AppGlyph.chevronRight, null, tint = secondary, size = 12.dp)
                 }
                 if (country != null) Text(country, style = inter(12f), color = secondary, modifier = Modifier.testTag("profile_country"))
             }

@@ -210,7 +210,7 @@ fun PlacesScreen(feature: WorldFeature, now: () -> Instant = feature.trips.clock
             state.items.map { PlacePin(it.place.id, GeoPoint(it.place.latitude, it.place.longitude)) } +
                 state.knownSuggestions.map { PlacePin(it.id, it.coordinate, isSuggested = true) }
         }
-        val chromeBottom = slot.mapBottomInset(current) - safeBottom.value
+        val chromeBottom = slot.mapBottomInset(current)
         PlacesMapLayer(
             pins = pins,
             routes = emptyList(),

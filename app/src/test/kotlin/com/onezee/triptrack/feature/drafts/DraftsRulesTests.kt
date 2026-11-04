@@ -90,6 +90,15 @@ class DraftsDecisionTests : PresentationTestCase() {
         assertEquals("draft", db.tripDao().trip(draft.id)!!.confirmation)
         vm.refresh().join(); assertTrue(vm.state.value.drafts.isEmpty())
     }
+    @Test fun backLeavesSelectionModeBeforeTheDraftScreen() = runTest(dispatcher) {
+        val draft = insert(draft = true)
+        val vm = vm(); vm.refresh().join(); vm.selectAll()
+        assertTrue(vm.state.value.selecting)
+        assertEquals(setOf(draft.id), vm.state.value.selected)
+        vm.closeSelection()
+        assertFalse(vm.state.value.selecting)
+        assertTrue(vm.state.value.selected.isEmpty())
+    }
     @Test fun deletionRequiresTheExactHouseConfirmationAndQueuesDiscard() = runTest(dispatcher) {
         val draft = insert(draft = true)
         val vm = vm(); vm.refresh().join(); vm.askDelete(listOf(draft.id))

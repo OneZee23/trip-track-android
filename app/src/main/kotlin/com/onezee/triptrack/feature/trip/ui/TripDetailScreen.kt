@@ -104,6 +104,7 @@ import com.onezee.triptrack.logic.speedValue
 import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.logic.encodePolyline
 import com.onezee.triptrack.map.MapHostState
+import com.onezee.triptrack.map.MapCamera
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.route.RouteGeometry
@@ -386,6 +387,7 @@ private fun TripDetailContent(
     SideEffect { replay.reduceMotion = reduceMotion }
     val mapState = remember { MapHostState() }
     val expansion = remember { TripMapExpansion() }
+    var heroCamera by remember { mutableStateOf<MapCamera?>(null) }
     var selectedMarker by remember { mutableStateOf<String?>(null) }
     TripReplayClock(replay, expansion.state == MapExpansion.expanded)
     val holdMarkers = remember(state.checkpoints, state.replay) {
@@ -429,7 +431,15 @@ private fun TripDetailContent(
     TripMapExpansionEffects(
         expansion,
         onExpanded = { fullscreenFit(mapInput.route, cardHeight, replay.canPlay)?.let(mapState::execute) },
-        onCollapsed = { selectedMarker = null; followsCar = false; replay.stop(); heroFit(mapInput.route)?.let(mapState::execute) },
+        onCollapsed = {
+            selectedMarker = null
+            followsCar = false
+            replay.stop()
+            val camera = heroCamera
+            if (camera != null) mapState.execute(MapCameraCommand.Move(camera.centre, camera.zoom, animated = false, bearing = camera.bearing))
+            else heroFit(mapInput.route)?.let(mapState::execute)
+            heroCamera = null
+        },
     )
     var followingSince by remember { mutableStateOf<Double?>(null) }
     LaunchedEffect(followsCar, replay.frame.head, expansion.state) {
@@ -472,7 +482,7 @@ private fun TripDetailContent(
                     live = live,
                     rendered = rendered,
                     map = { mapContent(Modifier.fillMaxSize(), false, MapInsets.Zero) {} },
-                    onExpand = { haptics.tap(); expansion.expand() },
+                    onExpand = { haptics.tap(); heroCamera = mapState.camera; expansion.expand() },
                 )
                 InfoPanel(
                     now = feature.clock(),
@@ -506,17 +516,19 @@ private fun TripDetailContent(
                     onAddPhotos = { pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                     onOpenBadge = { openedBadge = it },
                     onEditDescription = { showHiddenEntryInEdit = false; editingTrip = true },
+                    companions = {
+                        if (socialFeature != null && !state.isLoading) com.onezee.triptrack.feature.social.ui.TripCompanionsSection(
+                            tripId = trip.id,
+                            isOwn = state.isOwn,
+                            isOnServer = trip.isOnServer,
+                            cachedRoster = trip.companions,
+                            social = socialFeature,
+                            navigator = navigator,
+                        )
+                    },
                     // iOS: the reactions and the discussion are the last two sections of the same 22-point column.
                     social = {
                         if (socialFeature != null && !state.isLoading) {
-                            com.onezee.triptrack.feature.social.ui.TripCompanionsSection(
-                                tripId = trip.id,
-                                isOwn = state.isOwn,
-                                isOnServer = trip.isOnServer,
-                                cachedRoster = trip.companions,
-                                social = socialFeature,
-                                navigator = navigator,
-                            )
                             if (com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)) com.onezee.triptrack.feature.social.ui.TripSocialActions(state, vm, socialFeature,
                                 onOpenPicker = { reactionPicker = true },
                                 onPeekReactors = { reactorsPeek = it },
@@ -585,6 +597,14 @@ private fun TripDetailContent(
                 region = com.onezee.triptrack.ui.RegionDisplay.localized(trip?.region, strings.language),
                 onDismiss = { viewerIndex = null },
                 onDelete = if (state.isOwn) ({ id -> deletePhoto(feature, vm, state, id, scope, { toast = it }, strings.photoDeleted()) }) else null,
+                onMarkPlace = if (state.isOwn) ({ id ->
+                    val pin = state.photoPins.firstOrNull { it.id == id }
+                    val photo = state.photos.firstOrNull { it.id == id }
+                    if (pin != null && photo != null && vm.addCheckpoint(
+                            com.onezee.triptrack.model.TripRouteLocator.Fix(0, pin.coordinate, photo.timestamp, pin.metres ?: 0.0, pin.elapsed ?: 0.0), id,
+                        ) != null) viewerIndex = null
+                }) else null,
+                markPlaceIds = state.photoPins.mapTo(HashSet()) { it.id },
             )
         }
         openedBadge?.let { id -> TripBadgeOverlay(id, onDismiss = { openedBadge = null }) }
@@ -807,7 +827,6 @@ private fun Hero(
         if (coordinates.size > 1) {
             if (!expansionPresented && live) {
                 Box(Modifier.fillMaxSize()) { map() }
-                Box(Modifier.fillMaxSize().mapTouchShield())
             }
             val reveal = rememberRevealOpacity(rendered && live)
             if (expansionPresented || reveal < 1f) RoutePlaceholder(coordinates, Modifier.fillMaxSize().alpha(if (expansionPresented) 1f else 1f - reveal))
@@ -849,6 +868,7 @@ private fun InfoPanel(
     onFocusConsumed: () -> Unit,
     onOpenBadge: (String) -> Unit,
     onEditDescription: () -> Unit,
+    companions: @Composable ColumnScope.() -> Unit,
     social: @Composable ColumnScope.() -> Unit,
 ) {
     val trip = state.trip ?: return
@@ -916,6 +936,7 @@ private fun InfoPanel(
         if (trip.source == TripOrigin.recorded && state.drivingTime + state.stoppedTime > 0) {
             DetailSection(strings.movingAndStops()) { MovingStopsCard(state.drivingTime, state.stoppedTime) }
         }
+        companions()
         val description = trip.description?.trim().orEmpty()
         if (description.isNotEmpty()) DetailSection(strings.descriptionSection()) { DescriptionCard(description) }
         else if (state.isOwn) DetailSection(strings.descriptionSection()) { DescriptionPrompt(onEditDescription) }

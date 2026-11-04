@@ -296,14 +296,39 @@ fun PlainModalWindow() {
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window
     val darkWindow = LocalWindowIsDark.current ?: LocalIsDarkTheme.current
     SideEffect {
-        if (window != null) {
-            window.setDimAmount(0f)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            window.setWindowAnimations(0)
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
-            window.useDarkSystemBarGlyphs(!darkWindow)
+        window?.configurePlainModalWindow(darkWindow)
+    }
+}
+
+internal fun Window.configurePlainModalWindow(darkWindow: Boolean) {
+    setDimAmount(0f)
+    clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+    setWindowAnimations(0)
+    setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+    // What `enableEdgeToEdge` does for the activity, which a dialog window does not inherit. Without the
+    // cutout mode a notched Android 10 phone (POCO F1) letterboxed the dialog below the notch and painted
+    // the whole status bar black over every sheet; without the flag the bar colour is ignored.
+    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+        attributes.layoutInDisplayCutoutMode != WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+    ) {
+        attributes = attributes.also {
+            it.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
     }
+    statusBarColor = android.graphics.Color.TRANSPARENT
+    navigationBarColor = android.graphics.Color.TRANSPARENT
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        isStatusBarContrastEnforced = false
+        isNavigationBarContrastEnforced = false
+    }
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        decorView.systemUiVisibility = decorView.systemUiVisibility or
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    }
+    useDarkSystemBarGlyphs(!darkWindow)
 }
 
 @Suppress("DEPRECATION")

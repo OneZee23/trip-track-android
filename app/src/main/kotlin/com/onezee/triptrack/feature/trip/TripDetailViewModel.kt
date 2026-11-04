@@ -419,12 +419,14 @@ class TripDetailViewModel(
         if (!state.value.canAddSegment) return null
         return edit { repository.addSegment(tripId, from, to) }
     }
-    fun addCheckpoint(fix: TripRouteLocator.Fix): Job? = edit {
+    fun addCheckpoint(fix: TripRouteLocator.Fix, photoId: UUID? = null): Job? = edit {
         val checkpoint = TripCheckpoint(timestamp = fix.timestamp, latitude = fix.coordinate.latitude,
             longitude = fix.coordinate.longitude, distanceFromStart = fix.distanceFromStart, elapsedFromStart = fix.elapsedFromStart)
-        if (repository.addCheckpoint(checkpoint, tripId) != null) {
-            nameCheckpoint(checkpoint, tripId)
-            placeManager?.registerCheckpoint(checkpoint, tripId, recording = recording())
+        val added = repository.addCheckpoint(checkpoint, tripId)
+        if (added != null) {
+            if (photoId != null) repository.updateCheckpoint(added.id, null, photoId, listOf(photoId))
+            nameCheckpoint(added, tripId)
+            placeManager?.registerCheckpoint(added, tripId, recording = recording())
         }
     }
     /** iOS applyEdits for the description alone: the text the owner wrote, trimmed; one's own trip only. */

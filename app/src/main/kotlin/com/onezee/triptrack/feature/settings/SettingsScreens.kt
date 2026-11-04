@@ -122,7 +122,9 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
         SettingsSheet.units -> SettingsOptionPicker(strings.settingsUnits(), DistanceUnit.entries, state.distanceUnit, strings.unitsPickerFootnote(),
             label = { it.labelFull(strings.language.code, strings) }, badge = { strings.unitDistanceBadge(it) }, onSelect = manager::setDistanceUnit, onDismissRequest = manager::dismissSheet, testTagPrefix = "settings_units")
         SettingsSheet.averageSpeed -> SettingsOptionPicker(strings.avgSpeedModeTitle(), AvgSpeedMode.entries, state.averageSpeed, strings.avgSpeedPickerFootnote(),
-            label = { if (it == AvgSpeedMode.overall) strings.avgSpeedOverall() else strings.avgSpeedMoving() }, onSelect = manager::setAverageSpeed, onDismissRequest = manager::dismissSheet, testTagPrefix = "settings_avg_speed")
+            label = { if (it == AvgSpeedMode.overall) strings.avgSpeedOverall() else strings.avgSpeedMoving() },
+            badgeGlyph = { if (it == AvgSpeedMode.overall) AppGlyph.clock else AppGlyph.car },
+            onSelect = manager::setAverageSpeed, onDismissRequest = manager::dismissSheet, testTagPrefix = "settings_avg_speed")
         SettingsSheet.theme -> SettingsOptionPicker(strings.theme(), listOf(ThemeMode.system, ThemeMode.light, ThemeMode.dark), graph.themeManager.mode, strings.themePickerFootnote(),
             label = { themeLabel(it, strings) }, badgeGlyph = ::themeGlyph, onSelect = { graph.themeManager.select(it); manager.setTheme(it.rawValue) }, onDismissRequest = manager::dismissSheet, testTagPrefix = "settings_theme")
         SettingsSheet.language -> SettingsOptionPicker(strings.lang(), AppLanguage.displayOrder, language, strings.languagePickerFootnote(),

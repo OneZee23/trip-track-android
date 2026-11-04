@@ -169,7 +169,7 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
                 ActionPopover(actions, onDismissRequest = { actions = false }, items = listOf(
                     ActionPopoverItem(strings.edit(), AppGlyph.pencil) { onSheet(VehicleSheet.edit) },
                     ActionPopoverItem(strings.garageDrive2Title(), AppGlyph.squareAndArrowUp) { onSheet(VehicleSheet.drive2) },
-                    *if (vehicle?.soldAt == null) arrayOf(ActionPopoverItem(strings.makeMainVehicle(), AppGlyph.checkmark) { onSelect() }) else emptyArray(),
+                    *if (vehicle != null && vehicle.soldAt == null && vehicle.id != state.selectedVehicleId) arrayOf(ActionPopoverItem(strings.makeMainVehicle(), AppGlyph.checkmark) { onSelect() }) else emptyArray(),
                     ActionPopoverItem(strings.deleteVehicle(), AppGlyph.trash, true) { onSheet(VehicleSheet.delete) },
                 ))
             }

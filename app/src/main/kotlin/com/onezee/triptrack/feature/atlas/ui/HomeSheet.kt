@@ -169,7 +169,8 @@ private fun HomeMapCard(home: HomeState, fallback: GeoPoint?, onPlace: (GeoPoint
             val markers = home.coordinate?.let { listOf(MapMarker("home_pin_picker", it, MapMarker.Kind.HOME, image = house)) }.orEmpty()
             val accent = atlas.accent
             val zone = remember(home.coordinate, radius, accent) { home.coordinate?.let { homeZone(it, radius, accent) } }
-            MapHost(mapState, Modifier.fillMaxSize(), area = zone, markers = markers, onMapTap = { haptics.tap(); onPlace(it.coordinate) },
+            MapHost(mapState, Modifier.fillMaxSize(), area = zone, markers = markers,
+                chromeInsets = MapInsets(bottom = 48.0), onMapTap = { haptics.tap(); onPlace(it.coordinate) },
                 showsUserLocation = true, systemInsets = WindowInsets(0))
         }
         // The hint stands only while there is no home: it explains the screen's one action.

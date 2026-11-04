@@ -61,8 +61,21 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("achievements_screen")) {
         // iOS AchievementsView: the display title, and someone else's name under it.
         CustomNavBar(strings.achievementsSection(), onBack, subtitle = ownerName, largeTitle = true)
-        Text(strings.achievementsOpenedOf(badges.count { it.unlocked }, total), Modifier.padding(16.dp), style = AppType.meta, color = AppTheme.colors.textSecondary)
-        if (ownerName != null) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            val progress = if (total == 0) 0f else badges.count { it.unlocked }.toFloat() / total
+            Box(Modifier.size(64.dp), contentAlignment = Alignment.Center) {
+                androidx.compose.foundation.Canvas(Modifier.fillMaxSize()) {
+                    drawArc(AppTheme.accent.copy(alpha = 0.16f), -90f, 360f, false, style = androidx.compose.ui.graphics.drawscope.Stroke(5.dp.toPx()))
+                    drawArc(AppTheme.accent, -90f, 360f * progress, false, style = androidx.compose.ui.graphics.drawscope.Stroke(5.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round))
+                }
+                Text("${(progress * 100).toInt()}%", style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(strings.achievementsSection(), style = AppType.itemTitle, color = AppTheme.colors.text)
+                Text(strings.achievementsOpenedOf(badges.count { it.unlocked }, total), style = AppType.meta, color = AppTheme.colors.textSecondary)
+            }
+        }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(strings.achievementsFilterAll(), strings.achievementsFilterUnlocked(), strings.achievementsFilterSecret()).forEachIndexed { index, title ->
                 PressableCard(onClick = { filter = index }, modifier = Modifier.testTag("achievements_filter_$index")) {
                     Text(title, Modifier.background(if (filter == index) AppTheme.accentBg else AppTheme.colors.cardAlt, CapsuleShape).padding(horizontal = 12.dp, vertical = 10.dp), style = AppType.chip, color = if (filter == index) AppTheme.accent else AppTheme.colors.textSecondary)
@@ -78,11 +91,12 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
             Text(if (ownerName == null) strings.achievementsEmptyHint() else strings.achievementsEmptyOtherHint(), style = inter(11f, InterWeight.semibold),
                 color = AppTheme.colors.textSecondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         }
-        else LazyVerticalGrid(GridCells.Adaptive(100.dp), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        else LazyVerticalGrid(GridCells.Fixed(2), contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(displayed.sortedWith(compareByDescending<AchievementRow> { it.unlocked }.thenBy { it.id in hidden && !it.unlocked }.thenByDescending { it.rarity.rawValue }), key = { it.id }) { badge ->
                 Column(Modifier.fillMaxWidth().testTag("achievement_${badge.id}").surfaceCard(16.dp).clickable(role = Role.Button) { onBadge(badge.id) }.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     if (badge.id in hidden && !badge.unlocked) Box(Modifier.size(80.dp), contentAlignment = Alignment.Center) { Glyph(AppGlyph.lockFill, null, tint = AppTheme.colors.textTertiary, size = 28.dp) } else BadgeArt(badge)
-                    Text(if (badge.id in hidden && !badge.unlocked) "???" else MeArtwork.badgeTitles[badge.id]?.let { strings.tr(it) }.orEmpty(), style = interScaled(12f, InterWeight.medium), color = AppTheme.colors.text)
+                    Text(if (badge.id in hidden && !badge.unlocked) "???" else MeArtwork.badgeTitles[badge.id]?.let { strings.tr(it) }.orEmpty(), style = interScaled(12f, InterWeight.medium), color = AppTheme.colors.text, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 2, softWrap = true)
+                    if (badge.unlocked) Text(strings.achievementsRarityCount(badge.rarity, 1), style = AppType.caption, color = AppTheme.colors.textTertiary, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1)
                 }
             }
         }
@@ -90,19 +104,35 @@ internal fun AchievementsScreen(badges: List<AchievementRow>, onBack: () -> Unit
 }
 
 @Composable
-internal fun BadgeDetailScreen(badge: AchievementRow?, onBack: () -> Unit, unit: DistanceUnit = DistanceUnit.km) {
+internal fun BadgeDetailScreen(
+    badge: AchievementRow?, onBack: () -> Unit, unit: DistanceUnit = DistanceUnit.km,
+    pinned: Boolean = false, onPin: (() -> Unit)? = null, onUnpin: (() -> Unit)? = null,
+) {
     val strings = appStrings
+    var confirmingPin by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
         CustomNavBar(badge?.id?.let { MeArtwork.badgeTitles[it] }?.let { strings.tr(it) } ?: strings.badges(), onBack)
         if (badge != null) {
             Spacer(Modifier.height(50.dp))
             BadgeArt(badge, 180.dp)
-            Text(if (badge.unlocked) strings.unlocked() else strings.badgeDetailLocked(), Modifier.padding(20.dp), style = AppType.headerTitle, color = AppTheme.colors.text)
+            Text(if (badge.unlocked) strings.unlocked().replaceFirstChar(Char::uppercase) else strings.badgeDetailLocked(), Modifier.padding(20.dp), style = AppType.headerTitle, color = AppTheme.colors.text)
             MeArtwork.badgeDescriptions[badge.id]?.let { resource ->
                 val figures = BadgeDefinitions.all.firstOrNull { it.id == badge.id }?.figures.orEmpty().map { it.shown(unit, strings.language.code, strings) }
                 Text(strings.tr(resource, *figures.toTypedArray()), Modifier.padding(horizontal = 20.dp), style = AppType.body, color = AppTheme.colors.textSecondary)
             }
             if (badge.earnCount > 1) Text(strings.earnedTimes(badge.earnCount), style = AppType.body, color = AppTheme.colors.textSecondary)
+            if (badge.unlocked && (onPin != null || onUnpin != null)) {
+                Text(if (pinned) strings.achievementUnpin() else strings.achievementPin(), Modifier.padding(top = 18.dp)
+                    .clickable(role = Role.Button) { if (pinned) onUnpin?.invoke() else if (onPin != null) confirmingPin = true }
+                    .testTag("achievement_pin"), style = AppType.itemTitle, color = AppTheme.accent)
+            }
         }
     }
+    AppConfirm(
+        item = true.takeIf { confirmingPin },
+        onDismissRequest = { confirmingPin = false },
+        title = { strings.achievementPinConfirmTitle() },
+        message = { strings.achievementPinConfirmBody() },
+        actions = { listOf(AppDialogAction(strings.achievementPin(), testTag = "achievement_pin_confirm") { onPin?.invoke(); confirmingPin = false }) },
+    )
 }

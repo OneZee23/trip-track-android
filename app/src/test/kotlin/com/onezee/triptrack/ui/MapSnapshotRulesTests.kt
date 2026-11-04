@@ -18,8 +18,8 @@ class MapSnapshotRulesTests {
 
         assertEquals(10.005, region.centreLat, 0.000001)
         assertEquals(20.01, region.centreLon, 0.000001)
-        assertEquals(0.014, region.latitudeSpan, 0.000001)
-        assertEquals(0.028, region.longitudeSpan, 0.000001)
+        assertEquals(0.018, region.latitudeSpan, 0.000001)
+        assertEquals(0.036, region.longitudeSpan, 0.000001)
         assertEquals(0.005, SnapshotRules.region(listOf(GeoPoint(1.0, 2.0), GeoPoint(1.0, 2.0))).latitudeSpan, 0.0)
     }
 

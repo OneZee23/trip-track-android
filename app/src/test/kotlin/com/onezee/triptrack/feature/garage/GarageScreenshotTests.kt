@@ -13,7 +13,9 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.captureScreenRoboImage
@@ -97,6 +99,33 @@ class GarageScreenshotTests(private val dark: Boolean) {
     }
     @Test fun formTop() { form(GarageFixtures.car); shot("form_top") }
     @Test fun formEngine() { form(GarageFixtures.car.copy(powertrain = Powertrain.pluginHybrid)); shot("form_engine", scrollTo = "vehicle_powertrain_row", scroller = "vehicle_edit_scroll") }
+    @Test fun newVehicleFormUsesAddFlowFields() {
+        content {
+            VehicleEditContent(VehicleEditState(vehicle = GarageFixtures.car, energy = VehicleEnergyDraft.from(GarageFixtures.car, DistanceUnit.km)),
+                DistanceUnit.km, isNew = true, {}, {}, {}, {}, {}, { _, _ -> }, {}, { _, _, _, _, _ -> }, { _, _, _, _ -> }, {}, {}, onSold = null)
+        }
+        listOf("vehicle_name", "vehicle_type_tile_car", "vehicle_catalog", "vehicle_year", "vehicle_plate", "vehicle_avatar_card")
+            .forEach { compose.onNodeWithTag(it).assertExists() }
+        listOf("vehicle_about", "vehicle_odometer", "vehicle_dashboard")
+            .forEach { compose.onNodeWithTag(it).assertDoesNotExist() }
+    }
+    @Test fun powertrainOptionsShowTheirHints() {
+        val strings = com.onezee.triptrack.designsystem.strings.AppStrings(RuntimeEnvironment.getApplication(), AppLanguage.ru)
+        content {
+            com.onezee.triptrack.designsystem.components.SettingsOptionPicker(
+                "Двигатель", Powertrain.entries, Powertrain.fuel, "Подсказка",
+                label = { it.name }, onSelect = {}, onDismissRequest = {},
+                subtitle = { when (it) {
+                    Powertrain.fuel -> strings.powertrainFuelHint()
+                    Powertrain.electric -> strings.powertrainElectricHint()
+                    Powertrain.pluginHybrid -> strings.powertrainHybridHint()
+                } },
+            )
+        }
+        compose.onNodeWithText(strings.powertrainFuelHint(), substring = true).assertExists()
+        compose.onNodeWithText(strings.powertrainElectricHint(), substring = true).assertExists()
+        compose.onNodeWithText(strings.powertrainHybridHint(), substring = true).assertExists()
+    }
     @Test fun formOfAMotorcycleHasNoTypeRow() { form(GarageFixtures.car.copy(type = VehicleType.moto, avatarStyle = "motorcycle", avatarEmoji = "pixel_motorcycle_red")); shot("form_moto") }
 
     @Test fun levelPage() { content { VehicleLevelScreen(6, 1655.0, DistanceUnit.km, {}) }; shot("level") }

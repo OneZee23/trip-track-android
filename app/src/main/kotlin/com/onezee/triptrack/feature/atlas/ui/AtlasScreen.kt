@@ -86,6 +86,7 @@ import com.onezee.triptrack.feature.atlas.AtlasLocationPermission
 import com.onezee.triptrack.feature.atlas.AtlasSelection
 import com.onezee.triptrack.feature.atlas.AtlasSheetDetent
 import com.onezee.triptrack.feature.atlas.AtlasSlot
+import com.onezee.triptrack.feature.atlas.atlasOwnsBack
 import com.onezee.triptrack.feature.atlas.AtlasSummaryVariant
 import com.onezee.triptrack.feature.atlas.WorldFeature
 import com.onezee.triptrack.logic.distanceKm
@@ -178,7 +179,7 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
         val selectionPanel = state.selection != null && region == null
 
         // Back on Android closes what is open before it leaves the tab (Android's back guidance).
-        BackHandler(enabled = state.selection != null || state.selectedPlaceId != null || state.homeSelected || detent == AtlasSheetDetent.expanded) {
+        BackHandler(enabled = atlasOwnsBack(feature.atlasTrips.canPop, state.selection != null || state.selectedPlaceId != null, state.homeSelected, detent)) {
             when {
                 region != null -> if (detent == AtlasSheetDetent.expanded) vm.setDetent(AtlasSheetDetent.collapsed) else vm.backFromSubstate()
                 state.selection != null || state.selectedPlaceId != null || state.homeSelected -> vm.closeSelection()
@@ -208,8 +209,7 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
 
         // The attribution and the camera's bottom stay over the slot, but NEVER over the list: at the
         // list's top the inset would be 748 of an 844 map, and the camera fits by the sum of insets.
-        val chromeBottom = slot.attributionInset(if (detent == AtlasSheetDetent.peek) AtlasSheetDetent.peek else AtlasSheetDetent.collapsed, variant) -
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value
+        val chromeBottom = slot.attributionInset(if (detent == AtlasSheetDetent.peek) AtlasSheetDetent.peek else AtlasSheetDetent.collapsed, variant)
         val latitudeSpan = mapState.camera?.latitudeSpan ?: 0.0
         val routes = remember(state.exploration) { RouteIndex.build(state.exploration.trips) }
         AtlasMapLayer(

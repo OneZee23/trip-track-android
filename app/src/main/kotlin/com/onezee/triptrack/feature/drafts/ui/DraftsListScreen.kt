@@ -35,6 +35,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -126,6 +127,8 @@ fun DraftsListScreen(vm: DraftsViewModel, onOpenTrip: (TripSummary) -> Unit, onB
     val buttonBottom = tappable + TabBarMetrics.bottomGap + TabBarMetrics.pillHeight + 12.dp
     val listBottom = tappable + 68.dp + 22.dp + 12.dp + 52.dp + 12.dp
     var toast by remember { mutableStateOf<ToastItem?>(null) }
+
+    BackHandler(enabled = state.selecting) { vm.closeSelection() }
 
     LaunchedEffect(vm) { vm.opened() }
     LaunchedEffect(state.message) { state.message?.let { toast = strings.toast(it); vm.consumeMessage() } }

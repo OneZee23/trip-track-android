@@ -6,6 +6,10 @@ import org.junit.Test
 import kotlin.test.*
 
 class AtlasSlotTests {
+    @Test fun pushedTripOwnsBackBeforeAtlasLayers() {
+        assertFalse(atlasOwnsBack(true, true, false, AtlasSheetDetent.expanded))
+        assertTrue(atlasOwnsBack(false, true, false, AtlasSheetDetent.expanded))
+    }
     private val se = AtlasSlot(667.0, 20.0, 0.0)
     private val mini = AtlasSlot(812.0, 50.0, 34.0)
     private val thirteen = AtlasSlot(844.0, 47.0, 34.0)

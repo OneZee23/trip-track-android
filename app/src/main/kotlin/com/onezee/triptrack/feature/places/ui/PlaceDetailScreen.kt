@@ -164,7 +164,7 @@ private fun PlaceDetailContent(state: PlaceDetailState, vm: PlaceDetailViewModel
                     routes = state.routes,
                     selectedId = place.id,
                     mapState = mapState,
-                    chrome = MapInsets.Zero,
+                    chrome = MapInsets(bottom = AtlasTheme.sheetRadius.value.toDouble()),
                     // The map stands under the status bar; the sheet covers its lower edge.
                     systemInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                     strings = strings,

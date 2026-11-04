@@ -247,11 +247,11 @@ private fun YearStrip(vm: StatsViewModel, state: StatsState, aggregates: MeAggre
                 val height = if (maxKm > 0 && km > 0) maxOf(4.0, km / maxKm * 104).dp else 4.dp
                 Column(Modifier.weight(1f).clickable(enabled = pickable, role = Role.Button) { haptics.selection(); vm.selectMonth(i) }
                     .semantics { this.selected = selected; contentDescription = "${StatsPeriodFormat.monthName(i, strings.language, strings.zone)}, ${Measure.distanceKm(km, unit, strings.language.code, strings)}, ${strings.tripsCount(chart.trips[i])}" }
-                    .padding(horizontal = 2.5.dp).testTag("stats_month_$i"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    .testTag("stats_month_$i"), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(Modifier.height(104.dp), contentAlignment = Alignment.BottomCenter) {
                         Box(Modifier.fillMaxWidth().height(height).alpha(if (km > 0) 1f else .35f).background(if (lit) AppTheme.accent else dim, RoundedCornerShape(4.dp)))
                     }
-                    Text(labels[i], style = inter(11f, if (selected) InterWeight.bold else InterWeight.medium), color = if (selected) colors.text else colors.textSecondary, maxLines = 1)
+                    Text(labels[i], style = inter(9f, if (selected) InterWeight.bold else InterWeight.medium), color = if (selected) colors.text else colors.textSecondary, maxLines = 1, softWrap = false)
                 }
             }
         }
