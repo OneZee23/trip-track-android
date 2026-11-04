@@ -4,6 +4,7 @@ package com.onezee.triptrack.feature.social
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.onezee.triptrack.feature.atlas.AtlasAppearance
 import com.onezee.triptrack.feature.atlas.AtlasCameraAction
 import com.onezee.triptrack.feature.atlas.AtlasSelection
 import com.onezee.triptrack.feature.atlas.AtlasState
@@ -60,7 +61,9 @@ class PublicMapViewModel(
     private val worker: kotlinx.coroutines.CoroutineDispatcher,
     private val atlasProvider: () -> com.onezee.triptrack.logic.RegionAtlas = { com.onezee.triptrack.logic.RegionAtlas.shared },
 ) : ViewModel() {
-    private val mutable = MutableStateFlow(AtlasState())
+    // iOS: public and vehicle maps keep the night look (`MyMapRepresentable.appearance`); only the Atlas has a saved
+    // style. With the default «Туман» someone else's map drew the pale mist.
+    private val mutable = MutableStateFlow(AtlasState(appearance = NIGHT, fog = MapFog(RevealedLayer.empty, FogLook.of(NIGHT.model()))))
     val state: StateFlow<AtlasState> = mutable.asStateFlow()
     private val mutableFailed = MutableStateFlow(false)
     /** The load failed: an empty map then says so instead of claiming nothing was published. */
@@ -156,3 +159,5 @@ class PublicMapViewModel(
             .orEmpty().mapNotNull { value.exploration.trip(it) }.sortedByDescending { it.startDate },
     )
 }
+
+private val NIGHT = AtlasAppearance(AtlasMapAppearance.Style.night)
