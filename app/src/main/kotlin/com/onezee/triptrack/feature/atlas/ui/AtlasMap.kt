@@ -41,6 +41,7 @@ import com.onezee.triptrack.map.MapStyles
 import com.onezee.triptrack.map.MapTap
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.fog.FogPalette
+import com.onezee.triptrack.map.fog.usesDarkFog
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
@@ -172,7 +173,9 @@ fun AtlasMapLayer(
     modifier: Modifier = Modifier,
 ) {
     if (!LocalLiveMaps.current) {
-        Box(modifier.fillMaxSize().background(AtlasTheme.colors.fog).testTag("atlas_map"))
+        // The style's fog, not the theme's: «Туман» is the pale mist in the dark theme too, and a dark stub here let the
+        // empty map's light words pass for readable (4 Nov 2026).
+        Box(modifier.fillMaxSize().background(AtlasTheme.colors(dark = state.appearance.model().usesDarkFog).fog).testTag("atlas_map"))
         return
     }
     val context = LocalContext.current

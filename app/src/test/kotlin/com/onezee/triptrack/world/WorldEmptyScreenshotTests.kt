@@ -4,11 +4,17 @@ package com.onezee.triptrack.world
 
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.onezee.triptrack.data.RoomTripRepository
 import com.onezee.triptrack.data.TripRepository
+import com.onezee.triptrack.designsystem.theme.AtlasTheme
+import com.onezee.triptrack.feature.atlas.AtlasAppearance
+import com.onezee.triptrack.feature.atlas.ui.emptyMapInk
+import com.onezee.triptrack.model.AtlasMapAppearance
 import com.onezee.triptrack.model.Trip
 import kotlinx.coroutines.CompletableDeferred
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
@@ -54,6 +60,14 @@ class WorldWithoutTripsScreenshotTests(private val dark: Boolean) : WorldScreenT
         compose.onRoot().captureRoboImage("src/test/screenshots/world_atlas_empty_$theme.png")
     }
 
+    /** «Где я» hands the map to the person: the drawing does not stay over their dot (tester report, 4 Nov 2026). */
+    @Test fun locatingYieldsTheEmptyMap() {
+        showAtlas(dark)
+        compose.onNodeWithTag("atlas_locate").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("atlas_empty").assertDoesNotExist()
+    }
+
     @Test fun placesWithoutTrips() {
         showPlaces(dark)
         compose.onNodeWithTag("places_none_yet").assertExists()
@@ -91,5 +105,28 @@ class AtlasLoadingScreenshotTests(private val dark: Boolean) : WorldScreenTest()
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "dark={0}")
         fun themes() = parameters()
+    }
+}
+
+/**
+ * The empty map's words stand on the fog, so they take the fog's colours: the dark theme's light ink on the pale mist was
+ * invisible on a phone, and the drawing alone read as a stray icon (tester report, 4 Nov 2026). Robolectric draws no map,
+ * so the screenshots above cannot show it; this is the rule itself.
+ */
+class EmptyMapInkTests {
+    @Test fun mistStylesTakeDarkInkInEitherTheme() {
+        for (style in listOf(AtlasMapAppearance.Style.fog, AtlasMapAppearance.Style.cells)) {
+            assertEquals(AtlasTheme.colors(dark = false), emptyMapInk(AtlasAppearance(style), fogAvailable = true))
+            assertEquals(AtlasTheme.colors(dark = false), emptyMapInk(AtlasAppearance(style), fogAvailable = null))
+        }
+    }
+
+    @Test fun nightTakesLightInk() {
+        assertEquals(AtlasTheme.colors(dark = true), emptyMapInk(AtlasAppearance(AtlasMapAppearance.Style.night), fogAvailable = true))
+    }
+
+    /** Without the fog the words stand on the light map itself. */
+    @Test fun noFogMeansTheLightMap() {
+        assertEquals(AtlasTheme.colors(dark = false), emptyMapInk(AtlasAppearance(AtlasMapAppearance.Style.night), fogAvailable = false))
     }
 }

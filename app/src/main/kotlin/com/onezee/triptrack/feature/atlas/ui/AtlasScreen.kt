@@ -68,16 +68,19 @@ import com.onezee.triptrack.designsystem.navigation.TabBarMetrics
 import com.onezee.triptrack.designsystem.navigation.tabBarTappableInset
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter
+import com.onezee.triptrack.designsystem.theme.AtlasColors
 import com.onezee.triptrack.designsystem.theme.AtlasTheme
 import com.onezee.triptrack.designsystem.theme.CapsuleShape
 import com.onezee.triptrack.designsystem.theme.InterWeight
 import com.onezee.triptrack.designsystem.theme.LocalDistanceUnit
+import com.onezee.triptrack.designsystem.theme.LocalReduceMotion
 import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.designsystem.theme.rememberHaptics
 import com.onezee.triptrack.feature.TripsDestination
 import com.onezee.triptrack.feature.TripsDestinationScreen
 import com.onezee.triptrack.feature.atlas.AndroidAtlasLocation
+import com.onezee.triptrack.feature.atlas.AtlasAppearance
 import com.onezee.triptrack.feature.atlas.AtlasCameraAction
 import com.onezee.triptrack.feature.atlas.AtlasLocationPermission
 import com.onezee.triptrack.feature.atlas.AtlasSelection
@@ -91,6 +94,7 @@ import com.onezee.triptrack.logic.isEmpty
 import com.onezee.triptrack.map.MapHostState
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
+import com.onezee.triptrack.map.fog.usesDarkFog
 import com.onezee.triptrack.model.GeoBounds
 import com.onezee.triptrack.model.MapTripPin
 import com.onezee.triptrack.model.Measure
@@ -146,6 +150,11 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     val mapState = remember { MapHostState() }
     var framed by remember { mutableStateOf(false) }
+    // The empty map is the person's once they touch it: a gesture or «где я» fades the drawing and its words
+    // out, and the dot of «где я» is not left under them (a tester, 4 Nov 2026: «в середине карты горит иконка и
+    // никуда не убирается»). It comes back with the screen, not with the next pan.
+    var emptyYielded by remember { mutableStateOf(false) }
+    LaunchedEffect(mapState.gestureRevision) { if (mapState.gestureRevision > 0) emptyYielded = true }
 
     BoxWithConstraints(Modifier.fillMaxSize().background(atlas.background).testTag("screen_atlas")) {
         val screenHeight = maxHeight
@@ -239,6 +248,7 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
                 locationDenied = state.locationPermission == AtlasLocationPermission.denied || state.locationPermission == AtlasLocationPermission.restricted,
                 onLayers = { showAppearance = true },
                 onLocate = {
+                    emptyYielded = true
                     if (state.locationPermission == AtlasLocationPermission.denied || state.locationPermission == AtlasLocationPermission.restricted) {
                         // After «Позже» the button still helps: the whole atlas (spec: works without
                         // location, it just does not centre).
@@ -251,7 +261,16 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
             )
         }
 
-        if (state.isEmpty) EmptyAtlas(Modifier.align(Alignment.Center))
+        AnimatedVisibility(
+            visible = state.isEmpty && !emptyYielded,
+            modifier = Modifier.fillMaxSize(),
+            enter = fadeIn(tween(0)),
+            exit = fadeOut(if (LocalReduceMotion.current) tween(0) else tween(200)),
+        ) {
+            // The «где я» button stands over the slot; its top is the lowest the words may reach.
+            val lowest = slotTop - AtlasSlot.controlsGap - AtlasTheme.controlSize.value - 16
+            EmptyAtlas(emptyMapInk(state.appearance, mapState.fogAvailable), Modifier.emptyPlacement(lowest))
+        }
         if (state.isLoading || state.isFiltering) CarLoading(Modifier.align(Alignment.Center))
 
         // The strip of map over the open list IS «collapse» (spec §4): aimed at closing the list, the
@@ -430,15 +449,35 @@ fun placeCardLine(passCount: Int, lastAt: Instant?, strings: AppStrings): String
 
 /** iOS: emptyState. The drawing, «Карта пока пустая» and its line, above the sheet's middle. */
 @Composable
-private fun EmptyAtlas(modifier: Modifier) {
+private fun EmptyAtlas(ink: AtlasColors, modifier: Modifier) {
     val strings = appStrings
-    val atlas = AtlasTheme.colors
-    Column(modifier.widthIn(max = 280.dp).padding(bottom = (EMPTY_SHEET_HEIGHT / 2).dp).testTag("atlas_empty"),
+    Column(modifier.widthIn(max = 280.dp).testTag("atlas_empty"),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         com.onezee.triptrack.ui.EmptyStateIllustration(R.drawable.empty_map, size = 120.dp)
-        Text(strings.emptyMapTitle(), style = inter(18f, InterWeight.semibold), color = atlas.ink, textAlign = TextAlign.Center)
-        Text(strings.emptyMapSubtitle(), style = inter(13f), color = atlas.secondary, textAlign = TextAlign.Center)
+        Text(strings.emptyMapTitle(), Modifier.testTag("atlas_empty_title"), style = inter(18f, InterWeight.semibold), color = ink.ink,
+            textAlign = TextAlign.Center)
+        Text(strings.emptyMapSubtitle(), style = inter(13f), color = ink.secondary, textAlign = TextAlign.Center)
     }
+}
+
+/**
+ * The words of the empty map stand on the FOG, so they take its colours, not the app theme's. «Туман» and «Клетки» lay
+ * the pale mist over a light map in either theme, and only «Ночь» is dark; a map that cannot draw the fog shows the
+ * light map itself. With the theme's ink the dark theme wrote light grey on the mist and the title vanished.
+ */
+internal fun emptyMapInk(appearance: AtlasAppearance, fogAvailable: Boolean?): AtlasColors =
+    AtlasTheme.colors(dark = appearance.model().usesDarkFog && fogAvailable != false)
+
+/**
+ * iOS: centred over the map with `.padding(.bottom, MyMapSheet.collapsedHeight * 0.5)`, the bottom held at [lowest] (dp from
+ * the top). A tappable navigation bar lifts the sheet and the «где я» button by its height, and the last line used to run
+ * under the button.
+ */
+private fun Modifier.emptyPlacement(lowest: Double): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+    val centred = (constraints.maxHeight - placeable.height - (EMPTY_SHEET_HEIGHT / 2).dp.roundToPx()) / 2
+    val y = minOf(centred, lowest.toFloat().dp.roundToPx() - placeable.height).coerceAtLeast(0)
+    layout(constraints.maxWidth, constraints.maxHeight) { placeable.place((constraints.maxWidth - placeable.width) / 2, y) }
 }
 
 /** iOS MyMapSheet.collapsedHeight: 166 + the tab bar clearance + 2. */
