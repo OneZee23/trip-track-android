@@ -1,6 +1,8 @@
 package com.onezee.triptrack.feature.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,8 +43,11 @@ fun PrivacyEdgeQuestionSheet(onSave: (Int) -> Unit, onDismiss: () -> Unit) {
     val unit = LocalDistanceUnit.current
     ContentSizedSheet(onDismissRequest = onDismiss, background = colors.card, detent = com.onezee.triptrack.designsystem.components.SheetDetent.large) {
         val sheet = this
-        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp).testTag("privacy_edge_question"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            OnboardingHero(AppR.drawable.hidden_edges_illustration)
+        // The question scrolls and «Сохранить» stays under it: on the POCO F1 (393 × 780 dp with a
+        // three-button bar) the button fell below the screen and the choice could not be saved.
+        Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState())
+            .padding(start = 20.dp, end = 20.dp, top = 8.dp).testTag("privacy_edge_question"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            OnboardingHero(AppR.drawable.hidden_edges_illustration, top = 8.dp)
             Text(strings.tr(R.string.edgeQuestionTitle), style = inter(20f, InterWeight.bold), color = colors.text)
             Text(strings.tr(R.string.edgeQuestionBody), style = inter(14f), color = colors.textSecondary)
             options.forEach { (metres, labels) ->
@@ -58,6 +63,8 @@ fun PrivacyEdgeQuestionSheet(onSave: (Int) -> Unit, onDismiss: () -> Unit) {
                 }
             }
             Text(strings.tr(R.string.edgeQuestionFootnote), style = inter(12f), color = colors.textTertiary)
+        }
+        Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp)) {
             Row(Modifier.fillMaxWidth().background(if (selected == null) colors.cardAlt else AppTheme.accent, RoundedCornerShape(50))
                 .clickable(enabled = selected != null, role = Role.Button) { selected?.let(onSave); sheet.dismiss() }
                 .padding(vertical = 15.dp).testTag("privacy_edge_save"), horizontalArrangement = Arrangement.Center) {

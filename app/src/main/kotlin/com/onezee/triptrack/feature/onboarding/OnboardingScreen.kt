@@ -231,7 +231,7 @@ private fun PaginationDots(page: Int, modifier: Modifier = Modifier) {
  * every scene keeps its subject in the middle.
  */
 @Composable
-internal fun OnboardingHero(drawable: Int) {
+internal fun OnboardingHero(drawable: Int, top: Dp = 56.dp) {
     Image(
         bitmap = ImageBitmap.imageResource(drawable),
         contentDescription = null,
@@ -239,7 +239,7 @@ internal fun OnboardingHero(drawable: Int) {
         // Pixel art: neighbours, never a blur.
         filterQuality = FilterQuality.None,
         modifier = Modifier
-            .padding(top = 56.dp)
+            .padding(top = top)
             .padding(horizontal = 24.dp)
             .fillMaxWidth()
             .height(200.dp)
