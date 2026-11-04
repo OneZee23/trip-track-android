@@ -143,11 +143,15 @@ fun ContentSizedSheet(
     val context = LocalContext.current
     val view = LocalView.current
     val dialogNavigationBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    // `WindowInsets.Type` is API 30: on the Android 10 this fallback exists for, calling it threw
+    // NoSuchMethodError and took every sheet down (POCO F1, 5 Nov 2026). Android 10 reads the stable inset.
     val activityNavigationBottom = remember(context, view) {
-        val activity = context.findActivity()
-        val insets = activity?.window?.decorView?.rootWindowInsets
-            ?.getInsets(AndroidWindowInsets.Type.navigationBars())?.bottom ?: 0
-        insets
+        val insets = context.findActivity()?.window?.decorView?.rootWindowInsets
+        when {
+            insets == null -> 0
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> insets.getInsets(AndroidWindowInsets.Type.navigationBars()).bottom
+            else -> @Suppress("DEPRECATION") insets.stableInsetBottom
+        }
     }
     val bottomInsetPx = contentSizedSheetBottomInset(
         Build.VERSION.SDK_INT,
@@ -241,7 +245,7 @@ fun ContentSizedSheet(
                         // A modifier, not a number: the keyboard's padding above has consumed the
                         // bar's inset, so with the keys up the content does not float a bar's height over them.
                         .then(when {
-                            contentClearsNavigationBar -> Modifier
+                            contentClearsNavigationBar -> Modifier.padding(bottom = contentClearedBottomPadding(with(density) { bottomInsetPx.toDp() }))
                             Build.VERSION.SDK_INT in 29..30 && dialogNavigationBottom == 0.dp -> Modifier.padding(bottom = with(density) { bottomInsetPx.toDp() })
                             else -> Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
                         })
@@ -271,6 +275,15 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
 
 internal fun contentSizedSheetBottomInset(api: Int, dialogInsetPx: Int, activityInsetPx: Int): Int =
     if (api in 29..30 && dialogInsetPx == 0) activityInsetPx else dialogInsetPx
+
+/**
+ * A caption that ends the sheet with its own bottom padding may run over a gesture handle, not over
+ * a three-button bar: on the POCO F1 (Android 10) the picker footnote sat under ■ ● ◀. Whatever the
+ * bar is taller than a gesture handle gets padded.
+ */
+internal fun contentClearedBottomPadding(navigationInset: Dp): Dp = (navigationInset - GestureHandleAllowance).coerceAtLeast(0.dp)
+
+private val GestureHandleAllowance = 16.dp
 
 /** The system grabber of an iPhone sheet: 34 × 5, 8 below the top edge, the ink at 18 %. */
 internal val GrabberWidth = 34.dp

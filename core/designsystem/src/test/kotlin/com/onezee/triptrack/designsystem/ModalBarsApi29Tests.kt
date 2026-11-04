@@ -28,6 +28,8 @@ class ModalBarsApi29Tests {
             assertEquals(android.graphics.Color.TRANSPARENT, window.navigationBarColor)
             assertEquals(WindowManager.LayoutParams.MATCH_PARENT, window.attributes.width)
             assertEquals(WindowManager.LayoutParams.MATCH_PARENT, window.attributes.height)
+            assertTrue(window.attributes.flags and WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS != 0)
+            assertEquals(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES, window.attributes.layoutInDisplayCutoutMode)
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 assertTrue(flags and View.SYSTEM_UI_FLAG_LAYOUT_STABLE != 0)
                 assertTrue(flags and View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN != 0)
