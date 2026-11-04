@@ -73,7 +73,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                         SettingsPreferencesCard(state, onOpen = manager::openSheet)
                         Text(strings.appPrefsFootnote(), Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 10.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                     }
-                    SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle(), maxContentHeight = 210.dp) {
+                    SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle()) {
                         Column(Modifier.surfaceCard(16.dp)) {
                             MeToggle(strings.usageTitle(), usageEnabled, { graph.me.analytics.setEnabled(it, profile.hero.tripCount > 0) }, strings.usageDetail(), tag = "settings_usage_analytics")
                             if (auth.isSignedIn) {

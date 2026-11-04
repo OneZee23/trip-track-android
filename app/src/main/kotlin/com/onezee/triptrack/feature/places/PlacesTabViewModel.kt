@@ -7,6 +7,7 @@ import com.onezee.triptrack.data.PlaceStore
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.feature.settings.PresentationPreferences
 import com.onezee.triptrack.feature.settings.WorldChange
+import com.onezee.triptrack.feature.settings.HomeState
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
 import java.time.Instant
@@ -55,6 +56,9 @@ class PlacesTabViewModel(
     private val locale: Locale = Locale.getDefault(),
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val now: () -> Instant = Instant::now,
+    private val filming: Flow<Boolean> = flowOf(false),
+    private val home: Flow<HomeState> = flowOf(HomeState()),
+    private val defaultHiddenEdgeMetres: () -> Int? = { null },
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val worker = dispatcher
     private val mutableState = MutableStateFlow(PlacesTabState(sort = PlacesSort.load(preferences.string(PlacesSort.defaultsKey))))
@@ -62,13 +66,18 @@ class PlacesTabViewModel(
     var suggestionDebounceMillis = 300L
     private var suggestionTask: Job? = null
     private var reloadTask: Job? = null
+    private var filmingActive = false
+    private var homeState = HomeState()
+    private var cachedTrips = emptyList<Trip>()
 
     init {
         viewModelScope.launch { events.collect { event -> when (event) {
             WorldChange.places -> reload()
-            WorldChange.trips, WorldChange.sync -> refreshSuggestions()
+            WorldChange.trips, WorldChange.sync -> { if (filmingActive) reload(); refreshSuggestions() }
             else -> Unit
         } } }
+        viewModelScope.launch { filming.collect { value -> if (filmingActive != value) { filmingActive = value; reload() } } }
+        viewModelScope.launch { home.collect { value -> if (homeState != value) { homeState = value; if (filmingActive) reload() } } }
         reload()
     }
 
@@ -77,8 +86,10 @@ class PlacesTabViewModel(
         reloadTask = viewModelScope.launch {
             try {
                 val places = placeStore.fetchPlaces()
+                if (filmingActive) cachedTrips = repository.fetchTripsForMap()
                 val passes = placeStore.passes(places.map { it.id })
-                val items = PlaceListItem.sorted(places.map { PlaceListItem.build(it, passes[it.id].orEmpty(), now()) })
+                val visiblePlaces = places.filterNot { place -> filmingActive && hiddenPlace(GeoPoint(place.latitude, place.longitude)) }
+                val items = PlaceListItem.sorted(visiblePlaces.map { PlaceListItem.build(it, passes[it.id].orEmpty(), now()) })
                 val freshest = passes.mapNotNull { (id, all) -> PlaceLastPass.reading(id, all) }.maxByOrNull { it.at }
                     ?.takeUnless { seenKey(it) == preferences.string(SEEN_KEY) }
                 val recent = if (items.isEmpty()) repository.fetchTrips(recentTripsShown, 0) else emptyList()
@@ -87,6 +98,21 @@ class PlacesTabViewModel(
                 refreshSuggestions()
             } catch (error: CancellationException) { throw error }
             catch (_: Exception) { mutableState.update { it.copy(failed = true) } }
+        }
+    }
+
+    private fun hiddenPlace(point: GeoPoint): Boolean {
+        val zone = homeState.activeZone
+        if (zone != null && GeometryUtils.haversineDistance(point, zone.centre) < zone.radius) return true
+        return cachedTrips.any { trip ->
+            if (trip.trackPoints.isEmpty()) false else {
+                val resolved = TripHiddenPartsResolver.resolve(trip.trackPoints, trip.recordingBreaks,
+                    trip.hiddenParts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                    trip.hiddenParts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                    trip.hiddenParts?.sections.orEmpty(), zone?.let { it.centre to it.radius })
+                trip.trackPoints.indices.any { index -> resolved.hidden[index] &&
+                    GeometryUtils.haversineDistance(point, trip.trackPoints[index].coordinate) <= TripHiddenPartsResolver.photoNearMetres }
+            }
         }
     }
 
@@ -100,7 +126,7 @@ class PlacesTabViewModel(
                 val found = buildDetached(previews, taken, worker).map { suggestion ->
                     val cached = repository.cachedGeocode(GeohashEncoder.encode(suggestion.latitude, suggestion.longitude, 5))
                     suggestion.copy(name = listOfNotNull(cached?.locality, cached?.region).firstOrNull(String::isNotEmpty))
-                }
+                }.filterNot { suggestion -> filmingActive && hiddenPlace(suggestion.coordinate) }
                 ensureActive()
                 mutableState.update { it.copy(suggestions = found, lastTripId = previews.firstOrNull()?.id, failed = false) }
             } catch (error: CancellationException) { throw error }

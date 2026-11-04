@@ -78,6 +78,7 @@ data class AtlasState(
     val online: Boolean = true,
     val shareOfflineNotice: Boolean = false,
     val filmingMode: Boolean = false,
+    val filmingReady: Boolean = false,
 ) {
     val isEmpty get() = !isLoading && exploration.isEmpty
     val selectedPlace get() = placePins.firstOrNull { it.id == selectedPlaceId }
@@ -128,6 +129,9 @@ class MyMapViewModel(
     private var findsTask: Job? = null
     private var cachedTrips = emptyList<Trip>()
     private var allTime: Pair<MapExploration, RevealedLayer>? = null
+    private var filmingAllTime: Pair<MapExploration, RevealedLayer>? = null
+    private var filmingTripsCache = emptyList<Trip>()
+    private var cachedHome = home.value
     private var placeSeeds = emptyList<AtlasPlaces.Seed>()
     private var finds = AtlasFinds()
     private var pendingDiscovery: UUID? = null
@@ -141,8 +145,13 @@ class MyMapViewModel(
         viewModelScope.launch { online.collect { value -> mutableState.update { it.copy(online = value) } } }
         viewModelScope.launch { filming.collect { active -> mutableState.update { it.copy(filmingMode = active,
             home = if (active) HomeState() else home.value, homeSelected = if (active) false else it.homeSelected) }; rebuildPlacePins(); if (loaded) applyCurrentPeriod() } }
-        viewModelScope.launch { home.collect { value -> mutableState.update { it.copy(home = if (it.filmingMode) HomeState() else value, homeSelected = it.homeSelected && value.mapPin != null,
-            homeTripCount = value.coordinate?.let { point -> AtlasHome.tripsStarted(point, it.exploration.trips.mapNotNull { trip -> trip.route.firstOrNull() }) } ?: 0) } } }
+        viewModelScope.launch { home.collect { value ->
+            val changed = cachedHome != value
+            cachedHome = value
+            mutableState.update { it.copy(home = if (it.filmingMode) HomeState() else value, homeSelected = it.homeSelected && value.mapPin != null,
+                homeTripCount = value.coordinate?.let { point -> AtlasHome.tripsStarted(point, it.exploration.trips.mapNotNull { trip -> trip.route.firstOrNull() }) } ?: 0) }
+            if (changed && loaded) { stale = true; coalescer.schedule() }
+        } }
         viewModelScope.launch { events.collect { event -> when (event) {
             WorldChange.places -> schedulePlacesReload()
             WorldChange.discoveries -> reloadDiscoveries()
@@ -160,7 +169,7 @@ class MyMapViewModel(
         filterTask?.cancel()
         loaded = true
         stale = false
-        mutableState.update { it.copy(isLoading = it.isLoading || it.exploration.isEmpty, failed = false) }
+        mutableState.update { it.copy(isLoading = it.isLoading || it.exploration.isEmpty, failed = false, filmingReady = false) }
         loadTask = viewModelScope.launch {
             try {
                 val atlas = atlasProvider()
@@ -173,9 +182,16 @@ class MyMapViewModel(
                 trips.forEach { Trip.invalidatePreviewCache(it.id) }
                 val layer = RevealedLayer.build(tiles, atlas)
                 val exploration = MapExploration.build(trips, hashes, atlas, layer.regionKm)
+                val maskedTrips = filmingTrips(trips)
+                val maskedHashes = maskedTrips.flatMap { it.previewCoordinates }.mapTo(mutableSetOf()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }
+                val maskedLayer = AtlasPreviewLayer.build(maskedTrips, atlas)
+                val maskedExploration = MapExploration.build(maskedTrips, maskedHashes, atlas, maskedLayer.regionKm)
                 ensureActive()
                 cachedTrips = trips
                 allTime = exploration to layer
+                filmingTripsCache = maskedTrips
+                filmingAllTime = maskedExploration to maskedLayer
+                mutableState.update { it.copy(filmingReady = true) }
                 applyCurrentPeriod()
                 reloadPlaces()
                 reloadDiscoveries()
@@ -200,11 +216,11 @@ class MyMapViewModel(
         val period = state.value.period
         val atlas = atlasProvider()
         if (state.value.filmingMode) {
-            val safeTrips = filmingTrips(cachedTrips)
-            val layer = AtlasPreviewLayer.build(safeTrips, atlas)
-            val hashes = safeTrips.flatMap { it.previewCoordinates }.mapTo(mutableSetOf()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }
+            val cachedFilming = filmingAllTime ?: return
+            val safeTrips = filmingTripsCache
             val filtered = if (period == AtlasPeriod.AllTime) safeTrips else safeTrips.filter { period.contains(it.startDate, now(), zone) }
-            val revealed = if (period == AtlasPeriod.AllTime) layer else AtlasPreviewLayer.build(filtered, atlas)
+            val revealed = if (period == AtlasPeriod.AllTime) cachedFilming.second else AtlasPreviewLayer.build(filtered, atlas)
+            val hashes = filtered.flatMap { it.previewCoordinates }.mapTo(mutableSetOf()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }
             val exploration = MapExploration.build(filtered, hashes, atlas, revealed.regionKm)
             apply(exploration, revealed, atlas)
             return
@@ -223,8 +239,9 @@ class MyMapViewModel(
         mutableState.update { old ->
             val selection = old.selection?.takeIf { resolve(it, exploration) }
             selected(old.copy(exploration = exploration, revealed = layer, selection = selection,
-                fog = MapFog(layer, FogLook.of(old.appearance.model())), overview = AtlasOverview.build(exploration, atlas, allTime?.first ?: exploration),
+                fog = MapFog(layer, FogLook.of(old.appearance.model())),
                 journal = AtlasJournal.build(exploration, layer, finds.seals, finds.hints), isFiltering = false, isLoading = false,
+                overview = AtlasOverview.build(exploration, atlas, (if (old.filmingMode) filmingAllTime?.first else allTime?.first) ?: exploration),
                 homeTripCount = old.home.coordinate?.let { AtlasHome.tripsStarted(it, exploration.trips.mapNotNull { trip -> trip.route.firstOrNull() }) } ?: 0))
         }
     }

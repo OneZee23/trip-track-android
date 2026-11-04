@@ -231,7 +231,7 @@ private fun PaginationDots(page: Int, modifier: Modifier = Modifier) {
  * every scene keeps its subject in the middle.
  */
 @Composable
-private fun OnboardingHero(drawable: Int) {
+internal fun OnboardingHero(drawable: Int) {
     Image(
         bitmap = ImageBitmap.imageResource(drawable),
         contentDescription = null,
@@ -274,8 +274,7 @@ private fun ColumnScope.PrivacyEdgesPage(current: Int?, onSave: (Int) -> Unit, o
     val strings = appStrings
     var selected by rememberSaveable { mutableStateOf<Int?>(null) }
     Spacer(Modifier.height(18.dp))
-    Image(painter = painterResource(R.drawable.hidden_edges_illustration), contentDescription = null,
-        contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().height(160.dp).padding(horizontal = 28.dp))
+    OnboardingHero(R.drawable.hidden_edges_illustration)
     PageTitle(strings.tr(LocationWords.string.edgeQuestionTitle), "onboarding_hidden_edges", top = 18.dp)
     BodyText(strings.tr(LocationWords.string.edgeQuestionBody), 10.dp)
     Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

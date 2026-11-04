@@ -272,6 +272,13 @@ fun AtlasScreen(feature: WorldFeature, resumeTick: Int = 0, now: () -> Instant =
             EmptyAtlas(emptyMapInk(state.appearance, mapState.fogAvailable), Modifier.emptyPlacement(lowest))
         }
         if (state.isLoading || state.isFiltering) CarLoading(Modifier.align(Alignment.Center))
+        if (state.filmingMode && !state.filmingReady) {
+            Box(Modifier.align(Alignment.TopCenter).padding(top = safeTop + 12.dp)
+                .clip(CapsuleShape).background(atlas.card).padding(horizontal = 14.dp, vertical = 8.dp)
+                .testTag("atlas_filming_preparing")) {
+                Text(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingPreparing), style = inter(12f, InterWeight.medium), color = atlas.ink)
+            }
+        }
 
         // The strip of map over the open list IS «collapse» (spec §4): aimed at closing the list, the
         // finger used to open whatever region lay under it.

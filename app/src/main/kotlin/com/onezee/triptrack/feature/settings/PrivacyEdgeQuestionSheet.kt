@@ -27,6 +27,8 @@ import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.designsystem.theme.inter
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.model.Measure
+import com.onezee.triptrack.feature.onboarding.OnboardingHero
+import com.onezee.triptrack.R as AppR
 
 // iOS: PrivacyEdgeQuestionSheet.swift.
 @Composable
@@ -40,6 +42,7 @@ fun PrivacyEdgeQuestionSheet(onSave: (Int) -> Unit, onDismiss: () -> Unit) {
     ContentSizedSheet(onDismissRequest = onDismiss, background = colors.card, detent = com.onezee.triptrack.designsystem.components.SheetDetent.large) {
         val sheet = this
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp).testTag("privacy_edge_question"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            OnboardingHero(AppR.drawable.hidden_edges_illustration)
             Text(strings.tr(R.string.edgeQuestionTitle), style = inter(20f, InterWeight.bold), color = colors.text)
             Text(strings.tr(R.string.edgeQuestionBody), style = inter(14f), color = colors.textSecondary)
             options.forEach { (metres, labels) ->

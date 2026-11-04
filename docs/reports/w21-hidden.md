@@ -1,31 +1,36 @@
 # w21: hidden trip parts and filming mode
 
-## Built
+## Completed
 
-- Ported `TripHiddenParts`, hidden ranges, the global privacy edge and filming preferences; added the Room `hiddenPartsJson` migration. The resolver follows the shared vectors and returns visible runs, ranges, numbers and photo visibility. iOS counterparts: `TripHiddenParts.swift`, `TripHiddenPartsResolver.swift`.
-- Added masked trip payloads for public and cloud uploads, `previewBreaks`, `hiddenParts`, `hiddenRanges`, photo deletion/re-upload decisions and number masking. Privacy changes enqueue every server-backed trip, including private cloud copies, and skip drafts.
-- Protected full local tracks on pull and conflict refresh. Propagated preview/replay breaks for social trips; replay now fades across breaks. Own trip route maps and the editor split hidden runs and draw the lock glyph with Android canvas paths.
-- Added the editor and public-version preview in the publish sheet, public-version poster masking, the first-run question/onboarding page, privacy settings, Android 15 screen-recording detection, Atlas revealed layer, and filming filters.
-- Added English and Russian resources and new light/dark Roborazzi captures for the editor, publish sheet, question and privacy settings.
+- Replaced the onboarding placeholder with `hidden_edges_illustration.png` through the shared `OnboardingHero` treatment on onboarding and the privacy question sheet. iOS: `PrivacyEdgeQuestionSheet.swift`; Android: `OnboardingScreen.kt:234,277`, `PrivacyEdgeQuestionSheet.kt:42-46`.
+- The own-trip action menu always opens the hidden-parts editor, including trips with no current mask. The action uses the spec's imperative title. Android: `TripDetailScreen.kt:548,740-743`.
+- Added the generated-title warning and rename action, plus the note for trips already seen on the server. Android: `HiddenPartsEditorSheet.kt:168-184`; iOS: hidden-parts editor in `TripDetailView.swift`.
+- Publish hints now check the home zone, saved places and the previous trip's overnight stop. The hint action applies the recommended edge distance in one tap. Android: `TripsFeature.kt:94-125` (`publishHint`), `TripDetailScreen.kt:230-232,674,1166-1167`; iOS: publish hint in `TripDetailView.swift`.
+- Filming mode filters saved places and suggestions, Atlas place pins, own journey/history cards, own trip maps and numbers, galleries, photo viewer and replay. Atlas builds and caches a masked all-time layer with the full layer, keeps the home-zone cache current, uses masked Atlas numbers, and shows the preparing hint while the masked layer is unavailable. The recording screen retains its location dot. Android: `PlacesTabViewModel.kt:73-130`, `MyMapViewModel.kt:171-195,214-245,262-292`, `AtlasScreen.kt:274-280`, `TripFilmingPresentation.kt`, `JourneyDetailScreen.kt`, `TripDetailScreen.kt`; iOS: filming-mode presentation in `AtlasView.swift`, `PlacesView.swift`, `TripDetailView.swift` and journey/profile views.
+- The Settings privacy sheet now scrolls through the filming controls and explanatory text. The regenerated settings captures show the full sheet. Android: `SettingsScreens.kt:76` privacy page.
+- Resource identifiers use the spec's §12 keys; English and Russian are filled in `core/designsystem/src/main/res/values/strings.xml` and `values-ru/strings.xml`.
 
-## Tests
+## Verification
 
-All Gradle commands used JDK 17 and `--offline`; Robolectric needed `JAVA_TOOL_OPTIONS='-Duser.home=/private/tmp/w21-robolectric-home'` because the default user cache lock was inaccessible.
+JDK 17, `./gradlew --offline`, and Robolectric's `JAVA_TOOL_OPTIONS='-Duser.home=/private/tmp/w21-robolectric-home'` were used. No emulator was started.
 
-- `:core:model:test` — passed.
-- `:core:logic:test` — passed, including every case in `docs/specs/hidden-parts-vectors.json` and replay break coverage.
-- `:core:map:test` — passed.
-- `:core:data:testDebugUnitTest` — passed, including Room migration and masked pull/conflict tests.
-- `:core:sync:test` — passed.
-- `:app:testDebugUnitTest --tests 'com.onezee.triptrack.feature.trip.ui.HiddenPartsScreenshotTests' -Proborazzi.test.record=true` — passed and recorded only this new screenshot class. The same command without recording passed.
-- Existing trip screenshots and publish tests passed in the app suite after fixes to test setup and conditional editor entry.
-- Full `:app:testDebugUnitTest` — 1,276 tests, 4 failures before re-recording the new settings capture. Two were `SettingsStackShotTests.privacyIsASheetOverTheSettings` (light and dark); two were the new settings capture, which passed after recording its new baseline. The existing privacy baselines remain unchanged and still differ after the new controls; the full suite was not rerun after the new baseline was recorded.
+- `:core:model:test`, `:core:logic:test`, `:core:map:test`, `:core:data:testDebugUnitTest`, and `:core:sync:test` passed in the earlier port run; this pass did not change those modules.
+- `./gradlew --offline :app:testDebugUnitTest --tests '*TripsScreenshotTests*' -Proborazzi.test.record=true` — passed after changing the action label.
+- `./gradlew --offline :core:designsystem:testDebugUnitTest :app:testDebugUnitTest` — passed; includes the full `:app:testDebugUnitTest` suite.
+- `git diff --check` — passed.
 
-## Left / deviations
+## Screenshots re-recorded and reviewed
 
-- The editor shortcut in the trip menu appears when that trip already has `hiddenParts`; it is also available from the trip edit sheet and publish sheet. This avoids changing existing trip-action screenshots, but differs from the spec's unconditional menu entry.
-- The editor does not yet implement the generated-title warning or the “people may have seen the full trip” warning. The nearby publish hint covers the home zone, but not saved places or the previous trip's overnight stop.
-- Filming mode filters the own trip detail, Atlas, and photo surfaces touched in this pass. Place-list filtering, every own journey/card surface, and the Atlas “preparing revealed layer” hint/background maintenance still need completion and review.
-- The onboarding illustration is the requested placeholder drawable `hidden_edges_illustration`; final artwork is pending from the owner.
-- Android strings were added manually to `values/strings.xml` and `values-ru/strings.xml`; all-language regeneration remains pending from iOS.
-- The Room schema migration, tests and client payload are implemented. Backend support/deployment is outside this Android checkout and remains a prerequisite for server persistence and old-client guards.
+All changed PNGs were opened and checked for clipped or overlapping content, type roles, spacing, radii and status/navigation bar placement. The two `SettingsStackShotTests.privacyIsASheetOverTheSettings` captures were checked after the privacy page was made scrollable.
+
+- `hidden_edge_question_light.png`, `hidden_edge_question_dark.png`
+- `hidden_parts_editor_light.png`, `hidden_parts_editor_dark.png`
+- `hidden_settings_privacy_light.png`, `hidden_settings_privacy_dark.png`
+- `settings_stack_privacy_light.png`, `settings_stack_privacy_dark.png`
+- `trips_trip_actions_light.png`, `trips_trip_actions_dark.png`
+- `trips_trip_actions_public_light.png`, `trips_trip_actions_public_dark.png`
+
+## Remaining
+
+- The Android resource names and English/Russian copy follow spec §12, but the current read-only iOS checkout has not finished that shared naming: it uses alternatives such as `hiddenStart`, `hiddenQuestionTitle`, and `hiddenOvernightHint`. The README's generator reads iOS AppStrings and cannot generate the spec identifiers from those alternate names. I left the required Android resources in place instead of editing the read-only iOS checkout or inventing eleven translations. Once iOS exposes the spec keys, run `python3 tools/strings/generate.py --ios /Users/onezee/OneZeeProjects/trip-track-094`, then validate and run the strings tests as described in `tools/strings/README.md`.
+- Backend deployment/support remains outside this Android checkout; server persistence and old-client guards still require the backend counterpart.

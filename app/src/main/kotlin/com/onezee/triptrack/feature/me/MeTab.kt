@@ -68,6 +68,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     val scope = rememberCoroutineScope()
     val strings = appStrings
+    val filmingMode by graph.tripsFeature.filmingMode.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(state.allTrips, settings.home, settings.homeAsked, settings.homeDeclinedAt, strings.language) {
         inferredHome = null
@@ -146,6 +147,8 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 homeCandidate = inferredHome,
                 suggestedTrips = suggestedChain,
                 suggestionSubtitle = suggestionSubtitle,
+                filmingMode = filmingMode, defaultHiddenEdgeMetres = settings.privacyEdgeMetres,
+                homeZone = settings.home.activeZone?.let { it.centre to it.radius },
                 onAcceptHome = { point -> graph.settingsManager.acceptInferredHome(point); inferredHome = null },
                 onDeclineHome = { graph.settingsManager.declineInferredHome(java.time.Instant.now()); inferredHome = null },
                 onCombineSuggestion = { chain -> composerPreselected = chain; composerAnchor = chain.firstOrNull() },

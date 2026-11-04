@@ -223,6 +223,7 @@ class AppGraph(
             failedSyncQueue = syncHost.queueState.map { it.failed.isNotEmpty() },
             homeZone = ::privacyZone,
             filmingMode = settingsManager.state.map { it.filmingActive }.stateIn(scope, SharingStarted.Eagerly, settingsManager.state.value.filmingActive),
+            defaultHiddenEdgeMetres = { settingsManager.state.value.privacyEdgeMetres },
             setDefaultHiddenEdge = settingsManager::setPrivacyEdgeMetres,
             deferPrivacyEdgeQuestion = settingsManager::deferPrivacyEdgeQuestion,
         ).also { feature ->

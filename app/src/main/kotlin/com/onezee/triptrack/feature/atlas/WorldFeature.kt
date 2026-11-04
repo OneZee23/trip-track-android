@@ -104,7 +104,8 @@ class WorldFeature(
     val placesTab: PlacesTabViewModel by lazy {
         // The trips' clock, not the phone's: «Сегодня», «На этой неделе» and «Ранее» are counted from it, and a test's
         // library would otherwise change groups with the calendar (4 Nov 2026).
-        appViewModel("places") { PlacesTabViewModel(places, repository, presentation, history, worker, sharedEvents, now = { trips.clock() }) }
+        appViewModel("places") { PlacesTabViewModel(places, repository, presentation, history, worker, sharedEvents,
+            now = { trips.clock() }, filming = filmingMode, home = home, defaultHiddenEdgeMetres = defaultHiddenEdgeMetres) }
     }
 
     fun placeDetail(id: UUID): PlaceDetailViewModel = PlaceDetailViewModel(id, places, repository, worker, sharedEvents, placeManager = placeManager)

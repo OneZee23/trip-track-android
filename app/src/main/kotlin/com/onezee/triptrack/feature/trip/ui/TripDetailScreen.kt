@@ -227,6 +227,10 @@ private fun TripDetailContent(
     var posterUrl by remember { mutableStateOf<String?>(null) }
     var showPoster by remember { mutableStateOf(false) }
     var showPrivacyEdgeQuestion by remember { mutableStateOf(false) }
+    var publishHint by remember { mutableStateOf<TripsFeature.PublishHint?>(null) }
+    LaunchedEffect(state.sourceTrip?.id, state.publishRequested) {
+        publishHint = if (state.publishRequested) state.sourceTrip?.let { runCatching { withContext(feature.worker) { feature.publishHint(it) } }.getOrNull() } else null
+    }
     val requestPublish = {
         if (feature.defaultHiddenEdgeMetres() == null) showPrivacyEdgeQuestion = true else vm.requestPublish()
     }
@@ -522,7 +526,7 @@ private fun TripDetailContent(
                         }
                     },
                 )
-                if (state.isOwn && trip.hiddenParts != null) {
+                if (state.isOwn && trip.hiddenParts?.let { it.startMetres != null || it.endMetres != null || it.sections.isNotEmpty() } == true) {
                     HiddenPartsEntryCard(trip.hiddenParts, feature.defaultHiddenEdgeMetres(), onClick = { editingHiddenParts = true })
                 }
             }
@@ -541,7 +545,7 @@ private fun TripDetailContent(
                         shareBusy = share.busy,
                         onShare = { haptics.tap(); share.start() },
                         onActions = { haptics.tap(); showActions = true },
-                    popover = { ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onEdit = { showHiddenEntryInEdit = true; editingTrip = true }, onHiddenParts = { editingHiddenParts = true }, showHiddenParts = trip?.hiddenParts != null, onRequestPublish = requestPublish, onCombine = { composerOpenings++; showComposer = true },
+                    popover = { ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onEdit = { showHiddenEntryInEdit = true; editingTrip = true }, onHiddenParts = { editingHiddenParts = true }, showHiddenParts = true, onRequestPublish = requestPublish, onCombine = { composerOpenings++; showComposer = true },
                             pinned = pinned, onTogglePin = {
                                 feature.pins?.let { pins -> scope.launch { if (!pins.toggle(trip.id)) toast = ToastItem(ToastType.info, strings.profileShowcaseLimit()) } }
                             })) },
@@ -645,6 +649,7 @@ private fun TripDetailContent(
         defaultEdgeMetres = feature.defaultHiddenEdgeMetres(),
         home = feature.homeZone()?.let { it.centre to it.radius },
         onSave = { vm.updateHiddenParts(it) },
+        onRename = { editingHiddenParts = false; showHiddenEntryInEdit = false; editingTrip = true },
         onDismissRequest = { editingHiddenParts = false },
     )
     if (showPoster && trip != null) TripPosterSheet(
@@ -666,13 +671,7 @@ private fun TripDetailContent(
         PublishTripSheet(cloudSyncEnabled = feature.cloudSyncEnabled(), trip = state.sourceTrip,
             defaultEdgeMetres = feature.defaultHiddenEdgeMetres(), home = feature.homeZone()?.let { it.centre to it.radius },
             onEditHidden = { editingHiddenParts = true },
-            nearbyHomeEnd = state.sourceTrip?.let { source -> feature.homeZone()?.centre?.let { home ->
-                val nearEnd = source.trackPoints.lastOrNull()?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(it.coordinate, home) <= 300.0 } == true &&
-                    (source.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0) == 0
-                val nearStart = source.trackPoints.firstOrNull()?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(it.coordinate, home) <= 300.0 } == true &&
-                    (source.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0) == 0
-                when { nearEnd -> false; nearStart -> true; else -> null }
-            } },
+            nearbyHint = publishHint,
             onHideNearbyEnd = { isStart ->
                 val current = state.sourceTrip?.hiddenParts ?: com.onezee.triptrack.model.TripHiddenParts()
                 vm.updateHiddenParts(if (isStart) current.copy(startMetres = 500) else current.copy(endMetres = 500))
@@ -739,7 +738,7 @@ private fun ownerActions(
     val trip = state.trip ?: return emptyList()
     return listOfNotNull(
         ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "detail_action_edit", action = onEdit),
-        if (showHiddenParts) ActionPopoverItem(strings.tr(R.string.hiddenFromOthers), AppGlyph.lock, testTag = "detail_action_hidden_parts", action = onHiddenParts) else null,
+        if (showHiddenParts) ActionPopoverItem(strings.tr(R.string.hiddenEditorTitle), AppGlyph.lock, testTag = "detail_action_hidden_parts", action = onHiddenParts) else null,
         if (trip.isPrivate) ActionPopoverItem(strings.publishAction(), AppGlyph.globe, testTag = "detail_action_publish", action = onRequestPublish)
         else ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "detail_action_publish") { vm.requestHide() },
         // iOS pin / pin.slash; the drawn set has no thumbtack yet, the Я journal menu stands in with the flag too.
@@ -1136,7 +1135,7 @@ private fun ZoomButton(glyph: AppGlyph, label: String, tag: String, enabled: Boo
  */
 @Composable
 internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptrack.model.Trip?, defaultEdgeMetres: Int?, home: Pair<com.onezee.triptrack.model.GeoPoint, Double>?, onEditHidden: () -> Unit,
-    nearbyHomeEnd: Boolean?, onHideNearbyEnd: (Boolean) -> Unit, onPublish: () -> Unit, onDismissRequest: () -> Unit) {
+    nearbyHint: TripsFeature.PublishHint?, onHideNearbyEnd: (Boolean) -> Unit, onPublish: () -> Unit, onDismissRequest: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
@@ -1161,10 +1160,10 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
                         .clickable(role = Role.Button, onClick = onEditHidden).padding(14.dp).testTag("publish_hidden_parts"),
                     style = inter(14f, InterWeight.medium), color = colors.text,
                 )
-                if (nearbyHomeEnd != null) Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
-                    .clickable(role = Role.Button) { onHideNearbyEnd(nearbyHomeEnd) }.padding(13.dp).testTag("publish_hide_nearby_home"),
+                if (nearbyHint != null) Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
+                    .clickable(role = Role.Button) { onHideNearbyEnd(nearbyHint.isStart) }.padding(13.dp).testTag("publish_hide_nearby_home"),
                     verticalAlignment = Alignment.CenterVertically) {
-                    Text(strings.tr(if (nearbyHomeEnd) R.string.publishHintHome else R.string.publishHintOvernight), Modifier.weight(1f), style = inter(13f), color = colors.text)
+                    Text(strings.tr(if (nearbyHint.isHome) R.string.publishHintHome else R.string.publishHintOvernight), Modifier.weight(1f), style = inter(13f), color = colors.text)
                     Text(strings.tr(R.string.publishHintAction).replace("{value}", "500 m"), style = inter(12f, InterWeight.bold), color = AppTheme.accent)
                 }
             }

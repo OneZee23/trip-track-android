@@ -16,18 +16,22 @@ data class TripSummary(
     val badgeIds: List<String>, val isTransfer: Boolean, val companions: List<TripCompanion>,
     val hiddenParts: TripHiddenParts? = null,
     val previewBreaks: List<Int> = emptyList(),
+    val trackPoints: List<TrackPoint> = emptyList(),
+    val recordingBreaks: List<Instant> = emptyList(),
 ) {
     companion object {
         fun from(trip: Trip) = TripSummary(trip.id, trip.startDate, trip.endDate, trip.title,
             trip.tripDescription, trip.region, trip.distance, trip.duration, trip.maxSpeed, trip.averageSpeed,
             trip.vehicleId, trip.isPrivate, trip.isOnServer, trip.source, trip.confirmation, trip.energyMode,
-            trip.previewCoordinates.toList(), trip.photos.map(PhotoState::from), trip.earnedBadgeIds.toList(), trip.isTransfer, trip.companions.toList(), trip.hiddenParts, trip.previewBreaks.orEmpty())
+            trip.previewCoordinates.toList(), trip.photos.map(PhotoState::from), trip.earnedBadgeIds.toList(), trip.isTransfer, trip.companions.toList(), trip.hiddenParts, trip.previewBreaks.orEmpty(), trip.trackPoints.toList(), trip.recordingBreaks.toList())
     }
 }
 
 // iOS: TripPhoto.swift
-data class PhotoState(val id: UUID, val filename: String, val caption: String?, val timestamp: Instant) {
-    companion object { fun from(photo: TripPhoto) = PhotoState(photo.id, photo.filename, photo.caption, photo.timestamp) }
+data class PhotoState(val id: UUID, val filename: String, val caption: String?, val timestamp: Instant,
+    val capturedAt: Instant? = null, val exifCoordinate: GeoPoint? = null) {
+    companion object { fun from(photo: TripPhoto) = PhotoState(photo.id, photo.filename, photo.caption, photo.timestamp,
+        photo.capturedAt, photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> GeoPoint(lat, lon) } }) }
 }
 
 // iOS: TripCheckpoint.swift, TripDetailView.swift (checkpointMarkers)

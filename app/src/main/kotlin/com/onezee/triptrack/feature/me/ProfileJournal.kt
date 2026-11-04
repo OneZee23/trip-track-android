@@ -44,6 +44,7 @@ import com.onezee.triptrack.feature.garage.VehicleAvatar
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.feature.social.ui.PublicJourneyCard
 import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.feature.trip.filmingVersion
 import com.onezee.triptrack.feature.feed.asTrip
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
@@ -130,6 +131,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         onCompanionTrip: (com.onezee.triptrack.model.SocialFeedTrip) -> Unit = {},
                         homeCandidate: Pair<GeoPoint, String>? = null, suggestedTrips: List<Trip> = emptyList(), suggestionSubtitle: String = "",
                         onAcceptHome: (GeoPoint) -> Unit = {}, onDeclineHome: () -> Unit = {}, onCombineSuggestion: (List<Trip>) -> Unit = {}, onDismissSuggestion: () -> Unit = {},
+                        filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null,
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -214,7 +216,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                     Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange) }
                 }
                 if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { PinsElsewhereRow(state.showcaseElsewhere.size, onUnpinElsewhere, Modifier.padding(bottom = 12.dp)) }
-                profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney)
+                profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney, filmingMode, defaultHiddenEdgeMetres, homeZone)
                 if (state.history.visibleTrips.isEmpty()) item(key = "empty") { ProfileHistoryEmpty(state.query.isNotBlank(), onClear) }
                 if (signedIn && socialFeature != null) item(key = "with_me") {
                     WithMeSection(socialFeature, unit, onOpen = onCompanionTrip)
@@ -282,12 +284,13 @@ private fun DraftsSection(state: MeState, now: Instant, onDrafts: () -> Unit) {
  * iOS: pinnedHistory, then the list (a month heading and its cards) or the grid (runs of tiles, a
  * journey as a card of its own width between them). Cards and tiles keep 14 pt margins, headings 16.
  */
-internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}) {
+internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}, filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null) {
+    fun display(trip: Trip) = if (filmingMode) trip.filmingVersion(defaultHiddenEdgeMetres, homeZone) else trip
     val levels = state.history.historicalLevels
     val level = { trip: Trip -> levels?.get(trip.id) ?: state.hero.identity.level }
     // The pinned cards show no car: the strip above them is the profile's showcase, not the journal.
     items(state.history.pinned, key = { "pin_${it.id}" }) { trip ->
-        JournalTripCard(trip, level(trip), pinned = true, vehicles = emptyList(), onTrip = onTrip, onComposeJourney = null, onPin = onPin, modifier = Modifier.padding(horizontal = 14.dp).padding(bottom = 12.dp))
+        JournalTripCard(display(trip), level(trip), pinned = true, vehicles = emptyList(), onTrip = { onTrip(trip) }, onComposeJourney = null, onPin = onPin, modifier = Modifier.padding(horizontal = 14.dp).padding(bottom = 12.dp))
     }
     if (state.mode == HistoryMode.grid) {
         state.history.gridRuns.forEachIndexed { run, rows ->
@@ -299,7 +302,7 @@ internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, on
                 trips.chunked(2).forEachIndexed { index, pair ->
                     item(key = "grid_${run}_$index") {
                         Row(Modifier.padding(horizontal = 14.dp).padding(bottom = if (index == (trips.size - 1) / 2) 12.dp else 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            pair.forEach { trip -> JournalTile(trip, unit, onTrip, onComposeJourney, Modifier.weight(1f)) }
+                            pair.forEach { trip -> JournalTile(display(trip), unit, { onTrip(trip) }, { onComposeJourney(trip) }, Modifier.weight(1f)) }
                             if (pair.size == 1) Spacer(Modifier.weight(1f))
                         }
                     }
@@ -312,9 +315,9 @@ internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, on
         items(chapter.rows, key = { row -> when (row) { is HistoryRow.Trip -> "trip_${row.value.id}"; is HistoryRow.Journey -> "journey_${row.value1.id}"; is HistoryRow.Routine -> "routine_${row.value.trips.first().id}" } }) { row ->
             val modifier = Modifier.padding(horizontal = 14.dp).padding(bottom = 12.dp)
             when (row) {
-                is HistoryRow.Trip -> JournalTripCard(row.value, level(row.value), pinned = false, vehicles = state.vehicles, onTrip = onTrip, onComposeJourney = onComposeJourney, onPin = onPin, modifier = modifier)
-                is HistoryRow.Routine -> Box(modifier) { ProfileRoutineTripsView(row.value, unit, onTrip) }
-                is HistoryRow.Journey -> JournalJourney(row, onJourney, modifier)
+                is HistoryRow.Trip -> JournalTripCard(display(row.value), level(row.value), pinned = false, vehicles = state.vehicles, onTrip = { onTrip(row.value) }, onComposeJourney = if (onComposeJourney == null) null else ({ onComposeJourney(row.value) }), onPin = onPin, modifier = modifier)
+                is HistoryRow.Routine -> Box(modifier) { ProfileRoutineTripsView(row.value.copy(trips = row.value.trips.map(::display)), unit, onTrip) }
+                is HistoryRow.Journey -> JournalJourney(row.copy(legs = row.legs.map(::display)), onJourney, modifier)
             }
         }
     }

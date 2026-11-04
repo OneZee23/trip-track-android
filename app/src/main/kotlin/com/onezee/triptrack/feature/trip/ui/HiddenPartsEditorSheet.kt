@@ -68,6 +68,7 @@ fun HiddenPartsEditorSheet(
     home: Pair<GeoPoint, Double>?,
     onSave: (TripHiddenParts?) -> Unit,
     onDismissRequest: () -> Unit,
+    onRename: () -> Unit = {},
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -163,6 +164,23 @@ fun HiddenPartsEditorSheet(
                 Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { usePublicPreview = !usePublicPreview }, verticalAlignment = Alignment.CenterVertically) {
                     Text(strings.tr(R.string.hiddenPreviewToggle), Modifier.weight(1f), style = inter(14f), color = colors.text)
                     Text(if (usePublicPreview) "●" else "○", style = inter(20f), color = AppTheme.accent)
+                }
+                val titleEnd = trip.title?.takeIf { it.isNotBlank() }
+                if (!trip.titleIsCustom && titleEnd != null) {
+                    val endpoint = when {
+                        (parts.endMetres ?: defaultEdgeMetres ?: 0) > 0 -> R.string.hiddenTitleNamesFinish
+                        (parts.startMetres ?: defaultEdgeMetres ?: 0) > 0 -> R.string.hiddenTitleNamesStart
+                        else -> null
+                    }
+                    endpoint?.let { key ->
+                        Column(Modifier.fillMaxWidth().testTag(if (key == R.string.hiddenTitleNamesStart) "hidden_title_warning_start" else "hidden_title_warning_finish"), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text(strings.tr(key).replace("{title}", titleEnd), style = inter(12.5f), color = colors.textSecondary)
+                        Text(strings.tr(R.string.hiddenRename), Modifier.clickable(role = Role.Button, onClick = onRename), style = inter(12.5f, InterWeight.semibold), color = AppTheme.accent)
+                        }
+                    }
+                }
+                if (trip.isOnServer && !trip.isPrivate) {
+                    Text(strings.tr(R.string.hiddenAlreadySeen), style = inter(12.5f), color = colors.textSecondary)
                 }
             }
         }

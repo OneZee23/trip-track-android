@@ -36,6 +36,7 @@ import com.onezee.triptrack.model.SocialJourneyResponse
 import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.logic.encodePolyline
+import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.network.ApiError
 import com.onezee.triptrack.ui.TripPhotoImages
 import com.onezee.triptrack.ui.navigation.TabNavigator
@@ -84,9 +85,40 @@ class TripsFeature(
     val failedSyncQueue: Flow<Boolean> = kotlinx.coroutines.flow.emptyFlow(),
     val homeZone: () -> com.onezee.triptrack.sync.PrivacyZoneSpec? = { null },
     val filmingMode: StateFlow<Boolean> = kotlinx.coroutines.flow.MutableStateFlow(false),
+    val defaultHiddenEdgeMetres: () -> Int? = { null },
     val setDefaultHiddenEdge: (Int?) -> Unit = {},
     val deferPrivacyEdgeQuestion: () -> Unit = {},
 ) {
+    data class PublishHint(val isStart: Boolean, val isHome: Boolean)
+
+    suspend fun publishHint(trip: com.onezee.triptrack.model.Trip): PublishHint? {
+        val defaultEdge = defaultHiddenEdgeMetres() ?: 0
+        val startHidden = (trip.hiddenParts?.startMetres ?: defaultEdge) > 0
+        val endHidden = (trip.hiddenParts?.endMetres ?: defaultEdge) > 0
+        if (startHidden && endHidden) return null
+        val start = trip.trackPoints.firstOrNull()?.coordinate ?: return null
+        val end = trip.trackPoints.lastOrNull()?.coordinate ?: return null
+        val home = homeZone()?.takeIf { it.radius > 0.0 }?.centre
+        val placesNear = places.fetchPlaces().map { com.onezee.triptrack.model.GeoPoint(it.latitude, it.longitude) }
+        val previous = repository.fetchTripsForMap().asSequence()
+            .filter { it.id != trip.id && it.endDate != null && it.endDate!! <= trip.startDate }
+            .maxByOrNull { it.endDate!! }?.trackPoints?.lastOrNull()?.coordinate
+        val nearby = buildList {
+            home?.let { add(it to true) }
+            placesNear.forEach { add(it to false) }
+            previous?.let { add(it to false) }
+        }
+        if (!startHidden && nearby.any { (point, _) -> com.onezee.triptrack.logic.GeometryUtils.haversineDistance(start, point) <= 300.0 }) {
+            val atHome = home?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(start, it) <= 300.0 } == true
+            return PublishHint(isStart = true, isHome = atHome)
+        }
+        if (!endHidden && nearby.any { (point, _) -> com.onezee.triptrack.logic.GeometryUtils.haversineDistance(end, point) <= 300.0 }) {
+            val atHome = home?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(end, it) <= 300.0 } == true
+            return PublishHint(isStart = false, isHome = atHome)
+        }
+        return null
+    }
+
     @Volatile var accountId: () -> UUID? = { null }
     @Volatile var socialApi: TripSocialApi = NoAccountSocialApi
     @Volatile var cloudSyncEnabled: () -> Boolean = { false }

@@ -75,8 +75,10 @@ import com.onezee.triptrack.feature.journey.JourneyDetailState
 import com.onezee.triptrack.feature.journey.JourneyDetailViewModel
 import com.onezee.triptrack.feature.journey.JourneyItemState
 import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.feature.trip.filmingVersion
 import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.logic.distanceParts
+import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.SocialJourneyResponse
@@ -146,7 +148,24 @@ fun SocialJourneyScreen(id: UUID, feature: TripsFeature, navigator: DestinationN
 
 @Composable
 private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>, social: SocialJourneyResponse?) {
-    val state by vm.state.collectAsState()
+    val rawState by vm.state.collectAsState()
+    val filming by feature.filmingMode.collectAsState()
+    val state = remember(rawState, filming, feature.defaultHiddenEdgeMetres()) {
+        if (!filming || rawState.isSocial) rawState else {
+            val home = feature.homeZone()?.let { it.centre to it.radius }
+            fun shown(trip: TripSummary) = trip.filmingVersion(feature.defaultHiddenEdgeMetres(), home)
+            val shownTrips = rawState.trips.map(::shown)
+            rawState.copy(
+                trips = shownTrips,
+                days = rawState.days.map { day -> day.copy(items = day.items.map { item -> item.copy(trips = item.trips.map(::shown)) }) },
+                coordinates = shownTrips.flatMap { it.coordinates },
+                cover = rawState.cover?.takeIf { cover -> shownTrips.any { trip -> trip.photos.any { it.id == cover.id } } },
+                totalMetres = shownTrips.sumOf { it.distance },
+                firstStart = shownTrips.minByOrNull { it.startDate }?.trackPoints?.firstOrNull()?.coordinate ?: rawState.firstStart,
+                farthestEnd = shownTrips.maxByOrNull { it.distance }?.trackPoints?.lastOrNull()?.coordinate ?: rawState.farthestEnd,
+            )
+        }
+    }
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
