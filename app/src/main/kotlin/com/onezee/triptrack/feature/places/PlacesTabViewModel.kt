@@ -78,7 +78,7 @@ class PlacesTabViewModel(
             try {
                 val places = placeStore.fetchPlaces()
                 val passes = placeStore.passes(places.map { it.id })
-                val items = PlaceListItem.sorted(places.map { PlaceListItem.build(it, passes[it.id].orEmpty()) })
+                val items = PlaceListItem.sorted(places.map { PlaceListItem.build(it, passes[it.id].orEmpty(), now()) })
                 val freshest = passes.mapNotNull { (id, all) -> PlaceLastPass.reading(id, all) }.maxByOrNull { it.at }
                     ?.takeUnless { seenKey(it) == preferences.string(SEEN_KEY) }
                 val recent = if (items.isEmpty()) repository.fetchTrips(recentTripsShown, 0) else emptyList()
