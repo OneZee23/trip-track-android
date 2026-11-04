@@ -53,7 +53,6 @@ import com.onezee.triptrack.model.serialization.IsoInstantSerializer
 import com.onezee.triptrack.network.ApiClient
 import com.onezee.triptrack.network.ApiEndpoint
 import com.onezee.triptrack.network.NetworkJson
-import com.onezee.triptrack.ui.AvatarGlyph
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -155,7 +154,7 @@ private fun BlockedRow(user: BlockedUser, isPending: Boolean, strings: AppString
     val colors = AppTheme.colors
     Row(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(42.dp).background(colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) {
-            AvatarGlyph(user.avatarEmoji ?: "🚗", 22f)
+            Text(user.avatarEmoji ?: "🚗", style = inter(22f))
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(user.displayName ?: strings.blockedListUser(), style = inter(14f, InterWeight.bold), color = colors.text, maxLines = 1)

@@ -80,7 +80,6 @@ import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.ReactionEmoji
 import com.onezee.triptrack.model.TripOrigin
-import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.MapSnapshotPreview
 import com.onezee.triptrack.ui.MapSnapshotRoutesPreview
 import com.onezee.triptrack.ui.RegionDisplay
@@ -344,7 +343,7 @@ private fun SocialAuthorRow(card: SocialCardState, isOwn: Boolean, now: Instant,
         // subscription, so nothing is re-checked here; a frame this build does not know reads as none.
         Box(Modifier.size(36.dp).background(colors.cardAlt, CircleShape)
             .avatarFrame(AvatarFrame.fromRawValue(author.avatarFrame.orEmpty()) ?: AvatarFrame.none, 2.dp).then(authorTap).testTag("feed_card_avatar"), contentAlignment = Alignment.Center) {
-            AvatarGlyph(author.avatarEmoji ?: "🙂", 19f)
+            Text(author.avatarEmoji ?: "🙂", style = inter(19f))
         }
         Column(Modifier.weight(1f).then(authorTap).testTag("feed_card_author"), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {

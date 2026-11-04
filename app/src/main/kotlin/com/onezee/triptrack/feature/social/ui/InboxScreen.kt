@@ -39,7 +39,6 @@ import com.onezee.triptrack.feature.settings.NotificationPreferencesState
 import com.onezee.triptrack.feature.social.*
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
-import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.RegionDisplay
 import com.onezee.triptrack.ui.RelativeTripDate
 import com.onezee.triptrack.model.ReactionEmoji
@@ -324,7 +323,7 @@ private fun InboxAvatar(item: NotificationItem) {
     val fallback = if (item.typedKind == NotificationKind.achievement) "🏅" else "🚗"
     Box {
         Box(Modifier.size(40.dp).background(if (system) AppTheme.accent.copy(alpha = .15f) else colors.cardAlt, CircleShape), contentAlignment = Alignment.Center) {
-            AvatarGlyph(if (system) item.emoji ?: fallback else item.actor?.avatarEmoji ?: item.emoji ?: fallback, 20f)
+            Text(if (system) item.emoji ?: fallback else item.actor?.avatarEmoji ?: item.emoji ?: fallback, style = inter(20f))
         }
         val badge: @Composable () -> Unit = when (item.typedKind) {
             NotificationKind.reaction -> { { ReactionIcon(ReactionEmoji.canonical(item.emoji ?: "🔥"), size = 11.dp, filled = true, tint = AppTheme.accent) } }

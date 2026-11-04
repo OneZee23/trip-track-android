@@ -75,7 +75,6 @@ import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.TripEnergyMode
 import com.onezee.triptrack.model.TripOrigin
 import com.onezee.triptrack.model.Vehicle
-import com.onezee.triptrack.ui.AvatarGlyph
 import com.onezee.triptrack.ui.DetailChip
 import com.onezee.triptrack.ui.DetailSectionHeader
 import com.onezee.triptrack.ui.DetailStatCard
@@ -617,7 +616,7 @@ fun AuthorPill(author: SocialAuthor, modifier: Modifier = Modifier, onClick: (()
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.size(28.dp).background(Color(0xFFF4F2EE), CircleShape), contentAlignment = Alignment.Center) {
-            AvatarGlyph(author.avatarEmoji ?: "🚗", 16f)
+            Text(author.avatarEmoji ?: "🚗", style = inter(16f))
         }
         Text(author.displayName ?: strings.companionsNoName(), style = inter(13f, InterWeight.bold), color = Color.White,
             maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
