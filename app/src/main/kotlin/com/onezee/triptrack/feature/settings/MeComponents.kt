@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.geometry.Offset
@@ -144,14 +145,29 @@ private fun SettingsHintPopoverButton(text: String) {
     }
 }
 
+/**
+ * A text field in a house card. [placeholder] stands inside the empty field, as iOS `TextField`'s
+ * prompt does («Например, Honda Civic»); [title] is a caption above it, for fields whose meaning the
+ * hint alone does not carry (the unit of a number). Build 13 put the hint above an empty field as a
+ * caption, and a tap on it did nothing: the whole card now puts the caret in the field.
+ */
 @Composable
-internal fun MeField(title: String, value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier,
-                     keyboard: KeyboardType = KeyboardType.Text, singleLine: Boolean = true, tag: String = "") {
-    Column(modifier.fillMaxWidth().revealOnFocus().padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-        Text(title, style = interScaled(11.5f, InterWeight.medium), color = AppTheme.colors.textSecondary)
-        BasicTextField(value, onChange, Modifier.fillMaxWidth().heightIn(min = 30.dp).testTag(tag),
+internal fun MeField(title: String?, value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier,
+                     keyboard: KeyboardType = KeyboardType.Text, singleLine: Boolean = true, tag: String = "", placeholder: String? = null) {
+    val focus = remember { androidx.compose.ui.focus.FocusRequester() }
+    val keys = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
+    Column(modifier.fillMaxWidth().revealOnFocus().clickable(interactionSource = null, indication = null) { focus.requestFocus(); keys?.show() }
+        .padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+        if (title != null) Text(title, style = interScaled(11.5f, InterWeight.medium), color = AppTheme.colors.textSecondary)
+        BasicTextField(value, onChange, Modifier.fillMaxWidth().heightIn(min = 30.dp).focusRequester(focus).testTag(tag),
             textStyle = interScaled(16f).copy(color = AppTheme.colors.text), singleLine = singleLine,
-            cursorBrush = SolidColor(AppTheme.accent), keyboardOptions = KeyboardOptions(keyboardType = keyboard))
+            cursorBrush = SolidColor(AppTheme.accent), keyboardOptions = KeyboardOptions(keyboardType = keyboard),
+            decorationBox = { field ->
+                Box(contentAlignment = Alignment.CenterStart) {
+                    if (value.isEmpty() && placeholder != null) Text(placeholder, style = interScaled(16f), color = AppTheme.colors.textTertiary, maxLines = 1)
+                    field()
+                }
+            })
     }
 }
 

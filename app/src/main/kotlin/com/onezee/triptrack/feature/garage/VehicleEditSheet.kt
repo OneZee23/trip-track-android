@@ -76,14 +76,15 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
         MeSheetHeader(if (isNew) strings.addVehicleTitle() else strings.editVehicleTitle(), onClose)
         Column(Modifier.weight(1f).testTag("vehicle_edit_scroll").verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             VehicleAvatarCard(vehicle, onAvatar)
-            MeSection(strings.vehicleNameSection()) { MeField(strings.vehicleNamePlaceholder(), vehicle.name, onName, tag = "vehicle_name") }
+            MeSection(strings.vehicleNameSection()) { MeField(null, vehicle.name, onName, tag = "vehicle_name", placeholder = strings.vehicleNamePlaceholder()) }
             MeSection(strings.vehicleWhatSection()) {
                 MeRow(strings.vehicleMakeModel(), listOf(vehicle.make, vehicle.model).filter(String::isNotBlank).joinToString(" "), tag = "vehicle_catalog", onClick = onCatalog)
                 MeRow(strings.vehicleTypeSection(), typeLabel(vehicle.type, strings), onClick = onType)
                 MeField(strings.vehicleYear(), vehicle.year.takeIf { it > 0 }?.toString().orEmpty(), {
                     onPassport(vehicle.make, vehicle.model, it.filter(Char::isDigit).take(4).toIntOrNull() ?: 0, vehicle.bodyType, vehicle.about)
                 }, keyboard = KeyboardType.Number, tag = "vehicle_year")
-                MeField(strings.vehicleAbout(), vehicle.about, { onPassport(vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, it) }, singleLine = false, tag = "vehicle_about")
+                MeField(strings.vehicleAbout(), vehicle.about, { onPassport(vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, it) }, singleLine = false, tag = "vehicle_about",
+                    placeholder = strings.vehicleAboutPlaceholder())
             }
             MeSection(strings.garageMileage()) {
                 MeField(strings.odometerLabel() + " · " + strings.unitDistanceBadge(vehicle.dashboardUnit(appUnit)), state.odometerText, onOdometer, keyboard = KeyboardType.Number, tag = "vehicle_odometer")
@@ -107,7 +108,7 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
                 MeRow(strings.currencyPickerTitle(), vehicle.fuelCurrency, tag = "vehicle_currency", onClick = { currencyPicker = true })
             }
             if (vehicle.type.hasPlate) MeSection(strings.plateSection()) {
-                MeField(strings.platePlaceholder(), vehicle.plate, onPlate, tag = "vehicle_plate")
+                MeField(null, vehicle.plate, onPlate, tag = "vehicle_plate", placeholder = strings.platePlaceholder())
                 MeToggle(strings.plateShowToOthers(), vehicle.plateVisible, { onVisibility(vehicle.visibleToOthers, it, vehicle.mapVisible, vehicle.photosVisible) }, strings.plateVisibilityHint())
             }
             MeSection(strings.vehicleWhoSees()) {
@@ -163,7 +164,7 @@ internal fun VehicleCatalogContent(state: VehicleCatalogState, onQuery: (String)
     val strings = appStrings
     Column(Modifier.fillMaxSize().testTag("vehicle_catalog_picker")) {
         CustomNavBar(when (state.step) { CatalogStep.model -> strings.vehicleMakeModel(); CatalogStep.generation -> strings.catalogGeneration(); CatalogStep.year -> strings.vehicleYear(); CatalogStep.variant -> strings.catalogVariant() }, onBack)
-        if (state.step == CatalogStep.model) MeField(strings.catalogSearchPlaceholder(), state.query, onQuery, tag = "catalog_query")
+        if (state.step == CatalogStep.model) MeField(null, state.query, onQuery, tag = "catalog_query", placeholder = strings.catalogSearchPlaceholder())
         LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             when (state.step) {
                 CatalogStep.model -> {
