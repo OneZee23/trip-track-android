@@ -122,6 +122,38 @@ class MeInteractionTests {
         assertEquals("", saved)
     }
 
+    /** Build 13 opened the username editor with no caret and a bare «@»; iOS gives the field the keyboard at once. */
+    @Test fun theUsernameEditorTakesTheKeyboardAndSavesAValidNewHandle() {
+        var saved: String? = null
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { UsernameEditor("", { saved = it }, {}) } }
+        compose.waitUntil(2000) { runCatching { compose.onNodeWithTag("username_editor_field").assertIsFocused() }.isSuccess }
+        compose.onNodeWithTag("username_editor_done").assertIsNotEnabled()
+        compose.onNodeWithTag("username_editor_field").performTextInput("@Road.Max")
+        compose.onNodeWithTag("username_editor_field").assertTextEquals("road.max")
+        compose.waitUntil(2000) { runCatching { compose.onNodeWithTag("username_editor_done").assertIsEnabled() }.isSuccess }
+        compose.onNodeWithTag("username_editor_done").performClick()
+        compose.waitForIdle()
+        assertEquals("road.max", saved)
+    }
+
+    @Test fun theUsernameEditorSaysWhatIsWrongAndKeepsDoneOff() {
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { UsernameEditor("", {}, {}) } }
+        compose.onNodeWithTag("username_editor_field").performTextInput("ab")
+        compose.onNodeWithText("Слишком коротко").assertExists()
+        compose.onNodeWithTag("username_editor_field").performTextReplacement("дорога")
+        compose.onNodeWithText("Только латиница, цифры, «.» и «_»").assertExists()
+        compose.mainClock.advanceTimeBy(1000)
+        compose.onNodeWithTag("username_editor_done").assertIsNotEnabled()
+    }
+
+    @Test fun anUnchangedHandleSaysNothingAndCannotBeSaved() {
+        compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) { UsernameEditor("road.max", {}, {}) } }
+        compose.onNodeWithTag("username_editor_field").assertTextEquals("road.max")
+        compose.mainClock.advanceTimeBy(1000)
+        compose.onNodeWithTag("username_editor_done").assertIsNotEnabled()
+        compose.onNodeWithText("Слишком коротко").assertDoesNotExist()
+    }
+
     @Test fun doubleTapZoomsAtTheFingerAndTheSecondDoubleTapRestoresPaging() {
         var zoomed = false
         compose.setContent { TripTrackTheme(false, AppLanguage.ru, reduceMotion = true) {

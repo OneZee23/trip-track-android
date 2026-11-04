@@ -90,14 +90,7 @@ internal fun ProfileTextEditor(field: ProfileTextField, initial: String, onSave:
     }
     ContentSizedSheet(onClose, background = AppTheme.colors.bg) {
         val sheet = this
-        Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 14.dp), contentAlignment = Alignment.Center) {
-            Text(title, style = inter(16f, InterWeight.bold), color = AppTheme.colors.text)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(strings.cancel(), Modifier.clickable(role = Role.Button) { sheet.dismiss() }, style = inter(15f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
-                Text(strings.done(), Modifier.clickable(enabled = canSave, role = Role.Button) { save() }.testTag("profile_${field.name}_done"),
-                    style = inter(15f, InterWeight.bold), color = AppTheme.accent.copy(alpha = if (canSave) 1f else .4f))
-            }
-        }
+        ProfileEditorHeader(title, canSave, "profile_${field.name}_done", onCancel = { sheet.dismiss() }, onDone = ::save)
         val border = if (error != null) AppTheme.red else if (field == ProfileTextField.displayName || focused) AppTheme.accent else AppTheme.colors.borderBright
         Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().background(AppTheme.colors.card, RoundedCornerShape(14.dp))
             .border(1.5.dp, border, RoundedCornerShape(14.dp)).padding(horizontal = 16.dp, vertical = 14.dp),
@@ -120,5 +113,23 @@ internal fun ProfileTextEditor(field: ProfileTextField, initial: String, onSave:
         }
         if (failed) MeRow(strings.publicDataLoadFailed())
         LaunchedEffect(Unit) { delay(100); focus.requestFocus() }
+    }
+}
+
+/**
+ * iOS NameEditorSheet's chrome: Отмена · the title · Готово, the last one dim until there is something
+ * to save. The name, the username and «О себе» share it, as on the iPhone: they sit one tap apart on
+ * «Мой профиль», and a second editor style there would read as a second app.
+ */
+@Composable
+internal fun ProfileEditorHeader(title: String, canSave: Boolean, doneTag: String, onCancel: () -> Unit, onDone: () -> Unit) {
+    val strings = appStrings
+    Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 14.dp), contentAlignment = Alignment.Center) {
+        Text(title, style = inter(16f, InterWeight.bold), color = AppTheme.colors.text)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(strings.cancel(), Modifier.clickable(role = Role.Button, onClick = onCancel), style = inter(15f, InterWeight.semibold), color = AppTheme.colors.textSecondary)
+            Text(strings.done(), Modifier.clickable(enabled = canSave, role = Role.Button, onClick = onDone).testTag(doneTag),
+                style = inter(15f, InterWeight.bold), color = AppTheme.accent.copy(alpha = if (canSave) 1f else .4f))
+        }
     }
 }

@@ -2,19 +2,32 @@
 package com.onezee.triptrack.feature.me
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.theme.*
@@ -24,11 +37,20 @@ import java.util.Locale
 import kotlinx.coroutines.*
 
 // iOS: MyProfileView.avatars, CountryChoice.all, UsernameEditorSheet.normalize.
+internal enum class UsernameError { tooShort, invalidChars }
+
 internal object ProfileIdentityChoices {
     val avatars = listOf("😎", "🙂", "😄", "🤠", "🥸", "🧔", "👨‍🦳", "👩", "👩‍🦰", "👱‍♀️", "👵", "🐶")
     val countries = "RU DE US GB FR IT ES PL KZ BY UA TR GE AM CN JP KR FI SE CZ AZ UZ KG TJ TM MD LT LV EE NO DK NL BE AT CH PT GR HU RO BG SK SI HR RS IE IS MN IL AE IN TH VN ID CA MX BR AR AU NZ ZA EG MA".split(' ')
     fun username(raw: String) = Regex("\\X").findAll(raw.lowercase(Locale.ROOT).trimStart('@')).take(20).joinToString("") { it.value }
     fun validUsername(value: String) = value.matches(Regex("[a-z0-9._]{3,20}"))
+    /** iOS UsernameEditorSheet.revalidate: nothing to say while empty or unchanged, the length first, then the letters. */
+    fun usernameError(value: String, initial: String): UsernameError? = when {
+        value.isEmpty() || value == initial -> null
+        Regex("\\X").findAll(value).count() < 3 -> UsernameError.tooShort
+        !value.matches(Regex("[a-z0-9._]+")) -> UsernameError.invalidChars
+        else -> null
+    }
     fun flag(value: String): String? = when (value) {
         "WORLD" -> "🌍"; "NEUTRAL" -> "🏳️"
         else -> value.uppercase(Locale.ROOT).takeIf { it.length == 2 && it.all { char -> char in 'A'..'Z' } }
@@ -141,19 +163,64 @@ private fun FollowCard(social: MyProfileSocial) {
     }
 }
 
+/**
+ * iOS UsernameEditorSheet: the name editor's chrome over a bordered field with the «@» glued to the
+ * handle, the rules and a counter under it, and a line that says what is wrong while it is wrong.
+ * The field takes the keyboard at once, as the name's does: build 13 opened a bare «@» with no caret
+ * and a button at the bottom, a different editor one row below the name's.
+ *
+ * There is no server to ask whether a handle is free (iOS asks nobody either, `canCheckAvailability:
+ * false`), so a valid new handle can be saved after the same 400 ms the iPhone waits for its answer.
+ */
 @Composable
-private fun UsernameEditor(initial: String, onSave: (String) -> Unit, onClose: () -> Unit) {
+internal fun UsernameEditor(initial: String, onSave: (String) -> Unit, onClose: () -> Unit) {
     val strings = appStrings
-    var text by rememberSaveable { mutableStateOf(initial) }
+    val colors = AppTheme.colors
+    val start = remember(initial) { ProfileIdentityChoices.username(initial) }
+    var text by rememberSaveable { mutableStateOf(start) }
     var ready by remember { mutableStateOf(false) }
-    LaunchedEffect(text) { ready = false; if (ProfileIdentityChoices.validUsername(text) && text != initial) { delay(400); ready = true } }
-    ContentSizedSheet(onClose, background = AppTheme.colors.bg) {
-        MeSheetHeader(strings.usernameTitle()) { dismiss() }
-        MeField("@", text, { text = ProfileIdentityChoices.username(it) }, tag = "username_editor_field")
-        Text(strings.usernameHint(), Modifier.padding(16.dp), style = AppType.caption, color = AppTheme.colors.textSecondary)
-        if (text.isNotEmpty() && text.length < 3) MeRow(strings.usernameTooShort())
-        else if (text.isNotEmpty() && !ProfileIdentityChoices.validUsername(text)) MeRow(strings.usernameInvalidChars())
-        // iOS also has no availability endpoint; a failed check allows a locally stored handle.
-        MeAction(strings.done(), { onSave(text); onClose() }, Modifier.padding(16.dp), enabled = ready)
+    val focus = remember { FocusRequester() }
+    var focused by remember { mutableStateOf(false) }
+    val error = ProfileIdentityChoices.usernameError(text, start)?.let { if (it == UsernameError.tooShort) strings.usernameTooShort() else strings.usernameInvalidChars() }
+    LaunchedEffect(text) { ready = false; if (ProfileIdentityChoices.validUsername(text) && text != start) { delay(400); ready = true } }
+    ContentSizedSheet(onClose, background = colors.bg) {
+        val sheet = this
+        fun save() { if (ready) { onSave(text); sheet.dismiss() } }
+        ProfileEditorHeader(strings.usernameTitle(), ready, "username_editor_done", onCancel = { sheet.dismiss() }, onDone = ::save)
+        val border = if (error != null) AppTheme.red else if (focused) AppTheme.accent else colors.borderBright
+        Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().background(colors.card, RoundedCornerShape(14.dp))
+            .border(1.5.dp, border, RoundedCornerShape(14.dp)).padding(start = 16.dp, end = 8.dp).heightIn(min = 52.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            // Glued to the handle, so the two read as one word; never part of what is stored.
+            Text("@", style = inter(17f, InterWeight.semibold), color = colors.textTertiary)
+            BasicTextField(text, { text = ProfileIdentityChoices.username(it) },
+                Modifier.weight(1f).padding(vertical = 14.dp).focusRequester(focus).onFocusChanged { focused = it.isFocused }
+                    .semantics { contentDescription = strings.usernameTitle() }.testTag("username_editor_field"),
+                singleLine = true, textStyle = inter(17f, InterWeight.semibold).copy(color = colors.text), cursorBrush = SolidColor(AppTheme.accent),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, autoCorrectEnabled = false, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { save() }))
+            if (text.isNotEmpty()) Box(Modifier.size(44.dp).clickable(role = Role.Button) { text = "" }.testTag("username_editor_clear"), contentAlignment = Alignment.Center) {
+                Glyph(AppGlyph.xmarkCircleFill, strings.calendarClearFilter(), tint = colors.textTertiary, size = 18.dp)
+            }
+        }
+        Column(Modifier.padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Two lines kept, as on iOS: the sheet is as tall as its content and must not twitch.
+                Text(strings.usernameHint(), Modifier.weight(1f), style = inter(11.5f), color = colors.textSecondary, minLines = 2)
+                val count = ProfileTextRules.count(text)
+                Text("$count/$USERNAME_MAX", style = inter(11f, InterWeight.medium, monospacedDigits = true),
+                    color = if (count >= USERNAME_MAX) AppTheme.red else colors.textTertiary)
+            }
+            // Fixed height, so the line coming and going never resizes the sheet.
+            Row(Modifier.height(16.dp).testTag("username_editor_verdict"), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (error != null) {
+                    Glyph(AppGlyph.xmark, null, tint = AppTheme.red, size = 10.dp)
+                    Text(error, style = inter(12f, InterWeight.semibold), color = AppTheme.red, maxLines = 1)
+                }
+            }
+        }
+        LaunchedEffect(Unit) { delay(100); focus.requestFocus() }
     }
 }
+
+private const val USERNAME_MAX = 20
