@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.*
+import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.model.ProfileBackground
@@ -81,14 +83,20 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
     }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding()) {
         CustomNavBar(strings.myProfileTitle(), onBack)
-        Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 40.dp)) {
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = tabBarContentClearance())) {
             val colors = identity.effectiveBackground.colors()
             Box(Modifier.fillMaxWidth().height(112.dp).then(if (colors.isNotEmpty()) Modifier.background(Brush.linearGradient(colors)) else Modifier.background(AppTheme.accentBg)))
             Column(Modifier.fillMaxWidth().offset(y = (-48).dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(Modifier.size(96.dp).background(AppTheme.colors.card, CircleShape).clickable(role = Role.Button) { avatars = !avatars }, contentAlignment = Alignment.Center) {
                     Text(identity.avatarEmoji, style = inter(52f))
+                    Box(Modifier.align(Alignment.BottomEnd).size(28.dp).background(AppTheme.accent, CircleShape), contentAlignment = Alignment.Center) {
+                        Glyph(AppGlyph.pencil, null, tint = Color.White, size = 13.dp)
+                    }
                 }
-                MeRow(strings.myProfileChangeAvatar(), tag = "profile_avatar_picker", onClick = { avatars = !avatars })
+                Text(identity.name.ifBlank { strings.meAddYourName() }, Modifier.padding(top = 8.dp), style = inter(17f, InterWeight.bold), color = AppTheme.colors.text, maxLines = 1)
+                Text(identity.username.takeIf(String::isNotEmpty)?.let { "@$it" }.orEmpty(), style = AppType.caption, color = AppTheme.colors.textSecondary, maxLines = 1)
+                Text(strings.myProfileChangeAvatar(), Modifier.padding(top = 8.dp).clickable(role = Role.Button) { avatars = !avatars }.testTag("profile_avatar_picker"),
+                    style = inter(13f, InterWeight.semibold), color = AppTheme.accent)
                 if (avatars) Column(Modifier.padding(horizontal = 16.dp)) {
                     ProfileIdentityChoices.avatars.chunked(4).forEach { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         row.forEach { emoji -> Box(Modifier.size(64.dp).background(if (identity.avatarEmoji == emoji) AppTheme.accentBg else AppTheme.colors.cardAlt, CircleShape)
@@ -126,6 +134,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
     }
     if (backgrounds) SettingsOptionPicker(strings.settingsProfileBackground(), MePlusGate.backgrounds, identity.effectiveBackground, "",
         label = { if (it == ProfileBackground.none) strings.cosmeticDefaultOption() else it.rawValue.replaceFirstChar(Char::uppercase) },
+        badgeTint = { it.colors().firstOrNull() },
         onSelect = { save { store.setBackground(it) } }, onDismissRequest = { backgrounds = false }, testTagPrefix = "profile_background")
     if (username) UsernameEditor(identity.username, { store.setUsername(it) }, { username = false })
 }

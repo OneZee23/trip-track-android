@@ -79,3 +79,11 @@ class LegacyVehicleCatalogTests {
     }
     @Test fun aSilhouetteForeignToTheTypeIsNotHandedOut() { assertEquals("motorcycle", catalog.defaultBody(VehicleCatalog.Model("Hilux", listOf("pickup")), VehicleType.moto)) }
 }
+
+class CatalogYearRangeTests {
+    @Test fun openEndedGenerationsContinueThroughTheCurrentYear() {
+        assertEquals("2018–2026", catalogYearRange(2018, null, 2026))
+        assertEquals("2018–2022", catalogYearRange(2018, 2022, 2026))
+        assertEquals("", catalogYearRange(null, null, 2026))
+    }
+}

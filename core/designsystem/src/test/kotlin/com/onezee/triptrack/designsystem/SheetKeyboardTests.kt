@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import android.graphics.Insets
 import android.view.WindowInsets
 import com.onezee.triptrack.designsystem.components.ContentSizedSheet
+import com.onezee.triptrack.designsystem.components.contentSizedSheetBottomInset
 import com.onezee.triptrack.designsystem.components.SheetDetent
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +41,12 @@ import kotlin.test.assertTrue
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35], qualifiers = "w360dp-h640dp-xhdpi")
 class SheetKeyboardTests {
+    @Test fun androidTenAndElevenFallBackToTheActivityInsetOnlyWhenDialogHasNone() {
+        assertEquals(48, contentSizedSheetBottomInset(29, 0, 48))
+        assertEquals(48, contentSizedSheetBottomInset(30, 0, 48))
+        assertEquals(24, contentSizedSheetBottomInset(29, 24, 48))
+        assertEquals(0, contentSizedSheetBottomInset(31, 0, 48))
+    }
     private val compose = createAndroidComposeRule<ComponentActivity>()
 
     @get:Rule

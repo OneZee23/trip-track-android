@@ -103,7 +103,7 @@ internal object SnapshotRules {
         val minLon = points.minOf { it.longitude }
         val maxLon = points.maxOf { it.longitude }
         return SnapshotRegion((minLat + maxLat) / 2, (minLon + maxLon) / 2,
-            max((maxLat - minLat) * 1.4, minimumSpan), max((maxLon - minLon) * 1.4, minimumSpan))
+            max((maxLat - minLat) * 1.8, minimumSpan), max((maxLon - minLon) * 1.8, minimumSpan))
     }
 
     fun finishFlagPointsUp(endY: Float, poleHeight: Float = 6f, flagHeight: Float = 3f): Boolean = endY > poleHeight + flagHeight + 2f

@@ -119,7 +119,7 @@ internal fun CountryScreen(selection: String, onSelect: (String) -> Unit, onBack
                     Row(Modifier.fillMaxWidth().background(if (selection == code) AppTheme.accentBg else Color.Transparent)
                         .clickable(role = Role.Button) { choose(code) }.padding(14.dp).testTag("country_$code").semantics { selected = selection == code },
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(11.dp)) {
-                        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) {
+                        Box(Modifier.width(32.dp), contentAlignment = Alignment.Center) {
                             val flag = ProfileIdentityChoices.flag(code)
                             if (flag == null) Glyph(AppGlyph.xmark, null, tint = AppTheme.colors.textSecondary, size = 16.dp)
                             else Text(flag, style = inter(18f))

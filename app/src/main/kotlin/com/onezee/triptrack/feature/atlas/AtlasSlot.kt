@@ -4,6 +4,9 @@ package com.onezee.triptrack.feature.atlas
 // iOS: AtlasSheetDetent.swift
 enum class AtlasSheetDetent { peek, collapsed, expanded }
 
+internal fun atlasOwnsBack(tripStackCanPop: Boolean, hasSelection: Boolean, hasHome: Boolean, detent: AtlasSheetDetent): Boolean =
+    !tripStackCanPop && (hasSelection || hasHome || detent == AtlasSheetDetent.expanded)
+
 // iOS: AtlasSheetDetent.swift
 enum class AtlasSummaryVariant(val contentHeight: Double) {
     summary(220.0), shortCard(212.0), emptyAtlas(230.0), withNoticeRow(276.0), region(298.0)

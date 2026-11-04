@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.hasTestTag
@@ -35,6 +36,8 @@ import java.time.ZoneOffset
 import java.util.UUID
 import org.junit.Rule
 import org.junit.Test
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.rules.RuleChain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -111,6 +114,24 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun vehiclePhotoVisibilityQuestion() = shot("vehicle_photo_visibility_question") {
         AppConfirmDialog(appStrings.vehiclePhotoAskTitle(), appStrings.vehiclePhotoAskBody(),
             listOf(AppDialogAction(appStrings.vehiclePhotoAskShow()) {}), {}, appStrings.vehiclePhotoAskKeep())
+    }
+    @Test fun badgePinConfirmsAndCanBeUndone() {
+        val pinned = mutableStateOf(false)
+        compose.setContent {
+            TripTrackTheme(isDark = dark, language = AppLanguage.ru, reduceMotion = true) {
+                BadgeDetailScreen(
+                    AchievementRow("first_trip", BadgeCategory.distance, BadgeRarity.common, unlocked = true, earnCount = 1),
+                    onBack = {}, pinned = pinned.value, onPin = { pinned.value = true }, onUnpin = { pinned.value = false },
+                )
+            }
+        }
+        compose.onNodeWithTag("achievement_pin").performClick()
+        compose.onNodeWithTag("achievement_pin_confirm").assertExists().performClick()
+        compose.mainClock.advanceTimeBy(500)
+        compose.waitForIdle()
+        assertTrue(pinned.value)
+        compose.onNodeWithTag("achievement_pin").performClick()
+        assertFalse(pinned.value)
     }
     @Test fun trackingMapLoading() = shot("tracking_map_loading") {
         com.onezee.triptrack.recording.TrackingScreen(

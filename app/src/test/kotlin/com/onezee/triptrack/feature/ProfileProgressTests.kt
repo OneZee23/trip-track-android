@@ -4,6 +4,9 @@ package com.onezee.triptrack.feature
 import com.onezee.triptrack.data.db.entity.UserSettingsEntity
 import com.onezee.triptrack.feature.me.*
 import com.onezee.triptrack.model.ProfileProgress
+import com.onezee.triptrack.model.Trip
+import com.onezee.triptrack.model.TripOrigin
+import java.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -31,5 +34,14 @@ class ProfileProgressTests : WorldTest() {
         db.settingsDao().upsert(old)
         ProfileProgressStore(db).merge(21, 25_730) { false }
         assertEquals(old, db.settingsDao().settings())
+    }
+    @Test fun launchBackfillUsesLibraryTripsOnlyWhenProgressIsEmpty() = runTest(dispatcher) {
+        db.settingsDao().upsert(UserSettingsEntity(userId))
+        val trip = Trip(startDate = Instant.parse("2024-01-01T00:00:00Z"), distance = 12_000.0, source = TripOrigin.recorded)
+        val store = ProfileProgressStore(db)
+        store.backfillIfNeeded(listOf(trip))
+        assertEquals(12L, db.settingsDao().settings()?.profileXP)
+        store.backfillIfNeeded(listOf(trip.copy(distance = 50_000.0)))
+        assertEquals(12L, db.settingsDao().settings()?.profileXP)
     }
 }

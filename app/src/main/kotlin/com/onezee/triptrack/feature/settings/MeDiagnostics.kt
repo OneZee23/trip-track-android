@@ -3,13 +3,20 @@ package com.onezee.triptrack.feature.settings
 
 import android.content.Intent
 import androidx.compose.runtime.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.core.content.FileProvider
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.Text
+import com.onezee.triptrack.designsystem.components.CustomNavBar
+import com.onezee.triptrack.designsystem.components.surfaceCard
 import com.onezee.triptrack.designsystem.theme.*
+import androidx.compose.ui.unit.dp
 import java.io.File
 import java.time.Instant
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +56,9 @@ internal fun DebugLogsContent(graph: AppGraph, onBack: () -> Unit) {
     var sharing by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     val rows by produceState<List<String>?>(null) { value = withContext(Dispatchers.IO) { graph.meDiagnostics.read().asReversed() } }
-    SettingsDetail(strings.logsJournalTitle(), onBack) {
-        Text(strings.logsPrivacyCaption(), style = AppType.caption, color = AppTheme.colors.textSecondary)
+    Column(Modifier.fillMaxSize().background(AppTheme.colors.bg)) {
+        CustomNavBar(strings.logsJournalTitle(), onBack)
+        Text(strings.logsPrivacyCaption(), Modifier.padding(horizontal = 16.dp, vertical = 10.dp), style = AppType.caption, color = AppTheme.colors.textSecondary)
         MeAction(strings.logsShareFile(), {
             if (!sharing) {
                 sharing = true
@@ -68,10 +76,19 @@ internal fun DebugLogsContent(graph: AppGraph, onBack: () -> Unit) {
                     finally { sharing = false }
                 }
             }
-        }, Modifier.testTag("logs_share"), enabled = !sharing && !rows.isNullOrEmpty())
-        if (failed) MeRow(strings.logsLoadFailed())
-        if (rows == null) MeRow(strings.loadingGeneric())
-        else if (rows!!.isEmpty()) MeRow(strings.logsEmpty())
-        else rows!!.forEach { line -> Text(line, style = interScaled(11f), color = AppTheme.colors.textSecondary) }
+        }, Modifier.padding(horizontal = 16.dp).testTag("logs_share"), enabled = !sharing && !rows.isNullOrEmpty())
+        if (failed) Box(Modifier.padding(horizontal = 16.dp)) { MeRow(strings.logsLoadFailed()) }
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp)) {
+            when {
+                rows == null -> MeRow(strings.loadingGeneric())
+                rows!!.isEmpty() -> MeRow(strings.logsEmpty())
+                else -> Column(Modifier.fillMaxWidth().surfaceCard(14.dp).padding(horizontal = 12.dp)) {
+                    rows!!.forEachIndexed { index, line ->
+                        if (index > 0) Spacer(Modifier.fillMaxWidth().height(1.dp).background(AppTheme.colors.border))
+                        Text(line, Modifier.fillMaxWidth().padding(vertical = 9.dp), style = interScaled(11f), color = AppTheme.colors.textSecondary)
+                    }
+                }
+            }
+        }
     }
 }

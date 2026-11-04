@@ -1,5 +1,10 @@
 package com.onezee.triptrack.designsystem.components
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.os.Build
+import android.view.WindowInsets as AndroidWindowInsets
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.spring
@@ -22,6 +27,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
@@ -45,6 +51,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
@@ -132,6 +140,20 @@ fun ContentSizedSheet(
     content: @Composable SheetScope.() -> Unit,
 ) {
     val density = LocalDensity.current
+    val context = LocalContext.current
+    val view = LocalView.current
+    val dialogNavigationBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val activityNavigationBottom = remember(context, view) {
+        val activity = context.findActivity()
+        val insets = activity?.window?.decorView?.rootWindowInsets
+            ?.getInsets(AndroidWindowInsets.Type.navigationBars())?.bottom ?: 0
+        insets
+    }
+    val bottomInsetPx = contentSizedSheetBottomInset(
+        Build.VERSION.SDK_INT,
+        with(density) { dialogNavigationBottom.roundToPx() },
+        activityNavigationBottom,
+    )
     val reduceMotion = LocalReduceMotion.current
     val scope = rememberCoroutineScope()
     val currentOnDismiss by rememberUpdatedState(onDismissRequest)
@@ -218,7 +240,11 @@ fun ContentSizedSheet(
                         .background(background, shape)
                         // A modifier, not a number: the keyboard's padding above has consumed the
                         // bar's inset, so with the keys up the content does not float a bar's height over them.
-                        .then(if (contentClearsNavigationBar) Modifier else Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
+                        .then(when {
+                            contentClearsNavigationBar -> Modifier
+                            Build.VERSION.SDK_INT in 29..30 && dialogNavigationBottom == 0.dp -> Modifier.padding(bottom = with(density) { bottomInsetPx.toDp() })
+                            else -> Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                        })
                         .then(
                             if (grabber) Modifier.drawWithContent {
                                 drawContent()
@@ -236,6 +262,15 @@ fun ContentSizedSheet(
         }
     }
 }
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+internal fun contentSizedSheetBottomInset(api: Int, dialogInsetPx: Int, activityInsetPx: Int): Int =
+    if (api in 29..30 && dialogInsetPx == 0) activityInsetPx else dialogInsetPx
 
 /** The system grabber of an iPhone sheet: 34 × 5, 8 below the top edge, the ink at 18 %. */
 internal val GrabberWidth = 34.dp

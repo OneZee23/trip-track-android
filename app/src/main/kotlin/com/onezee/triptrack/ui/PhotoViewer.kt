@@ -32,6 +32,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,12 +52,14 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import android.view.View
 import com.onezee.triptrack.designsystem.components.AppConfirm
 import com.onezee.triptrack.designsystem.components.AppDialogAction
 import com.onezee.triptrack.designsystem.components.AppGlyph
@@ -92,6 +95,8 @@ fun PhotoViewer(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onDelete: ((UUID) -> Unit)? = null,
+    onMarkPlace: ((UUID) -> Unit)? = null,
+    markPlaceIds: Set<UUID> = emptySet(),
 ) {
     val strings = appStrings
     val haptics = rememberHaptics()
@@ -104,6 +109,12 @@ fun PhotoViewer(
     val drag = remember { Animatable(0f) }
     var confirmingDelete by remember { mutableStateOf<ViewerPage?>(null) }
     val density = LocalDensity.current
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val originalFlags = view.systemUiVisibility
+        view.systemUiVisibility = originalFlags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        onDispose { view.systemUiVisibility = originalFlags }
+    }
     val dismissProgress = (maxOf(drag.value, 0f) / with(density) { 260.dp.toPx() }).coerceIn(0f, 1f)
     val chromeAlpha by animateFloatAsState(if (!chromeHidden && !zoomed) 1f - dismissProgress else 0f, tween(180), label = "viewerChrome")
 
@@ -149,6 +160,11 @@ fun PhotoViewer(
                 if (onDelete != null) {
                     ViewerButton(AppGlyph.trash, strings.delete(), "photo_viewer_delete", enabled = chromeAlpha > 0.5f) {
                         live.getOrNull(pager.currentPage)?.let { confirmingDelete = it }
+                    }
+                }
+                if (onMarkPlace != null && live.getOrNull(pager.currentPage)?.id?.let { it in markPlaceIds } == true) {
+                    ViewerButton(AppGlyph.mappinAndEllipse, strings.checkpointMarkPlace(), "photo_viewer_mark_place", enabled = chromeAlpha > 0.5f) {
+                        live.getOrNull(pager.currentPage)?.let { onMarkPlace(it.id) }
                     }
                 }
                 ViewerButton(AppGlyph.xmark, strings.closeSheet(), "photo_viewer_close", enabled = chromeAlpha > 0.5f, onClick = onDismiss)

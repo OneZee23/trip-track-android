@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.designsystem.components.AppGlyph
@@ -130,12 +129,13 @@ fun TripLiveMap(
         styleUri = style,
         // The one map moves between the hero and the fullscreen layer and fades in both.
         textureMode = true,
+        gesturesEnabled = fullscreen,
     )
 }
 
 /** The fit of the hero: the whole route with 30 of air (iOS RouteMapView.defaultFitInsets), no animation. */
 fun heroFit(route: RouteShape?): MapCameraCommand? =
-    route?.bounds?.let { MapCameraCommand.FitRoute(it, MapCameraCommand.DEFAULT_ROUTE_INSETS, animated = false) }
+    route?.bounds?.let { MapCameraCommand.FitRoute(it, MapInsets(top = 52.0, left = 40.0, bottom = 40.0, right = 52.0), animated = false) }
 
 /**
  * The fit of the fullscreen layer (iOS FullscreenMapSheet.fitPadding without replay): 56 under the
@@ -159,14 +159,6 @@ fun RoutePlaceholder(coordinates: List<GeoPoint>, modifier: Modifier = Modifier)
             Glyph(AppGlyph.map, contentDescription = null, tint = AppTheme.colors.textTertiary, size = 34.dp)
         }
     }
-}
-
-/**
- * Takes every touch on the hero away from the map without consuming it: the page above still
- * scrolls, and MapLibre never pans (iOS: the hero is `isInteractive: false`).
- */
-fun Modifier.mapTouchShield(): Modifier = pointerInput(Unit) {
-    awaitPointerEventScope { while (true) awaitPointerEvent() }
 }
 
 /**

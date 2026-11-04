@@ -1,5 +1,6 @@
 package com.onezee.triptrack.feature.journey.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -75,6 +77,14 @@ import com.onezee.triptrack.feature.journey.JourneyDetailState
 import com.onezee.triptrack.feature.journey.JourneyDetailViewModel
 import com.onezee.triptrack.feature.journey.JourneyItemState
 import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.map.MapHost
+import com.onezee.triptrack.map.MapHostState
+import com.onezee.triptrack.map.camera.MapCameraCommand
+import com.onezee.triptrack.map.camera.MapInsets
+import com.onezee.triptrack.map.marker.MapMarker
+import com.onezee.triptrack.map.route.MapRoutes
+import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.model.Journey
@@ -86,6 +96,8 @@ import com.onezee.triptrack.ui.DetailTopBar
 import com.onezee.triptrack.ui.LightRoutePreview
 import com.onezee.triptrack.ui.LoadingMoreRow
 import com.onezee.triptrack.ui.MapChromeButton
+import com.onezee.triptrack.ui.LiveMaps
+import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.ui.PhotoImage
 import com.onezee.triptrack.ui.PhotoSource
 import com.onezee.triptrack.ui.RegionDisplay
@@ -156,6 +168,7 @@ private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeatu
     val progress = heroProgress(with(density) { scroll.value.toDp().value }, 240f)
     var toast by remember { mutableStateOf<ToastItem?>(null) }
     var showActions by remember { mutableStateOf(false) }
+    var mapFullscreen by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf<Journey?>(null) }
     var editOpenings by remember { mutableIntStateOf(0) }
 
@@ -172,7 +185,7 @@ private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeatu
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("journey_detail")) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             if (social != null && state.author != null) AuthorRow(state, dateRange) { state.author?.let { navigator.push(TripsDestination.PublicProfile(it.id)) } }
-            JourneyHero(state, title, dateRange)
+            JourneyHero(state, title, dateRange, onExpand = { mapFullscreen = true })
             Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
                 if (!state.isSocial && state.loaded && state.trips.isEmpty()) {
                     EmptyCard { haptics.tap(); scope.launch { editing = withContext(feature.worker) { feature.journey(vm.journeyId) }; editOpenings++ } }
@@ -212,6 +225,7 @@ private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeatu
                 }
             }),
         )
+        if (mapFullscreen) JourneyMapFullscreen(state, onClose = { mapFullscreen = false })
         ToastHost(toast, onDismiss = { toast = null })
     }
 
@@ -265,7 +279,7 @@ private fun AuthorRow(state: JourneyDetailState, dateRange: String, onClick: () 
  * route of every leg, under a dark gradient carrying the title and «12–17 СЕНТ. · КРАСНОДАР. КРАЙ».
  */
 @Composable
-private fun JourneyHero(state: JourneyDetailState, title: String, dateRange: String) {
+private fun JourneyHero(state: JourneyDetailState, title: String, dateRange: String, onExpand: () -> Unit) {
     val strings = appStrings
     val regions = state.trips.mapNotNull { RegionDisplay.localized(it.region, strings.language)?.takeIf(String::isNotEmpty) }.distinct()
     val caption = (listOfNotNull(dateRange.takeIf { title != it && it.isNotEmpty() }) + regions.joinToString(", ").takeIf { it.isNotEmpty() }.let(::listOfNotNull))
@@ -275,10 +289,7 @@ private fun JourneyHero(state: JourneyDetailState, title: String, dateRange: Str
         when {
             cover != null -> PhotoImage(PhotoSource.Local(cover.filename), maxPixels = 1200, modifier = Modifier.fillMaxSize().testTag("journey_hero_cover"))
             // iOS fits the legs' map clear of the buttons above and the title below; so does the stand-in.
-            state.coordinates.size > 1 -> Box(Modifier.fillMaxSize().background(AppTheme.colors.cardAlt)) {
-                LightRoutePreview(state.trips.map { it.coordinates }.filter { it.size > 1 },
-                    Modifier.fillMaxSize().padding(start = 24.dp, top = 64.dp, end = 24.dp, bottom = 96.dp), accent = AppTheme.accent)
-            }
+            state.coordinates.size > 1 -> JourneyRouteMap(state, Modifier.fillMaxSize(), fullscreen = false)
             else -> Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.88f)), contentAlignment = Alignment.Center) {
                 Glyph(AppGlyph.map, contentDescription = null, tint = Color.White.copy(alpha = 0.35f), size = 34.dp)
             }
@@ -288,8 +299,44 @@ private fun JourneyHero(state: JourneyDetailState, title: String, dateRange: Str
             Text(title, style = inter(26f, InterWeight.bold), letterSpacing = points(-0.5f), color = Color.White, maxLines = 2, modifier = Modifier.testTag("journey_title"))
             if (caption.isNotEmpty()) Text(caption, style = inter(10f, InterWeight.bold), letterSpacing = points(0.4f), color = Color.White.copy(alpha = 0.78f), maxLines = 2)
         }
+        if (state.coordinates.size > 1) MapChromeButton(AppGlyph.arrowUpLeftAndArrowDownRight, strings.openRouteMapA11y(), onExpand,
+            Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 8.dp).testTag("journey_map_expand"))
     }
 }
+
+@Composable
+private fun JourneyMapFullscreen(state: JourneyDetailState, onClose: () -> Unit) {
+    BackHandler(onBack = onClose)
+    Box(Modifier.fillMaxSize().background(Color.Black).testTag("journey_fullscreen_map")) {
+        JourneyRouteMap(state, Modifier.fillMaxSize(), fullscreen = true)
+        MapChromeButton(AppGlyph.xmark, appStrings.closeSheet(), onClose,
+            Modifier.align(Alignment.TopStart).windowInsetsPadding(WindowInsets.safeDrawing).padding(start = 12.dp, top = 8.dp).testTag("journey_map_close"), progress = 1f)
+    }
+}
+
+@Composable
+private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fullscreen: Boolean) {
+    val mapState = remember { MapHostState() }
+    val route = remember(state.coordinates) { RouteGeometry.build(state.coordinates, preview = true) }
+    val markers = remember(state.checkpoints) { journeyCheckpointMarkers(state.checkpoints) }
+    val dark = AppTheme.isDark
+    val style = remember(dark) { LiveMaps.style(dark) }
+    LaunchedEffect(route.bounds, fullscreen) {
+        route.bounds?.let { bounds -> mapState.execute(MapCameraCommand.FitRoute(bounds,
+            if (fullscreen) MapInsets.all(40.0) else MapInsets(top = 64.0, bottom = 96.0, left = 24.0, right = 24.0), animated = false)) }
+    }
+    if (LocalLiveMaps.current) MapHost(mapState, modifier, routes = MapRoutes(listOf(route), RouteAppearance.plain), markers = markers,
+        systemInsets = if (fullscreen) WindowInsets.safeDrawing else WindowInsets(0), styleUri = style,
+        gesturesEnabled = fullscreen, textureMode = true)
+    else Box(modifier.background(AppTheme.colors.cardAlt)) {
+        LightRoutePreview(listOf(state.coordinates), Modifier.fillMaxSize(), accent = AppTheme.accent)
+    }
+}
+
+internal fun journeyCheckpointMarkers(checkpoints: List<com.onezee.triptrack.feature.trip.CheckpointState>): List<MapMarker> =
+    checkpoints.mapNotNull { checkpoint -> checkpoint.coordinate?.let {
+        MapMarker("journey_checkpoint:${checkpoint.id}", it, MapMarker.Kind.CHECKPOINT)
+    } }
 
 /** iOS: totals. Days, kilometres, legs (public legs on someone else's), and time on the road (own only). */
 @Composable

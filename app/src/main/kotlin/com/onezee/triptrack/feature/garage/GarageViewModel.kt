@@ -111,6 +111,7 @@ data class VehiclePassportState(
     val sheet: VehicleSheet? = null,
     val loaded: Boolean = false,
     val failed: Boolean = false,
+    val selectedVehicleId: UUID? = null,
 )
 
 // iOS: VehicleDetailView.swift.
@@ -126,12 +127,14 @@ class VehiclePassportViewModel(
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val now: () -> Instant = Instant::now,
     private val atlasProvider: () -> RegionAtlas = { RegionAtlas.shared },
+    selectedVehicleId: StateFlow<UUID?> = MutableStateFlow(null),
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val mutableState = MutableStateFlow(VehiclePassportState())
     val state = mutableState.asStateFlow()
     private var unit = appUnit.value
     private var loadTask: Job? = null
     init {
+        viewModelScope.launch { selectedVehicleId.collect { id -> mutableState.update { it.copy(selectedVehicleId = id) } } }
         viewModelScope.launch { appUnit.collect { value -> unit = value; mutableState.update { it.copy(dashboardUnit = it.vehicle?.dashboardUnit(value) ?: value) } } }
         viewModelScope.launch { events.filter { it in setOf(WorldChange.trips, WorldChange.sync, WorldChange.garage) }.collect { load() } }
         load()

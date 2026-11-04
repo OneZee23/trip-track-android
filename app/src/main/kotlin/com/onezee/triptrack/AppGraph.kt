@@ -316,6 +316,8 @@ class AppGraph(
             val id = settings.loadOrCreate().id
             userId = id
             userIdLoaded.complete(id)
+            val progressStore = com.onezee.triptrack.feature.me.ProfileProgressStore(database)
+            progressStore.backfillIfNeeded(trips.fetchAllTrips())
             location.start()
             // iOS MapViewModel's launch migrations: the territory of the whole library once (the
             // Atlas counts cities by it), then the one-off build of the opened world.

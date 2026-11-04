@@ -63,6 +63,7 @@ fun TripDiscussion(tripId: UUID, isOwner: Boolean, isOnServer: Boolean, initialC
     val colors = AppTheme.colors
     var open by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(focus == com.onezee.triptrack.model.TripFocus.Comments || focus is com.onezee.triptrack.model.TripFocus.Comment) }
     var focused by remember { mutableStateOf(false) }
+    var signIn by remember { mutableStateOf(false) }
     LaunchedEffect(vm, isOnServer) { vm.load(isOnServer) }
     if (state.unavailable) return
     val count = if (!state.hasLoadedOnce || state.loadFailed || state.nextCursor != null) maxOf(initialCount, state.comments.size) else state.comments.size
@@ -86,7 +87,9 @@ fun TripDiscussion(tripId: UUID, isOwner: Boolean, isOnServer: Boolean, initialC
                         .plainPressFeedback(interaction)
                         .background(colors.cardAlt, RoundedCornerShape(12.dp))
                         .border(1.dp, colors.border, RoundedCornerShape(12.dp))
-                        .clickable(interactionSource = interaction, indication = null, role = Role.Button) { focused = true; open = true }
+                        .clickable(interactionSource = interaction, indication = null, role = Role.Button) {
+                            if (social.signedIn) { focused = true; open = true } else signIn = true
+                        }
                         .padding(horizontal = 12.dp, vertical = 9.dp)
                         .testTag("discussion_cta_row"),
                     horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically,
@@ -113,6 +116,7 @@ fun TripDiscussion(tripId: UUID, isOwner: Boolean, isOnServer: Boolean, initialC
             }
         }
     }
+    if (signIn) social.auth?.let { SignInPromptSheet(SignInAction.comment, it, onDismissRequest = { signIn = false }) }
     if (open) TripCommentsSheet(tripId, isOwner, isOnServer, count, focused, social, navigator, onDismiss = { open = false; vm.load(isOnServer) }, highlightId = (focus as? com.onezee.triptrack.model.TripFocus.Comment)?.id, model = vm)
 }
 

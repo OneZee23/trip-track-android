@@ -64,6 +64,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var mutating by remember { mutableStateOf(false) }
     // iOS journalSignIn: the compact sign-in row on a journal that already has trips opens the prompt sheet.
     var signInOpen by rememberSaveable { mutableStateOf(false) }
+    var pinnedBadgeId by remember { mutableStateOf(feature.pinnedBadgeId) }
     // iOS GroupsWaitlistStore: the row under the sections and the clubs screen read one answer.
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     val scope = rememberCoroutineScope()
@@ -219,7 +220,12 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                     graph.vehicles.vehicle(destination.id)?.let { vehicle -> graph.vehicles.updateVehicleVisibility(destination.id, vehicle.visibleToOthers, vehicle.plateVisible, vehicle.mapVisible, true); feature.garage.reload() }
                 })
                 MeRoute.Achievements -> AchievementsScreen(state.achievements, { navigator.pop() }) { navigator.push(MeRoute.Badge(it)) }
-                is MeRoute.Badge -> BadgeDetailScreen(state.achievements.firstOrNull { it.id == destination.id }, { navigator.pop() }, settings.distanceUnit)
+                is MeRoute.Badge -> BadgeDetailScreen(
+                    state.achievements.firstOrNull { it.id == destination.id }, { navigator.pop() }, settings.distanceUnit,
+                    pinned = pinnedBadgeId == destination.id,
+                    onPin = { feature.pinnedBadgeId = destination.id; pinnedBadgeId = destination.id },
+                    onUnpin = { feature.pinnedBadgeId = ""; pinnedBadgeId = "" },
+                )
                 MeRoute.Clubs -> ClubsScreen(graph, waitlist, { waitlist = it }, { navigator.pop() })
                 MeRoute.Levels -> LevelsScreen(state.hero.identity, { navigator.pop() })
                 MeRoute.Country -> CountryScreen(state.hero.identity.country, feature.identity::setCountry, { navigator.pop() })
