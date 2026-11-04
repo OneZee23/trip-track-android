@@ -63,6 +63,7 @@ data class TripReplayFrame(
     val head: com.onezee.triptrack.model.GeoPoint? = null,
     val trailIndex: Int = -1,
     val course: Double = 0.0,
+    val opacity: Double = 1.0,
 )
 
 // iOS: FullscreenMapSheet.swift. Compose owns display-link subscription; the engine stays pure JVM.
@@ -98,7 +99,7 @@ class TripReplayPlayer(val input: TripReplayInput, private val distanceMetres: D
         } else { course = null; lastCarTick = 0.0 }
         frame = TripReplayFrame(engine.phase, engine.progress, engine.distanceFraction, engine.rate,
             engine.holdFractions, engine.holdingIndex, engine.currentSpeedMS, engine.currentSpeedKnown,
-            engine.hasSpeeds, head, trailIndex, course ?: 0.0)
+            engine.hasSpeeds, head, trailIndex, course ?: 0.0, engine.headOpacity)
         if (canCrawl) frame = frame.copy(phase = if (crawl.isPlaying) ReplayBarState.playing else ReplayBarState.idle,
             progress = crawl.progress, distanceFraction = head?.let { PlaybackProgress.fraction(cumulative, input.coords, it, trailIndex) } ?: 0.0)
     }

@@ -40,6 +40,7 @@ import com.onezee.triptrack.model.TripCheckpoint
 import com.onezee.triptrack.model.TripCompanion
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.model.TripEnergyMode
+import com.onezee.triptrack.model.TripHiddenParts
 import com.onezee.triptrack.model.TripOrigin
 import com.onezee.triptrack.model.TripPhoto
 import com.onezee.triptrack.model.TripSegment
@@ -262,6 +263,18 @@ class RoomTripRepository(
         // Photos taken while the trip was private were blocked at enqueue time; without this the
         // public card would show the trip without any of them.
         for (id in publicPhotoIds) sync.enqueue(SyncRequest(SyncEntityType.photo, id, SyncAction.upload))
+    }
+
+    override suspend fun updateHiddenParts(tripId: UUID, hiddenParts: TripHiddenParts?) {
+        var changed = false
+        editTrip(tripId) { entity ->
+            if (JsonColumns.decodeHiddenParts(entity.hiddenPartsJson) == hiddenParts) null
+            else {
+                changed = true
+                entity.copy(hiddenPartsJson = JsonColumns.encodeHiddenParts(hiddenParts)).touchedForUpload()
+            }
+        }
+        if (changed) sync.enqueue(SyncRequest(SyncEntityType.trip, tripId, SyncAction.update))
     }
 
     override suspend fun serverOnlyPhotoIds(tripId: UUID): List<UUID> =
@@ -654,6 +667,12 @@ class RoomTripRepository(
         // must still adopt source=manual, or a web-made route would earn recorded-trip rewards.
         val hasLocalEdits = existing != null && existing.syncStatus == pendingUpload
         val base = existing ?: TripEntity(id = p.id, startDate = p.startDate)
+        val hiddenParts = if (!hasLocalEdits && p.hiddenParts != null) p.hiddenParts else JsonColumns.decodeHiddenParts(base.hiddenPartsJson)
+        val effectiveStart = hiddenParts?.startMetres ?: environment.defaultHiddenEdgeMetres() ?: 0
+        val effectiveEnd = hiddenParts?.endMetres ?: environment.defaultHiddenEdgeMetres() ?: 0
+        val hasMask = effectiveStart > 0 || effectiveEnd > 0 || !hiddenParts?.sections.isNullOrEmpty() ||
+            environment.homeZoneActive() || !p.hiddenRanges.isNullOrEmpty()
+        val protectLocalFullTrack = existing != null && hasMask && trips.countTrackPoints(p.id) > 0
 
         // Old servers omit the breaks: an older peer knowing only points must not erase a pause.
         val remoteBreaks = p.recordingBreaks
@@ -668,11 +687,9 @@ class RoomTripRepository(
         // The server's preview is the ECHO of ours, and under the home privacy zone (0.8.2) it comes
         // back trimmed. Writing it over the local one would cut the person's own yard out of their
         // own map with no way back. A trip from the other phone has no preview here and needs it.
-        val preview = if (base.previewPolyline == null || !environment.homeZoneActive()) {
-            p.previewPolyline?.let(::decodeBase64)
-        } else {
-            base.previewPolyline
-        }
+        val preview = if (protectLocalFullTrack) base.previewPolyline else p.previewPolyline?.let(::decodeBase64)
+        val previewBreaks = if (protectLocalFullTrack) base.previewBreaksJSON else
+            p.previewBreaks?.let(JsonColumns::encodePreviewBreaks) ?: base.previewBreaksJSON
         // Segments replace the list whole when the key came, an empty list clearing them (deleted on
         // the other phone); an absent key keeps ours. Dangling ones are dropped on read.
         val remoteSegments = p.segments
@@ -686,13 +703,13 @@ class RoomTripRepository(
             base.copy(
                 title = p.title,
                 tripDescription = p.description,
-                startDate = p.startDate,
-                endDate = p.endDate,
-                distance = p.distance,
-                maxSpeed = p.maxSpeed,
-                averageSpeed = p.averageSpeed,
-                fuelUsed = p.fuelUsed,
-                elevation = p.elevation,
+                startDate = if (protectLocalFullTrack) base.startDate else p.startDate,
+                endDate = if (protectLocalFullTrack) base.endDate else p.endDate,
+                distance = if (protectLocalFullTrack) base.distance else p.distance,
+                maxSpeed = if (protectLocalFullTrack) base.maxSpeed else p.maxSpeed,
+                averageSpeed = if (protectLocalFullTrack) base.averageSpeed else p.averageSpeed,
+                fuelUsed = if (protectLocalFullTrack) base.fuelUsed else p.fuelUsed,
+                elevation = if (protectLocalFullTrack) base.elevation else p.elevation,
                 region = p.region,
                 isPrivate = p.isPrivate,
                 vehicleId = p.vehicleId,
@@ -703,6 +720,7 @@ class RoomTripRepository(
                 energyMode = energyMode,
                 fuelCurrency = p.fuelCurrency,
                 previewPolyline = preview,
+                previewBreaksJSON = previewBreaks,
                 badgesJSON = p.badgesJson,
                 xpEarned = p.xpEarned ?: 0,
                 conflictVersion = p.conflictVersion,
@@ -713,12 +731,13 @@ class RoomTripRepository(
                 syncStatus = synced,
                 recordingBreaksJSON = breaks,
                 segmentsJSON = segmentsJSON,
+                hiddenPartsJson = JsonColumns.encodeHiddenParts(hiddenParts),
             ),
         )
 
         // Points only when the server sent them (detail/push); a pull delta omits them. An explicit
         // empty list is «the other phone deleted the track», not silence.
-        p.trackPoints?.let { points ->
+        p.trackPoints?.takeUnless { protectLocalFullTrack }?.let { points ->
             trips.deleteTrackPoints(p.id)
             if (points.isNotEmpty()) trips.insertTrackPoints(points.map { it.toEntity(p.id) })
         }
@@ -732,6 +751,7 @@ class RoomTripRepository(
             if (row.uploadStatus == PhotoUploadStatus.localOnly.rawValue) continue
             val remote = serverPhotos[row.id]
             if (remote == null) {
+                if (protectLocalFullTrack) continue
                 trips.deletePhoto(row.id)
                 continue
             }
@@ -1246,6 +1266,7 @@ class RoomTripRepository(
             vehicleId = e.vehicleId,
             fuelCurrency = e.fuelCurrency,
             previewPolyline = e.previewPolyline,
+            previewBreaks = JsonColumns.decodePreviewBreaks(e.previewBreaksJSON),
             earnedBadgeIds = JsonColumns.decodeStrings(e.badgesJSON),
             xpEarned = e.xpEarned,
             companions = JsonColumns.decodeCompanions(e.companionsJSON),
@@ -1255,6 +1276,7 @@ class RoomTripRepository(
             roadFillState = roadFillState(e.roadFillState),
             energyMode = TripEnergyMode.parse(e.energyMode),
             recordingBreaks = JsonColumns.decodeBreaks(e.recordingBreaksJSON),
+            hiddenParts = JsonColumns.decodeHiddenParts(e.hiddenPartsJson),
         )
     }
 

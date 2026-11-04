@@ -19,6 +19,7 @@ class DataEnvironment(
     val localUserId: () -> UUID,
     /** True while the home privacy zone is on: the server's preview echo is trimmed then. */
     val homeZoneActive: () -> Boolean = { false },
+    val defaultHiddenEdgeMetres: () -> Int? = { null },
     /** The currency a car without its own symbol shows; € until the settings are loaded. */
     val fuelCurrency: () -> String = { "€" },
     val clock: () -> Instant = Instant::now,

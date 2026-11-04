@@ -36,6 +36,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -56,6 +57,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -109,6 +111,8 @@ fun OnboardingScreen(
     onFinished: () -> Unit,
     startPage: Int = 0,
     exampleTrip: Trip? = null,
+    privacyEdgeMetres: Int? = null,
+    onPrivacyEdgeSave: (Int) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coordinator = remember { OnboardingPermissionCoordinator(ledger, Build.VERSION.SDK_INT) { grantedPermissions(context) } }
@@ -137,6 +141,8 @@ fun OnboardingScreen(
         page = page,
         distanceUnit = distanceUnit,
         exampleTrip = exampleTrip,
+        privacyEdgeMetres = privacyEdgeMetres,
+        onPrivacyEdgeSave = onPrivacyEdgeSave,
         isRequesting = coordinator.isRequesting,
         locationGranted = RecordingPermission.fineLocation in granted,
         backgroundGranted = RecordingPermission.backgroundLocation in granted,
@@ -150,7 +156,8 @@ fun OnboardingScreen(
                 0 -> page = 1
                 1 -> page = 2
                 2 -> coordinator.proceed(OnboardingPermissionCoordinator.Step.location) { page = 3 }
-                3 -> coordinator.proceed(OnboardingPermissionCoordinator.Step.background) { page = 4 }
+                3 -> coordinator.proceed(OnboardingPermissionCoordinator.Step.background) { page = if (privacyEdgeMetres == null) 4 else 5 }
+                4 -> page = 5
                 else -> coordinator.proceed(OnboardingPermissionCoordinator.Step.notifications, onFinished)
             }
         },
@@ -173,6 +180,8 @@ fun OnboardingContent(
     approximateLocation: Boolean = false,
     onOpenLocationSettings: () -> Unit = {},
     exampleTrip: Trip? = null,
+    privacyEdgeMetres: Int? = null,
+    onPrivacyEdgeSave: (Int) -> Unit = {},
 ) {
     val colors = AppTheme.colors
     Box(Modifier.fillMaxSize().background(colors.bg).testTag("onboarding")) {
@@ -186,11 +195,13 @@ fun OnboardingContent(
                 3 -> PermissionPage(3, R.drawable.onboard_track, appStrings.onboardingBackgroundTitle(), backgroundBody(), backgroundGranted, isRequesting,
                     spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_background",
                     approximateLocation, onOpenLocationSettings) { onContinue(3) }
-                else -> PermissionPage(4, R.drawable.onboard_notify, appStrings.onboardingNotificationsTitle(), appStrings.onboardingNotificationsSub(),
-                    notificationsGranted, isRequesting, spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_notifications") { onContinue(4) }
+                4 -> PrivacyEdgesPage(privacyEdgeMetres, onPrivacyEdgeSave) { onContinue(4) }
+                5 -> PermissionPage(5, R.drawable.onboard_notify, appStrings.onboardingNotificationsTitle(), appStrings.onboardingNotificationsSub(),
+                    notificationsGranted, isRequesting, spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_notifications") { onContinue(5) }
+                else -> Unit
             }
         }
-        PaginationDots(page, Modifier.align(Alignment.BottomCenter).windowInsetsPadding(WindowInsets.systemBars).padding(bottom = 12.dp))
+        PaginationDots(page.coerceAtMost(4), Modifier.align(Alignment.BottomCenter).windowInsetsPadding(WindowInsets.systemBars).padding(bottom = 12.dp))
     }
 }
 
@@ -256,6 +267,48 @@ private fun BodyText(text: String, top: Dp) {
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp).padding(top = top),
     )
+}
+
+@Composable
+private fun ColumnScope.PrivacyEdgesPage(current: Int?, onSave: (Int) -> Unit, onContinue: () -> Unit) {
+    val strings = appStrings
+    var selected by rememberSaveable { mutableStateOf<Int?>(null) }
+    Spacer(Modifier.height(18.dp))
+    Image(painter = painterResource(R.drawable.hidden_edges_illustration), contentDescription = null,
+        contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().height(160.dp).padding(horizontal = 28.dp))
+    PageTitle(strings.tr(LocationWords.string.edgeQuestionTitle), "onboarding_hidden_edges", top = 18.dp)
+    BodyText(strings.tr(LocationWords.string.edgeQuestionBody), 10.dp)
+    Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        val options = listOf(
+            0 to (LocationWords.string.edgeOptionNone to null),
+            200 to (null to LocationWords.string.edgeOption200Note),
+            500 to (null to LocationWords.string.edgeOption500Note),
+            1000 to (null to LocationWords.string.edgeOption1000Note),
+        )
+        options.forEach { (metres, labels) ->
+            val active = selected == metres
+            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(if (active) AppTheme.accent.copy(alpha = .12f) else AppTheme.colors.card)
+                .clickable(role = Role.RadioButton) { selected = metres }.padding(12.dp).testTag("onboarding_edge_$metres"), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    val distance = Measure.distanceParts(metres.toDouble(), DistanceUnit.km, strings.language.code, strings)
+                    val title = if (metres == 0) strings.tr(labels.first!!) else "${distance.value} ${distance.unit}"
+                    Text(title, style = inter(14f, if (active) InterWeight.bold else InterWeight.medium), color = AppTheme.colors.text)
+                    labels.second?.let { Text(strings.tr(it), style = inter(11.5f), color = AppTheme.colors.textSecondary) }
+                }
+                Text(if (active) "●" else "○", style = inter(18f), color = if (active) AppTheme.accent else AppTheme.colors.textTertiary)
+            }
+        }
+    }
+    Text(strings.tr(LocationWords.string.edgeQuestionFootnote), Modifier.fillMaxWidth().padding(horizontal = 24.dp), style = inter(11f), color = AppTheme.colors.textTertiary, textAlign = TextAlign.Center)
+    val haptics = rememberHaptics()
+    Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 18.dp).height(56.dp)
+        .background(if (selected == null) AppTheme.colors.cardAlt else AppTheme.accent, RoundedCornerShape(14.dp))
+        .clickable(enabled = selected != null, role = Role.Button) {
+            val choice = selected ?: return@clickable
+            haptics.tap(); onSave(choice); onContinue()
+        }.testTag("onboarding_edge_save"), contentAlignment = Alignment.Center) {
+        Text(strings.save(), style = inter(15f, InterWeight.bold), color = if (selected == null) AppTheme.colors.textTertiary else Color.White)
+    }
 }
 
 /** The primary CTA: 56 tall, radius 14, accent with a faint accent shadow. */

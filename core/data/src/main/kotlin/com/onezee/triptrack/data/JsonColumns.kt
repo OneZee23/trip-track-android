@@ -5,6 +5,7 @@ package com.onezee.triptrack.data
 
 import com.onezee.triptrack.logic.RecordingBreaks
 import com.onezee.triptrack.model.TripCompanion
+import com.onezee.triptrack.model.TripHiddenParts
 import com.onezee.triptrack.model.TripSegment
 import com.onezee.triptrack.model.VehicleMod
 import com.onezee.triptrack.model.serialization.InstantSerializer
@@ -71,6 +72,16 @@ internal object JsonColumns {
 
     /** iOS: VehicleMod.decodeJSON. */
     fun decodeMods(text: String?): List<VehicleMod> = decode(mods, text)
+
+    fun encodeHiddenParts(value: TripHiddenParts?): String? = value?.let { json.encodeToString(TripHiddenParts.serializer(), it) }
+
+    fun decodeHiddenParts(text: String?): TripHiddenParts? = text?.let {
+        try { json.decodeFromString(TripHiddenParts.serializer(), it) } catch (_: Exception) { null }
+    }
+
+    fun encodePreviewBreaks(indices: List<Int>?): String? = indices?.takeIf { it.isNotEmpty() }?.let { json.encodeToString(ListSerializer(Int.serializer()), it) }
+
+    fun decodePreviewBreaks(text: String?): List<Int> = decode(ListSerializer(Int.serializer()), text)
 
     fun parseUuid(text: String): UUID? = if (uuidText.matches(text)) UUID.fromString(text) else null
 

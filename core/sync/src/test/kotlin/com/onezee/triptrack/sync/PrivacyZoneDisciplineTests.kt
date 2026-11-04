@@ -16,7 +16,9 @@ class PrivacyZoneDisciplineTests {
     }
     @Test fun testTheSendBoundaryStillTrims() {
         val mapper = code(File(root(), "core/sync/src/main/kotlin/com/onezee/triptrack/sync/TripSyncPayloadMapper.kt").readText())
-        assertTrue(mapper.contains("PrivacyZone.trim(Trip.decodePolyline")); assertTrue(mapper.contains("PrivacyZone.hides(it.coordinate"))
+        assertTrue(mapper.contains("TripHiddenPartsResolver.resolve("))
+        assertTrue(mapper.contains("resolution.hidden[index]"))
+        assertTrue(mapper.contains("TripHiddenPartsResolver.photoIsHidden("))
     }
     @Test fun testTheGuardCatchesPlantedLinesAndSparesTheListener() {
         assertTrue(code("val shown = PrivacyZone.trim(points, zone)").contains("PrivacyZone."))

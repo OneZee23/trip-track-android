@@ -23,6 +23,8 @@ fun OnboardingRoute(graph: AppGraph, resumeTick: Int) {
         ledger = graph.location.permissionLedger,
         distanceUnit = settings.distanceUnit,
         exampleTrip = latestTrip,
+        privacyEdgeMetres = settings.privacyEdgeMetres,
+        onPrivacyEdgeSave = graph.settingsManager::setPrivacyEdgeMetres,
         resumeTick = resumeTick,
         onFinished = {
             // Лента is home: it has other people's trips from the very first launch.

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -72,7 +73,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                         SettingsPreferencesCard(state, onOpen = manager::openSheet)
                         Text(strings.appPrefsFootnote(), Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 10.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                     }
-                    SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle()) {
+                    SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle(), maxContentHeight = 210.dp) {
                         Column(Modifier.surfaceCard(16.dp)) {
                             MeToggle(strings.usageTitle(), usageEnabled, { graph.me.analytics.setEnabled(it, profile.hero.tripCount > 0) }, strings.usageDetail(), tag = "settings_usage_analytics")
                             if (auth.isSignedIn) {
@@ -84,6 +85,24 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                                 MeRow(strings.settingsNotifications(), onClick = { manager.openSheet(SettingsSheet.notifications) })
                             }
                             MeRow(strings.homeRow(), if (state.home.coordinate == null) strings.homeNotSet() else strings.homeZoneShort(Measure.radius(state.home.radius.rawValue.toDouble(), state.distanceUnit, strings.language.code, strings)), tag = "settings_home", onClick = { manager.openSheet(SettingsSheet.home) })
+                            MeDivider()
+                            ProfileSectionLabel(strings.tr(com.onezee.triptrack.designsystem.R.string.privacyPlacesSection), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
+                            listOf(0 to com.onezee.triptrack.designsystem.R.string.edgeOptionNone, 200 to com.onezee.triptrack.designsystem.R.string.edgeOption200Note,
+                                500 to com.onezee.triptrack.designsystem.R.string.edgeOption500Note, 1000 to com.onezee.triptrack.designsystem.R.string.edgeOption1000Note).forEach { (metres, label) ->
+                                MeRow(strings.tr(if (metres == 0) com.onezee.triptrack.designsystem.R.string.privacyEdgesRow else label),
+                                    value = if (state.privacyEdgeMetres == metres) "✓" else "",
+                                    subtitle = if (metres == 0) null else Measure.distance(metres.toDouble(), state.distanceUnit, strings.language.code, strings),
+                                    tag = "privacy_edge_$metres", onClick = { manager.setPrivacyEdgeMetres(metres) })
+                            }
+                            Text(strings.tr(com.onezee.triptrack.designsystem.R.string.privacyEdgesFootnote), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
+                            MeDivider()
+                            ProfileSectionLabel(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingSection), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
+                            MeToggle(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingSection), state.filmingManual, manager::setFilmingManual,
+                                strings.tr(com.onezee.triptrack.designsystem.R.string.filmingToggleSubtitle), tag = "filming_manual")
+                            MeToggle(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingAutoToggle), state.filmingAuto, manager::setFilmingAuto,
+                                strings.tr(com.onezee.triptrack.designsystem.R.string.filmingAutoSubtitle), enabled = android.os.Build.VERSION.SDK_INT >= 35,
+                                tag = "filming_auto", hint = if (android.os.Build.VERSION.SDK_INT >= 35) null else strings.tr(com.onezee.triptrack.designsystem.R.string.android_filming_auto_unavailable))
+                            Text(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingFootnote), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                             if (privacyState.failed) MeRow(strings.publicDataLoadFailed(), strings.tryAgain(), onClick = { privacy?.load() })
                         }
                     }
@@ -236,9 +255,11 @@ private fun SettingsFooter(onPolicy: () -> Unit, onTerms: () -> Unit, onOpenStre
  * disc, 12 below it) with its cards 14 from the edges and 26 above the bottom.
  */
 @Composable
-internal fun SheetScope.SettingsSheetPage(title: String, content: @Composable ColumnScope.() -> Unit) {
+internal fun SheetScope.SettingsSheetPage(title: String, maxContentHeight: androidx.compose.ui.unit.Dp? = null, content: @Composable ColumnScope.() -> Unit) {
     MeSheetHeader(title, 12.dp) { dismiss() }
-    Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 14.dp).padding(bottom = 26.dp), verticalArrangement = Arrangement.spacedBy(4.dp), content = content)
+    Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())
+        .padding(horizontal = 14.dp).padding(bottom = 26.dp)
+        .then(maxContentHeight?.let { Modifier.heightIn(max = it).clipToBounds() } ?: Modifier), verticalArrangement = Arrangement.spacedBy(4.dp), content = content)
 }
 
 @Composable

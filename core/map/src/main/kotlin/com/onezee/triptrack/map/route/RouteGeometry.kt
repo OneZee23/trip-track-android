@@ -14,12 +14,12 @@ import com.onezee.triptrack.model.GeoPoint
  * (a gap filled in after the recording, drawn as a grey dash); `null` is a route without speeds at
  * all (someone else's trip, a synced preview), drawn in the accent colour.
  */
-data class RouteLine(val coordinates: List<GeoPoint>, val speed: Double?, val endFraction: Double = 1.0) {
+data class RouteLine(val coordinates: List<GeoPoint>, val speed: Double?, val endFraction: Double = 1.0, val hidden: Boolean = false) {
     val isUnknownSpeed: Boolean get() = speed != null && speed < 0
 }
 
 /** A route prepared for drawing: its lines in route order and the box that frames them. */
-data class RouteShape(val lines: List<RouteLine>, val bounds: GeoBounds?) {
+data class RouteShape(val lines: List<RouteLine>, val bounds: GeoBounds?, val hiddenLines: List<RouteLine> = emptyList()) {
     companion object {
         val empty = RouteShape(emptyList(), null)
     }
@@ -59,15 +59,16 @@ object RouteGeometry {
      * the route is drawn without colours. A [preview] polyline is one solid segment: its points are
      * sparse, and gap detection would shred it into single points that draw nothing.
      */
-    fun build(coordinates: List<GeoPoint>, speeds: List<Double> = emptyList(), preview: Boolean = false): RouteShape {
+    fun build(coordinates: List<GeoPoint>, speeds: List<Double> = emptyList(), preview: Boolean = false, breaks: List<Int> = emptyList()): RouteShape {
         if (coordinates.isEmpty()) return RouteShape.empty
         val bounds = boundsOf(coordinates)
         if (coordinates.size < 2) return RouteShape(emptyList(), bounds)
         val hasSpeeds = speeds.size == coordinates.size
         val segments = if (preview) {
-            listOf(coordinates to (if (hasSpeeds) speeds else emptyList()))
+            splitAtIndices(coordinates to (if (hasSpeeds) speeds else emptyList()), breaks)
         } else {
             splitIntoSegments(coordinates, if (hasSpeeds) speeds else emptyList(), gapThreshold)
+                .flatMap { splitAtIndices(it, breaks) }
         }
         val lines = ArrayList<RouteLine>()
         for ((segment, segmentSpeeds) in segments) {
@@ -82,6 +83,14 @@ object RouteGeometry {
             }
         }
         return RouteShape(replayFractions(lines), bounds)
+    }
+
+    private fun splitAtIndices(route: Pair<List<GeoPoint>, List<Double>>, breaks: List<Int>): List<Pair<List<GeoPoint>, List<Double>>> {
+        val (coordinates, speeds) = route
+        val boundaries = (listOf(0) + breaks.filter { it in 1 until coordinates.size }.distinct().sorted() + coordinates.size)
+        return boundaries.zipWithNext().map { (start, end) ->
+            coordinates.subList(start, end) to if (speeds.size == coordinates.size) speeds.subList(start, end) else emptyList()
+        }
     }
 
     // iOS: RouteMapView.swift, speedRun/runMetres. Point indices do not measure route progress.

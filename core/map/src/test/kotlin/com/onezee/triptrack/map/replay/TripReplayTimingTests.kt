@@ -30,6 +30,23 @@ class TripReplayTimingTests {
     @Test fun pauseAndSeekClearTheHoldAndResumeDoesNotRepeatIt() { val e = engine(10); e.setHolds(listOf(t0.plusSeconds(1))); e.seek(.09); e.play(0.0); e.tick(.5); assertNotNull(e.holdingIndex); e.pause(); assertNull(e.holdingIndex); e.seek(.2); e.play(2.0); e.tick(2.5); assertNull(e.holdingIndex); assertEquals(.25, e.progress, 1e-9) }
     @Test fun endPausesOnFinalFrameAndPlayRestarts() { val e = engine(1); e.play(0.0); e.tick(.5); e.tick(1.0); assertEquals(ReplayBarState.paused, e.phase); assertEquals(1.0, e.progress); assertEquals(GeoPoint(0.0, .01), e.headCoord); e.play(2.0); assertEquals(0.0, e.progress); assertEquals(GeoPoint(0.0, 0.0), e.headCoord) }
     @Test fun malformedInputDoesNotOfferAFrame() { val e = TripReplayEngine(); e.configure(TripReplayInput(listOf(GeoPoint(0.0, 0.0), GeoPoint(1.0, 1.0)), emptyList(), listOf(t0))); e.play(0.0); assertEquals(ReplayBarState.idle, e.phase); assertNull(e.headCoord) }
+    @Test fun crossingARecordingBreakFadesTheHeadWithoutDrawingAChord() {
+        val points = listOf(GeoPoint(0.0, 0.0), GeoPoint(0.0, .01), GeoPoint(.01, .01))
+        val e = TripReplayEngine().apply {
+            configure(TripReplayInput(points, emptyList(), listOf(t0, t0.plusSeconds(10), t0.plusSeconds(20)), breaks = listOf(1)))
+        }
+        e.seek(.125)
+        assertEquals(.5, e.headOpacity, 1e-9)
+        assertEquals(points.first(), e.headCoord)
+        e.seek(.25)
+        assertEquals(0.0, e.headOpacity, 1e-9)
+        e.seek(.375)
+        assertEquals(.5, e.headOpacity, 1e-9)
+        assertEquals(points[1], e.headCoord)
+        e.seek(.5)
+        assertEquals(1.0, e.headOpacity, 1e-9)
+        assertEquals(points[1], e.headCoord)
+    }
     @Test fun degenerateSpanParksAtTheEndWithAOneSecondClockFloor() { val e = engine(0); e.play(0.0); assertEquals(GeoPoint(0.0, .01), e.headCoord); assertEquals(1.0, e.distanceFraction); e.tick(.5); assertEquals(.5, e.progress) }
     @Test fun distanceDoesNotAdvanceAtAStationaryCheckpoint() {
         val e = TripReplayEngine(); e.configure(TripReplayInput(listOf(GeoPoint(0.0, 0.0), GeoPoint(0.0, 0.0), GeoPoint(0.0, .01)), emptyList(), listOf(t0, t0.plusSeconds(50), t0.plusSeconds(100))))

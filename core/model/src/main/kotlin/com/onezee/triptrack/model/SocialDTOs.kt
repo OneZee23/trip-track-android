@@ -130,6 +130,8 @@ data class SocialFeedTrip(
     var journey: SocialFeedTripJourney? = null,
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     var source: TripOrigin? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val previewBreaks: List<Int>? = null,
 )
 
 // iOS: SocialDTOs.swift
@@ -742,6 +744,8 @@ data class SocialTripResponse(
     val item: SocialFeedTrip,
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     var track: List<SocialTrackPoint>? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    var breaks: List<Instant>? = null,
 )
 
 // iOS: SocialDTOs.swift

@@ -77,6 +77,8 @@ class WorldFeature(
     /** Where the view models and their builds run. Tests pass the main dispatcher. */
     val worker: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(1),
     private val placeManager: PlaceManager,
+    private val filmingMode: StateFlow<Boolean> = kotlinx.coroutines.flow.MutableStateFlow(false),
+    private val defaultHiddenEdgeMetres: () -> Int? = { null },
 ) {
     private val scope = CoroutineScope(SupervisorJob() + worker)
     private val appViewModels = ViewModelStore()
@@ -93,7 +95,8 @@ class WorldFeature(
     /** Kept for the app's life like iOS `MyMapViewModel.shared`: the Atlas survives tab switches. */
     val atlas: MyMapViewModel by lazy {
         appViewModel("atlas") {
-            MyMapViewModel(repository, territory, tiles, places, presentation, location, home, worker, sharedEvents, online)
+            MyMapViewModel(repository, territory, tiles, places, presentation, location, home, worker, sharedEvents, online,
+                filming = filmingMode, defaultHiddenEdgeMetres = defaultHiddenEdgeMetres)
         }
     }
 

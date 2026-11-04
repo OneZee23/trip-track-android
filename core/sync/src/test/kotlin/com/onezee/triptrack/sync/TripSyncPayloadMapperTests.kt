@@ -35,8 +35,8 @@ class TripSyncPayloadMapperTests {
             fuelCurrency = "€", previewPolyline = byteArrayOf(0xDE.toByte(), 0xAD.toByte(), 0xBE.toByte(), 0xEF.toByte()))
         val p = mapped(trip, entity = entity)
         assertEquals(id, p.id); assertEquals(1234.5, p.distance); assertEquals("Morning trip", p.title); assertEquals("Berlin", p.region)
-        assertFalse(p.isPrivate); assertEquals("3q2+7w==", p.previewPolyline); assertEquals(entity.badgesJSON, p.badgesJson)
-        assertEquals(150, p.xpEarned); assertEquals(3, p.conflictVersion); assertEquals(50.0, p.trackPoints!!.single().latitude)
+        assertFalse(p.isPrivate); assertNull(p.previewPolyline); assertEquals(entity.badgesJSON, p.badgesJson)
+        assertEquals(150, p.xpEarned); assertEquals(3, p.conflictVersion); assertEquals(emptyList(), p.trackPoints)
     }
     @Test fun testTripWithNoOptionals() {
         val p = mapped(Trip(startDate = t0, isPrivate = false))
@@ -46,15 +46,17 @@ class TripSyncPayloadMapperTests {
     @Test fun testWithTheZoneOnOnlyThePointsOutsideItLeaveThePhone() {
         val points = points(); val trip = Trip(startDate = t0, trackPoints = points, previewPolyline = Trip.encodePolyline(points.map { it.coordinate }))
         val p = mapped(trip, zone)
-        assertEquals(3, p.trackPoints!!.size)
+        assertEquals(2, p.trackPoints!!.size)
         assertTrue(p.trackPoints!!.all { !PrivacyZone.hides(GeoPoint(it.latitude, it.longitude), zone) })
-        assertEquals(3, Trip.decodePolyline(Base64.getDecoder().decode(p.previewPolyline)).size)
+        assertEquals(2, Trip.decodePolyline(Base64.getDecoder().decode(p.previewPolyline)).size)
         assertEquals(5, trip.trackPoints.size); assertEquals(5, Trip.decodePolyline(trip.previewPolyline!!).size)
         assertEquals(950.0, p.maxAltitude); assertEquals(120, p.drivingTime)
     }
     @Test fun testWithoutTheZoneTheWireIsExactlyWhatItWasBefore() {
         val points = points(); val preview = Trip.encodePolyline(points.map { it.coordinate }); val trip = Trip(trackPoints = points, previewPolyline = preview)
-        val p = mapped(trip); assertEquals(points.size, p.trackPoints!!.size); assertEquals(Base64.getEncoder().encodeToString(preview), p.previewPolyline)
+        val p = mapped(trip); assertEquals(points.size, p.trackPoints!!.size)
+        assertContentEquals(Trip.encodePolyline(GeometryUtils.simplifyRDP(points.map { it.coordinate }, GeometryUtils.previewEpsilon)),
+            Base64.getDecoder().decode(p.previewPolyline))
     }
     @Test fun testATripEntirelyInsideTheZoneKeepsItsNumbersAndLosesItsTrack() {
         val points = listOf(point(10.0, 0, 800.0), point(60.0, 30, 810.0), point(120.0, 60, 815.0))
@@ -66,10 +68,10 @@ class TripSyncPayloadMapperTests {
         assertEquals(whole.elevation, trimmed.elevation); assertEquals(whole.maxAltitude, trimmed.maxAltitude); assertEquals(whole.drivingTime, trimmed.drivingTime)
         assertEquals(whole.stoppedTime, trimmed.stoppedTime)
     }
-    @Test fun testHidingATripDoesNotSendTheYardBackUp() { assertEquals(3, mapped(Trip(trackPoints = points(), isPrivate = true), zone).trackPoints!!.size) }
+    @Test fun testHidingATripDoesNotSendTheYardBackUp() { assertEquals(2, mapped(Trip(trackPoints = points(), isPrivate = true), zone).trackPoints!!.size) }
     @Test fun boundaryRemainsAndInteriorVisitsAreRemoved() {
         val p = point(500.0, 0); val coordinate = p.coordinate; val exact = PrivacyZoneSpec(home, GeometryUtils.haversineDistance(home, coordinate))
-        assertFalse(PrivacyZone.hides(coordinate, exact)); assertEquals(3, mapped(Trip(trackPoints = points()), zone).trackPoints!!.size)
+        assertFalse(PrivacyZone.hides(coordinate, exact)); assertEquals(2, mapped(Trip(trackPoints = points()), zone).trackPoints!!.size)
     }
     @Test fun oneRemainingPointSendsExplicitEmptyTrack() {
         val p = mapped(Trip(trackPoints = listOf(point(50.0, 0), point(1500.0, 30))), zone)

@@ -11,6 +11,8 @@ import org.robolectric.RuntimeEnvironment
  */
 class OnboardingDone : TestWatcher() {
     override fun starting(description: Description) {
-        (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph.onboarding.complete()
+        val graph = (RuntimeEnvironment.getApplication() as TripTrackApplication).appGraph
+        graph.onboarding.complete()
+        graph.settingsManager.setPrivacyEdgeMetres(0)
     }
 }

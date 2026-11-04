@@ -66,4 +66,6 @@ data class TripEntity(
     val energyMode: String? = null,
     // 0.8.1: unchecked|pending|done, the road gap filler's progress.
     @ColumnInfo(defaultValue = "unchecked") val roadFillState: String? = "unchecked",
+    val hiddenPartsJson: String? = null,
+    val previewBreaksJSON: String? = null,
 )

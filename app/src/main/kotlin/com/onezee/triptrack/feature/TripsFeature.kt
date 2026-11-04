@@ -82,6 +82,10 @@ class TripsFeature(
     placeChanges: Flow<Unit> = kotlinx.coroutines.flow.emptyFlow(),
     private val nameCheckpoint: suspend (com.onezee.triptrack.model.TripCheckpoint, UUID) -> Unit = { _, _ -> },
     val failedSyncQueue: Flow<Boolean> = kotlinx.coroutines.flow.emptyFlow(),
+    val homeZone: () -> com.onezee.triptrack.sync.PrivacyZoneSpec? = { null },
+    val filmingMode: StateFlow<Boolean> = kotlinx.coroutines.flow.MutableStateFlow(false),
+    val setDefaultHiddenEdge: (Int?) -> Unit = {},
+    val deferPrivacyEdgeQuestion: () -> Unit = {},
 ) {
     @Volatile var accountId: () -> UUID? = { null }
     @Volatile var socialApi: TripSocialApi = NoAccountSocialApi
@@ -164,6 +168,8 @@ class TripsFeature(
     fun distanceUnit(): com.onezee.triptrack.model.DistanceUnit =
         preferences.getString(com.onezee.triptrack.model.DistanceUnit.storageKey, null)?.let(com.onezee.triptrack.model.DistanceUnit::fromRawValue)
             ?: com.onezee.triptrack.model.DistanceUnit.km
+
+    fun defaultHiddenEdgeMetres(): Int? = preferences.getString("privacy.edgeMetres", null)?.toIntOrNull()
 
     fun offline(): Boolean = isOffline()
 

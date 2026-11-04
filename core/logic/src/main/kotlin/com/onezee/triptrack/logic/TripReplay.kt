@@ -47,14 +47,27 @@ fun GeometryUtils.significantIndices(coords: List<GeoPoint>, budget: Int): List<
 
 // iOS: TripReplayInput.swift. Async cancellation and dispatcher ownership stay with the screen.
 object TripReplay {
-    fun prepare(points: List<TrackPoint>): TripReplayInput =
-        prepare(points.map { it.coordinate }, points.map { it.speed }, points.map { it.timestamp })
+    fun prepare(points: List<TrackPoint>): TripReplayInput = prepare(
+        points.map { it.coordinate }, points.map { it.speed }, points.map { it.timestamp },
+        points.indices.filter { it > 0 && points[it].recordingSegmentIndex != points[it - 1].recordingSegmentIndex },
+    )
 
-    fun prepare(coords: List<GeoPoint>, speeds: List<Double> = emptyList(), timestamps: List<Instant> = emptyList()): TripReplayInput {
-        if (coords.size <= 300) return TripReplayInput(coords.toList(), speeds.toList(), timestamps.toList())
-        val indices = GeometryUtils.significantIndices(coords, 300)
+    fun prepare(coords: List<GeoPoint>, speeds: List<Double> = emptyList(), timestamps: List<Instant> = emptyList(), breaks: List<Int> = emptyList()): TripReplayInput {
+        if (coords.size <= 300) return TripReplayInput(coords.toList(), speeds.toList(), timestamps.toList(), breaks.filter { it in 1 until coords.size })
+        val boundaries = (listOf(0) + breaks.filter { it in 1 until coords.size }.distinct().sorted() + coords.size)
+        val selected = mutableListOf<Int>()
+        val selectedBreaks = mutableListOf<Int>()
+        for ((runIndex, pair) in boundaries.zipWithNext().withIndex()) {
+            val start = pair.first
+            val endExclusive = pair.second
+            if (runIndex > 0) selectedBreaks += selected.size
+            val run = coords.subList(start, endExclusive)
+            val budget = maxOf(2, (300.0 * run.size / coords.size).toInt())
+            selected += GeometryUtils.significantIndices(run, budget).map { it + start }
+        }
+        val indices = selected.distinct()
         return TripReplayInput(indices.map { coords[it] },
             if (speeds.size == coords.size) indices.map { speeds[it] } else emptyList(),
-            if (timestamps.size == coords.size) indices.map { timestamps[it] } else emptyList())
+            if (timestamps.size == coords.size) indices.map { timestamps[it] } else emptyList(), selectedBreaks)
     }
 }

@@ -240,7 +240,7 @@ fun AtlasMapLayer(
         systemInsets = WindowInsets.safeDrawing,
         styleUri = MapStyles.LIGHT,
         onMapTap = onTap,
-        showsUserLocation = state.locationPermission == com.onezee.triptrack.feature.atlas.AtlasLocationPermission.allowed,
+        showsUserLocation = !state.filmingMode && state.locationPermission == com.onezee.triptrack.feature.atlas.AtlasLocationPermission.allowed,
         regionLabels = labels,
     )
 }

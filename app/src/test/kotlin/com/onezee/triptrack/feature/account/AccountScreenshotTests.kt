@@ -177,8 +177,10 @@ class AccountScreenshotTests(private val dark: Boolean) {
     @Test fun onboardingValue() = onboarding(1)
     @Test fun onboardingLocation() = onboarding(2)
     @Test fun onboardingBackground() = onboarding(3)
-    @Test fun onboardingNotifications() = onboarding(4)
-
+    @Test fun onboardingNotifications() = shot("onboarding_4") {
+        OnboardingContent(page = 5, distanceUnit = DistanceUnit.km, isRequesting = false, locationGranted = false,
+            backgroundGranted = false, notificationsGranted = false, onContinue = {})
+    }
     private fun onboarding(page: Int) = shot("onboarding_$page") {
         OnboardingContent(page = page, distanceUnit = DistanceUnit.km, isRequesting = false, locationGranted = page == 3,
             backgroundGranted = false, notificationsGranted = false, onContinue = {})

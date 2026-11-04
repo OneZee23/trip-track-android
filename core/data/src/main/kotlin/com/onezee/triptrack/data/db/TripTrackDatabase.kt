@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.room.TypeConverters
 import com.onezee.triptrack.data.db.dao.DiscoveryDao
 import com.onezee.triptrack.data.db.dao.JourneyDao
@@ -59,7 +61,7 @@ import com.onezee.triptrack.data.db.entity.VisitedGeohashEntity
         RevealedCellEntity::class,
         DiscoveryEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -77,13 +79,22 @@ abstract class TripTrackDatabase : RoomDatabase() {
     companion object {
         const val FILE_NAME = "TripTrack.db"
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE TripEntity ADD COLUMN hiddenPartsJson TEXT")
+                db.execSQL("ALTER TABLE TripEntity ADD COLUMN previewBreaksJSON TEXT")
+            }
+        }
+
         /**
          * The app's store. There is deliberately no destructive fallback: a store that fails to
          * migrate is a crash to fix, not a library to throw away (`PersistenceController.loadStore`
          * learned that from 107 trips that disappeared from one phone).
          */
         fun open(context: Context): TripTrackDatabase =
-            Room.databaseBuilder(context.applicationContext, TripTrackDatabase::class.java, FILE_NAME).build()
+            Room.databaseBuilder(context.applicationContext, TripTrackDatabase::class.java, FILE_NAME)
+                .addMigrations(MIGRATION_1_2)
+                .build()
 
         /** A throwaway store, for tests and previews (`PersistenceController(inMemory:)`). */
         fun inMemory(context: Context): TripTrackDatabase =

@@ -7,6 +7,8 @@ import com.onezee.triptrack.data.files.TripPhotoFiles
 import com.onezee.triptrack.data.files.VehiclePhotoFiles
 import com.onezee.triptrack.data.sync.SyncAction
 import com.onezee.triptrack.data.sync.SyncEntityType
+import com.onezee.triptrack.logic.RecordingBreaks
+import com.onezee.triptrack.logic.TripHiddenPartsResolver
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.network.*
 import java.time.Instant
@@ -29,6 +31,7 @@ class APISyncTransport(
     private val photoEncoder: PhotoEncoder = RasterPhotoEncoder(),
     private val clock: () -> Instant = Instant::now,
     private val photos: R2PhotoStorage = R2PhotoStorage(client),
+    private val defaultHiddenEdgeMetres: () -> Int? = { null },
 ) : SyncTransport {
 
     override suspend fun execute(operation: SyncOperation) {
@@ -68,7 +71,7 @@ class APISyncTransport(
         val entity = repository.fetchEntity(id) ?: return@batch null
         if (entity.confirmation == TripConfirmation.draft.rawValue) return@batch null
         val trip = repository.fetchTripDetail(id) ?: return@batch null
-        TripSyncPayloadMapper.map(trip, entity, repository.photoRows(id), zone(), clock())
+        TripSyncPayloadMapper.map(trip, entity, repository.photoRows(id), zone(), clock(), defaultHiddenEdgeMetres())
     }
 
     private suspend fun uploadTrip(id: UUID) {
@@ -80,10 +83,12 @@ class APISyncTransport(
             return
         }
         manualTrackLoader.prepareUpload(id, zone() != null)
+        repository.fetchTripDetail(id)?.let { reconcileHiddenPhotoCopies(it) }
         val payload = payload(id) ?: return
         try {
             val response: TripUpsertResponse = client.post(ApiEndpoint.tripUpsert, payload)
             acknowledgeTrip(payload, response.conflictVersion, response.serverCreatedAt)
+            refreshTripPhotoCopies(id, payload.photos.orEmpty().mapTo(hashSetOf()) { it.id })
         } catch (error: ApiError) {
             when (error) {
                 is ApiError.ConflictDetected -> pullAndOverwriteTrip(id)
@@ -109,7 +114,10 @@ class APISyncTransport(
                     val sent = chunk.firstOrNull { it.id == result.id } ?: continue
                     if (result.id in handled) continue
                     when (result.status) {
-                        "created", "updated" -> acknowledgeTrip(sent, result.conflictVersion, result.serverCreatedAt)
+                        "created", "updated" -> {
+                            acknowledgeTrip(sent, result.conflictVersion, result.serverCreatedAt)
+                            refreshTripPhotoCopies(sent.id, sent.photos.orEmpty().mapTo(hashSetOf()) { it.id })
+                        }
                         "conflict" -> try { pullAndOverwriteTrip(result.id) } catch (error: ApiError) { continue }
                         else -> continue
                     }
@@ -124,7 +132,10 @@ class APISyncTransport(
             val entity = repository.fetchEntity(operation.entityId)
             if (entity == null) { handled.add(operation.entityId); onChunkSynced(1); continue }
             if (entity.confirmation == TripConfirmation.draft.rawValue || (!cloudSyncEnabled() && entity.isPrivate)) continue
-            try { manualTrackLoader.prepareUpload(entity.id, zone() != null) } catch (_: ApiError) { continue }
+            try {
+                manualTrackLoader.prepareUpload(entity.id, zone() != null)
+                repository.fetchTripDetail(entity.id)?.let { reconcileHiddenPhotoCopies(it) }
+            } catch (_: ApiError) { continue }
             val next = payload(entity.id) ?: continue
             if (SyncChunkBudget.shouldFlush(current.size, bytes, next.estimatedWireBytes)) flush()
             current.add(next)
@@ -141,6 +152,45 @@ class APISyncTransport(
             syncStatus = if (current.lastModifiedAt == sent.lastModifiedAt && current.syncStatus != SyncStatus.pendingDelete.rawValue)
                 SyncStatus.synced.rawValue else current.syncStatus,
         ))
+    }
+
+    /** iOS: TripSyncPayload.swift photo discipline. Hidden photos keep their source bytes on this phone. */
+    private suspend fun reconcileHiddenPhotoCopies(trip: Trip) {
+        val activeZone = zone()
+        val resolution = TripHiddenPartsResolver.resolve(
+            trip.trackPoints, RecordingBreaks.normalized(trip.recordingBreaks),
+            trip.hiddenParts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+            trip.hiddenParts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+            trip.hiddenParts?.sections.orEmpty(), activeZone?.let { it.centre to it.radius },
+        )
+        for (row in repository.photoRows(trip.id)) {
+            val hidden = TripHiddenPartsResolver.photoIsHidden(
+                row.capturedAt, row.exifLatitude?.let { lat -> row.exifLongitude?.let { lon -> GeoPoint(lat, lon) } },
+                trip.trackPoints, resolution, activeZone?.let { it.centre to it.radius },
+            )
+            if (!hidden || (row.remoteURL == null && row.thumbnailURL == null && row.serverCreatedAt == null)) continue
+            client.post<PhotoDeleteRequest, EmptyResponse>(ApiEndpoint.photoDelete, PhotoDeleteRequest(row.id))
+            db.withTransaction {
+                db.tripDao().photo(row.id)?.let { current -> db.tripDao().upsertPhoto(current.copy(
+                    remoteURL = null, thumbnailURL = null, serverCreatedAt = null,
+                    uploadStatus = PhotoUploadStatus.localOnly.rawValue, syncStatus = SyncStatus.synced.rawValue,
+                )) }
+            }
+        }
+    }
+
+    /** Reappearance after an edit uploads from the local source through the existing EXIF-stripping encoder. */
+    private suspend fun refreshTripPhotoCopies(tripId: UUID, visibleIds: Set<UUID>) {
+        if (!cloudSyncEnabled()) return
+        val trip = repository.fetchTripDetail(tripId) ?: return
+        if (trip.isPrivate) return
+        reconcileHiddenPhotoCopies(trip)
+        for (photo in repository.photoRows(tripId)) {
+            if (photo.id in visibleIds && (photo.remoteURL == null || photo.thumbnailURL == null)) {
+                try { uploadPhoto(photo.id) } catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { /* A later sync retries the photo independently. */ }
+            }
+        }
     }
 
     private suspend fun pullAndOverwriteTrip(id: UUID) {

@@ -39,7 +39,7 @@ object VehicleSerializer : IosObjectSerializer<Vehicle>({ Vehicle.generatedSeria
 object TripSerializer : IosObjectSerializer<Trip>({ Trip.generatedSerializer() }) {
     override fun read(value: JsonObject, json: Json): JsonObject = value.withoutNulls(setOf(
         "checkpoints", "segments", "titleIsCustom", "isTransfer", "companions", "isOnServer", "source",
-        "confirmation", "roadFillState", "energyMode", "recordingBreaks",
+        "confirmation", "roadFillState", "energyMode", "recordingBreaks", "hiddenParts", "previewBreaks",
     ))
 }
 

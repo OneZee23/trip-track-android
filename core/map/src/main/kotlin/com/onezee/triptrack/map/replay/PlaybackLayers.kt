@@ -54,7 +54,7 @@ internal class PlaybackLayers(private val resources: Resources, private val dens
         }
         style.getLayerAs<SymbolLayer>(CAR)?.setProperties(
             iconImage(if (playback.collapsed) DOT else IMAGE), iconRotate(playback.course.toFloat()),
-            iconOpacity(playback.mood.alpha),
+            iconOpacity((playback.mood.alpha * playback.opacity).toFloat()),
         )
         style.getLayerAs<SymbolLayer>(PAUSE)?.setProperties(visibility(if (playback.mood == MapCarMood.paused && !playback.collapsed) Property.VISIBLE else Property.NONE))
         if (position != playback.position) {

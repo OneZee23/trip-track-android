@@ -8,4 +8,5 @@ data class TripReplayInput(
     val coords: List<GeoPoint>,
     val speeds: List<Double>,
     val timestamps: List<Instant>,
+    val breaks: List<Int> = emptyList(),
 )

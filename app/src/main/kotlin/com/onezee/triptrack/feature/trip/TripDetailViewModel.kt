@@ -35,9 +35,11 @@ data class ReactorState(val author: AuthorState, val emoji: String, val createdA
 
 // iOS: TripDetailView.swift
 data class TripDetailState(
+    val sourceTrip: Trip? = null,
     val trip: TripSummary? = null, val isLoading: Boolean = true, val isOwn: Boolean = true, val noAccess: Boolean = false,
     val isRemoteBacked: Boolean = false, val loadFailed: Boolean = false, val geometryRevision: Long = 0,
     val coordinates: List<GeoPoint> = emptyList(), val speeds: List<Double> = emptyList(),
+    val routeBreaks: List<Int> = emptyList(),
     val replay: TripReplayInput = TripReplayInput(emptyList(), emptyList(), emptyList()),
     val isPreviewRoute: Boolean = false, val photoPins: List<PhotoPinState> = emptyList(),
     val checkpoints: List<CheckpointState> = emptyList(), val moments: List<MomentState> = emptyList(),
@@ -133,8 +135,12 @@ class TripDetailViewModel(
         try {
             val response = withContext(worker) { api.trip(tripId) }
             val item = response.item.asTrip()
-            val points = response.track.orEmpty().map { TrackPoint(latitude = it.lat, longitude = it.lon, speed = it.speed, timestamp = it.t) }
-            replaceTrip(item.copy(trackPoints = points), response.item.author.id == accountId(), true).join()
+            val breaks = response.breaks.orEmpty()
+            val points = response.track.orEmpty().map { point ->
+                TrackPoint(latitude = point.lat, longitude = point.lon, speed = point.speed, timestamp = point.t,
+                    recordingSegmentIndex = breaks.count { point.t >= it })
+            }
+            replaceTrip(item.copy(trackPoints = points, recordingBreaks = breaks), response.item.author.id == accountId(), true).join()
             seedSocial(response.item)
         } catch (cancelled: CancellationException) { throw cancelled }
         catch (error: com.onezee.triptrack.network.ApiError.TripNotFound) {
@@ -182,7 +188,9 @@ class TripDetailViewModel(
         // to about a kilometre a step, so the 1 km gap rule would shred it into dashes: it is one line too.
         val previewRoute = remote || (points.size <= 1 && t.previewPolyline != null)
         val coords = if (points.size > 1) points.map { it.coordinate } else t.previewCoordinates
-        val replay = if (points.size > 1) TripReplay.prepare(points) else TripReplay.prepare(coords)
+        val replayBreaks = if (points.size > 1) points.indices.filter { it > 0 && points[it].recordingSegmentIndex != points[it - 1].recordingSegmentIndex }
+            else t.previewBreaks.orEmpty()
+        val replay = if (points.size > 1) TripReplay.prepare(points) else TripReplay.prepare(coords, timestamps = emptyList(), breaks = replayBreaks)
         val prepared = if (own) photoPreparer.prepare(t) else TripPhotoPlacement.Prepared(emptyMap(), emptyList(), emptyMap())
         currentCoroutineContext().ensureActive()
         val photoById = t.photos.associateBy { it.id }
@@ -219,7 +227,8 @@ class TripDetailViewModel(
         val vehicle = t.vehicleId?.let { vehicles?.vehicle(it) }
         val estimate = energy(t, vehicle, t.energyMode)
         return TripDetailState(trip = TripSummary.from(t), isOwn = own, isRemoteBacked = remote, geometryRevision = expected,
-            coordinates = coords, speeds = if (points.size > 1) points.map { it.speed } else emptyList(), replay = replay,
+            sourceTrip = t,
+            coordinates = coords, speeds = if (points.size > 1) points.map { it.speed } else emptyList(), routeBreaks = replayBreaks, replay = replay,
             isPreviewRoute = previewRoute, photoPins = prepared.placed.map { pin -> val fix = prepared.fixes[pin.id]
                 PhotoPinState(pin.id, pin.filename, pin.coordinate, fix?.elapsedFromStart, fix?.distanceFromStart) },
             checkpoints = checkpoints, moments = moments, segments = segments, placeChips = chips,
@@ -420,6 +429,7 @@ class TripDetailViewModel(
     }
     /** iOS applyEdits for the description alone: the text the owner wrote, trimmed; one's own trip only. */
     fun updateDescription(text: String): Job? = edit { repository.updateNotes(tripId, text.trim()) }
+    fun updateHiddenParts(parts: TripHiddenParts?): Job? = edit { repository.updateHiddenParts(tripId, parts) }
     fun updateTripDetails(title: String, description: String, vehicleId: UUID?, isPrivate: Boolean, isTransfer: Boolean): Job? {
         val current = trip ?: return null
         if (!state.value.isOwn) return null

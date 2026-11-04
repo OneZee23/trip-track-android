@@ -93,6 +93,13 @@ fun AppShell(graph: AppGraph, resumeTick: Int = 0) {
                 }
             }
             SocialMessages(graph.social)
+            val recorder by trips.recorder.collectAsState()
+            val showEdgeQuestion = settings.loaded && settings.privacyEdgeMetres == null && !settings.privacyEdgeQuestionDeferred &&
+                settings.sheets.isEmpty() && !recorder.isRecording && selected == AppTab.home
+            if (showEdgeQuestion) com.onezee.triptrack.feature.settings.PrivacyEdgeQuestionSheet(
+                onSave = graph.settingsManager::setPrivacyEdgeMetres,
+                onDismiss = graph.settingsManager::deferPrivacyEdgeQuestion,
+            )
             RecordingPresentations(graph)
             AnimatedVisibility(
                 visible = selected != AppTab.record && !visibility.isHiddenByScreen,

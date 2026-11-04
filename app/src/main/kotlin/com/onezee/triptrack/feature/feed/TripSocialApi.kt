@@ -40,4 +40,5 @@ fun SocialFeedTrip.asTrip(): Trip = Trip(id = id, startDate = startDate,
     endDate = endDate ?: startDate.plusSeconds(duration.toLong()), distance = distance, maxSpeed = maxSpeed ?: 0.0,
     averageSpeed = if (duration > 0) distance / duration else 0.0, title = title, tripDescription = description,
     region = region, elevation = elevation ?: 0.0, isPrivate = isPrivate ?: false, isOnServer = true, source = source ?: TripOrigin.recorded,
-    previewPolyline = previewPolyline?.let { runCatching { java.util.Base64.getDecoder().decode(it) }.getOrNull() }, earnedBadgeIds = badgeIds)
+    previewPolyline = previewPolyline?.let { runCatching { java.util.Base64.getDecoder().decode(it) }.getOrNull() }, earnedBadgeIds = badgeIds,
+    previewBreaks = previewBreaks)

@@ -155,15 +155,22 @@ private fun tripMetrics(distance: Double, seconds: Long, padMinutes: Boolean, av
 
 /** The map slot of a card: the route on the card-alt ground, or the struck-out map when there is none. */
 @Composable
-private fun CardMap(coordinates: List<GeoPoint>, tripId: java.util.UUID, height: Dp, modifier: Modifier = Modifier) {
+private fun CardMap(coordinates: List<GeoPoint>, tripId: java.util.UUID, height: Dp, modifier: Modifier = Modifier, breaks: List<Int> = emptyList()) {
     val shape = RoundedCornerShape(12.dp)
     if (coordinates.size > 1) {
-        MapSnapshotPreview(coordinates, tripId, modifier.fillMaxWidth().height(height).clip(shape), height = height)
+        val routes = splitPreview(coordinates, breaks)
+        if (routes.size > 1) com.onezee.triptrack.ui.MapSnapshotRoutesPreview(routes, "$tripId:${breaks.hashCode()}", modifier.fillMaxWidth().height(height).clip(shape), height = height)
+        else MapSnapshotPreview(coordinates, tripId, modifier.fillMaxWidth().height(height).clip(shape), height = height)
     } else {
         Box(modifier.fillMaxWidth().height(height).clip(shape).background(AppTheme.colors.cardAlt), contentAlignment = Alignment.Center) {
             Glyph(AppGlyph.mapSlash, contentDescription = null, tint = AppTheme.colors.textTertiary, size = 26.dp)
         }
     }
+}
+
+private fun splitPreview(points: List<GeoPoint>, breaks: List<Int>): List<List<GeoPoint>> {
+    val boundaries = listOf(0) + breaks.filter { it in 1 until points.size }.distinct().sorted() + points.size
+    return boundaries.zipWithNext().map { (start, end) -> points.subList(start, end) }.filter { it.size > 1 }
 }
 
 /** iOS: DriverRank.color, the LVL tag of the feed's authors. */
@@ -242,7 +249,7 @@ fun ProfileTripCard(
             }
             Text(title, style = inter(17f, InterWeight.heavy), letterSpacing = points(-0.085f), color = colors.text, maxLines = 2,
                 modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp))
-            if (map != null && trip.coordinates.size > 1) map(trip.coordinates, mapHeight) else CardMap(trip.coordinates, trip.id, mapHeight)
+            if (map != null && trip.coordinates.size > 1) map(trip.coordinates, mapHeight) else CardMap(trip.coordinates, trip.id, mapHeight, breaks = trip.previewBreaks)
             Box(Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp)) {
                 MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = true, averageSpeed = averageSpeed))
             }
@@ -290,7 +297,7 @@ fun SocialFeedCard(
                     Text(title, style = inter(17f, InterWeight.heavy), letterSpacing = points(-0.085f), color = colors.text, maxLines = 2,
                         modifier = Modifier.padding(start = 13.dp, end = 13.dp, bottom = 10.dp))
                 }
-                CardMap(trip.coordinates, trip.id, 178.dp)
+                CardMap(trip.coordinates, trip.id, 178.dp, breaks = trip.previewBreaks)
                 Box(Modifier.padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 10.dp)) {
                     MetricsStrip(tripMetrics(trip.distance, trip.seconds, padMinutes = false))
                 }

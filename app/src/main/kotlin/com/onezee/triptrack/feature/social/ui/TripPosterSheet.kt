@@ -83,7 +83,7 @@ fun TripPosterSheet(
     val title = trip.title?.trim()?.takeIf(String::isNotEmpty) ?: TripAutoTitle.localized(null, trip.startDate, strings) ?: strings.tripTitle()
     val distance = Measure.distanceParts(trip.distance, unit, strings.language.code, strings, Measure.Style.tenths)
     val speed = Measure.speedParts(trip.averageSpeed, unit, strings.language.code, strings)
-    val spec = TripPosterSpec(title, "${distance.value} ${distance.unit}", shortDuration, "${speed.value} ${speed.unit}", trip.coordinates)
+    val spec = TripPosterSpec(title, "${distance.value} ${distance.unit}", shortDuration, "${speed.value} ${speed.unit}", trip.coordinates, trip.previewBreaks)
     var posterView by remember { mutableStateOf<TripPosterView?>(null) }
     ContentSizedSheet(onDismissRequest = onDismiss, background = colors.bg) {
         val sheet = this

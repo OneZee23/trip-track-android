@@ -28,7 +28,7 @@ internal class RouteLayers {
     private var opacities: List<Double>? = null
     private var litFraction: Double? = null
 
-    val layerIds: List<String> = listOf(CASING, LINE, DASH, ENDS)
+    val layerIds: List<String> = listOf(HIDDEN_CASING, HIDDEN_LINE, CASING, LINE, DASH, ENDS)
 
     fun addTo(style: Style, routes: MapRoutes?) {
         shapes = null
@@ -67,11 +67,12 @@ internal class RouteLayers {
         val lines = ArrayList<Feature>()
         val ends = ArrayList<Feature>()
         for (shape in routes?.shapes.orEmpty()) {
-            for (line in shape.lines) {
+            for (line in shape.lines + shape.hiddenLines) {
                 if (line.coordinates.size < 2) continue
                 val feature = Feature.fromGeometry(LineString.fromLngLats(line.coordinates.map(::point)))
                 feature.addStringProperty(COLOR, rgba(looks.argb(line)))
                 feature.addBooleanProperty(DASHED, line.isUnknownSpeed)
+                feature.addBooleanProperty(HIDDEN, line.hidden)
                 feature.addBooleanProperty(HAS_SPEED, line.speed != null)
                 feature.addNumberProperty(END_FRACTION, line.endFraction)
                 lines += feature
@@ -88,9 +89,11 @@ internal class RouteLayers {
     }
 
     private fun layers(looks: RouteAppearance): List<Layer> = listOf(
-        LineLayer(CASING, LINES_SOURCE).withFilter(Expression.eq(Expression.get(DASHED), false)),
-        LineLayer(LINE, LINES_SOURCE).withFilter(Expression.eq(Expression.get(DASHED), false)),
-        LineLayer(DASH, LINES_SOURCE).withFilter(Expression.eq(Expression.get(DASHED), true)),
+        LineLayer(HIDDEN_CASING, LINES_SOURCE).withFilter(Expression.eq(Expression.get(HIDDEN), true)),
+        LineLayer(HIDDEN_LINE, LINES_SOURCE).withFilter(Expression.eq(Expression.get(HIDDEN), true)),
+        LineLayer(CASING, LINES_SOURCE).withFilter(Expression.all(Expression.eq(Expression.get(HIDDEN), false), Expression.eq(Expression.get(DASHED), false))),
+        LineLayer(LINE, LINES_SOURCE).withFilter(Expression.all(Expression.eq(Expression.get(HIDDEN), false), Expression.eq(Expression.get(DASHED), false))),
+        LineLayer(DASH, LINES_SOURCE).withFilter(Expression.all(Expression.eq(Expression.get(HIDDEN), false), Expression.eq(Expression.get(DASHED), true))),
         CircleLayer(ENDS, ENDS_SOURCE),
     ).also { restyle(it, looks) }
 
@@ -101,6 +104,19 @@ internal class RouteLayers {
     private fun restyle(layers: List<Layer>, looks: RouteAppearance) {
         val width = looks.widthPoints.toFloat()
         for (layer in layers) when (layer.id) {
+            HIDDEN_CASING -> layer.setProperties(
+                PropertyFactory.lineColor(0xFFFFFFFF.toInt()),
+                PropertyFactory.lineWidth(width + 4f),
+                PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+            )
+            HIDDEN_LINE -> layer.setProperties(
+                PropertyFactory.lineColor(rgba(0x8C20212B.toInt())),
+                PropertyFactory.lineWidth(width),
+                PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+                PropertyFactory.lineDasharray(listOf(0.1f, 7.2f).map { it / looks.widthPoints.toFloat() }.toTypedArray()),
+            )
             CASING -> layer.setProperties(
                 PropertyFactory.lineColor(looks.casingArgb ?: 0),
                 PropertyFactory.lineWidth(width + looks.casingExtraPoints.toFloat()),
@@ -137,6 +153,8 @@ internal class RouteLayers {
 
     companion object {
         const val CASING = "triptrack-route-casing"
+        const val HIDDEN_CASING = "triptrack-route-hidden-casing"
+        const val HIDDEN_LINE = "triptrack-route-hidden-line"
         const val LINE = "triptrack-route-line"
         const val DASH = "triptrack-route-dash"
         const val ENDS = "triptrack-route-ends"
@@ -144,6 +162,7 @@ internal class RouteLayers {
         private const val ENDS_SOURCE = "triptrack-route-ends-source"
         private const val COLOR = "color"
         private const val DASHED = "dashed"
+        private const val HIDDEN = "hidden"
         private const val HAS_SPEED = "has-speed"
         private const val END_FRACTION = "end-fraction"
 

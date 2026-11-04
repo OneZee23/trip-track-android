@@ -1997,4 +1997,54 @@
     <string name="year" formatted="false">Year</string>
     <string name="yesterday" formatted="false">Yesterday</string>
     <string name="youtubeSub" formatted="false">Development videos</string>
+    <string name="hiddenEditorTitle" formatted="false">Hide from others</string>
+    <string name="hiddenFromOthers" formatted="false">Hidden from others</string>
+    <string name="hiddenStartLabel" formatted="false">Start</string>
+    <string name="hiddenEndLabel" formatted="false">End</string>
+    <string name="hiddenNone" formatted="false">None</string>
+    <string name="hiddenByDefault" formatted="false">default</string>
+    <string name="hiddenNothing" formatted="false">Nothing is hidden</string>
+    <string name="hiddenSummaryStart" formatted="false">start {value}</string>
+    <string name="hiddenSummaryEnd" formatted="false">end {value}</string>
+    <string name="hiddenSummaryMiddle" formatted="false">in the middle: {count}</string>
+    <string name="hiddenAddSection" formatted="false">Hide a section in the middle</string>
+    <string name="hiddenPickStart" formatted="false">Tap the route where the section begins</string>
+    <string name="hiddenPickEnd" formatted="false">Now where it ends</string>
+    <string name="hiddenNumbersTitle" formatted="false">Numbers for others</string>
+    <string name="hiddenNumbersWhole" formatted="false">Whole trip</string>
+    <string name="hiddenNumbersVisible" formatted="false">Without hidden parts</string>
+    <string name="hiddenNumbersCaption" formatted="false">Others will see {distance} and {duration}</string>
+    <string name="hiddenStaysTitle" formatted="false">Stays on this phone only</string>
+    <string name="hiddenStaysBody" formatted="false">Hidden pieces of the route and photos from them go neither to the feed nor to the cloud copy.</string>
+    <string name="hiddenPreviewToggle" formatted="false">As others will see it</string>
+    <string name="hiddenTitleNamesStart" formatted="false">The title “{title}” names where the trip starts.</string>
+    <string name="hiddenTitleNamesFinish" formatted="false">The title “{title}” names where the trip ends.</string>
+    <string name="hiddenRename" formatted="false">Rename</string>
+    <string name="hiddenAlreadySeen" formatted="false">Anyone who has already seen the trip may remember it whole.</string>
+    <string name="hiddenOnlyOnRecordingPhone" formatted="false">Hidden pieces exist only on the phone that recorded the trip.</string>
+    <string name="hiddenPill" formatted="false">Hidden from others: {distance}</string>
+    <string name="routeHiddenByAuthor" formatted="false">The route is hidden by its author</string>
+    <string name="publishPreviewCaption" formatted="false">This is how it will look in the feed and on your profile</string>
+    <string name="publishHiddenRow" formatted="false">Hidden: {summary}</string>
+    <string name="publishHintOvernight" formatted="false">Hide the end? You stayed overnight here</string>
+    <string name="publishHintHome" formatted="false">Hide the start? Your home is here</string>
+    <string name="publishHintAction" formatted="false">Hide {value}</string>
+    <string name="edgeQuestionTitle" formatted="false">Hide the start and end of trips?</string>
+    <string name="edgeQuestionBody" formatted="false">Your home and where you sleep won\'t reach the feed or the cloud copy. You will still see the whole trip.</string>
+    <string name="edgeOptionNone" formatted="false">Don\'t hide</string>
+    <string name="edgeOption200Note" formatted="false">yard, parking</string>
+    <string name="edgeOption500Note" formatted="false">block, campsite</string>
+    <string name="edgeOption1000Note" formatted="false">safer for camping</string>
+    <string name="edgeQuestionFootnote" formatted="false">You can change this in Settings → Privacy</string>
+    <string name="edgeQuestionWholeTrips" formatted="false">The whole route of {count} {trips} will be hidden</string>
+    <string name="privacyPlacesSection" formatted="false">Places others don\'t see</string>
+    <string name="privacyEdgesRow" formatted="false">Start and end of trips</string>
+    <string name="privacyEdgesFootnote" formatted="false">Hidden on every trip except those where you set your own. Goes neither to the feed nor to the cloud.</string>
+    <string name="filmingSection" formatted="false">Filming mode</string>
+    <string name="filmingToggleSubtitle" formatted="false">Hidden parts disappear from your own screens too</string>
+    <string name="filmingAutoToggle" formatted="false">Turn on while the screen is recorded</string>
+    <string name="filmingAutoSubtitle" formatted="false">Turns itself on and off</string>
+    <string name="filmingFootnote" formatted="false">In filming mode the Atlas, trip maps and Places show your trips without hidden pieces, without your home and without the blue dot of where you are. The recording screen keeps the dot.</string>
+    <string name="filmingPreparing" formatted="false">Preparing filming mode</string>
+    <string name="android_filming_auto_unavailable" formatted="false">This Android version can\'t detect screen recording</string>
 </resources>

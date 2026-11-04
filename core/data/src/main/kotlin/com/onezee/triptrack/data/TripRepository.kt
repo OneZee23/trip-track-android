@@ -15,6 +15,7 @@ import com.onezee.triptrack.model.TripCheckpoint
 import com.onezee.triptrack.model.TripCompanion
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.model.TripEnergyMode
+import com.onezee.triptrack.model.TripHiddenParts
 import com.onezee.triptrack.model.TripPhoto
 import com.onezee.triptrack.model.TripSegment
 import com.onezee.triptrack.model.TripSyncPayload
@@ -70,6 +71,7 @@ interface TripRepository {
     suspend fun updateTitle(tripId: UUID, title: String)
     suspend fun updateNotes(tripId: UUID, notes: String)
     suspend fun updatePrivacy(tripId: UUID, isPrivate: Boolean)
+    suspend fun updateHiddenParts(tripId: UUID, hiddenParts: TripHiddenParts?)
     /** The person rode as a passenger: the car comes off the trip and off its odometer. */
     suspend fun updateTransfer(tripId: UUID, isTransfer: Boolean)
     suspend fun updateVehicle(tripId: UUID, vehicleId: UUID?)

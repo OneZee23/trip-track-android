@@ -14,12 +14,14 @@ data class TripSummary(
     val isOnServer: Boolean, val source: TripOrigin, val confirmation: TripConfirmation,
     val energyMode: TripEnergyMode, val coordinates: List<GeoPoint>, val photos: List<PhotoState>,
     val badgeIds: List<String>, val isTransfer: Boolean, val companions: List<TripCompanion>,
+    val hiddenParts: TripHiddenParts? = null,
+    val previewBreaks: List<Int> = emptyList(),
 ) {
     companion object {
         fun from(trip: Trip) = TripSummary(trip.id, trip.startDate, trip.endDate, trip.title,
             trip.tripDescription, trip.region, trip.distance, trip.duration, trip.maxSpeed, trip.averageSpeed,
             trip.vehicleId, trip.isPrivate, trip.isOnServer, trip.source, trip.confirmation, trip.energyMode,
-            trip.previewCoordinates.toList(), trip.photos.map(PhotoState::from), trip.earnedBadgeIds.toList(), trip.isTransfer, trip.companions.toList())
+            trip.previewCoordinates.toList(), trip.photos.map(PhotoState::from), trip.earnedBadgeIds.toList(), trip.isTransfer, trip.companions.toList(), trip.hiddenParts, trip.previewBreaks.orEmpty())
     }
 }
 

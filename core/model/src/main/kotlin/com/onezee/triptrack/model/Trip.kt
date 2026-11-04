@@ -85,6 +85,10 @@ data class Trip(
     var energyMode: TripEnergyMode = TripEnergyMode.auto,
     @EncodeDefault
     var recordingBreaks: List<Instant> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    var hiddenParts: TripHiddenParts? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    var previewBreaks: List<Int>? = null,
 ) {
     companion object {}
 }

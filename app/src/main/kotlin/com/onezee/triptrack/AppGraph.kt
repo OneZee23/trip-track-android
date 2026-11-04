@@ -140,6 +140,7 @@ class AppGraph(
         cloudSyncEnabled = { accountSettings.cloudSyncEnabled },
         localUserId = { checkNotNull(userId) { "the settings row is loaded before anything is recorded" } },
         homeZoneActive = { privacyZone() != null },
+        defaultHiddenEdgeMetres = { preferences.getString("privacy.edgeMetres", null)?.toIntOrNull() },
     )
     val database: TripTrackDatabase = TripTrackDatabase.open(context)
     val settings = RoomSettingsStore(database)
@@ -220,6 +221,10 @@ class AppGraph(
             placeChanges = RoomWorldChanges(database).events.filter { it == WorldChange.places }.map { },
             nameCheckpoint = location.checkpointNamer::name,
             failedSyncQueue = syncHost.queueState.map { it.failed.isNotEmpty() },
+            homeZone = ::privacyZone,
+            filmingMode = settingsManager.state.map { it.filmingActive }.stateIn(scope, SharingStarted.Eagerly, settingsManager.state.value.filmingActive),
+            setDefaultHiddenEdge = settingsManager::setPrivacyEdgeMetres,
+            deferPrivacyEdgeQuestion = settingsManager::deferPrivacyEdgeQuestion,
         ).also { feature ->
             feature.openPlace = { world.openPlace(it) }
             feature.pins = object : com.onezee.triptrack.feature.TripPins {
@@ -290,6 +295,8 @@ class AppGraph(
             events = RoomWorldChanges(database).events, online = networkOnline(context, scope), trips = tripsFeature,
             saveHome = { home -> settingsManager.setHome(home) },
             placeManager = placeManager,
+            filmingMode = tripsFeature.filmingMode,
+            defaultHiddenEdgeMetres = { settingsManager.state.value.privacyEdgeMetres },
         ).also { it.selectTab = tabStore::select }
     }
 
@@ -373,6 +380,7 @@ class AppGraph(
         localUserId = { checkNotNull(userId) },
         cloudSyncEnabled = { accountSettings.cloudSyncEnabled },
         zone = ::privacyZone,
+        defaultHiddenEdgeMetres = { preferences.getString("privacy.edgeMetres", null)?.toIntOrNull() },
         isRecording = { location.recorder.state.value.isRecording },
         syncAccountProfile = { auth.backfillNameIfNeeded(); me.identity.syncJournal(); me.profilePhotos.sync() },
         purgeVehiclePreferences = { vehicleId ->

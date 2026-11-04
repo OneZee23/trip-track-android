@@ -120,4 +120,10 @@ data class TripSyncPayload(
     var energyMode: String? = null,
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     var recordingBreaks: List<Instant>? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val previewBreaks: List<Int>? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val hiddenParts: TripHiddenParts? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val hiddenRanges: List<HiddenRange>? = null,
 )

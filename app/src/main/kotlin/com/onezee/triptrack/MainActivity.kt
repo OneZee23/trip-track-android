@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.app.UiModeManager
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +15,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.drawable.toDrawable
@@ -46,9 +49,31 @@ class MainActivity : AppCompatActivity() {
             val dark = graph.themeManager.mode.isDark(isSystemInDarkTheme())
             SystemBarsFollowTheme(dark, graph.themeManager.mode)
             TripTrackTheme(isDark = dark, language = graph.languageManager.current(LocalConfiguration.current)) {
+                ScreenRecordingObserver(graph)
                 // iOS: TripTrackApp gates the whole window on hasCompletedOnboarding.
                 if (graph.onboarding.completed) AppShell(graph, resumeTick.intValue)
                 else OnboardingRoute(graph, resumeTick.intValue)
+            }
+        }
+    }
+
+    @Composable
+    private fun ScreenRecordingObserver(graph: AppGraph) {
+        DisposableEffect(graph) {
+            if (Build.VERSION.SDK_INT < 35) {
+                graph.settingsManager.setScreenRecording(false)
+                onDispose { }
+            } else {
+                val callback = java.util.function.Consumer<Int> { state ->
+                    graph.settingsManager.setScreenRecording(state == WindowManager.SCREEN_RECORDING_STATE_VISIBLE)
+                }
+                val manager = windowManager
+                val current = manager.addScreenRecordingCallback(mainExecutor, callback)
+                graph.settingsManager.setScreenRecording(current == WindowManager.SCREEN_RECORDING_STATE_VISIBLE)
+                onDispose {
+                    manager.removeScreenRecordingCallback(callback)
+                    graph.settingsManager.setScreenRecording(false)
+                }
             }
         }
     }

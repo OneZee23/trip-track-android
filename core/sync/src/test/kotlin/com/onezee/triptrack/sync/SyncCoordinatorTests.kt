@@ -90,9 +90,10 @@ class SyncCoordinatorTests : SyncTestCase() {
     }
     @Test fun fullPullRequestResetsCursorAndZoneChangeQueuesOnlyPublicConfirmedTrips() = runBlocking<Unit> {
         val c = coordinator(); cursor.set(t0, account!!, "A"); c.requestFullPull(); assertNull(cursor.get(account!!, "A"))
-        val public = tripPayload(); repo.applyRemoteTrip(public); repo.applyRemoteTrip(tripPayload().copy(isPrivate = true))
+        val public = tripPayload(); val privateCopy = tripPayload().copy(isPrivate = true)
+        repo.applyRemoteTrip(public); repo.applyRemoteTrip(privateCopy)
         val draft = UUID.randomUUID(); db.tripDao().upsertTrip(TripEntity(draft, startDate = t0, isPrivate = false, confirmation = "draft"))
-        c.privacyZoneChanged(); assertEquals(listOf(public.id), queue.state.value.pending.map { it.entityId }); gate.close()
+        c.privacyZoneChanged(); assertEquals(setOf(public.id, privateCopy.id), queue.state.value.pending.map { it.entityId }.toSet()); gate.close()
     }
     @Test fun failedPullStillDrainsPublicWritesAndSyncsProfile() = runBlocking<Unit> {
         val c = coordinator(); val trip = tripPayload(); repo.applyRemoteTrip(trip)

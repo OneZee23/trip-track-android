@@ -76,6 +76,7 @@ import com.onezee.triptrack.designsystem.components.Text
 import com.onezee.triptrack.designsystem.components.ToastHost
 import com.onezee.triptrack.designsystem.components.ToastItem
 import com.onezee.triptrack.designsystem.components.ToastType
+import com.onezee.triptrack.designsystem.R
 import com.onezee.triptrack.designsystem.components.edgeScrims
 import com.onezee.triptrack.designsystem.components.plainPressFeedback
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
@@ -95,15 +96,19 @@ import com.onezee.triptrack.feature.trip.SegmentState
 import com.onezee.triptrack.feature.trip.TripDetailState
 import com.onezee.triptrack.feature.trip.TripDetailViewModel
 import com.onezee.triptrack.feature.trip.TripExportFormat
+import com.onezee.triptrack.feature.trip.TripSummary
 import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
 import com.onezee.triptrack.feature.social.ui.TripPosterSheet
 import com.onezee.triptrack.logic.elevation
 import com.onezee.triptrack.logic.speedValue
+import com.onezee.triptrack.logic.coordinate
+import com.onezee.triptrack.logic.encodePolyline
 import com.onezee.triptrack.map.MapHostState
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.model.Journey
+import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.model.TripOrigin
@@ -148,8 +153,40 @@ import kotlinx.coroutines.withContext
 fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>) {
     val vm = entryViewModel("trip:${dest.id}") { feature.tripDetail(dest.id, dest.preview, dest.social) }
     LaunchedEffect(vm) { vm.load() }
-    val state by vm.state.collectAsState()
+    val loaded by vm.state.collectAsState()
+    val filming by feature.filmingMode.collectAsState()
+    val state = remember(loaded, filming, feature.defaultHiddenEdgeMetres()) {
+        if (filming) loaded.withoutHiddenParts(feature.defaultHiddenEdgeMetres(), feature.homeZone()?.let { it.centre to it.radius }) else loaded
+    }
     TripDetailContent(state, vm, feature, navigator, dest.social, (dest.focus as? com.onezee.triptrack.model.TripFocus.Checkpoint)?.id, dest.focus, dest.editOnOpen)
+}
+
+/** Own screens expose the same locally resolved public view while the recording callback is active. */
+private fun TripDetailState.withoutHiddenParts(defaultEdge: Int?, home: Pair<com.onezee.triptrack.model.GeoPoint, Double>?): TripDetailState {
+    val full = sourceTrip?.takeIf { isOwn } ?: return this
+    if (full.trackPoints.isEmpty()) return this
+    val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(full.trackPoints, full.recordingBreaks,
+        full.hiddenParts?.startMetres ?: defaultEdge ?: 0, full.hiddenParts?.endMetres ?: defaultEdge ?: 0,
+        full.hiddenParts?.sections.orEmpty(), home)
+    val indexes = resolved.visibleRuns.flatMap { it.toList() }
+    val points = indexes.map(full.trackPoints::get)
+    val breaks = mutableListOf<Int>()
+    var next = 0
+    resolved.visibleRuns.forEachIndexed { index, run -> if (index > 0) breaks += next; next += run.count() }
+    val photoIds = full.photos.filter { photo -> com.onezee.triptrack.logic.TripHiddenPartsResolver.photoIsHidden(
+        photo.capturedAt, photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> com.onezee.triptrack.model.GeoPoint(lat, lon) } },
+        full.trackPoints, resolved, home) }.map { it.id }.toSet()
+    val hiddenRanges = resolved.hiddenRanges
+    val safeTrip = full.copy(trackPoints = points, previewPolyline = Trip.encodePolyline(resolved.previewPoints), previewBreaks = breaks,
+        hiddenParts = null, photos = full.photos.filterNot { it.id in photoIds },
+        distance = if (full.hiddenParts?.numbersVisibleOnly == true) resolved.visibleDistance else full.distance)
+    return copy(sourceTrip = safeTrip,
+        trip = trip?.copy(coordinates = resolved.previewPoints, previewBreaks = breaks, hiddenParts = null, photos = trip.photos.filterNot { it.id in photoIds }),
+        coordinates = resolved.previewPoints, speeds = points.map { it.speed }, routeBreaks = breaks,
+        replay = com.onezee.triptrack.logic.TripReplay.prepare(points),
+        checkpoints = checkpoints.filterNot { cp -> hiddenRanges.any { cp.timestamp >= it.from && cp.timestamp <= it.to } },
+        photos = photos.filterNot { it.id in photoIds }, photoPins = photoPins.filterNot { it.id in photoIds },
+        moments = moments.map { moment -> moment.copy(photos = moment.photos.filterNot { it.id in photoIds }) }.filter { it.photos.isNotEmpty() || it.checkpointId != null })
 }
 
 @Composable
@@ -189,6 +226,36 @@ private fun TripDetailContent(
     var shareAfterPublish by remember { mutableStateOf(false) }
     var posterUrl by remember { mutableStateOf<String?>(null) }
     var showPoster by remember { mutableStateOf(false) }
+    var showPrivacyEdgeQuestion by remember { mutableStateOf(false) }
+    val requestPublish = {
+        if (feature.defaultHiddenEdgeMetres() == null) showPrivacyEdgeQuestion = true else vm.requestPublish()
+    }
+    val posterTrip = remember(trip, state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), state.sourceTrip?.hiddenParts, state.sourceTrip?.recordingBreaks) {
+        val full = state.sourceTrip?.takeIf { state.isOwn } ?: return@remember trip
+        val home = feature.homeZone()?.let { it.centre to it.radius }
+        val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+            full.trackPoints, full.recordingBreaks,
+            full.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+            full.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+            full.hiddenParts?.sections.orEmpty(), home,
+        )
+        val hiddenPhotoIds = full.photos.filter { photo ->
+            com.onezee.triptrack.logic.TripHiddenPartsResolver.photoIsHidden(photo.capturedAt,
+                photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> com.onezee.triptrack.model.GeoPoint(lat, lon) } },
+                full.trackPoints, resolved, home)
+        }.map { it.id }.toSet()
+        val base = TripSummary.from(full)
+        base.copy(coordinates = resolved.previewPoints, previewBreaks = resolved.previewBreaks,
+            photos = base.photos.filterNot { it.id in hiddenPhotoIds },
+            distance = if (full.hiddenParts?.numbersVisibleOnly == true) resolved.visibleDistance else base.distance,
+            duration = if (full.hiddenParts?.numbersVisibleOnly == true && resolved.visibleStart != null && resolved.visibleEnd != null)
+                java.time.Duration.between(resolved.visibleStart, resolved.visibleEnd).seconds.toDouble() else base.duration,
+            averageSpeed = if (full.hiddenParts?.numbersVisibleOnly == true) {
+                val speeds = full.trackPoints.filterIndexed { index, _ -> !resolved.hidden[index] }.map { it.speed }
+                speeds.average().takeIf { speeds.isNotEmpty() } ?: 0.0
+            } else base.averageSpeed,
+        )
+    }
     // iOS canOfferShare: one's own trip always (a private one is published first), someone else's only when public.
     val showShare = socialFeature != null && !state.isLoading && trip != null && com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)
     val share = com.onezee.triptrack.feature.social.ui.rememberTripShare(
@@ -196,7 +263,7 @@ private fun TripDetailContent(
         tripId = trip?.id ?: UUID(0L, 0L),
         title = trip?.title ?: strings.tripTitle(),
         needsPublish = state.isOwn && trip?.isPrivate == true,
-        onPublish = { shareAfterPublish = true; vm.requestPublish() },
+        onPublish = { shareAfterPublish = true; requestPublish() },
         autoShare = shareAfterPublish && trip?.isPrivate == false && trip.isOnServer,
         onPosterReady = { posterUrl = it; showPoster = true },
         onShared = { shareAfterPublish = false },
@@ -211,12 +278,14 @@ private fun TripDetailContent(
     var viewerIndex by remember { mutableStateOf<Int?>(null) }
     var openedBadge by remember { mutableStateOf<String?>(null) }
     var editingTrip by remember { mutableStateOf(false) }
+    var showHiddenEntryInEdit by remember { mutableStateOf(false) }
+    var editingHiddenParts by remember { mutableStateOf(false) }
     var editVehicles by remember { mutableStateOf<List<Vehicle>>(emptyList()) }
     LaunchedEffect(state.isOwn, trip?.id) {
         if (state.isOwn && trip != null) editVehicles = runCatching { feature.vehicles() }.getOrDefault(emptyList())
     }
     LaunchedEffect(editOnOpen, trip?.id, state.isOwn) {
-        if (editOnOpen && trip != null && state.isOwn) editingTrip = true
+        if (editOnOpen && trip != null && state.isOwn) { editingTrip = true; showHiddenEntryInEdit = true }
     }
     var photoToDelete by remember { mutableStateOf<DetailPhotoState?>(null) }
     var journeyTick by remember { mutableIntStateOf(0) }
@@ -265,11 +334,45 @@ private fun TripDetailContent(
     }
 
     // The map: the route shape is built off the main thread, once per geometry revision.
-    val route by produceState(RouteGeometry.build(emptyList()), state.geometryRevision, state.coordinates) {
+    val route by produceState(RouteGeometry.build(emptyList()), state.geometryRevision, state.coordinates, state.routeBreaks,
+        state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
         val coordinates = state.coordinates
         val speeds = state.speeds
         val preview = state.isPreviewRoute
-        value = withContext(Dispatchers.Default) { RouteGeometry.build(coordinates, speeds, preview) }
+        val breaks = state.routeBreaks
+        val sourceTrip = state.sourceTrip
+        val isOwn = state.isOwn
+        val home = feature.homeZone()?.let { it.centre to it.radius }
+        val default = feature.defaultHiddenEdgeMetres() ?: 0
+        value = withContext(Dispatchers.Default) {
+            val ownTrip = sourceTrip?.takeIf { isOwn && it.trackPoints.size == coordinates.size }
+            val hidden = ownTrip?.let { trip ->
+                com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(trip.trackPoints, trip.recordingBreaks,
+                    trip.hiddenParts?.startMetres ?: default, trip.hiddenParts?.endMetres ?: default,
+                    trip.hiddenParts?.sections.orEmpty(), home)
+            }
+            val hasMask = hidden != null && hidden.hidden.any { it }
+            if (!hasMask || preview) RouteGeometry.build(coordinates, speeds, preview, breaks)
+            else {
+                val visible = hidden!!.visibleRuns.flatMap { range ->
+                    val chunk = range.map { ownTrip!!.trackPoints[it] }
+                    listOf(RouteGeometry.build(chunk.map { it.coordinate }, chunk.map { it.speed }).lines)
+                }.flatten()
+                val segment = ownTrip!!.trackPoints.map { point -> ownTrip.recordingBreaks.count { point.timestamp >= it } }
+                val hiddenLines = mutableListOf<com.onezee.triptrack.map.route.RouteLine>()
+                var index = 0
+                while (index < hidden!!.hidden.size) {
+                    if (!hidden.hidden[index]) { index++; continue }
+                    val start = index
+                    while (index + 1 < hidden.hidden.size && hidden.hidden[index + 1] && segment[index + 1] == segment[start]) index++
+                    val chunk = ownTrip.trackPoints.subList(start, index + 1)
+                    if (chunk.size > 1) hiddenLines += com.onezee.triptrack.map.route.RouteLine(chunk.map { it.coordinate }, null, hidden = true)
+                    index++
+                }
+                val fullBounds = RouteGeometry.build(coordinates, speeds, breaks = breaks).bounds
+                com.onezee.triptrack.map.route.RouteShape(visible, fullBounds, hiddenLines)
+            }
+        }
     }
     val pinBitmaps by produceState(emptyMap<UUID, Bitmap>(), state.photoPins, images) {
         value = state.photoPins.mapNotNull { pin -> images?.load(PhotoSource.Local(pin.filename), 120)?.let { pin.id to it.asAndroidBitmap() } }.toMap()
@@ -294,7 +397,7 @@ private fun TripDetailContent(
     }
     val shownMarker = selectedMarker ?: replay.frame.holdingIndex?.let { holdMarkers.getOrNull(it) }?.let { "cp:${it.id}" }
     val playback = replay.frame.head?.takeIf { expansion.state.presented }?.let {
-        MapPlayback(it, replay.frame.course, replayCarColor(vehicle?.avatarEmoji), collapsedCar)
+        MapPlayback(it, replay.frame.course, replayCarColor(vehicle?.avatarEmoji), collapsedCar, opacity = replay.frame.opacity)
     }
     val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps,
         playback, if (playback != null) replay.litFraction else null)
@@ -398,7 +501,7 @@ private fun TripDetailContent(
                     onDeletePhoto = { photoToDelete = it },
                     onAddPhotos = { pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                     onOpenBadge = { openedBadge = it },
-                    onEditDescription = { editingTrip = true },
+                    onEditDescription = { showHiddenEntryInEdit = false; editingTrip = true },
                     // iOS: the reactions and the discussion are the last two sections of the same 22-point column.
                     social = {
                         if (socialFeature != null && !state.isLoading) {
@@ -419,6 +522,9 @@ private fun TripDetailContent(
                         }
                     },
                 )
+                if (state.isOwn && trip.hiddenParts != null) {
+                    HiddenPartsEntryCard(trip.hiddenParts, feature.defaultHiddenEdgeMetres(), onClick = { editingHiddenParts = true })
+                }
             }
             Box(Modifier.fillMaxWidth().height(safeTop + 28.dp).edgeScrims(top = true))
             DetailTopBar(
@@ -435,7 +541,7 @@ private fun TripDetailContent(
                         shareBusy = share.busy,
                         onShare = { haptics.tap(); share.start() },
                         onActions = { haptics.tap(); showActions = true },
-                        popover = { ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onEdit = { editingTrip = true }, onCombine = { composerOpenings++; showComposer = true },
+                    popover = { ActionPopover(showActions, { showActions = false }, ownerActions(state, journey, vm, navigator, onEdit = { showHiddenEntryInEdit = true; editingTrip = true }, onHiddenParts = { editingHiddenParts = true }, showHiddenParts = trip?.hiddenParts != null, onRequestPublish = requestPublish, onCombine = { composerOpenings++; showComposer = true },
                             pinned = pinned, onTogglePin = {
                                 feature.pins?.let { pins -> scope.launch { if (!pins.toggle(trip.id)) toast = ToastItem(ToastType.info, strings.profileShowcaseLimit()) } }
                             })) },
@@ -530,10 +636,19 @@ private fun TripDetailContent(
         trip = trip.asPreviewTrip(),
         vehicles = editVehicles,
         onSave = { title, description, vehicleId, isPrivate, isTransfer -> vm.updateTripDetails(title, description, vehicleId, isPrivate, isTransfer) },
+        showHiddenPartsEntry = showHiddenEntryInEdit,
+        onEditHidden = { editingTrip = false; editingHiddenParts = true },
         onDismissRequest = { editingTrip = false },
     )
+    if (editingHiddenParts && state.isOwn && state.sourceTrip != null) HiddenPartsEditorSheet(
+        trip = state.sourceTrip!!,
+        defaultEdgeMetres = feature.defaultHiddenEdgeMetres(),
+        home = feature.homeZone()?.let { it.centre to it.radius },
+        onSave = { vm.updateHiddenParts(it) },
+        onDismissRequest = { editingHiddenParts = false },
+    )
     if (showPoster && trip != null) TripPosterSheet(
-        trip = trip,
+        trip = posterTrip ?: trip,
         authorName = social?.author?.displayName ?: strings.publicProfileDriver(),
         shareUrl = posterUrl,
         onDismiss = { showPoster = false },
@@ -548,8 +663,27 @@ private fun TripDetailContent(
         )
     }
     if (state.publishRequested) {
-        PublishTripSheet(cloudSyncEnabled = feature.cloudSyncEnabled(), onPublish = { vm.publish() }, onDismissRequest = { shareAfterPublish = false; vm.cancelPublish() })
+        PublishTripSheet(cloudSyncEnabled = feature.cloudSyncEnabled(), trip = state.sourceTrip,
+            defaultEdgeMetres = feature.defaultHiddenEdgeMetres(), home = feature.homeZone()?.let { it.centre to it.radius },
+            onEditHidden = { editingHiddenParts = true },
+            nearbyHomeEnd = state.sourceTrip?.let { source -> feature.homeZone()?.centre?.let { home ->
+                val nearEnd = source.trackPoints.lastOrNull()?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(it.coordinate, home) <= 300.0 } == true &&
+                    (source.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0) == 0
+                val nearStart = source.trackPoints.firstOrNull()?.let { com.onezee.triptrack.logic.GeometryUtils.haversineDistance(it.coordinate, home) <= 300.0 } == true &&
+                    (source.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0) == 0
+                when { nearEnd -> false; nearStart -> true; else -> null }
+            } },
+            onHideNearbyEnd = { isStart ->
+                val current = state.sourceTrip?.hiddenParts ?: com.onezee.triptrack.model.TripHiddenParts()
+                vm.updateHiddenParts(if (isStart) current.copy(startMetres = 500) else current.copy(endMetres = 500))
+            },
+            onPublish = { vm.publish() },
+            onDismissRequest = { shareAfterPublish = false; vm.cancelPublish() })
     }
+    if (showPrivacyEdgeQuestion) com.onezee.triptrack.feature.settings.PrivacyEdgeQuestionSheet(
+        onSave = { feature.setDefaultHiddenEdge(it); showPrivacyEdgeQuestion = false; vm.requestPublish() },
+        onDismiss = { showPrivacyEdgeQuestion = false; feature.deferPrivacyEdgeQuestion(); vm.requestPublish() },
+    )
     AppConfirm(
         item = state.confirmation,
         onDismissRequest = vm::cancelConfirmation,
@@ -594,6 +728,9 @@ private fun ownerActions(
     vm: TripDetailViewModel,
     navigator: DestinationNavigator<TripsDestination>,
     onEdit: () -> Unit,
+    onHiddenParts: () -> Unit,
+    showHiddenParts: Boolean,
+    onRequestPublish: () -> Unit,
     onCombine: () -> Unit,
     pinned: Boolean?,
     onTogglePin: () -> Unit,
@@ -602,7 +739,8 @@ private fun ownerActions(
     val trip = state.trip ?: return emptyList()
     return listOfNotNull(
         ActionPopoverItem(strings.edit(), AppGlyph.pencil, testTag = "detail_action_edit", action = onEdit),
-        if (trip.isPrivate) ActionPopoverItem(strings.publishAction(), AppGlyph.globe, testTag = "detail_action_publish") { vm.requestPublish() }
+        if (showHiddenParts) ActionPopoverItem(strings.tr(R.string.hiddenFromOthers), AppGlyph.lock, testTag = "detail_action_hidden_parts", action = onHiddenParts) else null,
+        if (trip.isPrivate) ActionPopoverItem(strings.publishAction(), AppGlyph.globe, testTag = "detail_action_publish", action = onRequestPublish)
         else ActionPopoverItem(strings.makePrivateAction(), AppGlyph.lock, testTag = "detail_action_publish") { vm.requestHide() },
         // iOS pin / pin.slash; the drawn set has no thumbtack yet, the Я journal menu stands in with the flag too.
         if (pinned != null && !trip.isPrivate && trip.confirmation != TripConfirmation.draft && trip.endDate != null)
@@ -997,7 +1135,8 @@ private fun ZoomButton(glyph: AppGlyph, label: String, tag: String, enabled: Boo
  * (and that the trip leaves the phone even with Cloud Sync off), Cancel and Publish.
  */
 @Composable
-private fun PublishTripSheet(cloudSyncEnabled: Boolean, onPublish: () -> Unit, onDismissRequest: () -> Unit) {
+internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptrack.model.Trip?, defaultEdgeMetres: Int?, home: Pair<com.onezee.triptrack.model.GeoPoint, Double>?, onEditHidden: () -> Unit,
+    nearbyHomeEnd: Boolean?, onHideNearbyEnd: (Boolean) -> Unit, onPublish: () -> Unit, onDismissRequest: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
@@ -1005,6 +1144,30 @@ private fun PublishTripSheet(cloudSyncEnabled: Boolean, onPublish: () -> Unit, o
         val sheet = this
         Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 20.dp).testTag("publish_sheet"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(strings.publishTripTitle(), style = inter(19f, InterWeight.bold), color = colors.text)
+            Text(strings.tr(R.string.publishPreviewCaption), style = inter(12f), color = colors.textSecondary)
+            trip?.let { ownTrip ->
+                val hidden = remember(ownTrip.id, ownTrip.hiddenParts, ownTrip.trackPoints, ownTrip.recordingBreaks) {
+                    com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+                        ownTrip.trackPoints, ownTrip.recordingBreaks,
+                        ownTrip.hiddenParts?.startMetres ?: defaultEdgeMetres ?: 0, ownTrip.hiddenParts?.endMetres ?: defaultEdgeMetres ?: 0,
+                        ownTrip.hiddenParts?.sections.orEmpty(), home,
+                    )
+                }
+                val routes = hidden.visibleRuns.map { run -> run.map { ownTrip.trackPoints[it].let { p -> com.onezee.triptrack.model.GeoPoint(p.latitude, p.longitude) } } }
+                if (routes.isNotEmpty()) com.onezee.triptrack.ui.LightRoutePreview(routes, Modifier.fillMaxWidth().height(112.dp).clip(RoundedCornerShape(12.dp)))
+                Text(
+                    strings.tr(R.string.publishHiddenRow).replace("{summary}", ownTrip.hiddenParts?.let { strings.tr(R.string.hiddenSummaryMiddle).replace("{count}", it.sections.size.toString()) } ?: strings.tr(R.string.hiddenNothing)),
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
+                        .clickable(role = Role.Button, onClick = onEditHidden).padding(14.dp).testTag("publish_hidden_parts"),
+                    style = inter(14f, InterWeight.medium), color = colors.text,
+                )
+                if (nearbyHomeEnd != null) Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
+                    .clickable(role = Role.Button) { onHideNearbyEnd(nearbyHomeEnd) }.padding(13.dp).testTag("publish_hide_nearby_home"),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(strings.tr(if (nearbyHomeEnd) R.string.publishHintHome else R.string.publishHintOvernight), Modifier.weight(1f), style = inter(13f), color = colors.text)
+                    Text(strings.tr(R.string.publishHintAction).replace("{value}", "500 m"), style = inter(12f, InterWeight.bold), color = AppTheme.accent)
+                }
+            }
             Text(strings.publishConfirmBody() + if (!cloudSyncEnabled) "\n\n" + strings.publishConfirmCloudOff() else "", style = inter(14f), color = colors.textSecondary)
             Row(Modifier.padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
@@ -1021,6 +1184,19 @@ private fun PublishTripSheet(cloudSyncEnabled: Boolean, onPublish: () -> Unit, o
                 ) { Text(strings.publishAction(), style = inter(15f, InterWeight.bold), color = Color.White) }
             }
         }
+    }
+}
+
+@Composable
+private fun HiddenPartsEntryCard(parts: com.onezee.triptrack.model.TripHiddenParts?, defaultEdge: Int?, onClick: () -> Unit) {
+    val strings = appStrings
+    val colors = AppTheme.colors
+    Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp)
+        .clip(RoundedCornerShape(14.dp)).background(colors.cardAlt).clickable(role = Role.Button, onClick = onClick)
+        .padding(14.dp).testTag("detail_hidden_parts_card"), verticalAlignment = Alignment.CenterVertically) {
+        Glyph(AppGlyph.lock, contentDescription = null, tint = colors.text, size = 18.dp)
+        Text(strings.tr(R.string.hiddenFromOthers), Modifier.weight(1f).padding(start = 10.dp), style = inter(14f, InterWeight.medium), color = colors.text)
+        Text(strings.tr(R.string.hiddenSummaryMiddle).replace("{count}", parts?.sections?.size?.toString() ?: "0"), style = inter(12f), color = colors.textSecondary)
     }
 }
 

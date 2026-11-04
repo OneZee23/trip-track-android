@@ -15,6 +15,7 @@ class TripReplayEngine {
     var trailIndex = -1; private set
     var currentSpeedMS = 0.0; private set
     var currentSpeedKnown = true; private set
+    var headOpacity = 1.0; private set
     val hasSpeeds: Boolean get() = speeds.isNotEmpty()
     var distanceFraction = 0.0; private set
     var rate = 1.0; private set
@@ -24,6 +25,7 @@ class TripReplayEngine {
     private var coords = emptyList<GeoPoint>()
     private var timestamps = emptyList<Instant>()
     private var speeds = emptyList<Double>()
+    private var breaks = emptySet<Int>()
     private var cumulativeMetres = emptyList<Double>()
     private var baseDuration = 12.0
     private var lastTick = 0.0
@@ -35,6 +37,7 @@ class TripReplayEngine {
         coords = input.coords
         timestamps = input.timestamps
         speeds = input.speeds.takeIf { it.size == coords.size }.orEmpty()
+        breaks = input.breaks.toSet()
         var metres = 0.0
         cumulativeMetres = coords.mapIndexed { i, point ->
             if (i > 0) metres += GeometryUtils.haversineDistance(coords[i - 1], point)
@@ -51,6 +54,7 @@ class TripReplayEngine {
         if (span <= 0) { holdFractions = emptyList(); return }
         holdFractions = dates.map { seconds(timestamps.first(), it) / span }.filter { it > 0 && it < 1 }.sorted()
         holdingIndex = null
+        headOpacity = 1.0
     }
 
     fun play(now: Double) {
@@ -122,6 +126,7 @@ class TripReplayEngine {
         val span = seconds(timestamps.first(), timestamps.last())
         if (span <= 0) {
             headCoord = coords.last()
+            headOpacity = 1.0
             trailIndex = coords.lastIndex
             distanceFraction = 1.0
             return
@@ -133,7 +138,8 @@ class TripReplayEngine {
         val hi = minOf(lo + 1, coords.lastIndex)
         val segmentDuration = seconds(timestamps[lo], timestamps[hi])
         val fraction = if (segmentDuration > 0) ((target - seconds(timestamps.first(), timestamps[lo])) / segmentDuration).coerceIn(0.0, 1.0) else 0.0
-        headCoord = GeoPoint(
+        headOpacity = if (hi in breaks) kotlin.math.abs(2.0 * fraction - 1.0) else 1.0
+        headCoord = if (hi in breaks) (if (fraction < 0.5) coords[lo] else coords[hi]) else GeoPoint(
             coords[lo].latitude + (coords[hi].latitude - coords[lo].latitude) * fraction,
             coords[lo].longitude + (coords[hi].longitude - coords[lo].longitude) * fraction,
         )

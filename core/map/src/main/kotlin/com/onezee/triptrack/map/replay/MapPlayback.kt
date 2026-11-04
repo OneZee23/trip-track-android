@@ -12,6 +12,7 @@ data class MapPlayback(
     val accuracyMetres: Double? = null,
     val coneHalfAngle: Double? = null,
     val pulse: Double? = null,
+    val opacity: Double = 1.0,
 )
 
 // iOS: MapCarMarker.State. Pause takes precedence over a lost signal.

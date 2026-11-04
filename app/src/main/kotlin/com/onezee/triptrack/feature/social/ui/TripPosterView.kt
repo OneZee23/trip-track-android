@@ -24,6 +24,7 @@ data class TripPosterSpec(
     val duration: String,
     val averageSpeed: String,
     val coordinates: List<GeoPoint>,
+    val previewBreaks: List<Int> = emptyList(),
 )
 
 class TripPosterView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
@@ -128,17 +129,21 @@ class TripPosterView @JvmOverloads constructor(context: Context, attrs: Attribut
     private fun drawRoute(canvas: Canvas, w: Float, h: Float, s: Float) {
         val points = project(spec.coordinates, w, h, 18f * s)
         if (points.size < 2) return
-        val path = Path().apply { moveTo(points.first().x, points.first().y); points.drop(1).forEach { lineTo(it.x, it.y) } }
+        val boundaries = listOf(0) + spec.previewBreaks.filter { it in 1 until points.size }.distinct().sorted() + points.size
+        val paths = boundaries.zipWithNext().map { (start, end) -> Path().apply {
+            moveTo(points[start].x, points[start].y)
+            for (index in start + 1 until end) lineTo(points[index].x, points[index].y)
+        } }.filterIndexed { index, _ -> boundaries[index + 1] - boundaries[index] > 1 }
         val routeWidth = if (transparent) 9f else 7f
         paint.color = 0x6b70c8ff
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = routeWidth * s
         paint.strokeCap = Paint.Cap.ROUND
         paint.strokeJoin = Paint.Join.ROUND
-        canvas.drawPath(path, paint)
+        paths.forEach { canvas.drawPath(it, paint) }
         paint.color = 0xff70c8ff.toInt()
         paint.strokeWidth = (routeWidth * .57f) * s
-        canvas.drawPath(path, paint)
+        paths.forEach { canvas.drawPath(it, paint) }
         paint.style = Paint.Style.FILL
         val start = points.first(); val end = points.last()
         paint.color = -1; canvas.drawCircle(start.x, start.y, 5f * s, paint)

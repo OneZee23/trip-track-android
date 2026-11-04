@@ -113,6 +113,9 @@ interface TripDao {
     @Query("SELECT * FROM TripEntity WHERE isPrivate = 0")
     suspend fun publicTrips(): List<TripEntity>
 
+    @Query("SELECT * FROM TripEntity WHERE serverCreatedAt IS NOT NULL AND endDate IS NOT NULL AND confirmation != 'draft'")
+    suspend fun tripsWithServerCopy(): List<TripEntity>
+
     /** iOS: countLiveTrips. Library size, including `pendingDelete`; drafts never reach the server. */
     @Query("SELECT COUNT(*) FROM TripEntity WHERE endDate IS NOT NULL AND ${WorldSql.NOT_DRAFT}")
     suspend fun countLiveTrips(): Int

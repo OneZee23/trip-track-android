@@ -86,7 +86,7 @@ class SchemaContractTests : RoomTestCase() {
         assertEquals(Column("startDate", "INTEGER", true, null), trip["startDate"])
         assertEquals(Column("endDate", "INTEGER", false, null), trip["endDate"])
         assertEquals(Column("previewPolyline", "BLOB", false, null), trip["previewPolyline"])
-        assertEquals(33, trip.size, "the 33 attributes of v24, id included")
+        assertEquals(35, trip.size, "the v24 attributes plus hidden parts and preview breaks")
     }
 
     @Test

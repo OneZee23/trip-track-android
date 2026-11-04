@@ -6,6 +6,7 @@ package com.onezee.triptrack.data
 import com.onezee.triptrack.data.db.entity.TripCheckpointEntity
 import com.onezee.triptrack.data.db.entity.TripEntity
 import com.onezee.triptrack.data.db.entity.TripPhotoEntity
+import com.onezee.triptrack.data.db.entity.TrackPointEntity
 import com.onezee.triptrack.model.CompanionStatus
 import com.onezee.triptrack.model.PhotoUploadStatus
 import com.onezee.triptrack.model.TrackPointPayload
@@ -172,6 +173,7 @@ class TripPullRulesTests : RoomTestCase() {
         val local = byteArrayOf(1, 2, 3, 4)
         val echo = Base64.getEncoder().encodeToString(byteArrayOf(9))
         val id = insert(TripEntity(id = UUID.randomUUID(), startDate = start, endDate = start, previewPolyline = local, syncStatus = synced))
+        db.tripDao().insertTrackPoints(listOf(TrackPointEntity(id = UUID.randomUUID(), timestamp = start, tripId = id)))
 
         homeZoneActive = true
         repo.applyRemoteTrip(tripPayload(id = id, startDate = start, conflictVersion = 0, previewPolyline = echo))

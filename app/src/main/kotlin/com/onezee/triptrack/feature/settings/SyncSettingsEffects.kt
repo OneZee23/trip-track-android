@@ -31,6 +31,7 @@ class SyncSettingsEffects(
         syncEngine.coordinator.runFullSync()
     }
     override suspend fun homeZoneChanged(before: HomeZone?, after: HomeZone?) { engine()?.coordinator?.privacyZoneChanged() }
+    override suspend fun privacyEdgeChanged(before: Int?, after: Int?) { engine()?.coordinator?.privacyZoneChanged() }
     override suspend fun autoRecordChanged(mode: AutoRecordMode, timeout: Int, stereos: List<SavedBluetoothDevice>) {
         recordingSettings.apply(mode, timeout, stereos)
     }

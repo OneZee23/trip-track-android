@@ -47,6 +47,7 @@ class SyncEngine private constructor(
             purgeVehiclePreferences: suspend (UUID) -> Unit,
             invalidateTripSnapshots: () -> Unit = {},
             reloadSettings: suspend () -> Unit = {},
+            defaultHiddenEdgeMetres: () -> Int? = { null },
             workManager: WorkManager = WorkManager.getInstance(context),
         ): SyncEngine = withContext(Dispatchers.IO) {
             val app = context.applicationContext
@@ -64,7 +65,7 @@ class SyncEngine private constructor(
             val enqueuer = SyncEnqueuer(db, queue, authorized, cloudSyncEnabled, scope) { scheduler.onLocalChange() }
             val tripFiles = DirectoryTripPhotoFiles(File(app.noBackupFilesDir, "TripPhotos"))
             val vehicleFiles = DirectoryVehiclePhotoFiles(File(app.noBackupFilesDir, "VehiclePhotos"))
-            val environment = DataEnvironment(cloudSyncEnabled, localUserId, { zone() != null })
+            val environment = DataEnvironment(cloudSyncEnabled, localUserId, { zone() != null }, defaultHiddenEdgeMetres)
             val repository = RoomTripRepository(db, environment, tripFiles, enqueuer)
             val vehiclePhotos = RoomVehiclePhotoStore(db, vehicleFiles, enqueuer)
             val vehicles = RoomVehicleStore(db, repository, vehiclePhotos, environment, enqueuer)
@@ -73,7 +74,7 @@ class SyncEngine private constructor(
             val discoverySync = DiscoverySync(SecretsApi(client), discoveries) { authorized() && cloudSyncEnabled() }
             val loader = ManualTripTrackLoader(repository, client, accountId, cloudSyncEnabled)
             queue.configure(APISyncTransport(client, db, repository, vehicles, tripFiles, vehicleFiles, cloudSyncEnabled, zone,
-                loader, discussion::archive, discoverySync::retry))
+                loader, discussion::archive, discoverySync::retry, defaultHiddenEdgeMetres = defaultHiddenEdgeMetres))
             val applier = PullApplier(repository, discoveries, vehiclePhotos, purgeVehiclePreferences, invalidateTripSnapshots, reloadSettings)
             val restore = VehiclePhotoRestore(client, db, vehicleFiles, vehiclePhotos, cloudSyncEnabled, accountId)
             val coordinator = SyncCoordinator(client, db, repository, queue, enqueuer, applier,

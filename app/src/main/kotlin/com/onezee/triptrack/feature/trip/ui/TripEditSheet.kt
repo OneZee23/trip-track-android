@@ -52,6 +52,8 @@ fun TripEditSheet(
     vehicles: List<Vehicle>,
     onSave: (String, String, UUID?, Boolean, Boolean) -> Unit,
     onDismissRequest: () -> Unit,
+    showHiddenPartsEntry: Boolean = false,
+    onEditHidden: () -> Unit = {},
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -127,6 +129,9 @@ fun TripEditSheet(
                         }
                     }
                 }
+                if (showHiddenPartsEntry) Text(strings.tr(com.onezee.triptrack.designsystem.R.string.hiddenFromOthers),
+                    Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onEditHidden).testTag("trip_edit_hidden_parts")
+                        .padding(vertical = 10.dp), style = inter(14f, InterWeight.medium), color = AppTheme.accent)
             }
         }
     }

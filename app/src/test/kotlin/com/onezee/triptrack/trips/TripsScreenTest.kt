@@ -140,7 +140,7 @@ abstract class TripsScreenTest {
         repository = RoomTripRepository(db, environment, files, sink)
         val photos = RoomVehiclePhotoStore(db, DirectoryVehiclePhotoFiles(root.resolve("cars")), sink)
         vehicles = RoomVehicleStore(db, repository, photos, environment, sink)
-        val preferences = app.getSharedPreferences("trips-screens", Context.MODE_PRIVATE).also { it.edit().clear().commit() }
+        val preferences = app.getSharedPreferences("trips-screens", Context.MODE_PRIVATE).also { it.edit().clear().putString("privacy.edgeMetres", "0").commit() }
         val queue = object : DraftDecisionQueue {
             override suspend fun enqueue(id: UUID, decision: DraftDecision) { decisions += id to decision }
             override suspend fun decisionsQueued() {}

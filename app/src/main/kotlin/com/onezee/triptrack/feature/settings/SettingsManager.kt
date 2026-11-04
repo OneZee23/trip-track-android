@@ -54,12 +54,18 @@ data class SettingsState(
     val showOnPublicMap: Boolean = false,
     val home: HomeState = HomeState(),
     val homeAsked: Boolean = false,
+    val privacyEdgeMetres: Int? = null,
+    val filmingManual: Boolean = false,
+    val filmingAuto: Boolean = true,
+    val screenRecording: Boolean = false,
+    val privacyEdgeQuestionDeferred: Boolean = false,
     val homeDeclinedAt: java.time.Instant? = null,
     val selectedVehicleId: UUID? = null,
     val sheets: List<SettingsSheet> = emptyList(),
     val failed: Boolean = false,
 ) {
     val sheet get() = sheets.lastOrNull()
+    val filmingActive get() = filmingManual || (filmingAuto && screenRecording)
 }
 
 // iOS: cloudSyncEnabled / homePrivacyZoneChanged. Sync and recording owners implement side effects.
@@ -68,6 +74,7 @@ interface SettingsEffects {
     suspend fun homeZoneChanged(before: HomeZone?, after: HomeZone?)
     suspend fun autoRecordChanged(mode: AutoRecordMode, timeout: Int, stereos: List<SavedBluetoothDevice>)
     suspend fun publicMapChanged(enabled: Boolean)
+    suspend fun privacyEdgeChanged(before: Int?, after: Int?) = Unit
 }
 
 // iOS: SettingsManager.swift. Each setter serializes persistence before publishing a new snapshot.
@@ -113,6 +120,10 @@ class SettingsManager(
             autoRecordMode = autoRecord.mode, autoRecordTrigger = autoRecord.trigger, autoStopTimeout = autoRecord.autoStopTimeout,
             stereos = autoRecord.savedDevices, cloudSyncEnabled = preferences.string(CLOUD_KEY)?.toBooleanStrictOrNull() ?: false,
             showOnPublicMap = preferences.string(PUBLIC_MAP_KEY)?.toBooleanStrictOrNull() ?: false,
+            privacyEdgeMetres = preferences.string(PRIVACY_EDGE_KEY)?.toIntOrNull(),
+            filmingManual = preferences.string(FILMING_MANUAL_KEY)?.toBooleanStrictOrNull() ?: false,
+            filmingAuto = preferences.string(FILMING_AUTO_KEY)?.toBooleanStrictOrNull() ?: true,
+            privacyEdgeQuestionDeferred = preferences.string(PRIVACY_EDGE_DEFERRED_KEY)?.toBooleanStrictOrNull() ?: false,
             averageSpeed = preferences.string("com.triptrack.settings.avgSpeedMode")?.let { raw -> AvgSpeedMode.entries.firstOrNull { it.rawValue == raw } } ?: AvgSpeedMode.overall,
             home = home?.let { value -> HomeState(if (value.latitude != null && value.longitude != null) GeoPoint(value.latitude!!, value.longitude!!) else null,
                 value.radius, value.showsOnMap, value.trimsPublicTracks) } ?: HomeState(),
@@ -178,6 +189,26 @@ class SettingsManager(
         mutableState.update { it.copy(home = home) }
         if (before != home.activeZone) effects.homeZoneChanged(before, home.activeZone)
     }
+    fun setPrivacyEdgeMetres(value: Int?) = edit {
+        val before = state.value.privacyEdgeMetres
+        preferences.set(PRIVACY_EDGE_KEY, value?.toString())
+        preferences.set(PRIVACY_EDGE_DEFERRED_KEY, "false")
+        mutableState.update { it.copy(privacyEdgeMetres = value) }
+        if (before != value) effects.privacyEdgeChanged(before, value)
+    }
+    fun setFilmingManual(value: Boolean) = edit {
+        preferences.set(FILMING_MANUAL_KEY, value.toString())
+        mutableState.update { it.copy(filmingManual = value) }
+    }
+    fun setFilmingAuto(value: Boolean) = edit {
+        preferences.set(FILMING_AUTO_KEY, value.toString())
+        mutableState.update { it.copy(filmingAuto = value) }
+    }
+    fun setScreenRecording(value: Boolean) { mutableState.update { it.copy(screenRecording = value) } }
+    fun deferPrivacyEdgeQuestion() {
+        preferences.set(PRIVACY_EDGE_DEFERRED_KEY, "true")
+        mutableState.update { it.copy(privacyEdgeQuestionDeferred = true) }
+    }
     fun acceptInferredHome(home: GeoPoint) = edit {
         preferences.set("home.asked", "true")
         val current = state.value.home
@@ -221,6 +252,10 @@ class SettingsManager(
     companion object {
         private const val CLOUD_KEY = "com.triptrack.settings.cloudSyncEnabled"
         private const val PUBLIC_MAP_KEY = "com.triptrack.settings.showOnPublicMap"
+        private const val PRIVACY_EDGE_KEY = "privacy.edgeMetres"
+        private const val PRIVACY_EDGE_DEFERRED_KEY = "privacy.edgeQuestionDeferred"
+        private const val FILMING_MANUAL_KEY = "filming.manual"
+        private const val FILMING_AUTO_KEY = "filming.auto"
         private val LANGUAGES = setOf("ru", "en", "de", "fr", "es", "pt", "it", "tr", "pl", "uk", "id", "fil", "kk")
     }
 }

@@ -77,6 +77,7 @@ data class AtlasState(
     val showsLocationDialog: Boolean = false,
     val online: Boolean = true,
     val shareOfflineNotice: Boolean = false,
+    val filmingMode: Boolean = false,
 ) {
     val isEmpty get() = !isLoading && exploration.isEmpty
     val selectedPlace get() = placePins.firstOrNull { it.id == selectedPlaceId }
@@ -103,7 +104,7 @@ class MyMapViewModel(
     private val placeStore: PlaceStore,
     private val preferences: PresentationPreferences,
     location: AtlasLocationSource,
-    home: StateFlow<HomeState>,
+    private val home: StateFlow<HomeState>,
     dispatcher: CoroutineDispatcher,
     events: Flow<WorldChange> = emptyFlow(),
     online: Flow<Boolean> = flowOf(true),
@@ -111,6 +112,8 @@ class MyMapViewModel(
     private val atlasProvider: () -> RegionAtlas = { RegionAtlas.shared },
     private val now: () -> Instant = Instant::now,
     private val zone: ZoneId = ZoneId.systemDefault(),
+    private val filming: Flow<Boolean> = flowOf(false),
+    private val defaultHiddenEdgeMetres: () -> Int? = { null },
 ) : ViewModel(CoroutineScope(SupervisorJob() + dispatcher)) {
     private val savedAppearance = preferences.string("atlas.mapAppearance")?.let { raw ->
         runCatching { Json.decodeFromString<AtlasMapAppearance>(raw) }.getOrNull()
@@ -136,7 +139,9 @@ class MyMapViewModel(
     init {
         viewModelScope.launch { location.permission.collect { value -> mutableState.update { it.copy(locationPermission = value) } } }
         viewModelScope.launch { online.collect { value -> mutableState.update { it.copy(online = value) } } }
-        viewModelScope.launch { home.collect { value -> mutableState.update { it.copy(home = value, homeSelected = it.homeSelected && value.mapPin != null,
+        viewModelScope.launch { filming.collect { active -> mutableState.update { it.copy(filmingMode = active,
+            home = if (active) HomeState() else home.value, homeSelected = if (active) false else it.homeSelected) }; rebuildPlacePins(); if (loaded) applyCurrentPeriod() } }
+        viewModelScope.launch { home.collect { value -> mutableState.update { it.copy(home = if (it.filmingMode) HomeState() else value, homeSelected = it.homeSelected && value.mapPin != null,
             homeTripCount = value.coordinate?.let { point -> AtlasHome.tripsStarted(point, it.exploration.trips.mapNotNull { trip -> trip.route.firstOrNull() }) } ?: 0) } } }
         viewModelScope.launch { events.collect { event -> when (event) {
             WorldChange.places -> schedulePlacesReload()
@@ -194,6 +199,16 @@ class MyMapViewModel(
         val cached = allTime ?: return
         val period = state.value.period
         val atlas = atlasProvider()
+        if (state.value.filmingMode) {
+            val safeTrips = filmingTrips(cachedTrips)
+            val layer = AtlasPreviewLayer.build(safeTrips, atlas)
+            val hashes = safeTrips.flatMap { it.previewCoordinates }.mapTo(mutableSetOf()) { GeohashEncoder.encode(it.latitude, it.longitude, 6) }
+            val filtered = if (period == AtlasPeriod.AllTime) safeTrips else safeTrips.filter { period.contains(it.startDate, now(), zone) }
+            val revealed = if (period == AtlasPeriod.AllTime) layer else AtlasPreviewLayer.build(filtered, atlas)
+            val exploration = MapExploration.build(filtered, hashes, atlas, revealed.regionKm)
+            apply(exploration, revealed, atlas)
+            return
+        }
         if (period == AtlasPeriod.AllTime) { apply(cached.first, cached.second, atlas); return }
         mutableState.update { it.copy(isFiltering = true) }
         val trips = cachedTrips.filter { it.previewPolyline?.isNotEmpty() == true && period.contains(it.startDate, now(), zone) }
@@ -228,8 +243,36 @@ class MyMapViewModel(
         rebuildPlacePins()
     }
     private fun rebuildPlacePins() {
-        val pins = AtlasPlaces.build(placeSeeds, state.value.period, now(), zone)
+        val allPins = AtlasPlaces.build(placeSeeds, state.value.period, now(), zone)
+        val pins = if (state.value.filmingMode) allPins.filterNot { pin -> hiddenPlace(pin.coordinate) } else allPins
         mutableState.update { it.copy(placePins = pins, selectedPlaceId = it.selectedPlaceId?.takeIf { id -> pins.any { pin -> pin.id == id } }) }
+    }
+
+    private fun filmingTrips(trips: List<Trip>): List<Trip> {
+        val homeZone = home.value.activeZone?.let { it.centre to it.radius }
+        return trips.map { trip ->
+            if (trip.trackPoints.isEmpty()) trip else {
+                val result = TripHiddenPartsResolver.resolve(trip.trackPoints, trip.recordingBreaks,
+                    trip.hiddenParts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                    trip.hiddenParts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                    trip.hiddenParts?.sections.orEmpty(), homeZone)
+                trip.copy(previewPolyline = result.previewPoints.takeIf { it.size >= 2 }?.let(Trip::encodePolyline),
+                    previewBreaks = result.previewBreaks, distance = if (trip.hiddenParts?.numbersVisibleOnly == true) result.visibleDistance else trip.distance,
+                    photos = trip.photos.filterNot { photo -> TripHiddenPartsResolver.photoIsHidden(photo.capturedAt,
+                        photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> GeoPoint(lat, lon) } }, trip.trackPoints, result, homeZone) })
+            }
+        }
+    }
+    private fun hiddenPlace(point: GeoPoint): Boolean {
+        val homeZone = home.value.activeZone?.let { it.centre to it.radius }
+        if (homeZone != null && GeometryUtils.haversineDistance(point, homeZone.first) < homeZone.second) return true
+        return cachedTrips.any { trip -> trip.trackPoints.isNotEmpty() && run {
+            val resolution = TripHiddenPartsResolver.resolve(trip.trackPoints, trip.recordingBreaks,
+                trip.hiddenParts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                trip.hiddenParts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                trip.hiddenParts?.sections.orEmpty(), homeZone)
+            trip.trackPoints.indices.any { resolution.hidden[it] && GeometryUtils.haversineDistance(point, trip.trackPoints[it].coordinate) <= TripHiddenPartsResolver.photoNearMetres }
+        } }
     }
     fun reloadDiscoveries() {
         if (!loaded) return

@@ -158,10 +158,10 @@ class SyncCoordinator(
         recoverPendingEntities()
     }
 
-    /** A zone change republishes public trips, preserving their full local geometry. */
+    /** Privacy inputs change the masked copy for every server mirror the account retains. */
     suspend fun privacyZoneChanged() {
         val ids = db.withTransaction {
-            db.tripDao().publicTrips().filter { it.serverCreatedAt != null && it.confirmation != TripConfirmation.draft.rawValue }.map { row ->
+            db.tripDao().tripsWithServerCopy().filter { !it.isPrivate || cloudSyncEnabled() }.map { row ->
                 db.tripDao().upsertTrip(row.copy(lastModifiedAt = clock(), syncStatus = SyncStatus.pendingUpload.rawValue))
                 row.id
             }
