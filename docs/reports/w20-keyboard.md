@@ -39,6 +39,24 @@ Android shows no on-screen keyboard at all. Every field looked fine.
   caret in the field at once with a Latin keyboard. Build 13 opened a bare «@» with no caret and a button at the
   bottom, unlike the name editor one row above it. The header is shared: `ProfileEditorHeader`.
 
+## On the owner's phone
+
+POCOPHONE F1, Android 10 (API 29, the oldest the app supports), MIUI 12, three-button bar, light theme. Its
+TripTrack from Google Play was build 13 (the closed track; build 14 was still in review), which Sentry's release
+health showed before the phone was connected. Over USB, with the debug build beside it:
+
+- the name, the username and «О себе» stand on the keyboard, the typed text in sight (Android 10 takes the other
+  branch of Compose's dialog: `SOFT_INPUT_ADJUST_RESIZE` instead of `ADJUST_NOTHING`, and the sheet rides it too);
+- the car form found two more things, both fixed:
+  - the large car on «Аватар» was squashed: `PixelAsset` stretched the 256 × 204 sprite into a 168 × 106 box.
+    iOS fits it (`scaledToFit`); the form's hero and the style tiles now pass `ContentScale.Fit`. The stage on «Я»
+    and the passport keep their stretched platform, which is how iOS measures them (40 baselines would have moved);
+  - the hint «Например, Honda Civic» stood above an empty field as a caption, and a tap on it did nothing.
+    `MeField` takes a `placeholder` drawn inside the empty field, as iOS `TextField` does (the name, the plate,
+    «Про неё», the catalog search), and the whole card puts the caret in the field.
+
+Baselines re-recorded: `garage_form_top`, `garage_form_engine`, `garage_form_moto` (light and dark).
+
 ## Checked
 
 Emulator API 35, three-button navigation, dark theme, Russian, on-screen keyboard forced
