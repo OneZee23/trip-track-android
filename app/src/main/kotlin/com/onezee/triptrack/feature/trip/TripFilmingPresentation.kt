@@ -61,3 +61,18 @@ fun TripSummary.filmingVersion(defaultEdgeMetres: Int?, home: Pair<GeoPoint, Dou
         recordingBreaks = emptyList(),
     )
 }
+
+/**
+ * The history card a filming viewer sees. The history keeps trips without their points, so the full trip
+ * is read and only its masked card is kept; null when it can't be read. Build 15 masked nothing there and
+ * drew the whole route, hidden parts included (POCO, 5 Nov 2026).
+ */
+internal suspend fun filmingCard(
+    trip: Trip, loadTrip: (suspend (java.util.UUID) -> Trip?)?, defaultEdgeMetres: Int?, home: Pair<GeoPoint, Double>?,
+): Trip? {
+    val full = if (trip.trackPoints.isNotEmpty()) trip else loadTrip?.invoke(trip.id) ?: return null
+    return full.filmingVersion(defaultEdgeMetres, home).copy(trackPoints = emptyList())
+}
+
+/** Until its masked card is ready, a card in filming mode shows no route and no photos. */
+internal fun Trip.withoutGeometry(): Trip = copy(previewPolyline = null, previewBreaks = emptyList(), photos = emptyList(), checkpoints = emptyList())

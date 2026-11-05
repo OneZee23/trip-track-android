@@ -149,6 +149,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 suggestedTrips = suggestedChain,
                 suggestionSubtitle = suggestionSubtitle,
                 filmingMode = filmingMode, defaultHiddenEdgeMetres = settings.privacyEdgeMetres,
+                loadTrip = { id -> kotlinx.coroutines.withContext(graph.tripsFeature.worker) { graph.tripsFeature.repository.fetchTripDetail(id) } },
                 homeZone = settings.home.activeZone?.let { it.centre to it.radius },
                 onAcceptHome = { point -> graph.settingsManager.acceptInferredHome(point); inferredHome = null },
                 onDeclineHome = { graph.settingsManager.declineInferredHome(java.time.Instant.now()); inferredHome = null },

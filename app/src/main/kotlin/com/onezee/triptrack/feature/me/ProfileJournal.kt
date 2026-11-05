@@ -44,7 +44,8 @@ import com.onezee.triptrack.feature.garage.VehicleAvatar
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.feature.social.ui.PublicJourneyCard
 import com.onezee.triptrack.feature.trip.TripSummary
-import com.onezee.triptrack.feature.trip.filmingVersion
+import com.onezee.triptrack.feature.trip.filmingCard
+import com.onezee.triptrack.feature.trip.withoutGeometry
 import com.onezee.triptrack.feature.feed.asTrip
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
@@ -133,6 +134,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         homeCandidate: Pair<GeoPoint, String>? = null, suggestedTrips: List<Trip> = emptyList(), suggestionSubtitle: String = "",
                         onAcceptHome: (GeoPoint) -> Unit = {}, onDeclineHome: () -> Unit = {}, onCombineSuggestion: (List<Trip>) -> Unit = {}, onDismissSuggestion: () -> Unit = {},
                         filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null,
+                        loadTrip: (suspend (java.util.UUID) -> Trip?)? = null,
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -144,9 +146,13 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
     val now = LocalClock.current.instant()
     val hero = state.hero
     val reduceMotion = LocalReduceMotion.current
+    // Newest first, published in small batches: the cards on screen get their masked routes first.
     val filmingTrips by produceState(emptyMap<java.util.UUID, Trip>(), state.allTrips, filmingMode, defaultHiddenEdgeMetres, homeZone) {
-        value = if (!filmingMode) emptyMap() else withContext(Dispatchers.Default) {
-            state.allTrips.associate { trip -> trip.id to trip.filmingVersion(defaultHiddenEdgeMetres, homeZone) }
+        if (!filmingMode) { value = emptyMap(); return@produceState }
+        val ready = mutableMapOf<java.util.UUID, Trip>()
+        state.allTrips.forEachIndexed { index, trip ->
+            withContext(Dispatchers.Default) { filmingCard(trip, loadTrip, defaultHiddenEdgeMetres, homeZone) }?.let { ready[trip.id] = it }
+            if (index % 6 == 5 || index == state.allTrips.lastIndex) value = ready.toMap()
         }
     }
     var visibilityNoticeDismissed by rememberSaveable { mutableStateOf(socialFeature?.noticePreferences?.getBoolean("profile.visibility_notice_seen", false) ?: true) }
@@ -291,7 +297,7 @@ private fun DraftsSection(state: MeState, now: Instant, onDrafts: () -> Unit) {
  * journey as a card of its own width between them). Cards and tiles keep 14 pt margins, headings 16.
  */
 internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}, filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null, filmingTrips: Map<java.util.UUID, Trip> = emptyMap()) {
-    fun display(trip: Trip) = if (filmingMode) filmingTrips[trip.id] ?: trip else trip
+    fun display(trip: Trip) = if (filmingMode) filmingTrips[trip.id] ?: trip.withoutGeometry() else trip
     val levels = state.history.historicalLevels
     val level = { trip: Trip -> levels?.get(trip.id) ?: state.hero.identity.level }
     // The pinned cards show no car: the strip above them is the profile's showcase, not the journal.
