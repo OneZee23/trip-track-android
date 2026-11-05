@@ -68,4 +68,15 @@ class TripHiddenPartsResolverTests {
             assertEquals(expect.getValue("hiddenPhotoIds").jsonArray.map { it.jsonPrimitive.content }, hiddenPhotos, name)
         }
     }
+
+    @Test fun drawnHiddenRunsReachTheVisibleNeighboursAndDrawALonePoint() {
+        // A hidden start of one point on a sparse track still draws: start → first visible point.
+        assertEquals(listOf(0..1), TripHiddenPartsResolver.drawnHiddenRuns(listOf(true, false, false, false), listOf(0, 0, 0, 0)))
+        // A middle piece reaches both neighbours.
+        assertEquals(listOf(1..4), TripHiddenPartsResolver.drawnHiddenRuns(listOf(false, false, true, true, false), listOf(0, 0, 0, 0, 0)))
+        // A recording break is not crossed: the run stops at the pause on both sides.
+        assertEquals(listOf(0..2, 3..4), TripHiddenPartsResolver.drawnHiddenRuns(listOf(false, true, true, true, false), listOf(0, 0, 0, 1, 1)))
+        // Nothing hidden draws nothing.
+        assertEquals(emptyList(), TripHiddenPartsResolver.drawnHiddenRuns(listOf(false, false), listOf(0, 0)))
+    }
 }

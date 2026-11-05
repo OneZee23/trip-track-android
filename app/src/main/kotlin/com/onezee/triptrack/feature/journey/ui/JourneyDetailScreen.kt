@@ -360,18 +360,8 @@ private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fulls
                     if (index > 0) breaks += visibleOffset
                     visibleOffset += run.count()
                 }
-                val hiddenLines = buildList {
-                    var index = 0
-                    while (index < hidden.hidden.size) {
-                        if (!hidden.hidden[index]) { index++; continue }
-                        val start = index
-                        while (index + 1 < hidden.hidden.size && hidden.hidden[index + 1]) index++
-                        if (index > start) add(com.onezee.triptrack.map.route.RouteLine(
-                            (start..index).map { leg.trackPoints[it].let { p -> GeoPoint(p.latitude, p.longitude) } },
-                            null, hidden = true,
-                        ))
-                        index++
-                    }
+                val hiddenLines = com.onezee.triptrack.logic.TripHiddenPartsResolver.drawnHiddenRuns(hidden.hidden, List(hidden.hidden.size) { 0 }).map { range ->
+                    com.onezee.triptrack.map.route.RouteLine(range.map { leg.trackPoints[it].let { p -> GeoPoint(p.latitude, p.longitude) } }, null, hidden = true)
                 }
                 RouteGeometry.build(visible, preview = true, breaks = breaks).copy(hiddenLines = hiddenLines)
             } else {

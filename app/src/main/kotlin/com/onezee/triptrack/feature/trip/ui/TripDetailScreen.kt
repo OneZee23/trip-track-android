@@ -374,15 +374,8 @@ private fun TripDetailContent(
                     listOf(RouteGeometry.build(chunk.map { it.coordinate }, chunk.map { it.speed }).lines)
                 }.flatten()
                 val segment = ownTrip!!.trackPoints.map { point -> ownTrip.recordingBreaks.count { point.timestamp >= it } }
-                val hiddenLines = mutableListOf<com.onezee.triptrack.map.route.RouteLine>()
-                var index = 0
-                while (index < hidden!!.hidden.size) {
-                    if (!hidden.hidden[index]) { index++; continue }
-                    val start = index
-                    while (index + 1 < hidden.hidden.size && hidden.hidden[index + 1] && segment[index + 1] == segment[start]) index++
-                    val chunk = ownTrip.trackPoints.subList(start, index + 1)
-                    if (chunk.size > 1) hiddenLines += com.onezee.triptrack.map.route.RouteLine(chunk.map { it.coordinate }, null, hidden = true)
-                    index++
+                val hiddenLines = com.onezee.triptrack.logic.TripHiddenPartsResolver.drawnHiddenRuns(hidden!!.hidden, segment).map { range ->
+                    com.onezee.triptrack.map.route.RouteLine(range.map { ownTrip.trackPoints[it].coordinate }, null, hidden = true)
                 }
                 val fullBounds = RouteGeometry.build(coordinates, speeds, breaks = breaks).bounds
                 com.onezee.triptrack.map.route.RouteShape(visible, fullBounds, hiddenLines)

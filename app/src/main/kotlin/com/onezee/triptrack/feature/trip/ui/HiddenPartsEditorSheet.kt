@@ -331,15 +331,8 @@ private fun hiddenEditorRoute(trip: Trip, result: com.onezee.triptrack.logic.Tri
         RouteGeometry.build(points.map { GeoPoint(it.latitude, it.longitude) }, points.map { it.speed }).lines
     }
     val segments = trip.trackPoints.map { point -> trip.recordingBreaks.count { point.timestamp >= it } }
-    val hidden = mutableListOf<RouteLine>()
-    var index = 0
-    while (index < result.hidden.size) {
-        if (!result.hidden[index]) { index++; continue }
-        val start = index
-        while (index + 1 < result.hidden.size && result.hidden[index + 1] && segments[index + 1] == segments[start]) index++
-        val points = trip.trackPoints.subList(start, index + 1)
-        if (points.size > 1) hidden += RouteLine(points.map { GeoPoint(it.latitude, it.longitude) }, null, hidden = true)
-        index++
+    val hidden = com.onezee.triptrack.logic.TripHiddenPartsResolver.drawnHiddenRuns(result.hidden, segments).map { range ->
+        RouteLine(range.map { trip.trackPoints[it].let { p -> GeoPoint(p.latitude, p.longitude) } }, null, hidden = true)
     }
     val all = trip.trackPoints.map { GeoPoint(it.latitude, it.longitude) }
     val speeds = trip.trackPoints.map { it.speed }

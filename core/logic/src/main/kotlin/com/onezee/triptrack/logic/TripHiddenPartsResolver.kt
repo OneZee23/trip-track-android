@@ -22,6 +22,28 @@ data class TripHiddenPartsResolution(
 
 // iOS: TripHiddenPartsResolver.swift.
 object TripHiddenPartsResolver {
+    /**
+     * The hidden runs to DRAW (Style A), as index ranges into the track. Each reaches to its visible
+     * neighbour on either side within the same recording segment, so the dots meet the visible line
+     * at the lock instead of stopping a sampling step short, and a hidden run of one point still
+     * draws: on a sparse track (the POCO F1 dev trip, 5 Nov) the hidden start was one point, and the
+     * map showed a lock and no hidden line at all. Drawing only: what is hidden is decided by `resolve`.
+     */
+    fun drawnHiddenRuns(hidden: List<Boolean>, segments: List<Int>): List<IntRange> {
+        val runs = mutableListOf<IntRange>()
+        var index = 0
+        while (index < hidden.size) {
+            if (!hidden[index]) { index++; continue }
+            val start = index
+            while (index + 1 < hidden.size && hidden[index + 1] && segments[index + 1] == segments[start]) index++
+            val from = if (start > 0 && segments[start - 1] == segments[start]) start - 1 else start
+            val to = if (index + 1 < hidden.size && segments[index + 1] == segments[index]) index + 1 else index
+            if (to > from) runs += from..to
+            index++
+        }
+        return runs
+    }
+
     const val sliverMetres = 100.0
     const val photoNearMetres = 150.0
 
