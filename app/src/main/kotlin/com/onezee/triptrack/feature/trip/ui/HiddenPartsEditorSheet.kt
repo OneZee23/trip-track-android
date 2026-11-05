@@ -80,6 +80,7 @@ import com.onezee.triptrack.map.route.SpeedColorScale
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.feature.account.HouseSwitch
 import com.onezee.triptrack.ui.LightRoutePreview
+import com.onezee.triptrack.ui.durationText
 import com.onezee.triptrack.ui.LiveMaps
 import com.onezee.triptrack.ui.LocalLiveMaps
 import kotlin.math.max
@@ -233,6 +234,12 @@ fun HiddenPartsEditorSheet(
                             style = inter(12f, if (active) InterWeight.bold else InterWeight.medium), color = if (active) Color.White else colors.text)
                     }
                 }
+                // What other people will see under the current choice: the numbers that upload, like iOS.
+                val othersMetres = if (parts.numbersVisibleOnly) result.visibleDistance else trip.distance
+                val othersSeconds = if (!parts.numbersVisibleOnly) ((trip.endDate ?: trip.startDate).toEpochMilli() - trip.startDate.toEpochMilli()) / 1000.0
+                    else result.visibleStart?.let { from -> result.visibleEnd?.let { to -> (to.toEpochMilli() - from.toEpochMilli()) / 1000.0 } } ?: 0.0
+                Text(strings.hiddenNumbersPreview(Measure.distance(othersMetres, LocalDistanceUnit.current, strings.language.code, strings), durationText(othersSeconds, strings)),
+                    Modifier.testTag("hidden_numbers_preview"), style = inter(12f), color = colors.textSecondary)
                 Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(colors.cardAlt).padding(13.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(strings.hiddenLocalCardTitle(), style = inter(13f, InterWeight.bold), color = colors.text)
                     Text(hiddenPartsLocalCopy(strings, result.hiddenRanges.size, hiddenPhotoCount), style = inter(12f), color = colors.textSecondary)

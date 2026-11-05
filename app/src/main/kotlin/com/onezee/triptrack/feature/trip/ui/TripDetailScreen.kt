@@ -1243,15 +1243,20 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
 }
 
 @Composable
-private fun HiddenPartsEntryCard(parts: com.onezee.triptrack.model.TripHiddenParts?, defaultEdge: Int?, onClick: () -> Unit) {
+internal fun HiddenPartsEntryCard(parts: com.onezee.triptrack.model.TripHiddenParts?, defaultEdge: Int?, onClick: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
+    // Title over summary, like iOS: side by side the summary took the whole width and build 15
+    // printed the title one letter per line.
     Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp)
-        .clip(RoundedCornerShape(14.dp)).background(colors.cardAlt).clickable(role = Role.Button, onClick = onClick)
+        .clip(RoundedCornerShape(16.dp)).background(colors.card).clickable(role = Role.Button, onClick = onClick)
         .padding(14.dp).testTag("detail_hidden_parts_card"), verticalAlignment = Alignment.CenterVertically) {
-        Glyph(AppGlyph.lock, contentDescription = null, tint = colors.text, size = 18.dp)
-        Text(strings.hiddenEditorTitle(), Modifier.weight(1f).padding(start = 10.dp), style = inter(14f, InterWeight.medium), color = colors.text)
-        Text(hiddenPartsSummary(strings, parts, defaultEdge, LocalDistanceUnit.current), style = inter(12f), color = colors.textSecondary)
+        Glyph(AppGlyph.lock, contentDescription = null, tint = AppTheme.accent, size = 18.dp)
+        Column(Modifier.weight(1f).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Text(strings.hiddenEditorTitle(), style = inter(15f, InterWeight.bold), color = colors.text)
+            Text(hiddenPartsSummary(strings, parts, defaultEdge, LocalDistanceUnit.current), style = inter(12f), color = colors.textSecondary)
+        }
+        Glyph(AppGlyph.chevronRight, contentDescription = null, tint = colors.textTertiary, size = 14.dp)
     }
 }
 

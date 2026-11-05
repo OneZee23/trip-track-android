@@ -85,6 +85,19 @@ class HiddenPartsScreenshotTests(private val dark: Boolean) {
         captureScreenRoboImage("src/test/screenshots/hidden_parts_editor_section_$theme.png")
     }
 
+    /** «Другие увидят …» follows «Цифры для других»: the whole trip, then only the visible runs. */
+    @Test fun numbersCaptionFollowsTheChoice() {
+        frame { HiddenPartsEditorSheet(trip, 500, null, {}, {}) }
+        fun caption() = compose.onNodeWithTag("hidden_numbers_preview", useUnmergedTree = true).fetchSemanticsNode()
+            .config[androidx.compose.ui.semantics.SemanticsProperties.Text].joinToString("") { it.text }
+        val whole = caption()
+        org.junit.Assert.assertTrue(whole, whole.contains("3.6"))
+        compose.onNodeWithTag("hidden_numbers_true", useUnmergedTree = true).performClick()
+        compose.waitForIdle()
+        val visible = caption()
+        org.junit.Assert.assertTrue(visible, visible.contains("1.8") && !visible.contains("3.6"))
+    }
+
     @Test fun publishSheet() {
         frame { PublishTripSheet(false, trip, 500, GeoPoint(45.0, 38.0) to 100.0, {}, null, {}, {}, {}) }
         captureScreenRoboImage("src/test/screenshots/hidden_parts_publish_$theme.png")
