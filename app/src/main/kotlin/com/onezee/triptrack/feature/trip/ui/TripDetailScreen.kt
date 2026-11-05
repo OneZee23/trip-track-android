@@ -551,10 +551,13 @@ private fun TripDetailContent(
                                 trip.id, state.isOwn, trip.isOnServer, social?.commentCountRaw ?: 0, socialFeature, navigator, focus)
                         }
                     },
+                    // Inside the panel: appended after it, the card sat below the bottom inset, under the navigation bar.
+                    hiddenParts = {
+                        if (state.isOwn && trip.hiddenParts?.let { it.startMetres != null || it.endMetres != null || it.sections.isNotEmpty() } == true) {
+                            HiddenPartsEntryCard(trip.hiddenParts, feature.defaultHiddenEdgeMetres(), onClick = { editingHiddenParts = true })
+                        }
+                    },
                 )
-                if (state.isOwn && trip.hiddenParts?.let { it.startMetres != null || it.endMetres != null || it.sections.isNotEmpty() } == true) {
-                    HiddenPartsEntryCard(trip.hiddenParts, feature.defaultHiddenEdgeMetres(), onClick = { editingHiddenParts = true })
-                }
             }
             Box(Modifier.fillMaxWidth().height(safeTop + 28.dp).edgeScrims(top = true))
             DetailTopBar(
@@ -885,6 +888,7 @@ private fun InfoPanel(
     onEditDescription: () -> Unit,
     companions: @Composable ColumnScope.() -> Unit,
     social: @Composable ColumnScope.() -> Unit,
+    hiddenParts: @Composable ColumnScope.() -> Unit = {},
 ) {
     val trip = state.trip ?: return
     val strings = appStrings
@@ -955,6 +959,8 @@ private fun InfoPanel(
         val description = trip.description?.trim().orEmpty()
         if (description.isNotEmpty()) DetailSection(strings.descriptionSection()) { DescriptionCard(description) }
         else if (state.isOwn) DetailSection(strings.descriptionSection()) { DescriptionPrompt(onEditDescription) }
+        // iOS: the hidden parts card follows the notes and precedes the photos.
+        hiddenParts()
         if (loaded) TripPhotosSection(state.photos, state.isOwn, onOpenPhotoAt, onDeletePhoto, if (state.isOwn) onAddPhotos else null)
         // iOS badgesSection: what the trip earned, after the photos and before the reactions.
         if (trip.badgeIds.isNotEmpty()) TripAchievementsSection(trip.badgeIds, onOpenBadge)
@@ -1248,7 +1254,7 @@ internal fun HiddenPartsEntryCard(parts: com.onezee.triptrack.model.TripHiddenPa
     val colors = AppTheme.colors
     // Title over summary, like iOS: side by side the summary took the whole width and build 15
     // printed the title one letter per line.
-    Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp)
+    Row(Modifier.fillMaxWidth()
         .clip(RoundedCornerShape(16.dp)).background(colors.card).clickable(role = Role.Button, onClick = onClick)
         .padding(14.dp).testTag("detail_hidden_parts_card"), verticalAlignment = Alignment.CenterVertically) {
         Glyph(AppGlyph.lock, contentDescription = null, tint = AppTheme.accent, size = 18.dp)
