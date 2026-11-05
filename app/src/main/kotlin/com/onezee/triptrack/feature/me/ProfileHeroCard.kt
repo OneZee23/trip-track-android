@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -222,11 +223,47 @@ private fun IdentityText(state: ProfileHeroState, name: HeroName, ink: HeroInk, 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         PressableCard(onClick = actions.onProfile, onClickLabel = strings.myProfileTitle(), modifier = Modifier.testTag("profile_identity")) {
             Box(Modifier.heightIn(min = if (ink.hasPhotos) 26.dp else 32.dp), contentAlignment = Alignment.CenterStart) {
-                Text(name.text, style = interScaled(21f, InterWeight.bold), letterSpacing = points(-0.3f), color = if (name.isPlaceholder) ink.secondary else ink.ink)
+                HeroNameText(name.text, if (name.isPlaceholder) ink.secondary else ink.ink)
             }
         }
         LevelRow(state.identity.level, ink, actions.onLevel)
     }
+}
+
+/**
+ * iOS ProfileHeroCard name: one line that shrinks in steps to half size, then two lines split at the space
+ * that balances them, never inside a word; a name too long even for that wraps at half size. A long surname
+ * broke by letter onto a third line (owner, 5 Nov 2026).
+ */
+@Composable
+internal fun HeroNameText(name: String, color: Color, modifier: Modifier = Modifier) {
+    val base = interScaled(21f, InterWeight.bold)
+    val spacing = points(-0.3f)
+    val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+    androidx.compose.foundation.layout.BoxWithConstraints(modifier) {
+        val width = constraints.maxWidth
+        val steps = listOf(1f, .9f, .8f, .7f, .6f, .5f)
+        fun style(scale: Float) = base.copy(fontSize = base.fontSize * scale, letterSpacing = spacing * scale)
+        fun fits(text: String, scale: Float) = measurer.measure(text, style(scale), maxLines = 1, softWrap = false).size.width <= width
+        val lines = remember(name) { heroNameLines(name) }
+        val oneLine = remember(name, width, base) { steps.firstOrNull { fits(name, it) } }
+        val twoLines = remember(name, width, base) { if (oneLine != null || lines == null) null else steps.firstOrNull { fits(lines.first, it) && fits(lines.second, it) } }
+        when {
+            oneLine != null -> Text(name, style = style(oneLine), color = color, maxLines = 1, softWrap = false)
+            lines != null && twoLines != null -> Column { listOf(lines.first, lines.second).forEach { Text(it, style = style(twoLines), color = color, maxLines = 1, softWrap = false) } }
+            else -> Text(name, style = style(.5f), color = color, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+        }
+    }
+}
+
+/** The name split at the space that makes its two lines closest in length; null for a single word. */
+internal fun heroNameLines(name: String): Pair<String, String>? {
+    val words = name.split(' ').filter { it.isNotEmpty() }
+    if (words.size < 2) return null
+    val split = (1 until words.size).minByOrNull { i ->
+        kotlin.math.abs(words.subList(0, i).joinToString(" ").length - words.subList(i, words.size).joinToString(" ").length)
+    } ?: 1
+    return words.subList(0, split).joinToString(" ") to words.subList(split, words.size).joinToString(" ")
 }
 
 /** iOS: «LVL 8» in Handjet Black 17, the rank in Inter 12 medium and a 9 pt chevron: a row of text, no capsule. */

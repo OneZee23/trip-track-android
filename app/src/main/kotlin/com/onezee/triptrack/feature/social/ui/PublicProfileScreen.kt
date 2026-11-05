@@ -295,7 +295,7 @@ private fun PublicHero(
                 // 44-point targets iOS takes back out of the layout are Compose's own minimum touch size, so no padding grows the rows.
                 Row(Modifier.heightIn(min = if (photos.isEmpty()) 32.dp else 26.dp).combinedClickable(role = Role.Button, onClick = onCopyName, onLongClick = onCopyName).testTag("profile_display_name"),
                     horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(name, style = interScaled(21f, InterWeight.bold), letterSpacing = points(-.3f), color = ink, modifier = Modifier.weight(1f, fill = false))
+                    com.onezee.triptrack.feature.me.HeroNameText(name, ink, Modifier.weight(1f, fill = false))
                     if (showsBadge) ProBadge(height = 16.dp)
                 }
                 Row(Modifier.heightIn(min = if (photos.isEmpty()) 26.dp else 18.dp).clickable(role = Role.Button, onClick = onLevel).testTag("public_lvl_pill"),
