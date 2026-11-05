@@ -261,8 +261,9 @@ private fun HiddenEdgePicker(label: String, value: Int?, default: Int?, onPick: 
     Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(label, Modifier.weight(1f), style = inter(14f, InterWeight.bold), color = colors.text)
-            if (value == null && default != null) Text(strings.hiddenDefault(), style = inter(11f), color = colors.textSecondary)
-            if (value != null && default != null) Text(strings.hiddenDefault(), Modifier.clickable(role = Role.Button) { onPick(null) }, style = inter(11f), color = colors.textSecondary)
+            // As on iOS: the caption says the trip follows the global choice, and only then. A trip
+            // with its own distance shows no caption (the POCO showed «по умолчанию» over an own 500 m).
+            if (value == null) Text(strings.hiddenDefault(), style = inter(11f), color = colors.textSecondary)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             listOf(0, 200, 500, 1000, 2000).forEach { option ->
