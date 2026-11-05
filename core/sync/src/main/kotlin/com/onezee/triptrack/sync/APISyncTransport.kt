@@ -318,6 +318,7 @@ class APISyncTransport(
         if (row.thumbnailURL == null) {
             val bytes = photoEncoder.jpeg(source, 200, 50)
             if (bytes == null) { db.tripDao().upsertPhoto(row.copy(uploadStatus = PhotoUploadStatus.failed.rawValue)); return }
+            if (!photoVisibleAtUpload(id)) return
             val response = photos.uploadPhotoPart(trip.id, id, PhotoType.thumbnail, bytes, row.caption, row.timestamp)
             db.withTransaction {
                 db.tripDao().photo(id)?.let { db.tripDao().upsertPhoto(it.copy(thumbnailURL = response.url)) }
@@ -326,6 +327,7 @@ class APISyncTransport(
         if (row.remoteURL == null) {
             val bytes = photoEncoder.jpeg(source, 1440, 70)
             if (bytes != null) try {
+                if (!photoVisibleAtUpload(id)) return
                 val response = photos.uploadPhotoPart(trip.id, id, PhotoType.original, bytes, row.caption, row.timestamp)
                 repository.markPhotoOriginalUploaded(id, response.url)
             } catch (_: ApiError) { /* A later sync polls thumbnail-without-original debt, even on Wi-Fi at launch. */ }
@@ -336,6 +338,35 @@ class APISyncTransport(
                 syncStatus = SyncStatus.synced.rawValue, lastModifiedAt = clock(),
             )) }
         }
+    }
+
+    private suspend fun photoVisibleAtUpload(id: UUID): Boolean {
+        val current = db.tripDao().photo(id) ?: return false
+        val tripId = current.tripId ?: return false
+        val trip = repository.fetchTripDetail(tripId) ?: return false
+        val activeZone = zone()
+        val parts = trip.hiddenParts
+        val resolution = TripHiddenPartsResolver.resolve(
+            trip.trackPoints, RecordingBreaks.normalized(trip.recordingBreaks),
+            parts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+            parts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+            parts?.sections.orEmpty(), activeZone?.let { it.centre to it.radius },
+        )
+        val hidden = TripHiddenPartsResolver.photoIsHidden(
+            current.capturedAt,
+            current.exifLatitude?.let { latitude -> current.exifLongitude?.let { longitude -> GeoPoint(latitude, longitude) } },
+            trip.trackPoints, resolution, activeZone?.let { it.centre to it.radius },
+        )
+        if (hidden) {
+            reconcileHiddenPhotoCopies(trip)
+            db.withTransaction {
+                db.tripDao().photo(id)?.let { photo -> db.tripDao().upsertPhoto(photo.copy(
+                    uploadStatus = PhotoUploadStatus.localOnly.rawValue,
+                    syncStatus = SyncStatus.synced.rawValue,
+                )) }
+            }
+        }
+        return !hidden
     }
 
     private suspend fun uploadVehiclePhoto(id: UUID) {

@@ -14,7 +14,7 @@
     "TripTrack/Localization/Translations/Translations+HiddenPrivacy.swift": "68dac4d10f77a24f63e5c435039860826c0f27038bf0ac50764270a63f63b72f",
     "TripTrack/Localization/AppStrings+Admin.swift": "19d7a0ed9fbbbe201be3c8249a14ec45f1837721c60cd18be83b2325d222d4c0",
     "TripTrack/Localization/AppStrings+CosmeticRetention.swift": "ecdafedd13c8b809a0292087037d9eb0142ee4fa5a5b7161e23d8dfa6ea36d87",
-    "TripTrack/Localization/AppStrings+HiddenParts.swift": "7312488d5034d92a5d212e83a7a8cbf875e8af44b448f72f219fa5b7a726c6fc",
+    "TripTrack/Localization/AppStrings+HiddenParts.swift": "6d0496248b678d89c83287e9f519de51f98fb29bd808e9e07c157d76d93c82ac",
     "TripTrack/Localization/AppStrings+ProfileDesign.swift": "716f7079f3e0e9a304fbeeca66a533971b5e49265aeb42120c78314f80b51017",
     "TripTrack/Localization/AppStrings+ProfileJournal.swift": "06506f06cc158ce8dfa658cd0ae1ef0ba2df61c13638c81afa53763ebfe1b547",
     "TripTrack/Localization/AppStrings+RecordingOutcome.swift": "729a9ab2bc799630e4ab4da4515e4a0226e23559b8511a6cd84625de29a11ce6",
@@ -905,7 +905,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 129,
+      "line": 139,
       "function": "hiddenTitleHint",
       "complete": true,
       "resources": [
@@ -914,7 +914,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 133,
+      "line": 143,
       "function": "hiddenTitleHintStart",
       "complete": true,
       "resources": [
@@ -923,7 +923,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 137,
+      "line": 147,
       "function": "hiddenAlreadySeen",
       "complete": true,
       "resources": [
@@ -932,7 +932,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 138,
+      "line": 148,
       "function": "hiddenLocalOnlyNotice",
       "complete": true,
       "resources": [
@@ -941,7 +941,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 139,
+      "line": 149,
       "function": "hiddenChooseEdge",
       "complete": true,
       "resources": [
@@ -950,7 +950,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 140,
+      "line": 150,
       "function": "hiddenSectionStartHandle",
       "complete": true,
       "resources": [
@@ -959,7 +959,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 141,
+      "line": 151,
       "function": "hiddenSectionEndHandle",
       "complete": true,
       "resources": [
@@ -968,7 +968,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 142,
+      "line": 152,
       "function": "hiddenQuestionTitle",
       "complete": true,
       "resources": [
@@ -977,7 +977,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 143,
+      "line": 153,
       "function": "hiddenQuestionBody",
       "complete": true,
       "resources": [
@@ -986,7 +986,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 144,
+      "line": 154,
       "function": "hiddenQuestionWholeTrips",
       "complete": false,
       "resources": [
@@ -995,7 +995,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 149,
+      "line": 159,
       "function": "hiddenOptionDetail",
       "complete": false,
       "resources": [
@@ -1006,7 +1006,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 157,
+      "line": 167,
       "function": "hiddenSave",
       "complete": true,
       "resources": [
@@ -1015,7 +1015,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 158,
+      "line": 168,
       "function": "hiddenSettingsFootnote",
       "complete": true,
       "resources": [
@@ -1024,7 +1024,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 159,
+      "line": 169,
       "function": "hiddenPublishPreviewTitle",
       "complete": true,
       "resources": [
@@ -1033,7 +1033,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 160,
+      "line": 170,
       "function": "hiddenPublishRow",
       "complete": false,
       "resources": [
@@ -1042,7 +1042,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 165,
+      "line": 175,
       "function": "hiddenOvernightHint",
       "complete": true,
       "resources": [
@@ -1051,7 +1051,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 166,
+      "line": 176,
       "function": "hiddenHomeHint",
       "complete": true,
       "resources": [
@@ -1060,7 +1060,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 167,
+      "line": 177,
       "function": "hiddenQuickHide",
       "complete": true,
       "resources": [
@@ -1069,7 +1069,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 171,
+      "line": 181,
       "function": "hiddenPrivacyIntro",
       "complete": true,
       "resources": [
@@ -1078,7 +1078,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 172,
+      "line": 182,
       "function": "hiddenPrivacyModeFootnote",
       "complete": true,
       "resources": [
@@ -1087,7 +1087,7 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 173,
+      "line": 183,
       "function": "hiddenRouteLockAccessibility",
       "complete": true,
       "resources": [
@@ -25019,7 +25019,7 @@
       "name": "hiddenAlreadySeen",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 137,
+      "line": 147,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25030,7 +25030,7 @@
       "name": "hiddenChooseEdge",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 139,
+      "line": 149,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25074,7 +25074,7 @@
       "name": "hiddenHomeHint",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 166,
+      "line": 176,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25148,7 +25148,7 @@
       "name": "hiddenLocalOnlyNotice",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 138,
+      "line": 148,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25215,7 +25215,7 @@
       "name": "hiddenOption1000",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 153,
+      "line": 163,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25226,7 +25226,7 @@
       "name": "hiddenOption200",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 151,
+      "line": 161,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25237,7 +25237,7 @@
       "name": "hiddenOption500",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 152,
+      "line": 162,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25248,7 +25248,7 @@
       "name": "hiddenOvernightHint",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 165,
+      "line": 175,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25259,7 +25259,7 @@
       "name": "hiddenPrivacyIntro",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 171,
+      "line": 181,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25270,7 +25270,7 @@
       "name": "hiddenPrivacyModeFootnote",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 172,
+      "line": 182,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25281,7 +25281,7 @@
       "name": "hiddenPublishPreviewTitle",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 159,
+      "line": 169,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25292,7 +25292,7 @@
       "name": "hiddenPublishRow",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 162,
+      "line": 172,
       "placeholders": {
         "summary": {
           "index": 1,
@@ -25310,7 +25310,7 @@
       "name": "hiddenQuestionBody",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 143,
+      "line": 153,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25332,7 +25332,7 @@
       "name": "hiddenQuestionTitle",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 142,
+      "line": 152,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25343,7 +25343,7 @@
       "name": "hiddenQuestionWholeTrips",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 145,
+      "line": 155,
       "placeholders": {
         "count": {
           "index": 1,
@@ -25361,7 +25361,7 @@
       "name": "hiddenQuickHide",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 168,
+      "line": 178,
       "placeholders": {
         "distance": {
           "index": 1,
@@ -25379,7 +25379,7 @@
       "name": "hiddenRouteLockAccessibility",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 173,
+      "line": 183,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25390,7 +25390,7 @@
       "name": "hiddenSave",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 157,
+      "line": 167,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25401,7 +25401,7 @@
       "name": "hiddenSectionEndHandle",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 141,
+      "line": 151,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25412,7 +25412,7 @@
       "name": "hiddenSectionStartHandle",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 140,
+      "line": 150,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25446,7 +25446,7 @@
       "name": "hiddenSettingsFootnote",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 158,
+      "line": 168,
       "placeholders": {},
       "formatted": false,
       "signatures": {
@@ -25523,7 +25523,7 @@
       "name": "hiddenTitleHint",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 130,
+      "line": 140,
       "placeholders": {
         "title": {
           "index": 1,
@@ -25541,7 +25541,7 @@
       "name": "hiddenTitleHintStart",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 134,
+      "line": 144,
       "placeholders": {
         "title": {
           "index": 1,
@@ -43776,25 +43776,25 @@
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 144,
+      "line": 154,
       "name": "hiddenQuestionWholeTrips",
       "reason": "port function logic; static tr templates extracted where available"
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 145,
+      "line": 155,
       "name": "hiddenQuestionWholeTrips",
       "reason": "ru/text: placeholder tokens differ from English; English fallback emitted"
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 149,
+      "line": 159,
       "name": "hiddenOptionDetail",
       "reason": "port function logic; static tr templates extracted where available"
     },
     {
       "file": "TripTrack/Localization/AppStrings+HiddenParts.swift",
-      "line": 160,
+      "line": 170,
       "name": "hiddenPublishRow",
       "reason": "port function logic; static tr templates extracted where available"
     },

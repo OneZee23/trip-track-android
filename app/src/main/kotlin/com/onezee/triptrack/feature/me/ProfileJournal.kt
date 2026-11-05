@@ -52,6 +52,7 @@ import com.onezee.triptrack.ui.LocalClock
 import com.onezee.triptrack.ui.cards.ProfileCardVehicle
 import com.onezee.triptrack.ui.cards.ProfileTripCard
 import java.time.Instant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 internal val LocalMeAverageSpeed = compositionLocalOf { AvgSpeedMode.overall }
@@ -143,6 +144,11 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
     val now = LocalClock.current.instant()
     val hero = state.hero
     val reduceMotion = LocalReduceMotion.current
+    val filmingTrips by produceState(emptyMap<java.util.UUID, Trip>(), state.allTrips, filmingMode, defaultHiddenEdgeMetres, homeZone) {
+        value = if (!filmingMode) emptyMap() else withContext(Dispatchers.Default) {
+            state.allTrips.associate { trip -> trip.id to trip.filmingVersion(defaultHiddenEdgeMetres, homeZone) }
+        }
+    }
     var visibilityNoticeDismissed by rememberSaveable { mutableStateOf(socialFeature?.noticePreferences?.getBoolean("profile.visibility_notice_seen", false) ?: true) }
     Box(Modifier.fillMaxSize().background(colors.bg)) {
         // The history's search field lives in this list: with the keyboard up the list ends on the
@@ -216,7 +222,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                     Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange) }
                 }
                 if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { PinsElsewhereRow(state.showcaseElsewhere.size, onUnpinElsewhere, Modifier.padding(bottom = 12.dp)) }
-                profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney, filmingMode, defaultHiddenEdgeMetres, homeZone)
+                profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney, filmingMode, defaultHiddenEdgeMetres, homeZone, filmingTrips)
                 if (state.history.visibleTrips.isEmpty()) item(key = "empty") { ProfileHistoryEmpty(state.query.isNotBlank(), onClear) }
                 if (signedIn && socialFeature != null) item(key = "with_me") {
                     WithMeSection(socialFeature, unit, onOpen = onCompanionTrip)
@@ -284,8 +290,8 @@ private fun DraftsSection(state: MeState, now: Instant, onDrafts: () -> Unit) {
  * iOS: pinnedHistory, then the list (a month heading and its cards) or the grid (runs of tiles, a
  * journey as a card of its own width between them). Cards and tiles keep 14 pt margins, headings 16.
  */
-internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}, filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null) {
-    fun display(trip: Trip) = if (filmingMode) trip.filmingVersion(defaultHiddenEdgeMetres, homeZone) else trip
+internal fun LazyListScope.profileJournal(state: MeState, unit: DistanceUnit, onTrip: (Trip) -> Unit, onJourney: (Journey) -> Unit, onPin: (java.util.UUID) -> Unit, onComposeJourney: (Trip) -> Unit = {}, filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null, filmingTrips: Map<java.util.UUID, Trip> = emptyMap()) {
+    fun display(trip: Trip) = if (filmingMode) filmingTrips[trip.id] ?: trip else trip
     val levels = state.history.historicalLevels
     val level = { trip: Trip -> levels?.get(trip.id) ?: state.hero.identity.level }
     // The pinned cards show no car: the strip above them is the profile's showcase, not the journal.

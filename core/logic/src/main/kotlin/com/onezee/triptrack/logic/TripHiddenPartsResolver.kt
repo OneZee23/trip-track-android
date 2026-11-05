@@ -12,6 +12,7 @@ data class TripHiddenPartsResolution(
     val hidden: List<Boolean>,
     val visibleRuns: List<IntRange>,
     val hiddenRanges: List<HiddenRange>,
+    val hiddenPointIndex: Map<Long, List<GeoPoint>>,
     val previewPoints: List<GeoPoint>,
     val previewBreaks: List<Int>,
     val visibleDistance: Double,
@@ -32,7 +33,7 @@ object TripHiddenPartsResolver {
         sections: List<HiddenSection>,
         home: Pair<GeoPoint, Double>?,
     ): TripHiddenPartsResolution {
-        if (points.isEmpty()) return TripHiddenPartsResolution(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), 0.0, null, null)
+        if (points.isEmpty()) return TripHiddenPartsResolution(emptyList(), emptyList(), emptyList(), emptyMap(), emptyList(), emptyList(), 0.0, null, null)
         val segment = points.map { point -> recordingBreaks.count { point.timestamp >= it } }
         val distance = prefix(points, segment)
         val total = distance.last()
@@ -47,8 +48,10 @@ object TripHiddenPartsResolver {
         while (changed) {
             changed = false
             visibleRuns(hidden, segment).forEach { run ->
+                val touchesHidden = (run.first > 0 && hidden[run.first - 1]) ||
+                    (run.last < hidden.lastIndex && hidden[run.last + 1])
                 val surrounded = run.first > 0 && hidden[run.first - 1] && run.last < hidden.lastIndex && hidden[run.last + 1]
-                if (run.count() < 2 || (surrounded && distance[run.last] - distance[run.first] < sliverMetres)) {
+                if ((run.count() < 2 && touchesHidden) || (surrounded && distance[run.last] - distance[run.first] < sliverMetres)) {
                     run.forEach { hidden[it] = true }
                     changed = true
                 }
@@ -56,6 +59,11 @@ object TripHiddenPartsResolver {
         }
         val runs = visibleRuns(hidden, segment)
         val hiddenRanges = indexRuns(hidden).map { HiddenRange(points[it.first].timestamp, points[it.last].timestamp) }
+        val hiddenPointIndex = HashMap<Long, MutableList<GeoPoint>>()
+        hidden.indices.filter { hidden[it] }.forEach { index ->
+            val coordinate = points[index].coordinate
+            hiddenPointIndex.getOrPut(cell(coordinate)) { mutableListOf() }.add(coordinate)
+        }
         val previewPoints = mutableListOf<GeoPoint>()
         val previewBreaks = mutableListOf<Int>()
         runs.forEachIndexed { index, range ->
@@ -64,7 +72,7 @@ object TripHiddenPartsResolver {
         }
         val visibleDistance = runs.sumOf { distance[it.last] - distance[it.first] }
         return TripHiddenPartsResolution(
-            hidden = hidden.toList(), visibleRuns = runs, hiddenRanges = hiddenRanges,
+            hidden = hidden.toList(), visibleRuns = runs, hiddenRanges = hiddenRanges, hiddenPointIndex = hiddenPointIndex,
             previewPoints = previewPoints, previewBreaks = previewBreaks,
             visibleDistance = visibleDistance, visibleStart = runs.firstOrNull()?.let { points[it.first].timestamp },
             visibleEnd = runs.lastOrNull()?.let { points[it.last].timestamp },
@@ -78,7 +86,31 @@ object TripHiddenPartsResolver {
         if (capturedAt != null) return result.hiddenRanges.any { capturedAt >= it.from && capturedAt <= it.to }
         if (coordinate == null) return false
         if (home != null && GeometryUtils.haversineDistance(coordinate, home.first) < home.second) return true
-        return points.indices.any { result.hidden[it] && GeometryUtils.haversineDistance(coordinate, points[it].coordinate) <= photoNearMetres }
+        val indices = cellIndices(coordinate)
+        for (xOffset in -2..2) for (yOffset in -2..2) for (zOffset in -2..2) {
+            val key = cell(indices.first + xOffset, indices.second + yOffset, indices.third + zOffset)
+            if (result.hiddenPointIndex[key].orEmpty().any { GeometryUtils.haversineDistance(coordinate, it) <= photoNearMetres }) return true
+        }
+        return false
+    }
+
+    private fun cell(point: GeoPoint): Long = cell(cellIndices(point))
+
+    private fun cell(indices: Triple<Int, Int, Int>): Long = cell(indices.first, indices.second, indices.third)
+
+    private fun cell(x: Int, y: Int, z: Int): Long =
+        ((x.toLong() and 0x1FFFFFL) shl 42) or ((y.toLong() and 0x1FFFFFL) shl 21) or (z.toLong() and 0x1FFFFFL)
+
+    private fun cellIndices(point: GeoPoint): Triple<Int, Int, Int> {
+        val latitude = Math.toRadians(point.latitude)
+        val longitude = Math.toRadians(point.longitude)
+        val scale = 6_371_000.0 / (photoNearMetres / 2)
+        val cosLatitude = kotlin.math.cos(latitude)
+        return Triple(
+            kotlin.math.floor(cosLatitude * kotlin.math.cos(longitude) * scale).toInt(),
+            kotlin.math.floor(cosLatitude * kotlin.math.sin(longitude) * scale).toInt(),
+            kotlin.math.floor(kotlin.math.sin(latitude) * scale).toInt(),
+        )
     }
 
     private fun prefix(points: List<TrackPoint>, segment: List<Int>): List<Double> {

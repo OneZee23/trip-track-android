@@ -23,6 +23,7 @@ data class RouteAppearance(
      */
     val lineColorOverride: Int? = null,
     val showsEndpoints: Boolean = true,
+    val hiddenInkArgb: Int = SpeedColorScale.argb(0x20, 0x21, 0x2B, 0.55),
 ) {
     companion object {
         const val SELECTED_WIDTH = 3.2

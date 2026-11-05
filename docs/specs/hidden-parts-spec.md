@@ -50,8 +50,9 @@ effective start and end metres, the sections, and the active home zone if any.
   recording break; the vectors use haversine on clean tracks, where both agree.
 - A point is hidden if `d_i < start`, or `total − d_i < end`, or `from ≤ t_i ≤ to` for any section, or it is strictly
   inside the home zone (the existing `PrivacyZone` rule).
-- Visible runs are maximal runs of visible points, split at recording breaks. A run with fewer than 2 points, or a run
-  shorter than 100 m with hidden points on both sides, becomes hidden; repeat until nothing changes.
+- Visible runs are maximal runs of visible points, split at recording breaks. A run with fewer than 2 points becomes
+  hidden only when it touches a hidden piece; a run shorter than 100 m with hidden points on both sides also becomes
+  hidden. Repeat until nothing changes. With no hidden piece, recording breaks alone do not hide a trip.
 - `hiddenRanges`: for every maximal run of hidden points `[a..b]` (breaks ignored), `[t_a, t_b]`, inclusive.
 - The preview is built from the visible runs only, each run simplified on its own. `previewBreaks` lists the indices
   in the uploaded preview where the runs after the first begin.

@@ -162,8 +162,10 @@ fun TripDetailScreen(dest: TripsDestination.TripDetail, feature: TripsFeature, n
     LaunchedEffect(vm) { vm.load() }
     val loaded by vm.state.collectAsState()
     val filming by feature.filmingMode.collectAsState()
-    val state = remember(loaded, filming, feature.defaultHiddenEdgeMetres()) {
-        if (filming) loaded.withoutHiddenParts(feature.defaultHiddenEdgeMetres(), feature.homeZone()?.let { it.centre to it.radius }) else loaded
+    val state by produceState(loaded, loaded, filming, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
+        value = if (filming) withContext(Dispatchers.Default) {
+            loaded.withoutHiddenParts(feature.defaultHiddenEdgeMetres(), feature.homeZone()?.let { it.centre to it.radius })
+        } else loaded
     }
     TripDetailContent(state, vm, feature, navigator, dest.social, (dest.focus as? com.onezee.triptrack.model.TripFocus.Checkpoint)?.id, dest.focus, dest.editOnOpen)
 }
@@ -241,31 +243,33 @@ private fun TripDetailContent(
     val requestPublish = {
         if (feature.defaultHiddenEdgeMetres() == null) showPrivacyEdgeQuestion = true else vm.requestPublish()
     }
-    val posterTrip = remember(trip, state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), state.sourceTrip?.hiddenParts, state.sourceTrip?.recordingBreaks) {
-        val full = state.sourceTrip?.takeIf { state.isOwn } ?: return@remember trip
-        val home = feature.homeZone()?.let { it.centre to it.radius }
-        val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
-            full.trackPoints, full.recordingBreaks,
-            full.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
-            full.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
-            full.hiddenParts?.sections.orEmpty(), home,
-        )
-        val hiddenPhotoIds = full.photos.filter { photo ->
-            com.onezee.triptrack.logic.TripHiddenPartsResolver.photoIsHidden(photo.capturedAt,
-                photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> com.onezee.triptrack.model.GeoPoint(lat, lon) } },
-                full.trackPoints, resolved, home)
-        }.map { it.id }.toSet()
-        val base = TripSummary.from(full)
-        base.copy(coordinates = resolved.previewPoints, previewBreaks = resolved.previewBreaks,
-            photos = base.photos.filterNot { it.id in hiddenPhotoIds },
-            distance = if (full.hiddenParts?.numbersVisibleOnly == true) resolved.visibleDistance else base.distance,
-            duration = if (full.hiddenParts?.numbersVisibleOnly == true && resolved.visibleStart != null && resolved.visibleEnd != null)
-                java.time.Duration.between(resolved.visibleStart, resolved.visibleEnd).seconds.toDouble() else base.duration,
-            averageSpeed = if (full.hiddenParts?.numbersVisibleOnly == true) {
-                val speeds = full.trackPoints.filterIndexed { index, _ -> !resolved.hidden[index] }.map { it.speed }
-                speeds.average().takeIf { speeds.isNotEmpty() } ?: 0.0
-            } else base.averageSpeed,
-        )
+    val posterTrip by produceState(trip, trip, state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
+        val full = state.sourceTrip?.takeIf { state.isOwn }
+        value = if (full == null) trip else withContext(Dispatchers.Default) {
+            val home = feature.homeZone()?.let { it.centre to it.radius }
+            val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+                full.trackPoints, full.recordingBreaks,
+                full.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+                full.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+                full.hiddenParts?.sections.orEmpty(), home,
+            )
+            val hiddenPhotoIds = full.photos.filter { photo ->
+                com.onezee.triptrack.logic.TripHiddenPartsResolver.photoIsHidden(photo.capturedAt,
+                    photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> com.onezee.triptrack.model.GeoPoint(lat, lon) } },
+                    full.trackPoints, resolved, home)
+            }.map { it.id }.toSet()
+            val base = TripSummary.from(full)
+            base.copy(coordinates = resolved.previewPoints, previewBreaks = resolved.previewBreaks,
+                photos = base.photos.filterNot { it.id in hiddenPhotoIds },
+                distance = if (full.hiddenParts?.numbersVisibleOnly == true) resolved.visibleDistance else base.distance,
+                duration = if (full.hiddenParts?.numbersVisibleOnly == true && resolved.visibleStart != null && resolved.visibleEnd != null)
+                    java.time.Duration.between(resolved.visibleStart, resolved.visibleEnd).seconds.toDouble() else base.duration,
+                averageSpeed = if (full.hiddenParts?.numbersVisibleOnly == true) {
+                    val speeds = full.trackPoints.filterIndexed { index, _ -> !resolved.hidden[index] }.map { it.speed }
+                    speeds.average().takeIf { speeds.isNotEmpty() } ?: 0.0
+                } else base.averageSpeed,
+            )
+        }
     }
     // iOS canOfferShare: one's own trip always (a private one is published first), someone else's only when public.
     val showShare = socialFeature != null && !state.isLoading && trip != null && com.onezee.triptrack.feature.social.canOfferShare(state.isOwn, trip.isPrivate)
@@ -411,9 +415,9 @@ private fun TripDetailContent(
     val playback = replay.frame.head?.takeIf { expansion.state.presented }?.let {
         MapPlayback(it, replay.frame.course, replayCarColor(vehicle?.avatarEmoji), collapsedCar, opacity = replay.frame.opacity)
     }
-    val lockPoints = remember(state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
+    val lockPoints by produceState(emptyList<com.onezee.triptrack.model.GeoPoint>(), state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
         val own = state.sourceTrip?.takeIf { state.isOwn && it.trackPoints.isNotEmpty() }
-        if (own == null) emptyList() else {
+        value = if (own == null) emptyList() else withContext(Dispatchers.Default) {
             val homeZone = feature.homeZone()?.let { it.centre to it.radius }
             val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(own.trackPoints, own.recordingBreaks,
                 own.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
@@ -422,7 +426,7 @@ private fun TripDetailContent(
             hiddenRouteLockMarkers(own.trackPoints, resolved.hidden).map { it.position }
         }
     }
-    val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps,
+    val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() || it.hiddenLines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps,
         playback, if (playback != null) replay.litFraction else null, lockPoints)
     val currentInput by rememberUpdatedState(mapInput)
     val dark = AppTheme.isDark
@@ -1184,12 +1188,15 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
             Text(strings.publishTripTitle(), style = inter(19f, InterWeight.bold), color = colors.text)
             Text(strings.hiddenPublishPreviewTitle(), style = inter(12f), color = colors.textSecondary)
             trip?.let { ownTrip ->
-                val hidden = remember(ownTrip.id, ownTrip.hiddenParts, ownTrip.trackPoints, ownTrip.recordingBreaks) {
-                    com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
-                        ownTrip.trackPoints, ownTrip.recordingBreaks,
-                        ownTrip.hiddenParts?.startMetres ?: defaultEdgeMetres ?: 0, ownTrip.hiddenParts?.endMetres ?: defaultEdgeMetres ?: 0,
-                        ownTrip.hiddenParts?.sections.orEmpty(), home,
-                    )
+                val hidden by produceState(com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(emptyList(), emptyList(), 0, 0, emptyList(), null),
+                    ownTrip.id, ownTrip.hiddenParts, ownTrip.trackPoints, ownTrip.recordingBreaks, defaultEdgeMetres, home) {
+                    value = withContext(Dispatchers.Default) {
+                        com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+                            ownTrip.trackPoints, ownTrip.recordingBreaks,
+                            ownTrip.hiddenParts?.startMetres ?: defaultEdgeMetres ?: 0, ownTrip.hiddenParts?.endMetres ?: defaultEdgeMetres ?: 0,
+                            ownTrip.hiddenParts?.sections.orEmpty(), home,
+                        )
+                    }
                 }
                 val routes = hidden.visibleRuns.map { run -> run.map { ownTrip.trackPoints[it].let { p -> com.onezee.triptrack.model.GeoPoint(p.latitude, p.longitude) } } }
                 val previewShape = remember(ownTrip.id, hidden) {

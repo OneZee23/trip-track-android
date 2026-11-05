@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.toArgb
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.theme.AppTheme
@@ -117,10 +118,11 @@ fun TripLiveMap(
             input.hiddenLockPoints.mapIndexed { index, point -> MapMarker("hidden_lock:$index", point, MapMarker.Kind.HIDDEN_LOCK, image = hiddenLockBitmap()) }
     }
     val style = remember { LiveMaps.style(dark) }
+    val appearance = RouteAppearance.plain.copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
     MapHost(
         state = state,
         modifier = modifier.testTag("detail_live_map"),
-        routes = input.route?.let { MapRoutes(listOf(it), RouteAppearance.plain, input.litFraction) },
+        routes = input.route?.let { MapRoutes(listOf(it), appearance, input.litFraction) },
         playback = input.playback,
         markers = markers,
         onMarkerTap = onMarkerTap,

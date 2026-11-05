@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.selected
@@ -78,6 +79,8 @@ import com.onezee.triptrack.feature.journey.JourneyDetailViewModel
 import com.onezee.triptrack.feature.journey.JourneyItemState
 import com.onezee.triptrack.feature.trip.TripSummary
 import com.onezee.triptrack.feature.trip.filmingVersion
+import com.onezee.triptrack.feature.trip.ui.hiddenLockBitmap
+import com.onezee.triptrack.feature.trip.ui.hiddenRouteLockMarkers
 import com.onezee.triptrack.map.MapHost
 import com.onezee.triptrack.map.MapHostState
 import com.onezee.triptrack.map.camera.MapCameraCommand
@@ -163,8 +166,8 @@ fun SocialJourneyScreen(id: UUID, feature: TripsFeature, navigator: DestinationN
 private fun JourneyDetailContent(vm: JourneyDetailViewModel, feature: TripsFeature, navigator: DestinationNavigator<TripsDestination>, social: SocialJourneyResponse?) {
     val rawState by vm.state.collectAsState()
     val filming by feature.filmingMode.collectAsState()
-    val state = remember(rawState, filming, feature.defaultHiddenEdgeMetres()) {
-        if (!filming || rawState.isSocial) rawState else {
+    val state by produceState(rawState, rawState, filming, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
+        value = if (!filming || rawState.isSocial) rawState else kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
             val home = feature.homeZone()?.let { it.centre to it.radius }
             fun shown(trip: TripSummary) = trip.filmingVersion(feature.defaultHiddenEdgeMetres(), home)
             val shownTrips = rawState.trips.map(::shown)
@@ -341,8 +344,9 @@ private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fulls
     // would join the end of one leg to the start of the next with a straight chord across country
     // (iOS draws legs, and the journey map has no replay for the same reason).
     val route = remember(state.coordinates) { RouteGeometry.build(state.coordinates, preview = true) }
-    val legRoutes = remember(state.trips, state.isSocial) {
-        state.trips.mapNotNull { leg ->
+    val legRoutes by produceState(emptyList<com.onezee.triptrack.map.route.RouteShape>(), state.trips, state.isSocial) {
+        value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            state.trips.mapNotNull { leg ->
             if (!state.isSocial && leg.trackPoints.size > 1 && leg.hiddenParts != null) {
                 val hidden = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
                     leg.trackPoints, leg.recordingBreaks,
@@ -373,16 +377,33 @@ private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fulls
             } else {
                 leg.coordinates.takeIf { it.size > 1 }?.let { RouteGeometry.build(it, preview = true, breaks = leg.previewBreaks) }
             }
+            }
         }
     }
-    val markers = remember(state.checkpoints) { journeyCheckpointMarkers(state.checkpoints) }
+    val hiddenLocks by produceState(emptyList<MapMarker>(), state.trips, state.isSocial) {
+        value = if (state.isSocial) emptyList() else kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            state.trips.flatMap { leg ->
+                if (leg.trackPoints.isEmpty() || leg.hiddenParts == null) emptyList() else {
+                    val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+                        leg.trackPoints, leg.recordingBreaks, leg.hiddenParts.startMetres ?: 0,
+                        leg.hiddenParts.endMetres ?: 0, leg.hiddenParts.sections, null,
+                    )
+                    hiddenRouteLockMarkers(leg.trackPoints, resolved.hidden).mapIndexed { index, marker ->
+                        marker.copy(id = "journey_hidden_${leg.id}_$index", image = hiddenLockBitmap())
+                    }
+                }
+            }
+        }
+    }
+    val markers = remember(state.checkpoints, hiddenLocks) { journeyCheckpointMarkers(state.checkpoints) + hiddenLocks }
     val dark = AppTheme.isDark
     val style = remember(dark) { LiveMaps.style(dark) }
     LaunchedEffect(route.bounds, fullscreen) {
         route.bounds?.let { bounds -> mapState.execute(MapCameraCommand.FitRoute(bounds,
             if (fullscreen) MapInsets.all(40.0) else MapInsets(top = 64.0, bottom = 96.0, left = 24.0, right = 24.0), animated = false)) }
     }
-    if (LocalLiveMaps.current) MapHost(mapState, modifier, routes = MapRoutes(legRoutes, RouteAppearance.plain), markers = markers,
+    val appearance = RouteAppearance.plain.copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
+    if (LocalLiveMaps.current) MapHost(mapState, modifier, routes = MapRoutes(legRoutes, appearance), markers = markers,
         systemInsets = if (fullscreen) WindowInsets.safeDrawing else WindowInsets(0), styleUri = style,
         gesturesEnabled = fullscreen, textureMode = true)
     else Box(modifier.background(AppTheme.colors.cardAlt)) {

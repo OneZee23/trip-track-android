@@ -7,6 +7,7 @@ import org.maplibre.android.style.layers.Layer
 import org.maplibre.android.style.layers.LineLayer
 import org.maplibre.android.style.layers.Property
 import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.PropertyValue
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
@@ -64,19 +65,8 @@ internal class RouteLayers {
         opacities = nextOpacities
         if (!geometryChanged && !colorsChanged) return
         shapes = routes?.shapes
-        val lines = ArrayList<Feature>()
         val ends = ArrayList<Feature>()
         for (shape in routes?.shapes.orEmpty()) {
-            for (line in shape.lines + shape.hiddenLines) {
-                if (line.coordinates.size < 2) continue
-                val feature = Feature.fromGeometry(LineString.fromLngLats(line.coordinates.map(::point)))
-                feature.addStringProperty(COLOR, rgba(looks.argb(line)))
-                feature.addBooleanProperty(DASHED, line.isUnknownSpeed)
-                feature.addBooleanProperty(HIDDEN, line.hidden)
-                feature.addBooleanProperty(HAS_SPEED, line.speed != null)
-                feature.addNumberProperty(END_FRACTION, line.endFraction)
-                lines += feature
-            }
             if (looks.showsEndpoints) {
                 val first = shape.lines.firstOrNull()?.coordinates?.firstOrNull()
                 val last = shape.lines.lastOrNull()?.coordinates?.lastOrNull()
@@ -84,7 +74,7 @@ internal class RouteLayers {
                 if (last != null && shape.lines.sumOf { it.coordinates.size } > 1) ends += endpoint(last, RouteAppearance.END)
             }
         }
-        style.getSourceAs<GeoJsonSource>(LINES_SOURCE)?.setGeoJson(FeatureCollection.fromFeatures(lines))
+        style.getSourceAs<GeoJsonSource>(LINES_SOURCE)?.setGeoJson(FeatureCollection.fromFeatures(lineFeatures(routes, looks)))
         style.getSourceAs<GeoJsonSource>(ENDS_SOURCE)?.setGeoJson(FeatureCollection.fromFeatures(ends))
     }
 
@@ -111,11 +101,7 @@ internal class RouteLayers {
                 PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
             )
             HIDDEN_LINE -> layer.setProperties(
-                PropertyFactory.lineColor(rgba(0x8C20212B.toInt())),
-                PropertyFactory.lineWidth(width),
-                PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
-                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
-                PropertyFactory.lineDasharray(listOf(0.1f, 7.2f).map { it / looks.widthPoints.toFloat() }.toTypedArray()),
+                *hiddenLineProperties(looks).toTypedArray(),
             )
             CASING -> layer.setProperties(
                 PropertyFactory.lineColor(looks.casingArgb ?: 0),
@@ -150,6 +136,27 @@ internal class RouteLayers {
 
     private fun endpoint(at: GeoPoint, argb: Int): Feature =
         Feature.fromGeometry(point(at)).also { it.addStringProperty(COLOR, rgba(argb)) }
+
+    internal fun lineFeatures(routes: MapRoutes?, looks: RouteAppearance): List<Feature> = buildList {
+        for (shape in routes?.shapes.orEmpty()) for (line in shape.lines + shape.hiddenLines) {
+            if (line.coordinates.size < 2) continue
+            val feature = Feature.fromGeometry(LineString.fromLngLats(line.coordinates.map(::point)))
+            feature.addStringProperty(COLOR, rgba(looks.argb(line)))
+            feature.addBooleanProperty(DASHED, line.isUnknownSpeed)
+            feature.addBooleanProperty(HIDDEN, line.hidden)
+            feature.addBooleanProperty(HAS_SPEED, line.speed != null)
+            feature.addNumberProperty(END_FRACTION, line.endFraction)
+            add(feature)
+        }
+    }
+
+    internal fun hiddenLineProperties(looks: RouteAppearance): List<PropertyValue<*>> = listOf(
+        PropertyFactory.lineColor(rgba(looks.hiddenInkArgb)),
+        PropertyFactory.lineWidth(looks.widthPoints.toFloat()),
+        PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+        PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+        PropertyFactory.lineDasharray(listOf(0.1f, 7.2f).map { it / looks.widthPoints.toFloat() }.toTypedArray()),
+    )
 
     companion object {
         const val CASING = "triptrack-route-casing"

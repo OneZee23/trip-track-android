@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +39,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -102,11 +102,14 @@ fun HiddenPartsEditorSheet(
     var usePublicPreview by remember { mutableStateOf(false) }
     var selectingSection by remember { mutableStateOf(false) }
     var sectionStart by remember { mutableStateOf<Instant?>(null) }
-    val result = remember(trip.trackPoints, trip.recordingBreaks, parts, defaultEdgeMetres, home) {
-        TripHiddenPartsResolver.resolve(
-            trip.trackPoints, trip.recordingBreaks, parts.startMetres ?: defaultEdgeMetres ?: 0,
-            parts.endMetres ?: defaultEdgeMetres ?: 0, parts.sections, home,
-        )
+    val result by produceState(TripHiddenPartsResolver.resolve(emptyList(), emptyList(), 0, 0, emptyList(), null),
+        trip.trackPoints, trip.recordingBreaks, parts, defaultEdgeMetres, home) {
+        value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            TripHiddenPartsResolver.resolve(
+                trip.trackPoints, trip.recordingBreaks, parts.startMetres ?: defaultEdgeMetres ?: 0,
+                parts.endMetres ?: defaultEdgeMetres ?: 0, parts.sections, home,
+            )
+        }
     }
     val distanceUnit = LocalDistanceUnit.current
     val hiddenPhotoCount = remember(trip.photos, result, home) { trip.photos.count { photo ->
@@ -142,7 +145,7 @@ fun HiddenPartsEditorSheet(
                 if (LocalLiveMaps.current) MapHost(
                     state = mapState,
                     modifier = Modifier.fillMaxSize(),
-                    routes = MapRoutes(listOf(mapShape), RouteAppearance.plain),
+                    routes = MapRoutes(listOf(mapShape), RouteAppearance.plain.copy(hiddenInkArgb = colors.text.copy(alpha = 0.55f).toArgb())),
                     markers = lockMarkers,
                     onMapTap = { tap ->
                         val nearest = trip.trackPoints.indices.minByOrNull { index ->
@@ -181,13 +184,6 @@ fun HiddenPartsEditorSheet(
                     },
                 )
             }
-            Column(Modifier.align(Alignment.TopCenter).statusBarsPadding().fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text(strings.cancel(), Modifier.clickable(role = Role.Button, onClick = onDismissRequest).testTag("hidden_editor_cancel"), style = inter(15f), color = colors.textSecondary)
-                    Text(strings.tr(R.string.hiddenEditorTitle), Modifier.weight(1f), style = inter(17f, InterWeight.bold), color = colors.text, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-                    Text(strings.done(), Modifier.clickable(role = Role.Button) { onSave(parts.takeIf { it != TripHiddenParts() }); onDismissRequest() }.testTag("hidden_editor_done"), style = inter(15f, InterWeight.bold), color = AppTheme.accent)
-                }
-            }
             Column(
                 Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding()
                     .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)).background(colors.card)
@@ -195,6 +191,11 @@ fun HiddenPartsEditorSheet(
                     .testTag("hidden_editor_sheet"),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(strings.tr(R.string.hiddenEditorTitle), Modifier.weight(1f), style = inter(19f, InterWeight.bold), color = colors.text)
+                    Text(strings.done(), Modifier.clickable(role = Role.Button) { onSave(parts.takeIf { it != TripHiddenParts() }); onDismissRequest() }
+                        .testTag("hidden_editor_done"), style = inter(15f, InterWeight.bold), color = AppTheme.accent)
+                }
                 Text(if (!selectingSection) summary else if (sectionStart == null) strings.hiddenTapStart() else strings.hiddenTapEnd(), style = inter(13f), color = colors.textSecondary)
                 HiddenTripBar(trip, result.hidden, parts.sections, strings)
                 HiddenEdgePicker(strings.hiddenStart(), parts.startMetres, defaultEdgeMetres) { parts = parts.copy(startMetres = it) }

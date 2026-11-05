@@ -955,7 +955,7 @@
     <string name="hiddenOption200" formatted="false">двор, парковка</string>
     <string name="hiddenOption500" formatted="false">квартал, стоянка</string>
     <string name="hiddenOvernightHint" formatted="false">Скрыть конец? Здесь вы ночевали</string>
-    <string name="hiddenPrivacyIntro" formatted="false">Скрывается у всех поездок, кроме тех, где вы задали своё. Ни в ленту, ни в облако не уходит.</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Скрытые участки скрываются во всех поездках, кроме тех, где вы задали своё расстояние. Они не попадают ни в ленту, ни в облако.</string>
     <string name="hiddenPrivacyModeFootnote" formatted="false">В режиме съёмки карты и «Места» скрывают закрытые участки, дом и синюю точку. Экран записи сохраняет точку.</string>
     <string name="hiddenPublishPreviewTitle" formatted="false">Так её увидят в ленте и в профиле</string>
     <string name="hiddenPublishRow">Скрыто: %1$s</string>

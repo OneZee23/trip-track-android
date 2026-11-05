@@ -52,6 +52,30 @@ class PullApplierTests : SyncTestCase() {
         repo.markSynced(trip.id, 2, t0); applier().apply(response(deleted = listOf(trip.id), deletedPhotos = listOf(photoId)))
         assertNull(repo.fetchEntity(trip.id)); assertNull(db.tripDao().photo(photoId))
     }
+    @Test fun deletedServerPhotoCopyKeepsItsLocallyHiddenFileAndRow() = runBlocking<Unit> {
+        val points = List(3) { index -> TrackPointPayload(UUID.randomUUID(), 45.0, 39.0 + index * .001, 10.0, 5.0, 0.0, 5.0, t0.plusSeconds(index * 10L), false) }
+        val trip = tripPayload().copy(trackPoints = points, hiddenParts = TripHiddenParts(
+            sections = listOf(HiddenSection(UUID.randomUUID(), t0.plusSeconds(5), t0.plusSeconds(15))),
+        ))
+        repo.applyRemoteTrip(trip)
+        val filename = tripFiles.save(byteArrayOf(1, 2, 3), trip.id)!!
+        val photoId = UUID.randomUUID()
+        db.tripDao().upsertPhoto(TripPhotoEntity(photoId, filename = filename, timestamp = t0.plusSeconds(10),
+            capturedAt = t0.plusSeconds(10), tripId = trip.id, remoteURL = "server/key", thumbnailURL = "server/thumb", uploadStatus = 2))
+
+        applier().apply(response(deletedPhotos = listOf(photoId)))
+
+        assertNotNull(db.tripDao().photo(photoId)); assertTrue(tripFiles.exists(filename))
+    }
+    @Test fun pulledEmptyHiddenPartsObjectClearsTheLocalOverride() = runBlocking<Unit> {
+        val trip = tripPayload().copy(hiddenParts = TripHiddenParts(startMetres = 500))
+        repo.applyRemoteTrip(trip)
+        assertEquals(500, repo.fetchTripDetail(trip.id)!!.hiddenParts!!.startMetres)
+
+        applier().apply(response(listOf(trip.copy(conflictVersion = 2, hiddenParts = TripHiddenParts()))))
+
+        assertNull(repo.fetchTripDetail(trip.id)!!.hiddenParts)
+    }
     @Test fun photoAbsenceKeepsTheDocumentedIosAsymmetry() = runBlocking<Unit> {
         val trip = tripPayload(); repo.applyRemoteTrip(trip)
         val remote = TripPhotoEntity(UUID.randomUUID(), timestamp = t0, tripId = trip.id, uploadStatus = 2, syncStatus = 2)

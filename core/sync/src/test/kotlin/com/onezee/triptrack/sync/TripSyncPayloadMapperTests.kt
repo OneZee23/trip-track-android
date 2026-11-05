@@ -36,12 +36,15 @@ class TripSyncPayloadMapperTests {
         val p = mapped(trip, entity = entity)
         assertEquals(id, p.id); assertEquals(1234.5, p.distance); assertEquals("Morning trip", p.title); assertEquals("Berlin", p.region)
         assertFalse(p.isPrivate); assertNull(p.previewPolyline); assertEquals(entity.badgesJSON, p.badgesJson)
-        assertEquals(150, p.xpEarned); assertEquals(3, p.conflictVersion); assertEquals(emptyList(), p.trackPoints)
+        assertEquals(150, p.xpEarned); assertEquals(3, p.conflictVersion); assertEquals(1, p.trackPoints!!.size)
     }
     @Test fun testTripWithNoOptionals() {
         val p = mapped(Trip(startDate = t0, isPrivate = false))
         assertNull(p.title); assertNull(p.previewPolyline); assertNull(p.badgesJson); assertEquals(emptyList(), p.trackPoints)
         assertNull(p.maxAltitude); assertNull(p.drivingTime)
+        assertEquals(TripHiddenParts(), p.hiddenParts)
+        assertEquals(TripHiddenParts(), NetworkJson.wire.decodeFromJsonElement(TripHiddenParts.serializer(),
+            NetworkJson.wire.encodeToJsonElement(p).jsonObject.getValue("hiddenParts")))
     }
     @Test fun testWithTheZoneOnOnlyThePointsOutsideItLeaveThePhone() {
         val points = points(); val trip = Trip(startDate = t0, trackPoints = points, previewPolyline = Trip.encodePolyline(points.map { it.coordinate }))
@@ -77,6 +80,14 @@ class TripSyncPayloadMapperTests {
         val p = mapped(Trip(trackPoints = listOf(point(50.0, 0), point(1500.0, 30))), zone)
         val json = NetworkJson.wire.encodeToJsonElement(p).jsonObject
         assertEquals(JsonArray(emptyList()), json["trackPoints"]); assertFalse("previewPolyline" in json)
+    }
+    @Test fun completelyHiddenVisibleNumbersSendZeroMaxAltitudeAndExplicitEmptyOverrideObject() {
+        val point = point(0.0, 0, altitude = 900.0)
+        val trip = Trip(startDate = t0, trackPoints = listOf(point), hiddenParts = TripHiddenParts(startMetres = 100, numbersVisibleOnly = true))
+        val payload = mapped(trip)
+        val wire = NetworkJson.wire.encodeToJsonElement(payload).jsonObject
+        assertEquals(0.0, payload.maxAltitude)
+        assertEquals(trip.hiddenParts, NetworkJson.wire.decodeFromJsonElement(TripHiddenParts.serializer(), wire.getValue("hiddenParts")))
     }
     @Test fun hiddenExifAndCheckpointLoseBothCoordinatesButKeepIdentity() {
         val id = UUID.randomUUID(); val checkpoint = TripCheckpoint(timestamp = t0, latitude = home.latitude, longitude = home.longitude, distanceFromStart = 0.0, elapsedFromStart = 0.0, name = "Дом")

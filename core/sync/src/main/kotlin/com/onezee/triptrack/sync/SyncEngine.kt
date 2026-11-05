@@ -75,7 +75,8 @@ class SyncEngine private constructor(
             val loader = ManualTripTrackLoader(repository, client, accountId, cloudSyncEnabled)
             queue.configure(APISyncTransport(client, db, repository, vehicles, tripFiles, vehicleFiles, cloudSyncEnabled, zone,
                 loader, discussion::archive, discoverySync::retry, defaultHiddenEdgeMetres = defaultHiddenEdgeMetres))
-            val applier = PullApplier(repository, discoveries, vehiclePhotos, purgeVehiclePreferences, invalidateTripSnapshots, reloadSettings)
+            val applier = PullApplier(repository, discoveries, vehiclePhotos, purgeVehiclePreferences, invalidateTripSnapshots, reloadSettings,
+                zone, defaultHiddenEdgeMetres)
             val restore = VehiclePhotoRestore(client, db, vehicleFiles, vehiclePhotos, cloudSyncEnabled, accountId)
             val coordinator = SyncCoordinator(client, db, repository, queue, enqueuer, applier,
                 LastSyncedAtStore(app.getSharedPreferences("triptrack.sync", Context.MODE_PRIVATE), apiScope),

@@ -127,6 +127,7 @@ class RoomTripRepository(
     override suspend fun fetchEntity(id: UUID): TripEntity? = trips.trip(id)
 
     override suspend fun photoRows(tripId: UUID): List<TripPhotoEntity> = trips.photos(tripId)
+    override suspend fun fetchPhotoRow(id: UUID): TripPhotoEntity? = trips.photo(id)
 
     // MARK: - Trip edits
 
@@ -667,7 +668,8 @@ class RoomTripRepository(
         // must still adopt source=manual, or a web-made route would earn recorded-trip rewards.
         val hasLocalEdits = existing != null && existing.syncStatus == pendingUpload
         val base = existing ?: TripEntity(id = p.id, startDate = p.startDate)
-        val hiddenParts = if (!hasLocalEdits && p.hiddenParts != null) p.hiddenParts else JsonColumns.decodeHiddenParts(base.hiddenPartsJson)
+        val hiddenParts = if (!hasLocalEdits && p.hiddenParts != null) p.hiddenParts.takeUnless { it == TripHiddenParts() }
+            else JsonColumns.decodeHiddenParts(base.hiddenPartsJson)
         val effectiveStart = hiddenParts?.startMetres ?: environment.defaultHiddenEdgeMetres() ?: 0
         val effectiveEnd = hiddenParts?.endMetres ?: environment.defaultHiddenEdgeMetres() ?: 0
         val hasMask = effectiveStart > 0 || effectiveEnd > 0 || !hiddenParts?.sections.isNullOrEmpty() ||

@@ -87,41 +87,41 @@ abstract class ResourceAppStrings {
     fun hiddenNumbersPreview(distance: String, duration: String): String = tr(R.string.hiddenNumbersPreview, distance, duration)
     // iOS: AppStrings+HiddenParts.swift:69
     fun hiddenLocalCardTitle(): String = tr(R.string.hiddenLocalCardTitle)
-    // iOS: AppStrings+HiddenParts.swift:129
-    fun hiddenTitleHint(title: String): String = tr(R.string.hiddenTitleHint, title)
-    // iOS: AppStrings+HiddenParts.swift:133
-    fun hiddenTitleHintStart(title: String): String = tr(R.string.hiddenTitleHintStart, title)
-    // iOS: AppStrings+HiddenParts.swift:137
-    fun hiddenAlreadySeen(): String = tr(R.string.hiddenAlreadySeen)
-    // iOS: AppStrings+HiddenParts.swift:138
-    fun hiddenLocalOnlyNotice(): String = tr(R.string.hiddenLocalOnlyNotice)
     // iOS: AppStrings+HiddenParts.swift:139
-    fun hiddenChooseEdge(): String = tr(R.string.hiddenChooseEdge)
-    // iOS: AppStrings+HiddenParts.swift:140
-    fun hiddenSectionStartHandle(): String = tr(R.string.hiddenSectionStartHandle)
-    // iOS: AppStrings+HiddenParts.swift:141
-    fun hiddenSectionEndHandle(): String = tr(R.string.hiddenSectionEndHandle)
-    // iOS: AppStrings+HiddenParts.swift:142
-    fun hiddenQuestionTitle(): String = tr(R.string.hiddenQuestionTitle)
+    fun hiddenTitleHint(title: String): String = tr(R.string.hiddenTitleHint, title)
     // iOS: AppStrings+HiddenParts.swift:143
+    fun hiddenTitleHintStart(title: String): String = tr(R.string.hiddenTitleHintStart, title)
+    // iOS: AppStrings+HiddenParts.swift:147
+    fun hiddenAlreadySeen(): String = tr(R.string.hiddenAlreadySeen)
+    // iOS: AppStrings+HiddenParts.swift:148
+    fun hiddenLocalOnlyNotice(): String = tr(R.string.hiddenLocalOnlyNotice)
+    // iOS: AppStrings+HiddenParts.swift:149
+    fun hiddenChooseEdge(): String = tr(R.string.hiddenChooseEdge)
+    // iOS: AppStrings+HiddenParts.swift:150
+    fun hiddenSectionStartHandle(): String = tr(R.string.hiddenSectionStartHandle)
+    // iOS: AppStrings+HiddenParts.swift:151
+    fun hiddenSectionEndHandle(): String = tr(R.string.hiddenSectionEndHandle)
+    // iOS: AppStrings+HiddenParts.swift:152
+    fun hiddenQuestionTitle(): String = tr(R.string.hiddenQuestionTitle)
+    // iOS: AppStrings+HiddenParts.swift:153
     fun hiddenQuestionBody(): String = tr(R.string.hiddenQuestionBody)
-    // iOS: AppStrings+HiddenParts.swift:157
-    fun hiddenSave(): String = tr(R.string.hiddenSave)
-    // iOS: AppStrings+HiddenParts.swift:158
-    fun hiddenSettingsFootnote(): String = tr(R.string.hiddenSettingsFootnote)
-    // iOS: AppStrings+HiddenParts.swift:159
-    fun hiddenPublishPreviewTitle(): String = tr(R.string.hiddenPublishPreviewTitle)
-    // iOS: AppStrings+HiddenParts.swift:165
-    fun hiddenOvernightHint(): String = tr(R.string.hiddenOvernightHint)
-    // iOS: AppStrings+HiddenParts.swift:166
-    fun hiddenHomeHint(): String = tr(R.string.hiddenHomeHint)
     // iOS: AppStrings+HiddenParts.swift:167
+    fun hiddenSave(): String = tr(R.string.hiddenSave)
+    // iOS: AppStrings+HiddenParts.swift:168
+    fun hiddenSettingsFootnote(): String = tr(R.string.hiddenSettingsFootnote)
+    // iOS: AppStrings+HiddenParts.swift:169
+    fun hiddenPublishPreviewTitle(): String = tr(R.string.hiddenPublishPreviewTitle)
+    // iOS: AppStrings+HiddenParts.swift:175
+    fun hiddenOvernightHint(): String = tr(R.string.hiddenOvernightHint)
+    // iOS: AppStrings+HiddenParts.swift:176
+    fun hiddenHomeHint(): String = tr(R.string.hiddenHomeHint)
+    // iOS: AppStrings+HiddenParts.swift:177
     fun hiddenQuickHide(distance: String): String = tr(R.string.hiddenQuickHide, distance)
-    // iOS: AppStrings+HiddenParts.swift:171
+    // iOS: AppStrings+HiddenParts.swift:181
     fun hiddenPrivacyIntro(): String = tr(R.string.hiddenPrivacyIntro)
-    // iOS: AppStrings+HiddenParts.swift:172
+    // iOS: AppStrings+HiddenParts.swift:182
     fun hiddenPrivacyModeFootnote(): String = tr(R.string.hiddenPrivacyModeFootnote)
-    // iOS: AppStrings+HiddenParts.swift:173
+    // iOS: AppStrings+HiddenParts.swift:183
     fun hiddenRouteLockAccessibility(): String = tr(R.string.hiddenRouteLockAccessibility)
     // iOS: AppStrings+ProfileDesign.swift:4
     fun profileDetailsGroup(): String = tr(R.string.profileDetailsGroup)

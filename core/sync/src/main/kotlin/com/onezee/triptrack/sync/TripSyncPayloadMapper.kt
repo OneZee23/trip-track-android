@@ -61,7 +61,7 @@ object TripSyncPayloadMapper {
             else -> trip.averageSpeed
         }
         val elevationGain = if (shouldUseVisibleNumbers) measuredRuns.sumOf { run -> run.zipWithNext().sumOf { (a, b) -> (b.altitude - a.altitude).coerceAtLeast(0.0) } } else trip.elevation
-        val maxAltitude = if (shouldUseVisibleNumbers) visibleMeasured.maxOfOrNull { it.altitude } else measured.maxOfOrNull { it.altitude }
+        val maxAltitude = if (shouldUseVisibleNumbers) visibleMeasured.maxOfOrNull { it.altitude } ?: 0.0 else measured.maxOfOrNull { it.altitude }
         fun hiddenAt(timestamp: Instant) = resolution.hiddenRanges.any { timestamp >= it.from && timestamp <= it.to }
         fun coordinate(lat: Double?, lon: Double?, timestamp: Instant): GeoPoint? {
             if (lat == null || lon == null) return null
@@ -100,7 +100,7 @@ object TripSyncPayloadMapper {
             },
             segments = trip.segments.map { TripSegmentPayload(it.id, it.fromCheckpointId, it.toCheckpointId, it.name) },
             source = trip.source, energyMode = trip.energyMode.rawValue, recordingBreaks = RecordingBreaks.normalized(trip.recordingBreaks),
-            previewBreaks = previewBreaks, hiddenParts = parts, hiddenRanges = resolution.hiddenRanges,
+            previewBreaks = previewBreaks, hiddenParts = parts ?: TripHiddenParts(), hiddenRanges = resolution.hiddenRanges,
         )
     }
 }

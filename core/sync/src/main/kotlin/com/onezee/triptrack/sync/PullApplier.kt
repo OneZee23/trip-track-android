@@ -3,6 +3,8 @@ package com.onezee.triptrack.sync
 import com.onezee.triptrack.data.DiscoveryStore
 import com.onezee.triptrack.data.TripRepository
 import com.onezee.triptrack.data.VehiclePhotoStore
+import com.onezee.triptrack.logic.RecordingBreaks
+import com.onezee.triptrack.logic.TripHiddenPartsResolver
 import com.onezee.triptrack.logic.GeohashEncoder
 import com.onezee.triptrack.model.*
 import java.util.UUID
@@ -18,8 +20,11 @@ class PullApplier(
     private val purgeVehiclePreferences: suspend (UUID) -> Unit,
     private val invalidateTripSnapshots: () -> Unit = {},
     private val reloadSettings: suspend () -> Unit = {},
+    private val zone: () -> PrivacyZoneSpec? = { null },
+    private val defaultHiddenEdgeMetres: () -> Int? = { null },
 ) {
     suspend fun apply(response: SyncPullResponse): List<UUID> {
+        val hiddenResolutions = mutableMapOf<UUID, Pair<Trip, com.onezee.triptrack.logic.TripHiddenPartsResolution>>()
         val previousManualVehicles = response.trips.upserted.mapNotNull { payload ->
             repository.fetchEntity(payload.id)?.takeIf { it.source == TripOrigin.manual.rawValue }?.vehicleId
         }
@@ -34,7 +39,7 @@ class PullApplier(
             }
             for (photo in response.photos.upserted) repository.applyRemotePhoto(photo)
             for (id in response.photos.deleted) {
-                if (repository.tripId(id) !in kept) repository.deletePhotoHard(id)
+                if (repository.tripId(id) !in kept && !photoIsLocallyHidden(id, hiddenResolutions)) repository.deletePhotoHard(id)
             }
             response.settings?.let { repository.applyRemoteSettings(it) }
             response.journeys?.let { section ->
@@ -51,6 +56,31 @@ class PullApplier(
             previousManualVehicles.isNotEmpty() || response.trips.upserted.any { it.source == TripOrigin.manual && it.vehicleId != null }) reloadSettings()
         // iOS reports incoming upsert IDs, including those protected by a repository edit guard.
         return response.trips.upserted.map { it.id }
+    }
+
+    private suspend fun photoIsLocallyHidden(
+        photoId: UUID,
+        cachedResolutions: MutableMap<UUID, Pair<Trip, com.onezee.triptrack.logic.TripHiddenPartsResolution>>,
+    ): Boolean {
+        val tripId = repository.tripId(photoId) ?: return false
+        val photo = repository.fetchPhotoRow(photoId) ?: return false
+        val (trip, resolution) = cachedResolutions.getOrPut(tripId) {
+            val localTrip = repository.fetchTripDetail(tripId) ?: return false
+            val activeZone = zone()
+            val parts = localTrip.hiddenParts
+            localTrip to TripHiddenPartsResolver.resolve(
+                localTrip.trackPoints, RecordingBreaks.normalized(localTrip.recordingBreaks),
+                parts?.startMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                parts?.endMetres ?: defaultHiddenEdgeMetres() ?: 0,
+                parts?.sections.orEmpty(), activeZone?.let { it.centre to it.radius },
+            )
+        }
+        val activeZone = zone()
+        return TripHiddenPartsResolver.photoIsHidden(
+            photo.capturedAt,
+            photo.exifLatitude?.let { latitude -> photo.exifLongitude?.let { longitude -> GeoPoint(latitude, longitude) } },
+            trip.trackPoints, resolution, activeZone?.let { it.centre to it.radius },
+        )
     }
 
     companion object {

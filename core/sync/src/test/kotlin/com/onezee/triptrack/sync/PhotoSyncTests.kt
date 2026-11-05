@@ -55,6 +55,24 @@ class PhotoSyncTests : SyncTestCase() {
         val trip = tripPayload().copy(isPrivate = true); repo.applyRemoteTrip(trip); val photo = repo.addPhoto(trip.id, byteArrayOf(1), null)!!
         cloud = false; transport(encoder).execute(op(photo.id)); assertEquals(0, server.requestCount)
     }
+    @Test fun queuedPhotoStaysLocalWhileHiddenAndUploadsAgainWhenVisible() = runBlocking<Unit> {
+        val trip = tripPayload().copy(trackPoints = listOf(
+            TrackPointPayload(UUID.randomUUID(), 45.0, 39.0, 10.0, 5.0, 0.0, 5.0, t0, false),
+            TrackPointPayload(UUID.randomUUID(), 45.0, 39.001, 10.0, 5.0, 0.0, 5.0, t0.plusSeconds(30), false),
+        ))
+        repo.applyRemoteTrip(trip)
+        val photo = repo.addPhoto(trip.id, byteArrayOf(1), null, capturedAt = t0.plusSeconds(10))!!
+        repo.updateHiddenParts(trip.id, TripHiddenParts(sections = listOf(HiddenSection(UUID.randomUUID(), t0, t0.plusSeconds(20)))))
+        transport(encoder).execute(op(photo.id))
+        assertEquals(0, server.requestCount)
+        assertNotNull(db.tripDao().photo(photo.id)); assertTrue(tripFiles.exists(db.tripDao().photo(photo.id)!!.filename))
+        assertEquals(PhotoUploadStatus.localOnly.rawValue, db.tripDao().photo(photo.id)!!.uploadStatus)
+
+        repo.updateHiddenParts(trip.id, null)
+        server.enqueue(ack(photo.id, "thumb/key")); server.enqueue(ack(photo.id, "original/key", 2))
+        transport(encoder).execute(op(photo.id))
+        assertEquals(2, server.requestCount); assertEquals("original/key", db.tripDao().photo(photo.id)!!.remoteURL)
+    }
     @Test fun unpublishRescuesPhotoBeforeDiscussionAndDeleteAndKeepsLocalTrip() = runBlocking<Unit> {
         val trip = tripPayload(); repo.applyRemoteTrip(trip); val photoId = UUID.randomUUID()
         db.tripDao().upsertPhoto(TripPhotoEntity(photoId, tripId = trip.id, timestamp = t0, remoteURL = "remote/key", filename = "missing.jpg"))

@@ -63,6 +63,7 @@ interface TripRepository {
     suspend fun fetchEntity(id: UUID): TripEntity?
     /** Photo rows of a trip in relationship order, with their upload bookkeeping. */
     suspend fun photoRows(tripId: UUID): List<TripPhotoEntity>
+    suspend fun fetchPhotoRow(id: UUID): TripPhotoEntity?
 
     // MARK: Trip edits
 
