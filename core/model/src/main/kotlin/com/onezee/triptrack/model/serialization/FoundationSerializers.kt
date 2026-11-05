@@ -50,7 +50,11 @@ object InstantSerializer : KSerializer<Instant> {
         val seconds = decoder.decodeDouble()
         if (!seconds.isFinite()) throw SerializationException("Invalid Foundation date")
         val whole = floor(seconds).toLong()
-        return Instant.ofEpochSecond(whole + referenceEpoch, ((seconds - whole) * 1_000_000_000).roundToLong())
+        // Rounded to the microsecond: around 2026 a double carries seconds to about 0.1 µs, so a stored
+        // 17:11:58.594 came back as .593999982 and no longer matched its track point. The hidden section
+        // ending at that point then left the point visible after a save (POCO, 5 Nov 2026).
+        val micros = ((seconds - whole) * 1_000_000).roundToLong()
+        return Instant.ofEpochSecond(whole + referenceEpoch, 0).plusNanos(micros * 1_000)
     }
 }
 

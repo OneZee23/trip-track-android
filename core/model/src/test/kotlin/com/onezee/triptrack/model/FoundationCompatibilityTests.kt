@@ -22,6 +22,14 @@ class FoundationCompatibilityTests {
         assertEquals(721692800.0, encoded.double)
     }
 
+    @Test fun storedDatesComeBackExactlyForMillisecondTimes() {
+        // A hidden section ends exactly at a track point; the stored double must decode to that same instant.
+        for (raw in listOf("2026-11-02T17:11:58.594Z", "2026-11-02T17:08:22.594Z", "2026-11-02T17:09:41.123Z", "2031-07-15T23:59:59.999Z")) {
+            val instant = Instant.parse(raw)
+            assertEquals(instant, ModelJson.storage.decodeFromString(InstantSerializer, ModelJson.storage.encodeToString(InstantSerializer, instant)))
+        }
+    }
+
     @Test fun wireDatesStayUtcAndMillisecondPrecise() {
         val expected = Instant.ofEpochSecond(1777451615, 49000000)
         for (raw in listOf("2026-04-29T08:33:35.049Z", "2026-04-29T11:33:35.049+03:00", "2026-04-29T08:33:35.049+0000")) {
