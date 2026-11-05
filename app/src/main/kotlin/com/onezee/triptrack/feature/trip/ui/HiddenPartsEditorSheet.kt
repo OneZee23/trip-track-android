@@ -377,6 +377,17 @@ internal fun hiddenLockBitmap(): Bitmap = Bitmap.createBitmap(48, 48, Bitmap.Con
     canvas.drawRect(23f, 28f, 25f, 33f, paint)
 }
 
+/**
+ * The bar, its hatch and the section handles share one time axis, from the first to the last
+ * recorded point. Colours placed by point number and handles placed by time disagreed wherever
+ * points are uneven in time (iOS TestFlight 101 showed the hidden start at a quarter of the bar).
+ */
+internal fun hiddenTimelineFraction(time: java.time.Instant, start: java.time.Instant, end: java.time.Instant): Float {
+    val length = (end.toEpochMilli() - start.toEpochMilli()).toDouble()
+    if (length <= 0) return 0f
+    return ((time.toEpochMilli() - start.toEpochMilli()) / length).toFloat().coerceIn(0f, 1f)
+}
+
 @Composable
 private fun HiddenTripBar(
     trip: Trip,
@@ -386,7 +397,6 @@ private fun HiddenTripBar(
 ) {
     val start = trip.trackPoints.firstOrNull()?.timestamp ?: trip.startDate
     val end = trip.trackPoints.lastOrNull()?.timestamp ?: trip.endDate ?: start
-    val duration = (end.toEpochMilli() - start.toEpochMilli()).coerceAtLeast(0).toDouble()
     val colors = AppTheme.colors
     Canvas(Modifier.fillMaxWidth().height(24.dp).testTag("hidden_trip_bar")) {
         val y = size.height / 2
@@ -395,8 +405,8 @@ private fun HiddenTripBar(
         val points = trip.trackPoints
         if (points.size > 1) {
             for (index in 0 until points.lastIndex) {
-                val left = size.width * index / points.lastIndex
-                val right = size.width * (index + 1) / points.lastIndex
+                val left = size.width * hiddenTimelineFraction(points[index].timestamp, start, end)
+                val right = size.width * hiddenTimelineFraction(points[index + 1].timestamp, start, end)
                 val color = if (hidden.getOrNull(index) == true) colors.textTertiary.copy(alpha = .65f)
                     else Color(SpeedColorScale.argb(points[index].speed))
                 drawLine(color, Offset(left, y), Offset(right, y), strokeWidth = barHeight, cap = StrokeCap.Round)
@@ -411,7 +421,7 @@ private fun HiddenTripBar(
         }
         sections.forEach { section ->
             listOf(section.from, section.to).forEach { time ->
-                val fraction = if (duration > 0) ((time.toEpochMilli() - start.toEpochMilli()) / duration).toFloat().coerceIn(0f, 1f) else 0f
+                val fraction = hiddenTimelineFraction(time, start, end)
                 drawCircle(colors.card, radius = 8.dp.toPx(), center = Offset(size.width * fraction, y))
                 drawCircle(colors.textSecondary, radius = 8.dp.toPx(), center = Offset(size.width * fraction, y), style = Stroke(1.dp.toPx()))
             }
