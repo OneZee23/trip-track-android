@@ -107,6 +107,8 @@ internal class MarkerLayers(private val density: Float) {
                 // The card's bottom is transparent room for the disc and the gap: anchored at the
                 // marker's point, it then stands clear of the disc whatever size the disc has.
                 padBottom(bitmap, ((discRadius(marker) + MapMarker.CALLOUT_GAP) * density).toInt())
+            } else if (marker.kind == MapMarker.Kind.HIDDEN_LOCK) {
+                Bitmap.createScaledBitmap(bitmap, (PHOTO_DIAMETER * density).toInt(), (PHOTO_DIAMETER * density).toInt(), true)
             } else {
                 val diameter = if (marker.kind == MapMarker.Kind.HOME) HOME_DIAMETER else PHOTO_DIAMETER
                 val ring = if (marker.kind == MapMarker.Kind.HOME) HOME_RING else PHOTO_RING
@@ -188,6 +190,7 @@ internal class MarkerLayers(private val density: Float) {
         MapMarker.Kind.PHOTO -> Look(13.5, SECONDARY, WHITE, 2.5)
         // Drawn from its image; the disc is the fallback when a screen gives none.
         MapMarker.Kind.HOME -> Look(HOME_DIAMETER / 2, ACCENT, WHITE, HOME_RING.toDouble())
+        MapMarker.Kind.HIDDEN_LOCK -> Look(10.0, WHITE, SECONDARY, 1.5)
     }
 
     /** How far the marker reaches above its point, in screen points. */

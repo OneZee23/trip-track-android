@@ -25,6 +25,18 @@
         <item quantity="many">підписок</item>
         <item quantity="other">підписки</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d прихована ділянка</item>
+        <item quantity="few">%1$d приховані ділянки</item>
+        <item quantity="many">%1$d прихованих ділянок</item>
+        <item quantity="other">%1$d прихованих ділянок</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d ділянка посередині</item>
+        <item quantity="few">%1$d ділянки посередині</item>
+        <item quantity="many">%1$d ділянок посередині</item>
+        <item quantity="other">%1$d ділянок посередині</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">публічна поїздка</item>
         <item quantity="few">публічні поїздки</item>
@@ -823,6 +835,12 @@
     <string name="feedTryADifferent" formatted="false">Спробуйте змінити мережу або зачекайте — ми повторимо автоматично.</string>
     <string name="feedViewModelLastMonth" formatted="false">Минулий місяць</string>
     <string name="feedViewModelThisMonth" formatted="false">Цей місяць</string>
+    <string name="filmingAutoSubtitle" formatted="false">Вмикається та вимикається автоматично</string>
+    <string name="filmingAutoTitle" formatted="false">Вмикати під час запису екрана</string>
+    <string name="filmingFootnote" formatted="false">У цьому режимі карти й «Місця» приховують ділянки маршруту, дім і синю точку. На екрані запису точка залишається.</string>
+    <string name="filmingPreparing" formatted="false">Готуємо режим зйомки</string>
+    <string name="filmingSubtitle" formatted="false">Прихованих ділянок не видно і на ваших екранах</string>
+    <string name="filmingTitle" formatted="false">Режим зйомки</string>
     <string name="filters" formatted="false">Фільтри</string>
     <string name="findFirstLabel" formatted="false">Знайшли першим</string>
     <string name="findPeople" formatted="false">Знайти людей</string>
@@ -916,6 +934,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Ви можете бути першим</string>
     <string name="guest" formatted="false">Гість</string>
     <string name="guestFeedBanner" formatted="false">Увійдіть, щоб підписуватися й реагувати</string>
+    <string name="hiddenAddSection" formatted="false">+ Приховати середню ділянку</string>
+    <string name="hiddenAllTrip" formatted="false">Уся поїздка</string>
+    <string name="hiddenAlreadySeen" formatted="false">Ті, хто вже бачив поїздку, можуть пам’ятати весь маршрут.</string>
+    <string name="hiddenChooseEdge" formatted="false">Відстань для приховування</string>
+    <string name="hiddenDefault" formatted="false">за замовчуванням</string>
+    <string name="hiddenEditorTitle" formatted="false">Приховати від інших</string>
+    <string name="hiddenEnd" formatted="false">Кінець</string>
+    <string name="hiddenHomeHint" formatted="false">Приховати початок? Тут ваш дім</string>
+    <string name="hiddenLocalCardBody">%1$s та %2$s з них не потраплять ні у стрічку, ні в хмарну копію.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Нічого з цього не потрапить у стрічку чи хмарну копію.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s не потраплять ні у стрічку, ні в хмарну копію.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Залишиться на цьому телефоні</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Приховані ділянки є лише на телефоні, де записано поїздку.</string>
+    <string name="hiddenNone" formatted="false">Немає</string>
+    <string name="hiddenNothing" formatted="false">Нічого не приховано</string>
+    <string name="hiddenNumbersPreview">Інші побачать %1$s і %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Цифри для інших</string>
+    <string name="hiddenOption1000" formatted="false">надійніше для кемпінгу</string>
+    <string name="hiddenOption200" formatted="false">подвір’я, парковка</string>
+    <string name="hiddenOption500" formatted="false">квартал, стоянка</string>
+    <string name="hiddenOvernightHint" formatted="false">Приховати кінець? Тут ви ночували</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Діє для поїздок без власного налаштування. Приховані ділянки не надсилаються у стрічку чи хмару.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">У режимі зйомки карти й «Місця» приховують приватні ділянки, дім і синю точку. На екрані запису точка залишається.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Так її побачать у стрічці й профілі</string>
+    <string name="hiddenPublishRow">Приховано: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Дім і місця ночівлі не потраплять у стрічку чи хмарну копію. Ви побачите всю поїздку.</string>
+    <string name="hiddenQuestionSave" formatted="false">Зберегти</string>
+    <string name="hiddenQuestionTitle" formatted="false">Приховувати початок і кінець поїздок?</string>
+    <string name="hiddenQuestionWholeTrips">Маршрут %1$d опублікованих поїздок буде приховано повністю</string>
+    <string name="hiddenQuickHide">Приховати %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Межа прихованої ділянки</string>
+    <string name="hiddenSave" formatted="false">Зберегти</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Кінець прихованої ділянки</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Початок прихованої ділянки</string>
+    <string name="hiddenSectionTitle">Ділянка %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Змінити можна в Налаштуваннях → Приватність</string>
+    <string name="hiddenShowOwn" formatted="false">Ваша поїздка</string>
+    <string name="hiddenShowPublic" formatted="false">Публічний перегляд</string>
+    <string name="hiddenStart" formatted="false">Початок</string>
+    <string name="hiddenTapEnd" formatted="false">Торкніться місця, де ділянка закінчується</string>
+    <string name="hiddenTapMapHint" formatted="false">Торкніться маршруту, щоб вибрати ділянку</string>
+    <string name="hiddenTapStart" formatted="false">Торкніться місця, де ділянка починається</string>
+    <string name="hiddenTitleHint">Назва «%1$s» вказує на місце фінішу. Змінити назву</string>
+    <string name="hiddenTitleHintStart">Назва «%1$s» вказує на місце старту. Змінити назву</string>
+    <string name="hiddenWithoutHidden" formatted="false">Без прихованих ділянок</string>
     <string name="hideFromFeedAlertBody" formatted="false">Її не буде в загальній стрічці та у вашому профілі.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Так, сховати</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Точно сховати зі стрічки?</string>
@@ -1441,9 +1504,16 @@
     <string name="previewBannerSubtitle" formatted="false">Превʼю · підписки та реакції недоступні</string>
     <string name="previewThisIsYou" formatted="false">Це ви</string>
     <string name="privacyCompanionSub" formatted="false">Сповіщати, коли вас позначають попутником</string>
+    <string name="privacyEdge1000" formatted="false">надійніше для кемпінгу</string>
+    <string name="privacyEdge200" formatted="false">подвір’я, парковка</string>
+    <string name="privacyEdge500" formatted="false">квартал, стоянка</string>
+    <string name="privacyEdgeFootnote" formatted="false">Діє для всіх поїздок, якщо для конкретної не задано власну відстань.</string>
+    <string name="privacyEdgeNever" formatted="false">Не приховувати</string>
+    <string name="privacyEdgesTitle" formatted="false">Початок і кінець поїздок</string>
     <string name="privacyFootnote" formatted="false">Приватну поїздку бачите лише ви та попутники, яких ви запросили. Ці перемикачі її не відкривають.</string>
     <string name="privacyOnlyMe" formatted="false">Тільки для мене</string>
     <string name="privacyOnlyMeHint" formatted="false">Приватна — бачите тільки ви</string>
+    <string name="privacyPlacesSection" formatted="false">Місця, яких інші не бачать</string>
     <string name="privacyPlusBadgeSub" formatted="false">Показувати значок поряд з іменем — у стрічці, профілі та коментарях.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Значок PRO</string>
     <string name="privacyPolicy" formatted="false">Політика конфіденційності</string>
@@ -1686,6 +1756,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Запишіть поїздку, щоб відкрити дорогу</string>
     <string name="roadCollectionRoadCollection" formatted="false">Колекція доріг</string>
     <string name="roadCollectionRoads" formatted="false">доріг</string>
+    <string name="routeHiddenByAuthor" formatted="false">Маршрут приховано автором</string>
     <string name="routeLinePickerFootnote" formatted="false">Колір змінюється лише у вас на екрані, зокрема на чужих маршрутах. Інші бачать ваші маршрути як звичайно.</string>
     <string name="routeLineSpeedGradient" formatted="false">Градієнт швидкості</string>
     <string name="save" formatted="false">Зберегти</string>

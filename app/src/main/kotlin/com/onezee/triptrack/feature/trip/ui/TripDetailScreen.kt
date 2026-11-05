@@ -101,6 +101,7 @@ import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
 import com.onezee.triptrack.feature.social.ui.TripPosterSheet
 import com.onezee.triptrack.logic.elevation
 import com.onezee.triptrack.logic.speedValue
+import com.onezee.triptrack.logic.radius
 import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.logic.encodePolyline
 import com.onezee.triptrack.map.MapHostState
@@ -108,6 +109,11 @@ import com.onezee.triptrack.map.MapCamera
 import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.route.RouteGeometry
+import com.onezee.triptrack.map.MapHost
+import com.onezee.triptrack.map.route.MapRoutes
+import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.ui.LiveMaps
+import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.Measure
@@ -405,8 +411,19 @@ private fun TripDetailContent(
     val playback = replay.frame.head?.takeIf { expansion.state.presented }?.let {
         MapPlayback(it, replay.frame.course, replayCarColor(vehicle?.avatarEmoji), collapsedCar, opacity = replay.frame.opacity)
     }
+    val lockPoints = remember(state.sourceTrip, state.isOwn, feature.defaultHiddenEdgeMetres(), feature.homeZone()) {
+        val own = state.sourceTrip?.takeIf { state.isOwn && it.trackPoints.isNotEmpty() }
+        if (own == null) emptyList() else {
+            val homeZone = feature.homeZone()?.let { it.centre to it.radius }
+            val resolved = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(own.trackPoints, own.recordingBreaks,
+                own.hiddenParts?.startMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+                own.hiddenParts?.endMetres ?: feature.defaultHiddenEdgeMetres() ?: 0,
+                own.hiddenParts?.sections.orEmpty(), homeZone)
+            hiddenRouteLockMarkers(own.trackPoints, resolved.hidden).map { it.position }
+        }
+    }
     val mapInput = TripMapInput(route.takeIf { it.lines.isNotEmpty() }, state.checkpoints, state.photoPins, pinBitmaps,
-        playback, if (playback != null) replay.litFraction else null)
+        playback, if (playback != null) replay.litFraction else null, lockPoints)
     val currentInput by rememberUpdatedState(mapInput)
     val dark = AppTheme.isDark
     val mapContent = remember {
@@ -671,6 +688,7 @@ private fun TripDetailContent(
         onSave = { vm.updateHiddenParts(it) },
         onRename = { editingHiddenParts = false; showHiddenEntryInEdit = false; editingTrip = true },
         onDismissRequest = { editingHiddenParts = false },
+        localityLookup = vm::cachedLocality,
     )
     if (showPoster && trip != null) TripPosterSheet(
         trip = posterTrip ?: trip,
@@ -1164,7 +1182,7 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
         val sheet = this
         Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 20.dp).testTag("publish_sheet"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(strings.publishTripTitle(), style = inter(19f, InterWeight.bold), color = colors.text)
-            Text(strings.tr(R.string.publishPreviewCaption), style = inter(12f), color = colors.textSecondary)
+            Text(strings.hiddenPublishPreviewTitle(), style = inter(12f), color = colors.textSecondary)
             trip?.let { ownTrip ->
                 val hidden = remember(ownTrip.id, ownTrip.hiddenParts, ownTrip.trackPoints, ownTrip.recordingBreaks) {
                     com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
@@ -1174,9 +1192,26 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
                     )
                 }
                 val routes = hidden.visibleRuns.map { run -> run.map { ownTrip.trackPoints[it].let { p -> com.onezee.triptrack.model.GeoPoint(p.latitude, p.longitude) } } }
-                if (routes.isNotEmpty()) com.onezee.triptrack.ui.LightRoutePreview(routes, Modifier.fillMaxWidth().height(112.dp).clip(RoundedCornerShape(12.dp)))
+                val previewShape = remember(ownTrip.id, hidden) {
+                    val indexes = hidden.visibleRuns.flatMap { it.toList() }
+                    RouteGeometry.build(
+                        indexes.map { ownTrip.trackPoints[it].let { p -> com.onezee.triptrack.model.GeoPoint(p.latitude, p.longitude) } },
+                        indexes.map { ownTrip.trackPoints[it].speed }, preview = true, breaks = hidden.previewBreaks,
+                    )
+                }
+                val previewMap = remember(ownTrip.id) { MapHostState() }
+                LaunchedEffect(previewShape.bounds) {
+                    previewShape.bounds?.let { previewMap.execute(MapCameraCommand.FitRoute(it, MapInsets.all(20.0), animated = false)) }
+                }
+                if (routes.isNotEmpty()) {
+                    val mapModifier = Modifier.fillMaxWidth().height(112.dp).clip(RoundedCornerShape(12.dp))
+                    if (LocalLiveMaps.current) MapHost(previewMap, mapModifier, routes = MapRoutes(listOf(previewShape), RouteAppearance.plain),
+                        systemInsets = androidx.compose.foundation.layout.WindowInsets(0),
+                        styleUri = LiveMaps.style(AppTheme.isDark), gesturesEnabled = false, textureMode = true)
+                    else com.onezee.triptrack.ui.LightRoutePreview(routes, mapModifier)
+                }
                 Text(
-                    strings.tr(R.string.publishHiddenRow).replace("{summary}", ownTrip.hiddenParts?.let { strings.tr(R.string.hiddenSummaryMiddle).replace("{count}", it.sections.size.toString()) } ?: strings.tr(R.string.hiddenNothing)),
+                    hiddenPublishRow(strings, hiddenPartsSummary(strings, ownTrip.hiddenParts, defaultEdgeMetres, LocalDistanceUnit.current)),
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
                         .clickable(role = Role.Button, onClick = onEditHidden).padding(14.dp).testTag("publish_hidden_parts"),
                     style = inter(14f, InterWeight.medium), color = colors.text,
@@ -1184,8 +1219,8 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
                 if (nearbyHint != null) Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
                     .clickable(role = Role.Button) { onHideNearbyEnd(nearbyHint.isStart) }.padding(13.dp).testTag("publish_hide_nearby_home"),
                     verticalAlignment = Alignment.CenterVertically) {
-                    Text(strings.tr(if (nearbyHint.isHome) R.string.publishHintHome else R.string.publishHintOvernight), Modifier.weight(1f), style = inter(13f), color = colors.text)
-                    Text(strings.tr(R.string.publishHintAction).replace("{value}", "500 m"), style = inter(12f, InterWeight.bold), color = AppTheme.accent)
+                    Text(if (nearbyHint.isHome) strings.hiddenHomeHint() else strings.hiddenOvernightHint(), Modifier.weight(1f), style = inter(13f), color = colors.text)
+                    Text(strings.hiddenQuickHide(Measure.radius(500.0, LocalDistanceUnit.current, strings.language.code, strings)), style = inter(12f, InterWeight.bold), color = AppTheme.accent)
                 }
             }
             Text(strings.publishConfirmBody() + if (!cloudSyncEnabled) "\n\n" + strings.publishConfirmCloudOff() else "", style = inter(14f), color = colors.textSecondary)
@@ -1215,8 +1250,8 @@ private fun HiddenPartsEntryCard(parts: com.onezee.triptrack.model.TripHiddenPar
         .clip(RoundedCornerShape(14.dp)).background(colors.cardAlt).clickable(role = Role.Button, onClick = onClick)
         .padding(14.dp).testTag("detail_hidden_parts_card"), verticalAlignment = Alignment.CenterVertically) {
         Glyph(AppGlyph.lock, contentDescription = null, tint = colors.text, size = 18.dp)
-        Text(strings.tr(R.string.hiddenFromOthers), Modifier.weight(1f).padding(start = 10.dp), style = inter(14f, InterWeight.medium), color = colors.text)
-        Text(strings.tr(R.string.hiddenSummaryMiddle).replace("{count}", parts?.sections?.size?.toString() ?: "0"), style = inter(12f), color = colors.textSecondary)
+        Text(strings.hiddenEditorTitle(), Modifier.weight(1f).padding(start = 10.dp), style = inter(14f, InterWeight.medium), color = colors.text)
+        Text(hiddenPartsSummary(strings, parts, defaultEdge, LocalDistanceUnit.current), style = inter(12f), color = colors.textSecondary)
     }
 }
 

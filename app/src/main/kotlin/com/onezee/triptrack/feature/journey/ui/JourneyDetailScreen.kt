@@ -90,6 +90,7 @@ import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.logic.distanceParts
 import com.onezee.triptrack.logic.coordinate
 import com.onezee.triptrack.model.Journey
+import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.SocialJourneyResponse
 import com.onezee.triptrack.ui.DetailSectionHeader
@@ -340,8 +341,39 @@ private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fulls
     // would join the end of one leg to the start of the next with a straight chord across country
     // (iOS draws legs, and the journey map has no replay for the same reason).
     val route = remember(state.coordinates) { RouteGeometry.build(state.coordinates, preview = true) }
-    val legRoutes = remember(state.trips) {
-        state.trips.map { it.coordinates }.filter { it.size > 1 }.map { RouteGeometry.build(it, preview = true) }
+    val legRoutes = remember(state.trips, state.isSocial) {
+        state.trips.mapNotNull { leg ->
+            if (!state.isSocial && leg.trackPoints.size > 1 && leg.hiddenParts != null) {
+                val hidden = com.onezee.triptrack.logic.TripHiddenPartsResolver.resolve(
+                    leg.trackPoints, leg.recordingBreaks,
+                    leg.hiddenParts.startMetres ?: 0, leg.hiddenParts.endMetres ?: 0,
+                    leg.hiddenParts.sections, null,
+                )
+                val visible = hidden.visibleRuns.flatMap { run -> run.map { leg.trackPoints[it].let { p -> GeoPoint(p.latitude, p.longitude) } } }
+                val breaks = mutableListOf<Int>()
+                var visibleOffset = 0
+                hidden.visibleRuns.forEachIndexed { index, run ->
+                    if (index > 0) breaks += visibleOffset
+                    visibleOffset += run.count()
+                }
+                val hiddenLines = buildList {
+                    var index = 0
+                    while (index < hidden.hidden.size) {
+                        if (!hidden.hidden[index]) { index++; continue }
+                        val start = index
+                        while (index + 1 < hidden.hidden.size && hidden.hidden[index + 1]) index++
+                        if (index > start) add(com.onezee.triptrack.map.route.RouteLine(
+                            (start..index).map { leg.trackPoints[it].let { p -> GeoPoint(p.latitude, p.longitude) } },
+                            null, hidden = true,
+                        ))
+                        index++
+                    }
+                }
+                RouteGeometry.build(visible, preview = true, breaks = breaks).copy(hiddenLines = hiddenLines)
+            } else {
+                leg.coordinates.takeIf { it.size > 1 }?.let { RouteGeometry.build(it, preview = true, breaks = leg.previewBreaks) }
+            }
+        }
     }
     val markers = remember(state.checkpoints) { journeyCheckpointMarkers(state.checkpoints) }
     val dark = AppTheme.isDark

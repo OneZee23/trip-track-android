@@ -35,7 +35,7 @@ data class HomeZone(val centre: GeoPoint, val radius: Double)
 enum class AvgSpeedMode(val rawValue: String) { overall("overall"), moving("moving") }
 
 // iOS: SettingsView.swift / SettingsOptionPicker.swift.
-enum class SettingsSheet { settings, units, theme, language, autoRecord, stereo, cloudSync, privacy, home, notifications, appPreferences, averageSpeed, logs }
+enum class SettingsSheet { settings, units, theme, language, autoRecord, stereo, cloudSync, privacy, privacyEdges, home, notifications, appPreferences, averageSpeed, logs }
 
 // iOS: SettingsManager.swift.
 data class SettingsState(

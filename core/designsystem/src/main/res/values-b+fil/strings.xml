@@ -17,6 +17,14 @@
         <item quantity="one">sinusundan</item>
         <item quantity="other">sinusundan</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d nakatagong bahagi</item>
+        <item quantity="other">%1$d nakatagong bahagi</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d bahaging nasa gitna</item>
+        <item quantity="other">%1$d bahaging nasa gitna</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">pampublikong biyahe</item>
         <item quantity="other">pampublikong biyahe</item>
@@ -763,6 +771,12 @@
     <string name="feedTryADifferent" formatted="false">Sumubok po ng ibang network o maghintay — susubukan naming ulit nang awtomatiko.</string>
     <string name="feedViewModelLastMonth" formatted="false">Noong nakaraang buwan</string>
     <string name="feedViewModelThisMonth" formatted="false">Ngayong buwan</string>
+    <string name="filmingAutoSubtitle" formatted="false">Awtomatikong magbubukas at magsasara</string>
+    <string name="filmingAutoTitle" formatted="false">I-on kapag nagre-record ng screen</string>
+    <string name="filmingFootnote" formatted="false">Sa mode na ito, itinatago ng mga mapa at Lugar ang mga nakatagong bahagi, bahay mo, at asul na tuldok. Nananatili ang tuldok sa screen ng recording.</string>
+    <string name="filmingPreparing" formatted="false">Inihahanda ang mode ng pagre-record</string>
+    <string name="filmingSubtitle" formatted="false">Hindi rin makikita sa sarili mong screen ang mga nakatagong bahagi</string>
+    <string name="filmingTitle" formatted="false">Mode ng pagkuha</string>
     <string name="filters" formatted="false">Mga filter</string>
     <string name="findFirstLabel" formatted="false">Unang nakahanap</string>
     <string name="findPeople" formatted="false">Maghanap ng tao</string>
@@ -856,6 +870,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Puwede kayong maging una</string>
     <string name="guest" formatted="false">Bisita</string>
     <string name="guestFeedBanner" formatted="false">Mag-sign in para maka-follow at maka-react</string>
+    <string name="hiddenAddSection" formatted="false">+ Itago ang gitnang bahagi</string>
+    <string name="hiddenAllTrip" formatted="false">Buong biyahe</string>
+    <string name="hiddenAlreadySeen" formatted="false">Maaaring maalala ng nakakita na ang buong ruta.</string>
+    <string name="hiddenChooseEdge" formatted="false">Distansyang itatago</string>
+    <string name="hiddenDefault" formatted="false">default</string>
+    <string name="hiddenEditorTitle" formatted="false">Itago sa iba</string>
+    <string name="hiddenEnd" formatted="false">Dulo</string>
+    <string name="hiddenHomeHint" formatted="false">Itago ang simula? Nandito ang bahay mo</string>
+    <string name="hiddenLocalCardBody">Hindi mapupunta sa feed o cloud copy ang %1$s at %2$s mula rito.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Walang lalabas dito sa feed o cloud copy.</string>
+    <string name="hiddenLocalCardPiecesOnly">Hindi mapupunta sa feed o cloud copy ang %1$s.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Mananatili sa teleponong ito</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Nasa teleponong nagrekord lang ng biyahe ang mga nakatagong bahagi.</string>
+    <string name="hiddenNone" formatted="false">Wala</string>
+    <string name="hiddenNothing" formatted="false">Walang nakatago</string>
+    <string name="hiddenNumbersPreview">Makikita ng iba ang %1$s at %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Mga bilang para sa iba</string>
+    <string name="hiddenOption1000" formatted="false">mas ligtas sa kamping</string>
+    <string name="hiddenOption200" formatted="false">bakuran, paradahan</string>
+    <string name="hiddenOption500" formatted="false">kapitbahayan, kampo</string>
+    <string name="hiddenOvernightHint" formatted="false">Itago ang dulo? Dito ka nagpalipas ng gabi</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Para ito sa biyahe na walang sariling setting. Hindi ipinapadala sa feed o cloud ang mga nakatagong bahagi.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">Itinatago ng mode ng pagkuha ang mga pribadong bahagi, bahay, at asul na tuldok sa mapa at Lugar. Nananatili ang tuldok sa screen ng recording.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Ganito ito makikita sa feed at profile</string>
+    <string name="hiddenPublishRow">Nakatago: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Hindi mapupunta sa feed o cloud copy ang bahay at mga tinuluyang lugar. Buong biyahe pa rin ang makikita mo.</string>
+    <string name="hiddenQuestionSave" formatted="false">I-save</string>
+    <string name="hiddenQuestionTitle" formatted="false">Itago ang simula at dulo ng biyahe?</string>
+    <string name="hiddenQuestionWholeTrips">Itatago ang buong ruta ng %1$d pampublikong biyahe</string>
+    <string name="hiddenQuickHide">Itago ang %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Hangganan ng nakatagong bahagi</string>
+    <string name="hiddenSave" formatted="false">I-save</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Dulo ng nakatagong bahagi</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Simula ng nakatagong bahagi</string>
+    <string name="hiddenSectionTitle">Bahagi %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Palitan sa Mga Setting → Privacy</string>
+    <string name="hiddenShowOwn" formatted="false">Iyong biyahe</string>
+    <string name="hiddenShowPublic" formatted="false">Pampublikong preview</string>
+    <string name="hiddenStart" formatted="false">Simula</string>
+    <string name="hiddenTapEnd" formatted="false">I-tap kung saan nagtatapos ang bahagi</string>
+    <string name="hiddenTapMapHint" formatted="false">I-tap ang ruta para pumili ng bahagi</string>
+    <string name="hiddenTapStart" formatted="false">I-tap kung saan nagsisimula ang bahagi</string>
+    <string name="hiddenTitleHint">Itinuturo ng pamagat na “%1$s” ang dulo. Palitan ang pamagat</string>
+    <string name="hiddenTitleHintStart">Itinuturo ng pamagat na “%1$s” ang pinagsimulan. Palitan ang pamagat</string>
+    <string name="hiddenWithoutHidden" formatted="false">Walang mga nakatagong bahagi</string>
     <string name="hideFromFeedAlertBody" formatted="false">Mawawala ito sa pampublikong feed at sa inyong profile.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Oo, itago</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Itago mula sa feed?</string>
@@ -1381,9 +1440,16 @@
     <string name="previewBannerSubtitle" formatted="false">Preview · hindi available ang pagsunod at reaksyon</string>
     <string name="previewThisIsYou" formatted="false">Kayo ito</string>
     <string name="privacyCompanionSub" formatted="false">Abisuhan ako kapag may nagtag sa akin bilang kasama</string>
+    <string name="privacyEdge1000" formatted="false">mas ligtas sa pagkakamping</string>
+    <string name="privacyEdge200" formatted="false">bakuran, paradahan</string>
+    <string name="privacyEdge500" formatted="false">kapitbahayan, kampo</string>
+    <string name="privacyEdgeFootnote" formatted="false">Para ito sa lahat ng biyahe maliban kung may sariling distansya ang isang biyahe.</string>
+    <string name="privacyEdgeNever" formatted="false">Huwag itago</string>
+    <string name="privacyEdgesTitle" formatted="false">Simula at dulo ng mga biyahe</string>
     <string name="privacyFootnote" formatted="false">Kayo lang at ang mga kasamang inimbitahan ninyo ang nakakakita ng pribadong biyahe. Hindi ito binabago ng mga switch na ito.</string>
     <string name="privacyOnlyMe" formatted="false">Para sa akin lang</string>
     <string name="privacyOnlyMeHint" formatted="false">Pribado — kayo lang ang nakakakita</string>
+    <string name="privacyPlacesSection" formatted="false">Mga lugar na hindi nakikita ng iba</string>
     <string name="privacyPlusBadgeSub" formatted="false">Ipakita ang badge katabi ng inyong pangalan sa feed, profile at mga komento.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Badge na PRO</string>
     <string name="privacyPolicy" formatted="false">Patakaran sa Privacy</string>
@@ -1626,6 +1692,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Mag-record ng biyahe para makatuklas ng kalsada</string>
     <string name="roadCollectionRoadCollection" formatted="false">Koleksyon ng kalsada</string>
     <string name="roadCollectionRoads" formatted="false">kalsada</string>
+    <string name="routeHiddenByAuthor" formatted="false">Itinago ng may-akda ang ruta</string>
     <string name="routeLinePickerFootnote" formatted="false">Sa inyong screen lang nagbabago ang kulay, pati sa ruta ng iba. Nakikita ng iba ang inyong mga ruta gaya ng dati.</string>
     <string name="routeLineSpeedGradient" formatted="false">Gradient ng bilis</string>
     <string name="save" formatted="false">I-save</string>

@@ -1373,5 +1373,211 @@
       "kk": "LEVEL UP!",
       "pt": "LEVEL UP!"
     }
+  },
+  "hiddenMiddleCount": {
+    "kind": "plurals",
+    "integer_tokens": [
+      "count"
+    ],
+    "values": {
+      "en": {
+        "one": "{count} section in the middle",
+        "other": "{count} sections in the middle"
+      },
+      "ru": {
+        "one": "{count} участок в середине",
+        "few": "{count} участка в середине",
+        "many": "{count} участков в середине",
+        "other": "{count} участков в середине"
+      },
+      "de": {
+        "one": "{count} Abschnitt in der Mitte",
+        "other": "{count} Abschnitte in der Mitte"
+      },
+      "es": {
+        "one": "{count} tramo en medio",
+        "many": "{count} tramos en medio",
+        "other": "{count} tramos en medio"
+      },
+      "fr": {
+        "one": "{count} portion au milieu",
+        "many": "{count} portions au milieu",
+        "other": "{count} portions au milieu"
+      },
+      "it": {
+        "one": "{count} tratto in mezzo",
+        "many": "{count} tratti in mezzo",
+        "other": "{count} tratti in mezzo"
+      },
+      "pl": {
+        "one": "{count} odcinek w środku",
+        "few": "{count} odcinki w środku",
+        "many": "{count} odcinków w środku",
+        "other": "{count} odcinków w środku"
+      },
+      "id": {
+        "other": "{count} bagian tengah"
+      },
+      "tr": {
+        "one": "Ortada {count} bölüm",
+        "other": "Ortada {count} bölüm"
+      },
+      "fil": {
+        "one": "{count} bahaging nasa gitna",
+        "other": "{count} bahaging nasa gitna"
+      },
+      "uk": {
+        "one": "{count} ділянка посередині",
+        "few": "{count} ділянки посередині",
+        "many": "{count} ділянок посередині",
+        "other": "{count} ділянок посередині"
+      },
+      "kk": {
+        "one": "Ортада {count} бөлік",
+        "other": "Ортада {count} бөлік"
+      },
+      "pt": {
+        "one": "{count} trecho no meio",
+        "many": "{count} trechos no meio",
+        "other": "{count} trechos no meio"
+      }
+    }
+  },
+  "hiddenLocalPieceCount": {
+    "kind": "plurals",
+    "integer_tokens": [
+      "count"
+    ],
+    "values": {
+      "en": {
+        "one": "{count} hidden piece",
+        "other": "{count} hidden pieces"
+      },
+      "ru": {
+        "one": "{count} скрытый кусок",
+        "few": "{count} скрытых куска",
+        "many": "{count} скрытых кусков",
+        "other": "{count} скрытых кусков"
+      },
+      "de": {
+        "one": "{count} verborgener Abschnitt",
+        "other": "{count} verborgene Abschnitte"
+      },
+      "es": {
+        "one": "{count} tramo oculto",
+        "many": "{count} tramos ocultos",
+        "other": "{count} tramos ocultos"
+      },
+      "fr": {
+        "one": "{count} portion masquée",
+        "many": "{count} portions masquées",
+        "other": "{count} portions masquées"
+      },
+      "it": {
+        "one": "{count} tratto nascosto",
+        "many": "{count} tratti nascosti",
+        "other": "{count} tratti nascosti"
+      },
+      "pl": {
+        "one": "{count} ukryty odcinek",
+        "few": "{count} ukryte odcinki",
+        "many": "{count} ukrytych odcinków",
+        "other": "{count} ukrytych odcinków"
+      },
+      "id": {
+        "other": "{count} bagian tersembunyi"
+      },
+      "tr": {
+        "one": "{count} gizli bölüm",
+        "other": "{count} gizli bölüm"
+      },
+      "fil": {
+        "one": "{count} nakatagong bahagi",
+        "other": "{count} nakatagong bahagi"
+      },
+      "uk": {
+        "one": "{count} прихована ділянка",
+        "few": "{count} приховані ділянки",
+        "many": "{count} прихованих ділянок",
+        "other": "{count} прихованих ділянок"
+      },
+      "kk": {
+        "one": "{count} жасырын бөлік",
+        "other": "{count} жасырын бөлік"
+      },
+      "pt": {
+        "one": "{count} trecho oculto",
+        "many": "{count} trechos ocultos",
+        "other": "{count} trechos ocultos"
+      }
+    }
+  },
+  "hiddenLocalCardEmpty": {
+    "values": {
+      "en": "Nothing hidden will appear in the feed or cloud copy.",
+      "ru": "Ничего отсюда не попадёт ни в ленту, ни в облачную копию.",
+      "de": "Nichts davon erscheint im Feed oder in der Cloud-Kopie.",
+      "es": "Nada de esto aparecerá en el feed ni en la copia en la nube.",
+      "fr": "Rien de tout cela ne paraîtra dans le fil ni dans la copie cloud.",
+      "it": "Niente di tutto questo apparirà nel feed né nella copia cloud.",
+      "pl": "Nic z tego nie trafi do kanału ani kopii w chmurze.",
+      "id": "Tidak ada yang akan muncul di feed atau salinan cloud.",
+      "tr": "Bunların hiçbiri akışta veya bulut kopyasında görünmez.",
+      "fil": "Walang lalabas dito sa feed o cloud copy.",
+      "uk": "Нічого з цього не потрапить у стрічку чи хмарну копію.",
+      "kk": "Мұның ешқайсысы таспаға да, бұлттағы көшірмеге де түспейді.",
+      "pt": "Nada disso aparecerá no feed nem na cópia na nuvem."
+    }
+  },
+  "hiddenLocalCardPiecesOnly": {
+    "values": {
+      "en": "{pieces} will not reach the feed or cloud copy.",
+      "ru": "{pieces} не попадут ни в ленту, ни в облачную копию.",
+      "de": "{pieces} erscheinen weder im Feed noch in der Cloud-Kopie.",
+      "es": "{pieces} no aparecerán en el feed ni en la copia en la nube.",
+      "fr": "{pieces} ne seront envoyées ni dans le fil ni dans la copie cloud.",
+      "it": "{pieces} non finiranno nel feed né nella copia cloud.",
+      "pl": "{pieces} nie trafią do kanału ani kopii w chmurze.",
+      "id": "{pieces} tidak akan masuk ke feed atau salinan cloud.",
+      "tr": "{pieces} akışa veya bulut kopyasına gitmez.",
+      "fil": "Hindi mapupunta sa feed o cloud copy ang {pieces}.",
+      "uk": "{pieces} не потраплять ні у стрічку, ні в хмарну копію.",
+      "kk": "{pieces} лентаға да, бұлттағы көшірмеге де жіберілмейді.",
+      "pt": "{pieces} não irão para o feed nem para a cópia na nuvem."
+    }
+  },
+  "hiddenLocalCardBody": {
+    "values": {
+      "en": "{pieces} and {photos} from them will not reach the feed or cloud copy.",
+      "ru": "{pieces} и {photos} с них не попадут ни в ленту, ни в облачную копию.",
+      "de": "{pieces} und {photos} davon erscheinen weder im Feed noch in der Cloud-Kopie.",
+      "es": "{pieces} y {photos} de ellos no aparecerán en el feed ni en la copia en la nube.",
+      "fr": "{pieces} et {photos} de ces portions ne seront envoyées ni dans le fil ni dans la copie cloud.",
+      "it": "{pieces} e {photos} non finiranno nel feed né nella copia cloud.",
+      "pl": "{pieces} i {photos} z nich nie trafią do kanału ani kopii w chmurze.",
+      "id": "{pieces} dan {photos} darinya tidak akan masuk ke feed atau salinan cloud.",
+      "tr": "{pieces} ve bunlardan {photos} akışa veya bulut kopyasına gitmez.",
+      "fil": "Hindi mapupunta sa feed o cloud copy ang {pieces} at {photos} mula rito.",
+      "uk": "{pieces} та {photos} з них не потраплять ні у стрічку, ні в хмарну копію.",
+      "kk": "{pieces} және олардағы {photos} лентаға да, бұлттағы көшірмеге де жіберілмейді.",
+      "pt": "{pieces} e {photos} deles não irão para o feed nem para a cópia na nuvem."
+    }
+  },
+  "hiddenQuestionSave": {
+    "values": {
+      "en": "Save",
+      "ru": "Сохранить",
+      "de": "Speichern",
+      "es": "Guardar",
+      "fr": "Enregistrer",
+      "it": "Salva",
+      "pl": "Zapisz",
+      "id": "Simpan",
+      "tr": "Kaydet",
+      "fil": "I-save",
+      "uk": "Зберегти",
+      "kk": "Сақтау",
+      "pt": "Guardar"
+    }
   }
 }

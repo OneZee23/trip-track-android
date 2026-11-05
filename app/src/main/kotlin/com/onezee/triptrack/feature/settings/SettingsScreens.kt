@@ -50,7 +50,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     DisposableEffect(Unit) { onDispose { manager.closeSheets() } }
     val context = LocalContext.current
     fun open(uri: String) { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri))) }
-    val pickers = setOf(SettingsSheet.units, SettingsSheet.theme, SettingsSheet.language, SettingsSheet.averageSpeed)
+    val pickers = setOf(SettingsSheet.units, SettingsSheet.theme, SettingsSheet.language, SettingsSheet.averageSpeed, SettingsSheet.privacyEdges)
     // iOS presents each sub-page as a sheet of its own over the one before it: Настройки, then Приватность or
     // «Единицы и формат» over it, a picker over that. The pickers are drawn below, over the last page.
     state.sheets.filter { it !in pickers }.forEachIndexed { index, page ->
@@ -87,22 +87,17 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                             MeRow(strings.homeRow(), if (state.home.coordinate == null) strings.homeNotSet() else strings.homeZoneShort(Measure.radius(state.home.radius.rawValue.toDouble(), state.distanceUnit, strings.language.code, strings)), tag = "settings_home", onClick = { manager.openSheet(SettingsSheet.home) })
                             MeDivider()
                             ProfileSectionLabel(strings.tr(com.onezee.triptrack.designsystem.R.string.privacyPlacesSection), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
-                            listOf(0 to com.onezee.triptrack.designsystem.R.string.edgeOptionNone, 200 to com.onezee.triptrack.designsystem.R.string.edgeOption200Note,
-                                500 to com.onezee.triptrack.designsystem.R.string.edgeOption500Note, 1000 to com.onezee.triptrack.designsystem.R.string.edgeOption1000Note).forEach { (metres, label) ->
-                                MeRow(strings.tr(if (metres == 0) com.onezee.triptrack.designsystem.R.string.privacyEdgesRow else label),
-                                    value = if (state.privacyEdgeMetres == metres) "✓" else "",
-                                    subtitle = if (metres == 0) null else Measure.distance(metres.toDouble(), state.distanceUnit, strings.language.code, strings),
-                                    tag = "privacy_edge_$metres", onClick = { manager.setPrivacyEdgeMetres(metres) })
-                            }
-                            Text(strings.tr(com.onezee.triptrack.designsystem.R.string.privacyEdgesFootnote), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
+                            MeRow(strings.privacyEdgesTitle(),
+                                value = state.privacyEdgeMetres?.takeIf { it > 0 }?.let { Measure.radius(it.toDouble(), state.distanceUnit, strings.language.code, strings) } ?: strings.privacyEdgeNever(),
+                                tag = "privacy_edges", onClick = { manager.openSheet(SettingsSheet.privacyEdges) })
+                            Text(strings.privacyEdgeFootnote(), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                             MeDivider()
-                            ProfileSectionLabel(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingSection), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
-                            MeToggle(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingSection), state.filmingManual, manager::setFilmingManual,
-                                strings.tr(com.onezee.triptrack.designsystem.R.string.filmingToggleSubtitle), tag = "filming_manual")
-                            MeToggle(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingAutoToggle), state.filmingAuto, manager::setFilmingAuto,
-                                strings.tr(com.onezee.triptrack.designsystem.R.string.filmingAutoSubtitle), enabled = android.os.Build.VERSION.SDK_INT >= 35,
-                                tag = "filming_auto", hint = if (android.os.Build.VERSION.SDK_INT >= 35) null else strings.tr(com.onezee.triptrack.designsystem.R.string.android_filming_auto_unavailable))
-                            Text(strings.tr(com.onezee.triptrack.designsystem.R.string.filmingFootnote), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
+                            ProfileSectionLabel(strings.filmingTitle(), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))
+                            MeToggle(strings.filmingTitle(), state.filmingManual, manager::setFilmingManual,
+                                strings.filmingSubtitle(), tag = "filming_manual")
+                            if (android.os.Build.VERSION.SDK_INT >= 35) MeToggle(strings.filmingAutoTitle(), state.filmingAuto, manager::setFilmingAuto,
+                                strings.filmingAutoSubtitle(), tag = "filming_auto")
+                            Text(strings.hiddenPrivacyModeFootnote(), Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                             if (privacyState.failed) MeRow(strings.publicDataLoadFailed(), strings.tryAgain(), onClick = { privacy?.load() })
                         }
                     }
@@ -134,6 +129,28 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                 manager.setLanguage(it.code)
                 graph.languageManager.choose(it)
             }, onDismissRequest = { if (manager.state.value.sheet == SettingsSheet.language) manager.dismissSheet() }, testTagPrefix = "settings_language")
+        SettingsSheet.privacyEdges -> {
+            val options = listOf(0, 200, 500, 1000)
+            val selected = state.privacyEdgeMetres?.takeIf { it in options } ?: 0
+            SettingsOptionPicker(
+                title = strings.privacyEdgesTitle(),
+                options = options,
+                selection = selected,
+                footnote = strings.privacyEdgeFootnote(),
+                label = { metres ->
+                    when (metres) {
+                        200 -> strings.privacyEdge200()
+                        500 -> strings.privacyEdge500()
+                        1000 -> strings.privacyEdge1000()
+                        else -> strings.privacyEdgeNever()
+                    }
+                },
+                badge = { metres -> if (metres == 0) "—" else Measure.radius(metres.toDouble(), state.distanceUnit, strings.language.code, strings) },
+                onSelect = manager::setPrivacyEdgeMetres,
+                onDismissRequest = manager::dismissSheet,
+                testTagPrefix = "privacy_edges",
+            )
+        }
         else -> Unit
     }
     if (adminOpen) ContentSizedSheet({ adminOpen = false }, background = AppTheme.colors.bg, detent = SheetDetent.large) {

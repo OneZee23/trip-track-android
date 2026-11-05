@@ -432,6 +432,8 @@ class TripDetailViewModel(
     /** iOS applyEdits for the description alone: the text the owner wrote, trimmed; one's own trip only. */
     fun updateDescription(text: String): Job? = edit { repository.updateNotes(tripId, text.trim()) }
     fun updateHiddenParts(parts: TripHiddenParts?): Job? = edit { repository.updateHiddenParts(tripId, parts) }
+    suspend fun cachedLocality(point: com.onezee.triptrack.model.GeoPoint): String? =
+        repository.cachedLocality(GeohashEncoder.encode(point.latitude, point.longitude, 5))
     fun updateTripDetails(title: String, description: String, vehicleId: UUID?, isPrivate: Boolean, isTransfer: Boolean): Job? {
         val current = trip ?: return null
         if (!state.value.isOwn) return null

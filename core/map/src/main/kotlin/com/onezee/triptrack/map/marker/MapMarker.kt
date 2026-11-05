@@ -47,6 +47,9 @@ data class MapMarker(
 
         /** Home (iOS: HomePinView): a 28 pt accent disc with the house glyph, given as [image]. */
         HOME,
+
+        /** Boundary of a hidden route segment, drawn with the app's own lock image. */
+        HIDDEN_LOCK,
     }
 
     companion object {

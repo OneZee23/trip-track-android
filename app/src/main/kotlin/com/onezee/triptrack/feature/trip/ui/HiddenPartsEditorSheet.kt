@@ -1,11 +1,17 @@
 package com.onezee.triptrack.feature.trip.ui
 
+import android.graphics.Bitmap
+import android.graphics.Canvas as AndroidCanvas
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,8 +25,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,8 +63,25 @@ import com.onezee.triptrack.model.Trip
 import com.onezee.triptrack.model.TripHiddenParts
 import com.onezee.triptrack.logic.TripHiddenPartsResolver
 import com.onezee.triptrack.logic.distance
+import com.onezee.triptrack.logic.GeometryUtils
+import com.onezee.triptrack.logic.radius
 import java.time.Instant
 import java.util.UUID
+import com.onezee.triptrack.map.MapHost
+import com.onezee.triptrack.map.MapHostState
+import com.onezee.triptrack.map.camera.MapCameraCommand
+import com.onezee.triptrack.map.camera.MapInsets
+import com.onezee.triptrack.map.route.MapRoutes
+import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.RouteGeometry
+import com.onezee.triptrack.map.route.RouteLine
+import com.onezee.triptrack.map.route.RouteShape
+import com.onezee.triptrack.map.route.SpeedColorScale
+import com.onezee.triptrack.map.marker.MapMarker
+import com.onezee.triptrack.feature.account.HouseSwitch
+import com.onezee.triptrack.ui.LightRoutePreview
+import com.onezee.triptrack.ui.LiveMaps
+import com.onezee.triptrack.ui.LocalLiveMaps
 import kotlin.math.max
 import kotlin.math.min
 
@@ -69,6 +94,7 @@ fun HiddenPartsEditorSheet(
     onSave: (TripHiddenParts?) -> Unit,
     onDismissRequest: () -> Unit,
     onRename: () -> Unit = {},
+    localityLookup: suspend (GeoPoint) -> String? = { null },
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -88,33 +114,73 @@ fun HiddenPartsEditorSheet(
             photo.exifLatitude?.let { lat -> photo.exifLongitude?.let { lon -> GeoPoint(lat, lon) } },
             trip.trackPoints, result, home)
     } }
-    val summary = buildList {
-        val start = parts.startMetres ?: defaultEdgeMetres ?: 0
-        val end = parts.endMetres ?: defaultEdgeMetres ?: 0
-        add(strings.tr(R.string.hiddenSummaryStart).replace("{value}", Measure.distance(start.toDouble(), distanceUnit, strings.language.code, strings)))
-        add(strings.tr(R.string.hiddenSummaryEnd).replace("{value}", Measure.distance(end.toDouble(), distanceUnit, strings.language.code, strings)))
-        add(if (parts.sections.isEmpty()) strings.tr(R.string.hiddenNothing) else strings.tr(R.string.hiddenSummaryMiddle).replace("{count}", parts.sections.size.toString()))
-    }.joinToString(" · ")
+    val firstPoint = trip.trackPoints.firstOrNull()
+    val lastPoint = trip.trackPoints.lastOrNull()
+    val startLocality by produceState<String?>(null, trip.id, firstPoint, localityLookup) {
+        value = firstPoint?.let { localityLookup(GeoPoint(it.latitude, it.longitude)) }
+    }
+    val endLocality by produceState<String?>(null, trip.id, lastPoint, localityLookup) {
+        value = lastPoint?.let { localityLookup(GeoPoint(it.latitude, it.longitude)) }
+    }
+    val mapState = remember { MapHostState() }
+    val mapShape = remember(trip.trackPoints, result, usePublicPreview) {
+        if (usePublicPreview) RouteGeometry.build(
+            result.previewPoints, preview = true, breaks = result.previewBreaks,
+        ) else hiddenEditorRoute(trip, result)
+    }
+    val lockMarkers = remember(trip.trackPoints, result, usePublicPreview) {
+        if (usePublicPreview) emptyList() else hiddenRouteLockMarkers(trip.trackPoints, result.hidden)
+    }
+    LaunchedEffect(mapShape.bounds) {
+        mapShape.bounds?.let { bounds -> mapState.execute(MapCameraCommand.FitRoute(bounds, MapInsets.all(30.0), animated = false)) }
+    }
+    val summary = hiddenPartsSummary(strings, parts, defaultEdgeMetres, distanceUnit)
 
     Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         Box(Modifier.fillMaxSize().background(colors.bg)) {
-            HiddenRouteCanvas(
-                points = trip.trackPoints,
-                hidden = result.hidden,
-                publicOnly = usePublicPreview,
-                onPoint = { index ->
-                    val stamp = trip.trackPoints.getOrNull(index)?.timestamp ?: return@HiddenRouteCanvas
-                    if (!selectingSection) return@HiddenRouteCanvas
-                    val start = sectionStart
-                    if (start == null) sectionStart = stamp
-                    else {
-                        val section = HiddenSection(UUID.randomUUID(), minOf(start, stamp), maxOf(start, stamp))
-                        parts = parts.copy(sections = parts.sections + section)
-                        sectionStart = null
-                        selectingSection = false
-                    }
-                },
-            )
+            Box(Modifier.align(Alignment.TopCenter).fillMaxWidth().height(224.dp)) {
+                if (LocalLiveMaps.current) MapHost(
+                    state = mapState,
+                    modifier = Modifier.fillMaxSize(),
+                    routes = MapRoutes(listOf(mapShape), RouteAppearance.plain),
+                    markers = lockMarkers,
+                    onMapTap = { tap ->
+                        val nearest = trip.trackPoints.indices.minByOrNull { index ->
+                            GeometryUtils.haversineDistance(tap.coordinate, GeoPoint(trip.trackPoints[index].latitude, trip.trackPoints[index].longitude))
+                        } ?: return@MapHost
+                        val stamp = trip.trackPoints[nearest].timestamp
+                        if (!selectingSection) return@MapHost
+                        val start = sectionStart
+                        if (start == null) sectionStart = stamp
+                        else {
+                            val section = HiddenSection(UUID.randomUUID(), minOf(start, stamp), maxOf(start, stamp))
+                            parts = parts.copy(sections = parts.sections + section)
+                            sectionStart = null
+                            selectingSection = false
+                        }
+                    },
+                    systemInsets = WindowInsets(0),
+                    styleUri = LiveMaps.style(AppTheme.isDark),
+                    textureMode = true,
+                    gesturesEnabled = true,
+                ) else HiddenRouteCanvas(
+                    points = trip.trackPoints,
+                    hidden = result.hidden,
+                    publicOnly = usePublicPreview,
+                    onPoint = { index ->
+                        val stamp = trip.trackPoints.getOrNull(index)?.timestamp ?: return@HiddenRouteCanvas
+                        if (!selectingSection) return@HiddenRouteCanvas
+                        val start = sectionStart
+                        if (start == null) sectionStart = stamp
+                        else {
+                            val section = HiddenSection(UUID.randomUUID(), minOf(start, stamp), maxOf(start, stamp))
+                            parts = parts.copy(sections = parts.sections + section)
+                            sectionStart = null
+                            selectingSection = false
+                        }
+                    },
+                )
+            }
             Column(Modifier.align(Alignment.TopCenter).statusBarsPadding().fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     Text(strings.cancel(), Modifier.clickable(role = Role.Button, onClick = onDismissRequest).testTag("hidden_editor_cancel"), style = inter(15f), color = colors.textSecondary)
@@ -129,9 +195,10 @@ fun HiddenPartsEditorSheet(
                     .testTag("hidden_editor_sheet"),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Text(if (!selectingSection) summary else strings.tr(if (sectionStart == null) R.string.hiddenPickStart else R.string.hiddenPickEnd), style = inter(13f), color = colors.textSecondary)
-                HiddenEdgePicker(strings.tr(R.string.hiddenStartLabel), parts.startMetres, defaultEdgeMetres) { parts = parts.copy(startMetres = it) }
-                HiddenEdgePicker(strings.tr(R.string.hiddenEndLabel), parts.endMetres, defaultEdgeMetres) { parts = parts.copy(endMetres = it) }
+                Text(if (!selectingSection) summary else if (sectionStart == null) strings.hiddenTapStart() else strings.hiddenTapEnd(), style = inter(13f), color = colors.textSecondary)
+                HiddenTripBar(trip, result.hidden, parts.sections, strings)
+                HiddenEdgePicker(strings.hiddenStart(), parts.startMetres, defaultEdgeMetres) { parts = parts.copy(startMetres = it) }
+                HiddenEdgePicker(strings.hiddenEnd(), parts.endMetres, defaultEdgeMetres) { parts = parts.copy(endMetres = it) }
                 if (parts.sections.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
                     parts.sections.forEach { section ->
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -141,7 +208,7 @@ fun HiddenPartsEditorSheet(
                     }
                 }
                 Text(
-                    if (!selectingSection) "+ ${strings.tr(R.string.hiddenAddSection)}" else strings.tr(if (sectionStart == null) R.string.hiddenPickStart else R.string.hiddenPickEnd),
+                    if (!selectingSection) strings.hiddenAddSection() else if (sectionStart == null) strings.hiddenTapStart() else strings.hiddenTapEnd(),
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(colors.cardAlt)
                         .clickable(role = Role.Button) { selectingSection = true; sectionStart = null }
                         .padding(horizontal = 14.dp, vertical = 12.dp).testTag("hidden_add_section"),
@@ -149,35 +216,34 @@ fun HiddenPartsEditorSheet(
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(strings.tr(R.string.hiddenNumbersTitle), Modifier.weight(1f), style = inter(14f, InterWeight.medium), color = colors.text)
-                    listOf(false to R.string.hiddenNumbersWhole, true to R.string.hiddenNumbersVisible).forEach { (selected, label) ->
+                    listOf(false to strings.hiddenAllTrip(), true to strings.hiddenWithoutHidden()).forEach { (selected, label) ->
                         val active = parts.numbersVisibleOnly == selected
-                        Text(strings.tr(label), Modifier.clip(CircleShape).background(if (active) AppTheme.accent else colors.cardAlt)
+                        Text(label, Modifier.clip(CircleShape).background(if (active) AppTheme.accent else colors.cardAlt)
                             .clickable(role = Role.Button) { parts = parts.copy(numbersVisibleOnly = selected) }
                             .padding(horizontal = 10.dp, vertical = 8.dp).testTag("hidden_numbers_$selected"),
                             style = inter(12f, if (active) InterWeight.bold else InterWeight.medium), color = if (active) Color.White else colors.text)
                     }
                 }
                 Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(colors.cardAlt).padding(13.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text(strings.tr(R.string.hiddenStaysTitle), style = inter(13f, InterWeight.bold), color = colors.text)
-                    Text(strings.tr(R.string.hiddenStaysBody) + "\n" + strings.photosCount(hiddenPhotoCount), style = inter(12f), color = colors.textSecondary)
+                    Text(strings.hiddenLocalCardTitle(), style = inter(13f, InterWeight.bold), color = colors.text)
+                    Text(hiddenPartsLocalCopy(strings, result.hiddenRanges.size, hiddenPhotoCount), style = inter(12f), color = colors.textSecondary)
                 }
-                Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { usePublicPreview = !usePublicPreview }, verticalAlignment = Alignment.CenterVertically) {
-                    Text(strings.tr(R.string.hiddenPreviewToggle), Modifier.weight(1f), style = inter(14f), color = colors.text)
-                    Text(if (usePublicPreview) "●" else "○", style = inter(20f), color = AppTheme.accent)
+                Row(Modifier.fillMaxWidth().toggleable(usePublicPreview, role = Role.Switch, onValueChange = { usePublicPreview = it }), verticalAlignment = Alignment.CenterVertically) {
+                    Text(strings.hiddenShowPublic(), Modifier.weight(1f), style = inter(14f), color = colors.text)
+                    HouseSwitch(usePublicPreview, { usePublicPreview = it })
                 }
                 val titleEnd = trip.title?.takeIf { it.isNotBlank() }
-                if (!trip.titleIsCustom && titleEnd != null) {
-                    val endpoint = when {
-                        (parts.endMetres ?: defaultEdgeMetres ?: 0) > 0 -> R.string.hiddenTitleNamesFinish
-                        (parts.startMetres ?: defaultEdgeMetres ?: 0) > 0 -> R.string.hiddenTitleNamesStart
-                        else -> null
-                    }
-                    endpoint?.let { key ->
-                        Column(Modifier.fillMaxWidth().testTag(if (key == R.string.hiddenTitleNamesStart) "hidden_title_warning_start" else "hidden_title_warning_finish"), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                            Text(strings.tr(key).replace("{title}", titleEnd), style = inter(12.5f), color = colors.textSecondary)
-                        Text(strings.tr(R.string.hiddenRename), Modifier.clickable(role = Role.Button, onClick = onRename), style = inter(12.5f, InterWeight.semibold), color = AppTheme.accent)
-                        }
-                    }
+                val startHidden = (parts.startMetres ?: defaultEdgeMetres ?: 0) > 0
+                val endHidden = (parts.endMetres ?: defaultEdgeMetres ?: 0) > 0
+                val titleNamesStart = !trip.titleIsCustom && titleEnd != null && startHidden &&
+                    !startLocality.isNullOrBlank() && titleEnd.contains(startLocality!!, ignoreCase = true)
+                val titleNamesFinish = !trip.titleIsCustom && titleEnd != null && endHidden &&
+                    !endLocality.isNullOrBlank() && titleEnd.contains(endLocality!!, ignoreCase = true)
+                if (titleNamesStart || titleNamesFinish) {
+                    val hint = if (titleNamesStart) strings.hiddenTitleHintStart(titleEnd!!) else strings.hiddenTitleHint(titleEnd!!)
+                    Text(hint, Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onRename)
+                        .testTag(if (titleNamesStart) "hidden_title_warning_start" else "hidden_title_warning_finish"),
+                        style = inter(12.5f), color = AppTheme.accent)
                 }
                 if (trip.isOnServer && !trip.isPrivate) {
                     Text(strings.tr(R.string.hiddenAlreadySeen), style = inter(12.5f), color = colors.textSecondary)
@@ -194,13 +260,13 @@ private fun HiddenEdgePicker(label: String, value: Int?, default: Int?, onPick: 
     Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(label, Modifier.weight(1f), style = inter(14f, InterWeight.bold), color = colors.text)
-            if (value == null && default != null) Text(strings.tr(R.string.hiddenByDefault), style = inter(11f), color = colors.textSecondary)
-            if (value != null && default != null) Text(strings.tr(R.string.hiddenByDefault), Modifier.clickable(role = Role.Button) { onPick(null) }, style = inter(11f), color = colors.textSecondary)
+            if (value == null && default != null) Text(strings.hiddenDefault(), style = inter(11f), color = colors.textSecondary)
+            if (value != null && default != null) Text(strings.hiddenDefault(), Modifier.clickable(role = Role.Button) { onPick(null) }, style = inter(11f), color = colors.textSecondary)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             listOf(0, 200, 500, 1000, 2000).forEach { option ->
                 val chosen = (value ?: default ?: 0) == option
-                val labelText = if (option == 0) strings.tr(R.string.hiddenNone) else Measure.distance(option.toDouble(), LocalDistanceUnit.current, strings.language.code, strings)
+                val labelText = if (option == 0) strings.hiddenNone() else Measure.radius(option.toDouble(), LocalDistanceUnit.current, strings.language.code, strings)
                 Text(labelText, Modifier.weight(1f).clip(CircleShape).background(if (chosen) AppTheme.accent else colors.cardAlt)
                     .clickable(role = Role.Button) { onPick(option) }.padding(vertical = 9.dp).testTag("hidden_${label}_${option}"),
                     style = inter(11f, if (chosen) InterWeight.bold else InterWeight.medium), color = if (chosen) Color.White else colors.text, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
@@ -256,6 +322,111 @@ private fun routePoints(points: List<GeoPoint>, width: Float, height: Float): Li
     val scale = min((height * .57) / max(maxLat - minLat, .00001), (width * .78) / max(maxLon - minLon, .00001))
     val midLat = (minLat + maxLat) / 2; val midLon = (minLon + maxLon) / 2
     return points.map { Offset(width / 2 + ((it.longitude - midLon) * scale).toFloat(), height * .36f - ((it.latitude - midLat) * scale).toFloat()) }
+}
+
+private fun hiddenEditorRoute(trip: Trip, result: com.onezee.triptrack.logic.TripHiddenPartsResolution): RouteShape {
+    val visible = result.visibleRuns.flatMap { range ->
+        val points = trip.trackPoints.subList(range.first, range.last + 1)
+        RouteGeometry.build(points.map { GeoPoint(it.latitude, it.longitude) }, points.map { it.speed }).lines
+    }
+    val segments = trip.trackPoints.map { point -> trip.recordingBreaks.count { point.timestamp >= it } }
+    val hidden = mutableListOf<RouteLine>()
+    var index = 0
+    while (index < result.hidden.size) {
+        if (!result.hidden[index]) { index++; continue }
+        val start = index
+        while (index + 1 < result.hidden.size && result.hidden[index + 1] && segments[index + 1] == segments[start]) index++
+        val points = trip.trackPoints.subList(start, index + 1)
+        if (points.size > 1) hidden += RouteLine(points.map { GeoPoint(it.latitude, it.longitude) }, null, hidden = true)
+        index++
+    }
+    val all = trip.trackPoints.map { GeoPoint(it.latitude, it.longitude) }
+    val speeds = trip.trackPoints.map { it.speed }
+    val bounds = RouteGeometry.build(all, speeds, breaks = trip.recordingBreaks.map { boundary ->
+        trip.trackPoints.indexOfFirst { it.timestamp >= boundary }
+    }.filter { it > 0 }).bounds
+    return RouteShape(visible, bounds, hidden)
+}
+
+internal fun hiddenRouteLockMarkers(points: List<TrackPoint>, hidden: List<Boolean>): List<MapMarker> {
+    val icon = hiddenLockBitmap()
+    val markers = mutableListOf<MapMarker>()
+    var index = 0
+    while (index < hidden.size) {
+        if (!hidden[index]) { index++; continue }
+        val first = index
+        while (index + 1 < hidden.size && hidden[index + 1]) index++
+        listOf(first - 1, index + 1).filter { it in points.indices }.forEachIndexed { offset, pointIndex ->
+            val point = points[pointIndex]
+            markers += MapMarker("hidden_lock_${first}_$offset", GeoPoint(point.latitude, point.longitude),
+                MapMarker.Kind.HIDDEN_LOCK, label = "", image = icon)
+        }
+        index++
+    }
+    return markers
+}
+
+internal fun hiddenLockBitmap(): Bitmap = Bitmap.createBitmap(48, 48, Bitmap.Config.ARGB_8888).also { bitmap ->
+    val canvas = AndroidCanvas(bitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    paint.color = android.graphics.Color.WHITE
+    canvas.drawCircle(24f, 24f, 23f, paint)
+    paint.color = android.graphics.Color.rgb(90, 91, 101)
+    paint.style = Paint.Style.STROKE
+    paint.strokeWidth = 3f
+    canvas.drawRoundRect(RectF(16f, 13f, 32f, 29f), 8f, 8f, paint)
+    paint.style = Paint.Style.FILL
+    canvas.drawRoundRect(RectF(14f, 22f, 34f, 38f), 3f, 3f, paint)
+    paint.color = android.graphics.Color.WHITE
+    canvas.drawCircle(24f, 28f, 2f, paint)
+    canvas.drawRect(23f, 28f, 25f, 33f, paint)
+}
+
+@Composable
+private fun HiddenTripBar(
+    trip: Trip,
+    hidden: List<Boolean>,
+    sections: List<HiddenSection>,
+    strings: com.onezee.triptrack.designsystem.strings.AppStrings,
+) {
+    val start = trip.trackPoints.firstOrNull()?.timestamp ?: trip.startDate
+    val end = trip.trackPoints.lastOrNull()?.timestamp ?: trip.endDate ?: start
+    val duration = (end.toEpochMilli() - start.toEpochMilli()).coerceAtLeast(0).toDouble()
+    val colors = AppTheme.colors
+    Canvas(Modifier.fillMaxWidth().height(24.dp).testTag("hidden_trip_bar")) {
+        val y = size.height / 2
+        val barHeight = 12.dp.toPx()
+        drawRoundRect(colors.cardAlt, topLeft = Offset(0f, y - barHeight / 2), size = androidx.compose.ui.geometry.Size(size.width, barHeight), cornerRadius = androidx.compose.ui.geometry.CornerRadius(barHeight / 2))
+        val points = trip.trackPoints
+        if (points.size > 1) {
+            for (index in 0 until points.lastIndex) {
+                val left = size.width * index / points.lastIndex
+                val right = size.width * (index + 1) / points.lastIndex
+                val color = if (hidden.getOrNull(index) == true) colors.textTertiary.copy(alpha = .65f)
+                    else Color(SpeedColorScale.argb(points[index].speed))
+                drawLine(color, Offset(left, y), Offset(right, y), strokeWidth = barHeight, cap = StrokeCap.Round)
+                if (hidden.getOrNull(index) == true) {
+                    var x = left - barHeight
+                    while (x < right) {
+                        drawLine(Color.White.copy(alpha = .7f), Offset(x, y + barHeight / 2), Offset(x + barHeight, y - barHeight / 2), strokeWidth = 1.2.dp.toPx())
+                        x += 6.dp.toPx()
+                    }
+                }
+            }
+        }
+        sections.forEach { section ->
+            listOf(section.from, section.to).forEach { time ->
+                val fraction = if (duration > 0) ((time.toEpochMilli() - start.toEpochMilli()) / duration).toFloat().coerceIn(0f, 1f) else 0f
+                drawCircle(colors.card, radius = 8.dp.toPx(), center = Offset(size.width * fraction, y))
+                drawCircle(colors.textSecondary, radius = 8.dp.toPx(), center = Offset(size.width * fraction, y), style = Stroke(1.dp.toPx()))
+            }
+        }
+    }
+    val clock = java.time.format.DateTimeFormatter.ofLocalizedTime(java.time.format.FormatStyle.SHORT).withLocale(strings.language.locale)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(clock.format(start.atZone(strings.zone)), style = inter(10f), color = AppTheme.colors.textTertiary)
+        Text(clock.format(end.atZone(strings.zone)), style = inter(10f), color = AppTheme.colors.textTertiary)
+    }
 }
 
 private fun hiddenRanges(hidden: List<Boolean>): List<IntRange> = booleanRanges(hidden, true)

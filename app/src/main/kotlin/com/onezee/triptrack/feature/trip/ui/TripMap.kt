@@ -54,6 +54,7 @@ data class TripMapInput(
     val photoBitmaps: Map<java.util.UUID, Bitmap>,
     val playback: MapPlayback? = null,
     val litFraction: Double? = null,
+    val hiddenLockPoints: List<GeoPoint> = emptyList(),
 )
 
 /**
@@ -109,10 +110,11 @@ fun TripLiveMap(
     modifier: Modifier = Modifier,
 ) {
     val strings = appStrings
-    val markers = remember(input.checkpoints, input.photoPins, input.photoBitmaps, fullscreen, strings.language) {
+    val markers = remember(input.checkpoints, input.photoPins, input.photoBitmaps, input.hiddenLockPoints, fullscreen, strings.language) {
         input.checkpoints.mapNotNull { checkpoint ->
             checkpoint.coordinate?.let { MapMarker("cp:${checkpoint.id}", it, MapMarker.Kind.CHECKPOINT, label = if (fullscreen) checkpoint.displayName(strings) else null) }
-        } + input.photoPins.map { pin -> MapMarker("photo:${pin.id}", pin.coordinate, MapMarker.Kind.PHOTO, image = input.photoBitmaps[pin.id]) }
+        } + input.photoPins.map { pin -> MapMarker("photo:${pin.id}", pin.coordinate, MapMarker.Kind.PHOTO, image = input.photoBitmaps[pin.id]) } +
+            input.hiddenLockPoints.mapIndexed { index, point -> MapMarker("hidden_lock:$index", point, MapMarker.Kind.HIDDEN_LOCK, image = hiddenLockBitmap()) }
     }
     val style = remember { LiveMaps.style(dark) }
     MapHost(

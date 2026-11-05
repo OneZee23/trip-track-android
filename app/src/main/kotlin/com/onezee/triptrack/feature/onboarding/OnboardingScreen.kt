@@ -91,6 +91,7 @@ import com.onezee.triptrack.location.permissions.HealthIssue
 import com.onezee.triptrack.location.permissions.HealthSettings
 import com.onezee.triptrack.location.permissions.Oem
 import com.onezee.triptrack.logic.distanceParts
+import com.onezee.triptrack.logic.radius
 import com.onezee.triptrack.logic.metresPerSecond
 import com.onezee.triptrack.logic.speedParts
 import com.onezee.triptrack.model.DistanceUnit
@@ -195,7 +196,7 @@ fun OnboardingContent(
                 3 -> PermissionPage(3, R.drawable.onboard_track, appStrings.onboardingBackgroundTitle(), backgroundBody(), backgroundGranted, isRequesting,
                     spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_background",
                     approximateLocation, onOpenLocationSettings) { onContinue(3) }
-                4 -> PrivacyEdgesPage(privacyEdgeMetres, onPrivacyEdgeSave) { onContinue(4) }
+                4 -> PrivacyEdgesPage(distanceUnit, privacyEdgeMetres, onPrivacyEdgeSave) { onContinue(4) }
                 5 -> PermissionPage(5, R.drawable.onboard_notify, appStrings.onboardingNotificationsTitle(), appStrings.onboardingNotificationsSub(),
                     notificationsGranted, isRequesting, spacing = 10.dp, consentTop = 6.dp, "onboarding_continue_notifications") { onContinue(5) }
                 else -> Unit
@@ -270,43 +271,50 @@ private fun BodyText(text: String, top: Dp) {
 }
 
 @Composable
-private fun ColumnScope.PrivacyEdgesPage(current: Int?, onSave: (Int) -> Unit, onContinue: () -> Unit) {
+private fun ColumnScope.PrivacyEdgesPage(distanceUnit: DistanceUnit, current: Int?, onSave: (Int) -> Unit, onContinue: () -> Unit) {
     val strings = appStrings
     var selected by rememberSaveable { mutableStateOf<Int?>(null) }
-    Spacer(Modifier.height(18.dp))
-    OnboardingHero(R.drawable.hidden_edges_illustration)
-    PageTitle(strings.tr(LocationWords.string.edgeQuestionTitle), "onboarding_hidden_edges", top = 18.dp)
-    BodyText(strings.tr(LocationWords.string.edgeQuestionBody), 10.dp)
-    Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Image(
+        bitmap = ImageBitmap.imageResource(R.drawable.hidden_edges_illustration),
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        filterQuality = FilterQuality.None,
+        modifier = Modifier.padding(top = 48.dp).size(210.dp).clip(RoundedCornerShape(20.dp)).align(Alignment.CenterHorizontally),
+    )
+    PageTitle(strings.hiddenQuestionTitle(), "onboarding_hidden_edges", top = 22.dp)
+    BodyText(strings.hiddenQuestionBody(), 8.dp)
+    Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
         val options = listOf(
-            0 to (LocationWords.string.edgeOptionNone to null),
-            200 to (null to LocationWords.string.edgeOption200Note),
-            500 to (null to LocationWords.string.edgeOption500Note),
-            1000 to (null to LocationWords.string.edgeOption1000Note),
+            0, 200, 500, 1000,
         )
-        options.forEach { (metres, labels) ->
+        options.forEach { metres ->
             val active = selected == metres
-            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(if (active) AppTheme.accent.copy(alpha = .12f) else AppTheme.colors.card)
-                .clickable(role = Role.RadioButton) { selected = metres }.padding(12.dp).testTag("onboarding_edge_$metres"), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            val descriptor = when (metres) {
+                200 -> strings.privacyEdge200()
+                500 -> strings.privacyEdge500()
+                1000 -> strings.privacyEdge1000()
+                else -> strings.privacyEdgeNever()
+            }
+            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp)).background(AppTheme.colors.card)
+                .clickable(role = Role.RadioButton) { selected = metres }.padding(horizontal = 12.dp, vertical = 8.dp).testTag("onboarding_edge_$metres"), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(if (active) "◉" else "○", style = inter(18f), color = if (active) AppTheme.accent else AppTheme.colors.textTertiary)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    val distance = Measure.distanceParts(metres.toDouble(), DistanceUnit.km, strings.language.code, strings)
-                    val title = if (metres == 0) strings.tr(labels.first!!) else "${distance.value} ${distance.unit}"
-                    Text(title, style = inter(14f, if (active) InterWeight.bold else InterWeight.medium), color = AppTheme.colors.text)
-                    labels.second?.let { Text(strings.tr(it), style = inter(11.5f), color = AppTheme.colors.textSecondary) }
+                    Text(if (metres == 0) descriptor else Measure.radius(metres.toDouble(), distanceUnit, strings.language.code, strings),
+                        style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+                    if (metres > 0) Text(descriptor, style = inter(11.5f), color = AppTheme.colors.textSecondary)
                 }
-                Text(if (active) "●" else "○", style = inter(18f), color = if (active) AppTheme.accent else AppTheme.colors.textTertiary)
             }
         }
     }
-    Text(strings.tr(LocationWords.string.edgeQuestionFootnote), Modifier.fillMaxWidth().padding(horizontal = 24.dp), style = inter(11f), color = AppTheme.colors.textTertiary, textAlign = TextAlign.Center)
+    Spacer(Modifier.height(8.dp))
     val haptics = rememberHaptics()
-    Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 18.dp).height(56.dp)
+    Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 54.dp).height(56.dp)
         .background(if (selected == null) AppTheme.colors.cardAlt else AppTheme.accent, RoundedCornerShape(14.dp))
         .clickable(enabled = selected != null, role = Role.Button) {
             val choice = selected ?: return@clickable
             haptics.tap(); onSave(choice); onContinue()
         }.testTag("onboarding_edge_save"), contentAlignment = Alignment.Center) {
-        Text(strings.save(), style = inter(15f, InterWeight.bold), color = if (selected == null) AppTheme.colors.textTertiary else Color.White)
+        Text(strings.tr(com.onezee.triptrack.designsystem.R.string.hiddenQuestionSave), style = inter(16f, InterWeight.bold), color = if (selected == null) AppTheme.colors.textTertiary else Color.White)
     }
 }
 

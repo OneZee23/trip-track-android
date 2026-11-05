@@ -16,7 +16,9 @@ import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
 import com.onezee.triptrack.feature.settings.PrivacyEdgeQuestionSheet
 import com.onezee.triptrack.feature.settings.SettingsRoute
+import com.onezee.triptrack.feature.onboarding.OnboardingContent
 import com.onezee.triptrack.TripTrackApplication
+import com.onezee.triptrack.model.DistanceUnit
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.TrackPoint
 import com.onezee.triptrack.model.Trip
@@ -83,9 +85,21 @@ class HiddenPartsScreenshotTests(private val dark: Boolean) {
         frame { SettingsRoute(graph) {} }
         compose.onNodeWithTag("settings_privacy").performClick()
         compose.waitForIdle()
-        compose.onNodeWithTag("privacy_edge_500").performScrollTo()
+        compose.onNodeWithTag("privacy_edges").performScrollTo()
         compose.waitForIdle()
         captureScreenRoboImage("src/test/screenshots/hidden_settings_privacy_$theme.png")
+        compose.onNodeWithTag("privacy_edges").performClick()
+        compose.waitForIdle()
+        captureScreenRoboImage("src/test/screenshots/hidden_settings_edges_picker_$theme.png")
+    }
+
+    @Test fun onboardingQuestion() {
+        frame {
+            OnboardingContent(page = 4, distanceUnit = DistanceUnit.km, isRequesting = false,
+                locationGranted = true, backgroundGranted = true, notificationsGranted = true,
+                onContinue = {}, privacyEdgeMetres = 500)
+        }
+        captureScreenRoboImage("src/test/screenshots/hidden_onboarding_$theme.png")
     }
 
     companion object {

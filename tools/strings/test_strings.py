@@ -91,6 +91,30 @@ class SwiftParserTests(unittest.TestCase):
             with self.assertRaises(Unsupported):
                 read_translations(path)
 
+    def test_shared_hidden_parts_translation_chunks(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "Translations+TR.swift"
+            path.write_text('''extension Translations {
+                static let tr: [String: String] = {
+                    var table = tr1
+                    table.merge(Translations.hiddenPrivacyTR) { _, new in new }
+                    table.merge(Translations.hiddenPartsTR) { _, new in new }
+                    return table
+                }()
+                private static let tr1: [String: String] = ["other": "value"]
+            }''', encoding="utf-8")
+            (root / "Translations+HiddenPrivacy.swift").write_text('''extension Translations {
+                private static let hiddenPartsKeys = ["hiddenStart", "hiddenEnd"]
+                static let hiddenPrivacyTR: [String: String] = ["privacyEdge200": "avlu"]
+                static let hiddenPartsTR = makeHiddenParts(["Başlangıç", "Bitiş"])
+                static let hiddenPartsDE = makeHiddenParts(["Start", "End"])
+            }''', encoding="utf-8")
+            table = read_translations(path)
+            self.assertEqual(table["privacyEdge200"][0], "avlu")
+            self.assertEqual(table["hiddenEnd"][0], "Bitiş")
+            self.assertNotIn("hiddenPrivacyDE", table)
+
 
 class GeneratorTests(unittest.TestCase):
     def merge_android(self, generator, entries):

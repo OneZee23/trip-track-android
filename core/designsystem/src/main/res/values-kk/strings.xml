@@ -17,6 +17,14 @@
         <item quantity="one">жазылым</item>
         <item quantity="other">жазылым</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d жасырын бөлік</item>
+        <item quantity="other">%1$d жасырын бөлік</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">Ортада %1$d бөлік</item>
+        <item quantity="other">Ортада %1$d бөлік</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">ашық сапар</item>
         <item quantity="other">ашық сапар</item>
@@ -763,6 +771,12 @@
     <string name="feedTryADifferent" formatted="false">Басқа желіні көріңіз немесе күте тұрыңыз — автоматты түрде қайталаймыз.</string>
     <string name="feedViewModelLastMonth" formatted="false">Өткен ай</string>
     <string name="feedViewModelThisMonth" formatted="false">Осы ай</string>
+    <string name="filmingAutoSubtitle" formatted="false">Өзі қосылып, өзі сөнеді</string>
+    <string name="filmingAutoTitle" formatted="false">Экран жазылғанда қосу</string>
+    <string name="filmingFootnote" formatted="false">Бұл режимде карталар мен «Орындар» жасырын бөліктерді, үйіңізді және көк нүктені көрсетпейді. Жазу экранында нүкте қалады.</string>
+    <string name="filmingPreparing" formatted="false">Түсіру режимі дайындалуда</string>
+    <string name="filmingSubtitle" formatted="false">Жасырын бөліктер өз экрандарыңызда да көрінбейді</string>
+    <string name="filmingTitle" formatted="false">Түсірілім режимі</string>
     <string name="filters" formatted="false">Сүзгілер</string>
     <string name="findFirstLabel" formatted="false">Бірінші тапты</string>
     <string name="findPeople" formatted="false">Адамдарды табу</string>
@@ -856,6 +870,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Сіз бірінші бола аласыз</string>
     <string name="guest" formatted="false">Қонақ</string>
     <string name="guestFeedBanner" formatted="false">Жазылу және реакция білдіру үшін кіріңіз</string>
+    <string name="hiddenAddSection" formatted="false">+ Орта бөлікті жасыру</string>
+    <string name="hiddenAllTrip" formatted="false">Бүкіл сапар</string>
+    <string name="hiddenAlreadySeen" formatted="false">Сапарды көргендер бүкіл бағытты есте сақтауы мүмкін.</string>
+    <string name="hiddenChooseEdge" formatted="false">Жасырылатын қашықтық</string>
+    <string name="hiddenDefault" formatted="false">әдепкі</string>
+    <string name="hiddenEditorTitle" formatted="false">Басқалардан жасыру</string>
+    <string name="hiddenEnd" formatted="false">Соңы</string>
+    <string name="hiddenHomeHint" formatted="false">Басын жасыру керек пе? Үйіңіз осында</string>
+    <string name="hiddenLocalCardBody">%1$s және олардағы %2$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Мұның ешқайсысы таспаға да, бұлттағы көшірмеге де түспейді.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Осы телефонда қалады</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Жасырын бөліктер сапар жазылған телефонда ғана бар.</string>
+    <string name="hiddenNone" formatted="false">Жоқ</string>
+    <string name="hiddenNothing" formatted="false">Ештеңе жасырылмаған</string>
+    <string name="hiddenNumbersPreview">Басқалар %1$s және %2$s көреді</string>
+    <string name="hiddenNumbersTitle" formatted="false">Басқаларға арналған сандар</string>
+    <string name="hiddenOption1000" formatted="false">кемпингке қауіпсіздеу</string>
+    <string name="hiddenOption200" formatted="false">аула, тұрақ</string>
+    <string name="hiddenOption500" formatted="false">аудан, тұрақ орны</string>
+    <string name="hiddenOvernightHint" formatted="false">Соңын жасыру керек пе? Мұнда түнегенсіз</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Жеке баптауы жоқ сапарларға қолданылады. Жасырын бөліктер таспаға да, бұлтқа да жіберілмейді.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">Түсірілім режимінде карталар мен «Орындар» жасырын бөліктерді, үйді және көк нүктені көрсетпейді. Жазу экранында нүкте қалады.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Таспада және профильде осылай көрінеді</string>
+    <string name="hiddenPublishRow">Жасырылғаны: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Үй мен түнеген орындар таспаға не бұлттағы көшірмеге түспейді. Сапарды толық көресіз.</string>
+    <string name="hiddenQuestionSave" formatted="false">Сақтау</string>
+    <string name="hiddenQuestionTitle" formatted="false">Сапардың басы мен соңын жасыру керек пе?</string>
+    <string name="hiddenQuestionWholeTrips">Жарияланған %1$d сапардың бүкіл бағыты жасырын болады</string>
+    <string name="hiddenQuickHide">%1$s жасыру</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Жасырын бөліктің шекарасы</string>
+    <string name="hiddenSave" formatted="false">Сақтау</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Жасырын бөліктің соңы</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Жасырын бөліктің басы</string>
+    <string name="hiddenSectionTitle">Бөлік %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Баптаулар → Құпиялық бөлімінен өзгертуге болады</string>
+    <string name="hiddenShowOwn" formatted="false">Сапарыңыз</string>
+    <string name="hiddenShowPublic" formatted="false">Ашық алдын ала көрініс</string>
+    <string name="hiddenStart" formatted="false">Басы</string>
+    <string name="hiddenTapEnd" formatted="false">Бөлік аяқталатын жерді басыңыз</string>
+    <string name="hiddenTapMapHint" formatted="false">Бөлікті таңдау үшін бағытты басыңыз</string>
+    <string name="hiddenTapStart" formatted="false">Бөлік басталатын жерді басыңыз</string>
+    <string name="hiddenTitleHint">«%1$s» атауында баратын жер көрсетілген. Атауын өзгерту</string>
+    <string name="hiddenTitleHintStart">«%1$s» атауында басталған жер көрсетілген. Атауын өзгерту</string>
+    <string name="hiddenWithoutHidden" formatted="false">Жасырын бөліктерсіз</string>
     <string name="hideFromFeedAlertBody" formatted="false">Ол жалпы лентадан және профиліңізден алынады.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Иә, жасыру</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Таспадан жасыру керек пе?</string>
@@ -1381,9 +1440,16 @@
     <string name="previewBannerSubtitle" formatted="false">Алдын ала қарау · жазылу мен реакциялар қолжетімсіз</string>
     <string name="previewThisIsYou" formatted="false">Бұл сіз</string>
     <string name="privacyCompanionSub" formatted="false">Біреу мені жолсерік деп белгілегенде хабарлау</string>
+    <string name="privacyEdge1000" formatted="false">кемпинг үшін қауіпсіздеу</string>
+    <string name="privacyEdge200" formatted="false">аула, тұрақ</string>
+    <string name="privacyEdge500" formatted="false">аудан, лагерь</string>
+    <string name="privacyEdgeFootnote" formatted="false">Сапарға жеке қашықтық қойылмаса, барлық сапарға қолданылады.</string>
+    <string name="privacyEdgeNever" formatted="false">Жасырмау</string>
+    <string name="privacyEdgesTitle" formatted="false">Сапардың басы мен соңы</string>
     <string name="privacyFootnote" formatted="false">Жеке сапарды тек сіз және шақырған серіктеріңіз көреді. Бұл қосқыштар оны ашпайды.</string>
     <string name="privacyOnlyMe" formatted="false">Тек өзім үшін</string>
     <string name="privacyOnlyMeHint" formatted="false">Жабық — тек сіз көресіз</string>
+    <string name="privacyPlacesSection" formatted="false">Басқалар көрмейтін орындар</string>
     <string name="privacyPlusBadgeSub" formatted="false">Белгіні таспада, профильде және пікірлерде атыңыздың қасында көрсету.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">PRO белгісі</string>
     <string name="privacyPolicy" formatted="false">Құпиялық саясаты</string>
@@ -1626,6 +1692,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Жолды ашу үшін сапар жазыңыз</string>
     <string name="roadCollectionRoadCollection" formatted="false">Жолдар жинағы</string>
     <string name="roadCollectionRoads" formatted="false">жол</string>
+    <string name="routeHiddenByAuthor" formatted="false">Маршрут автор тарапынан жасырылған</string>
     <string name="routeLinePickerFootnote" formatted="false">Түс тек сіздің экраныңызда өзгереді, басқалардың бағыттарында да. Басқалар сіздің бағыттарыңызды әдеттегідей көреді.</string>
     <string name="routeLineSpeedGradient" formatted="false">Жылдамдық градиенті</string>
     <string name="save" formatted="false">Сақтау</string>

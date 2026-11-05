@@ -21,6 +21,16 @@
         <item quantity="many">abonnements</item>
         <item quantity="other">abonnements</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d portion masquée</item>
+        <item quantity="many">%1$d portions masquées</item>
+        <item quantity="other">%1$d portions masquées</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d portion au milieu</item>
+        <item quantity="many">%1$d portions au milieu</item>
+        <item quantity="other">%1$d portions au milieu</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">trajet public</item>
         <item quantity="many">trajets publics</item>
@@ -793,6 +803,12 @@
     <string name="feedTryADifferent" formatted="false">Essayez un autre réseau ou patientez — nous réessaierons automatiquement.</string>
     <string name="feedViewModelLastMonth" formatted="false">Le mois dernier</string>
     <string name="feedViewModelThisMonth" formatted="false">Ce mois-ci</string>
+    <string name="filmingAutoSubtitle" formatted="false">S’active et se désactive automatiquement</string>
+    <string name="filmingAutoTitle" formatted="false">Activer pendant l’enregistrement d’écran</string>
+    <string name="filmingFootnote" formatted="false">Dans ce mode, les cartes et Lieux masquent les portions cachées, votre domicile et le point bleu. L’écran d’enregistrement garde le point.</string>
+    <string name="filmingPreparing" formatted="false">Préparation du mode vidéo</string>
+    <string name="filmingSubtitle" formatted="false">Les parties masquées disparaissent aussi de vos écrans</string>
+    <string name="filmingTitle" formatted="false">Mode vidéo</string>
     <string name="filters" formatted="false">Filtres</string>
     <string name="findFirstLabel" formatted="false">Premier à l\'avoir trouvé</string>
     <string name="findPeople" formatted="false">Trouver des gens</string>
@@ -886,6 +902,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Vous pouvez être le premier</string>
     <string name="guest" formatted="false">Invité</string>
     <string name="guestFeedBanner" formatted="false">Connectez-vous pour suivre et réagir</string>
+    <string name="hiddenAddSection" formatted="false">+ Masquer un tronçon intermédiaire</string>
+    <string name="hiddenAllTrip" formatted="false">Trajet entier</string>
+    <string name="hiddenAlreadySeen" formatted="false">Les personnes qui ont déjà vu le trajet peuvent se souvenir de tout l’itinéraire.</string>
+    <string name="hiddenChooseEdge" formatted="false">Distance à masquer</string>
+    <string name="hiddenDefault" formatted="false">par défaut</string>
+    <string name="hiddenEditorTitle" formatted="false">Masquer aux autres</string>
+    <string name="hiddenEnd" formatted="false">Fin</string>
+    <string name="hiddenHomeHint" formatted="false">Masquer le début ? Votre domicile est ici</string>
+    <string name="hiddenLocalCardBody">%1$s et %2$s de ces portions ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Rien de tout cela ne paraîtra dans le fil ni dans la copie cloud.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Reste sur ce téléphone</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Les tronçons masqués restent uniquement sur le téléphone qui a enregistré le trajet.</string>
+    <string name="hiddenNone" formatted="false">Aucun</string>
+    <string name="hiddenNothing" formatted="false">Rien n’est masqué</string>
+    <string name="hiddenNumbersPreview">Les autres verront %1$s et %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Chiffres visibles par les autres</string>
+    <string name="hiddenOption1000" formatted="false">plus sûr au camping</string>
+    <string name="hiddenOption200" formatted="false">cour, parking</string>
+    <string name="hiddenOption500" formatted="false">quartier, camping</string>
+    <string name="hiddenOvernightHint" formatted="false">Masquer la fin ? Vous avez dormi ici</string>
+    <string name="hiddenPrivacyIntro" formatted="false">S’applique aux trajets sans réglage propre. Les tronçons masqués ne partent ni dans le fil ni dans le cloud.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">En mode vidéo, les cartes et Lieux masquent les tronçons privés, votre domicile et le point bleu. L’écran d’enregistrement garde le point.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Aperçu dans le fil et le profil</string>
+    <string name="hiddenPublishRow">Masqué : %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Votre domicile et les lieux de nuitée restent hors du fil et du cloud. Vous gardez le trajet complet.</string>
+    <string name="hiddenQuestionSave" formatted="false">Enregistrer</string>
+    <string name="hiddenQuestionTitle" formatted="false">Masquer le début et la fin des trajets ?</string>
+    <string name="hiddenQuestionWholeTrips">Tout l’itinéraire de %1$d trajets publiés sera masqué</string>
+    <string name="hiddenQuickHide">Masquer %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Limite du tronçon masqué</string>
+    <string name="hiddenSave" formatted="false">Enregistrer</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Fin du tronçon masqué</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Début du tronçon masqué</string>
+    <string name="hiddenSectionTitle">Tronçon %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">À modifier dans Réglages → Confidentialité</string>
+    <string name="hiddenShowOwn" formatted="false">Votre trajet</string>
+    <string name="hiddenShowPublic" formatted="false">Aperçu public</string>
+    <string name="hiddenStart" formatted="false">Début</string>
+    <string name="hiddenTapEnd" formatted="false">Touchez l’endroit où le tronçon finit</string>
+    <string name="hiddenTapMapHint" formatted="false">Touchez l’itinéraire pour choisir un tronçon</string>
+    <string name="hiddenTapStart" formatted="false">Touchez l’endroit où le tronçon commence</string>
+    <string name="hiddenTitleHint">Le titre « %1$s » indique la destination. Modifier le titre</string>
+    <string name="hiddenTitleHintStart">Le titre « %1$s » indique le lieu de départ. Modifier le titre</string>
+    <string name="hiddenWithoutHidden" formatted="false">Sans les tronçons masqués</string>
     <string name="hideFromFeedAlertBody" formatted="false">Il quitte le fil public et votre profil.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Oui, masquer</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Le retirer du fil ?</string>
@@ -1411,9 +1472,16 @@
     <string name="previewBannerSubtitle" formatted="false">Aperçu · s\'abonner et réagir sont indisponibles</string>
     <string name="previewThisIsYou" formatted="false">C\'est vous</string>
     <string name="privacyCompanionSub" formatted="false">Me prévenir quand on m\'indique comme compagnon</string>
+    <string name="privacyEdge1000" formatted="false">plus sûr en camping</string>
+    <string name="privacyEdge200" formatted="false">cour, parking</string>
+    <string name="privacyEdge500" formatted="false">quartier, camping</string>
+    <string name="privacyEdgeFootnote" formatted="false">S’applique à tous les trajets, sauf si une distance propre est définie.</string>
+    <string name="privacyEdgeNever" formatted="false">Ne pas masquer</string>
+    <string name="privacyEdgesTitle" formatted="false">Début et fin des trajets</string>
     <string name="privacyFootnote" formatted="false">Un trajet privé n\'est visible que par vous et les compagnons que vous avez invités. Ces réglages n\'y changent rien.</string>
     <string name="privacyOnlyMe" formatted="false">Pour moi seul</string>
     <string name="privacyOnlyMeHint" formatted="false">Privé — vous seul le voyez</string>
+    <string name="privacyPlacesSection" formatted="false">Lieux invisibles aux autres</string>
     <string name="privacyPlusBadgeSub" formatted="false">Afficher le badge à côté de votre nom dans le fil, le profil et les commentaires.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Badge PRO</string>
     <string name="privacyPolicy" formatted="false">Politique de confidentialité</string>
@@ -1656,6 +1724,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Enregistrez un trajet pour découvrir une route</string>
     <string name="roadCollectionRoadCollection" formatted="false">Collection de routes</string>
     <string name="roadCollectionRoads" formatted="false">routes</string>
+    <string name="routeHiddenByAuthor" formatted="false">L’auteur a masqué l’itinéraire</string>
     <string name="routeLinePickerFootnote" formatted="false">La couleur change seulement sur votre écran, y compris sur les itinéraires des autres. Les autres voient vos itinéraires comme d\'habitude.</string>
     <string name="routeLineSpeedGradient" formatted="false">Dégradé de vitesse</string>
     <string name="save" formatted="false">Enregistrer</string>

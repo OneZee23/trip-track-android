@@ -17,6 +17,14 @@
         <item quantity="one">takip edilen</item>
         <item quantity="other">takip edilen</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d gizli bölüm</item>
+        <item quantity="other">%1$d gizli bölüm</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">Ortada %1$d bölüm</item>
+        <item quantity="other">Ortada %1$d bölüm</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">herkese açık gezi</item>
         <item quantity="other">herkese açık gezi</item>
@@ -763,6 +771,12 @@
     <string name="feedTryADifferent" formatted="false">Başka bir ağ deneyin ya da biraz bekleyin — otomatik olarak tekrar deneyeceğiz.</string>
     <string name="feedViewModelLastMonth" formatted="false">Geçen ay</string>
     <string name="feedViewModelThisMonth" formatted="false">Bu ay</string>
+    <string name="filmingAutoSubtitle" formatted="false">Kendiliğinden açılır ve kapanır</string>
+    <string name="filmingAutoTitle" formatted="false">Ekran kaydı sırasında aç</string>
+    <string name="filmingFootnote" formatted="false">Bu modda haritalar ve Yerler gizli bölümleri, evinizi ve mavi konum noktasını göstermez. Kayıt ekranında nokta görünür.</string>
+    <string name="filmingPreparing" formatted="false">Kayıt modu hazırlanıyor</string>
+    <string name="filmingSubtitle" formatted="false">Gizli bölümler kendi ekranlarınızda da görünmez</string>
+    <string name="filmingTitle" formatted="false">Kayıt modu</string>
     <string name="filters" formatted="false">Filtreler</string>
     <string name="findFirstLabel" formatted="false">İlk bulan</string>
     <string name="findPeople" formatted="false">İnsan bul</string>
@@ -856,6 +870,51 @@
     <string name="groupsWaitlistFirst" formatted="false">İlk siz olabilirsiniz</string>
     <string name="guest" formatted="false">Misafir</string>
     <string name="guestFeedBanner" formatted="false">Takip etmek ve tepki vermek için giriş yapın</string>
+    <string name="hiddenAddSection" formatted="false">+ Orta bölümü gizle</string>
+    <string name="hiddenAllTrip" formatted="false">Tüm yolculuk</string>
+    <string name="hiddenAlreadySeen" formatted="false">Yolculuğu görenler tüm rotayı hatırlayabilir.</string>
+    <string name="hiddenChooseEdge" formatted="false">Gizlenecek mesafe</string>
+    <string name="hiddenDefault" formatted="false">varsayılan</string>
+    <string name="hiddenEditorTitle" formatted="false">Başkalarından gizle</string>
+    <string name="hiddenEnd" formatted="false">Bitiş</string>
+    <string name="hiddenHomeHint" formatted="false">Başlangıcı gizle? Eviniz burada</string>
+    <string name="hiddenLocalCardBody">%1$s ve bunlardan %2$s akışa veya bulut kopyasına gitmez.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Bunların hiçbiri akışta veya bulut kopyasında görünmez.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s akışa veya bulut kopyasına gitmez.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Bu telefonda kalır</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Gizli bölümler yalnızca yolculuğun kaydedildiği telefondadır.</string>
+    <string name="hiddenNone" formatted="false">Yok</string>
+    <string name="hiddenNothing" formatted="false">Gizlenen bir şey yok</string>
+    <string name="hiddenNumbersPreview">Diğerleri %1$s ve %2$s görür</string>
+    <string name="hiddenNumbersTitle" formatted="false">Başkalarına gösterilecek sayılar</string>
+    <string name="hiddenOption1000" formatted="false">kamp için daha güvenli</string>
+    <string name="hiddenOption200" formatted="false">avlu, otopark</string>
+    <string name="hiddenOption500" formatted="false">mahalle, kamp alanı</string>
+    <string name="hiddenOvernightHint" formatted="false">Bitişi gizle? Burada gecelediniz</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Kendi ayarı olmayan yolculuklarda geçerlidir. Gizli bölümler akışa veya buluta gönderilmez.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">Kayıt modunda haritalar ve Yerler özel bölümleri, evinizi ve mavi konum noktasını gizler. Kayıt ekranında nokta görünür.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Akışta ve profilde böyle görünür</string>
+    <string name="hiddenPublishRow">Gizlenen: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Eviniz ve gece konakladığınız yerler akışa veya bulut kopyasına gitmez. Yolculuğun tamamını siz görürsünüz.</string>
+    <string name="hiddenQuestionSave" formatted="false">Kaydet</string>
+    <string name="hiddenQuestionTitle" formatted="false">Yolculukların başlangıcı ve sonu gizlensin mi?</string>
+    <string name="hiddenQuestionWholeTrips">Yayınlanan %1$d yolculuğun tüm rotası gizlenecek</string>
+    <string name="hiddenQuickHide">%1$s gizle</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Gizli bölüm sınırı</string>
+    <string name="hiddenSave" formatted="false">Kaydet</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Gizli bölümün sonu</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Gizli bölümün başlangıcı</string>
+    <string name="hiddenSectionTitle">Bölüm %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Ayarlar → Gizlilik bölümünden değiştirebilirsiniz</string>
+    <string name="hiddenShowOwn" formatted="false">Yolculuğunuz</string>
+    <string name="hiddenShowPublic" formatted="false">Herkese açık önizleme</string>
+    <string name="hiddenStart" formatted="false">Başlangıç</string>
+    <string name="hiddenTapEnd" formatted="false">Bölümün bittiği yere dokunun</string>
+    <string name="hiddenTapMapHint" formatted="false">Bir bölüm seçmek için rotaya dokunun</string>
+    <string name="hiddenTapStart" formatted="false">Bölümün başladığı yere dokunun</string>
+    <string name="hiddenTitleHint">“%1$s” başlığı varış yerini belirtiyor. Başlığı değiştir</string>
+    <string name="hiddenTitleHintStart">“%1$s” başlığı başlangıç yerini belirtiyor. Başlığı değiştir</string>
+    <string name="hiddenWithoutHidden" formatted="false">Gizli bölümler olmadan</string>
     <string name="hideFromFeedAlertBody" formatted="false">Herkese açık akıştan ve profilinizden kalkar.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Evet, gizle</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Akıştan gizlensin mi?</string>
@@ -1381,9 +1440,16 @@
     <string name="previewBannerSubtitle" formatted="false">Önizleme · takip ve tepkiler kullanılamaz</string>
     <string name="previewThisIsYou" formatted="false">Bu sizsiniz</string>
     <string name="privacyCompanionSub" formatted="false">Biri beni yol arkadaşı olarak işaretlediğinde haber ver</string>
+    <string name="privacyEdge1000" formatted="false">kamp için daha güvenli</string>
+    <string name="privacyEdge200" formatted="false">avlu, otopark</string>
+    <string name="privacyEdge500" formatted="false">mahalle, kamp alanı</string>
+    <string name="privacyEdgeFootnote" formatted="false">Yolculuk için ayrı bir mesafe belirlemediğiniz sürece tüm yolculuklarda geçerlidir.</string>
+    <string name="privacyEdgeNever" formatted="false">Gizleme</string>
+    <string name="privacyEdgesTitle" formatted="false">Yolculukların başlangıcı ve sonu</string>
     <string name="privacyFootnote" formatted="false">Özel bir yolculuğu yalnızca siz ve davet ettiğiniz yol arkadaşlarınız görür. Bu anahtarlar bunu değiştirmez.</string>
     <string name="privacyOnlyMe" formatted="false">Sadece ben</string>
     <string name="privacyOnlyMeHint" formatted="false">Özel — yalnızca siz görürsünüz</string>
+    <string name="privacyPlacesSection" formatted="false">Başkalarının göremediği yerler</string>
     <string name="privacyPlusBadgeSub" formatted="false">Rozeti akışta, profilde ve yorumlarda adınızın yanında gösterin.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">PRO rozeti</string>
     <string name="privacyPolicy" formatted="false">Gizlilik Politikası</string>
@@ -1626,6 +1692,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Bir yol keşfetmek için gezi kaydedin</string>
     <string name="roadCollectionRoadCollection" formatted="false">Yol koleksiyonu</string>
     <string name="roadCollectionRoads" formatted="false">yol</string>
+    <string name="routeHiddenByAuthor" formatted="false">Rota sahibi tarafından gizlendi</string>
     <string name="routeLinePickerFootnote" formatted="false">Renk yalnızca sizin ekranınızda değişir, başkalarının rotalarında da. Başkaları sizin rotalarınızı her zamanki gibi görür.</string>
     <string name="routeLineSpeedGradient" formatted="false">Hız geçişi</string>
     <string name="save" formatted="false">Kaydet</string>

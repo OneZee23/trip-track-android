@@ -21,6 +21,16 @@
         <item quantity="many">seguindo</item>
         <item quantity="other">seguindo</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d trecho oculto</item>
+        <item quantity="many">%1$d trechos ocultos</item>
+        <item quantity="other">%1$d trechos ocultos</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d trecho no meio</item>
+        <item quantity="many">%1$d trechos no meio</item>
+        <item quantity="other">%1$d trechos no meio</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">viagem pública</item>
         <item quantity="many">viagens públicas</item>
@@ -793,6 +803,12 @@
     <string name="feedTryADifferent" formatted="false">Tente outra rede ou espere um pouco — vamos tentar de novo automaticamente.</string>
     <string name="feedViewModelLastMonth" formatted="false">Mês passado</string>
     <string name="feedViewModelThisMonth" formatted="false">Este mês</string>
+    <string name="filmingAutoSubtitle" formatted="false">Liga e desliga automaticamente</string>
+    <string name="filmingAutoTitle" formatted="false">Ativar ao gravar a tela</string>
+    <string name="filmingFootnote" formatted="false">Neste modo, mapas e Lugares ocultam trechos escondidos, sua casa e o ponto azul. A tela de gravação mantém o ponto.</string>
+    <string name="filmingPreparing" formatted="false">Preparando o modo de gravação</string>
+    <string name="filmingSubtitle" formatted="false">As partes ocultas também somem das suas telas</string>
+    <string name="filmingTitle" formatted="false">Modo de gravação</string>
     <string name="filters" formatted="false">Filtros</string>
     <string name="findFirstLabel" formatted="false">O primeiro a encontrar</string>
     <string name="findPeople" formatted="false">Encontrar pessoas</string>
@@ -886,6 +902,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Você pode ser o primeiro</string>
     <string name="guest" formatted="false">Visitante</string>
     <string name="guestFeedBanner" formatted="false">Faça login para seguir e reagir</string>
+    <string name="hiddenAddSection" formatted="false">+ Ocultar trecho intermediário</string>
+    <string name="hiddenAllTrip" formatted="false">Viagem inteira</string>
+    <string name="hiddenAlreadySeen" formatted="false">Quem já viu a viagem pode lembrar o percurso completo.</string>
+    <string name="hiddenChooseEdge" formatted="false">Distância a ocultar</string>
+    <string name="hiddenDefault" formatted="false">padrão</string>
+    <string name="hiddenEditorTitle" formatted="false">Ocultar dos outros</string>
+    <string name="hiddenEnd" formatted="false">Fim</string>
+    <string name="hiddenHomeHint" formatted="false">Ocultar o início? Sua casa fica aqui</string>
+    <string name="hiddenLocalCardBody">%1$s e %2$s deles não irão para o feed nem para a cópia na nuvem.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Nada disso aparecerá no feed nem na cópia na nuvem.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s não irão para o feed nem para a cópia na nuvem.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Fica neste telefone</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Os trechos ocultos só ficam no telefone que gravou a viagem.</string>
+    <string name="hiddenNone" formatted="false">Nenhum</string>
+    <string name="hiddenNothing" formatted="false">Nada está oculto</string>
+    <string name="hiddenNumbersPreview">As outras pessoas verão %1$s e %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Números para outras pessoas</string>
+    <string name="hiddenOption1000" formatted="false">mais seguro para camping</string>
+    <string name="hiddenOption200" formatted="false">quintal, estacionamento</string>
+    <string name="hiddenOption500" formatted="false">bairro, camping</string>
+    <string name="hiddenOvernightHint" formatted="false">Ocultar o fim? Você passou a noite aqui</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Aplica-se às viagens sem uma configuração própria. Os trechos ocultos não vão para o feed nem para a nuvem.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">No modo de gravação, mapas e Lugares ocultam trechos privados, sua casa e o ponto azul. A tela de gravação mantém o ponto.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Assim aparecerá no feed e no perfil</string>
+    <string name="hiddenPublishRow">Oculto: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Sua casa e os locais onde passou a noite ficam fora do feed e da cópia na nuvem. Você vê a viagem inteira.</string>
+    <string name="hiddenQuestionSave" formatted="false">Guardar</string>
+    <string name="hiddenQuestionTitle" formatted="false">Ocultar o início e o fim das viagens?</string>
+    <string name="hiddenQuestionWholeTrips">A rota completa de %1$d viagens publicadas ficará oculta</string>
+    <string name="hiddenQuickHide">Ocultar %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Limite do trecho oculto</string>
+    <string name="hiddenSave" formatted="false">Salvar</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Fim do trecho oculto</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Início do trecho oculto</string>
+    <string name="hiddenSectionTitle">Trecho %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Altere em Ajustes → Privacidade</string>
+    <string name="hiddenShowOwn" formatted="false">Sua viagem</string>
+    <string name="hiddenShowPublic" formatted="false">Prévia pública</string>
+    <string name="hiddenStart" formatted="false">Início</string>
+    <string name="hiddenTapEnd" formatted="false">Toque onde o trecho termina</string>
+    <string name="hiddenTapMapHint" formatted="false">Toque na rota para escolher um trecho</string>
+    <string name="hiddenTapStart" formatted="false">Toque onde o trecho começa</string>
+    <string name="hiddenTitleHint">O título “%1$s” indica o destino. Alterar título</string>
+    <string name="hiddenTitleHintStart">O título “%1$s” indica o local de partida. Alterar título</string>
+    <string name="hiddenWithoutHidden" formatted="false">Sem os trechos ocultos</string>
     <string name="hideFromFeedAlertBody" formatted="false">Ela sai do feed público e do seu perfil.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Sim, esconder</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Esconder do feed?</string>
@@ -1411,9 +1472,16 @@
     <string name="previewBannerSubtitle" formatted="false">Prévia · seguir e reagir não estão disponíveis</string>
     <string name="previewThisIsYou" formatted="false">Este é você</string>
     <string name="privacyCompanionSub" formatted="false">Me avisar quando alguém me marcar como acompanhante</string>
+    <string name="privacyEdge1000" formatted="false">mais seguro para acampar</string>
+    <string name="privacyEdge200" formatted="false">quintal, estacionamento</string>
+    <string name="privacyEdge500" formatted="false">bairro, camping</string>
+    <string name="privacyEdgeFootnote" formatted="false">Aplica-se a todas as viagens, exceto quando uma distância própria é definida.</string>
+    <string name="privacyEdgeNever" formatted="false">Não ocultar</string>
+    <string name="privacyEdgesTitle" formatted="false">Início e fim das viagens</string>
     <string name="privacyFootnote" formatted="false">Uma viagem privada só é vista por você e pelos acompanhantes que você convidou. Estes interruptores não mudam isso.</string>
     <string name="privacyOnlyMe" formatted="false">Só para mim</string>
     <string name="privacyOnlyMeHint" formatted="false">Privada — só você vê</string>
+    <string name="privacyPlacesSection" formatted="false">Lugares que outras pessoas não veem</string>
     <string name="privacyPlusBadgeSub" formatted="false">Mostrar o selo ao lado do seu nome no feed, no perfil e nos comentários.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Selo PRO</string>
     <string name="privacyPolicy" formatted="false">Política de Privacidade</string>
@@ -1656,6 +1724,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Grave uma viagem para descobrir uma estrada</string>
     <string name="roadCollectionRoadCollection" formatted="false">Coleção de estradas</string>
     <string name="roadCollectionRoads" formatted="false">estradas</string>
+    <string name="routeHiddenByAuthor" formatted="false">O autor ocultou a rota</string>
     <string name="routeLinePickerFootnote" formatted="false">A cor muda só na sua tela, inclusive nos trajetos dos outros. Os outros veem seus trajetos como sempre.</string>
     <string name="routeLineSpeedGradient" formatted="false">Gradiente de velocidade</string>
     <string name="save" formatted="false">Salvar</string>

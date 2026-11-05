@@ -13,6 +13,12 @@
     <plurals name="followingCaption" tools:ignore="ImpliedQuantity">
         <item quantity="other">diikuti</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="other">%1$d bagian tersembunyi</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="other">%1$d bagian tengah</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="other">perjalanan publik</item>
     </plurals>
@@ -733,6 +739,12 @@
     <string name="feedTryADifferent" formatted="false">Coba jaringan lain atau tunggu sebentar — kami akan mencoba lagi otomatis.</string>
     <string name="feedViewModelLastMonth" formatted="false">Bulan lalu</string>
     <string name="feedViewModelThisMonth" formatted="false">Bulan ini</string>
+    <string name="filmingAutoSubtitle" formatted="false">Akan aktif dan nonaktif sendiri</string>
+    <string name="filmingAutoTitle" formatted="false">Aktifkan saat merekam layar</string>
+    <string name="filmingFootnote" formatted="false">Dalam mode ini, peta dan Tempat menyembunyikan bagian rute tersembunyi, rumah, dan titik lokasi biru. Layar perekaman tetap menampilkan titik.</string>
+    <string name="filmingPreparing" formatted="false">Menyiapkan mode perekaman</string>
+    <string name="filmingSubtitle" formatted="false">Bagian tersembunyi juga tidak terlihat di layar Anda</string>
+    <string name="filmingTitle" formatted="false">Mode perekaman</string>
     <string name="filters" formatted="false">Filter</string>
     <string name="findFirstLabel" formatted="false">Yang pertama menemukan</string>
     <string name="findPeople" formatted="false">Cari orang</string>
@@ -826,6 +838,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Anda bisa jadi yang pertama</string>
     <string name="guest" formatted="false">Tamu</string>
     <string name="guestFeedBanner" formatted="false">Masuk untuk mengikuti dan bereaksi</string>
+    <string name="hiddenAddSection" formatted="false">+ Sembunyikan bagian tengah</string>
+    <string name="hiddenAllTrip" formatted="false">Seluruh perjalanan</string>
+    <string name="hiddenAlreadySeen" formatted="false">Orang yang sudah melihat perjalanan mungkin ingat seluruh rutenya.</string>
+    <string name="hiddenChooseEdge" formatted="false">Jarak yang disembunyikan</string>
+    <string name="hiddenDefault" formatted="false">default</string>
+    <string name="hiddenEditorTitle" formatted="false">Sembunyikan dari orang lain</string>
+    <string name="hiddenEnd" formatted="false">Akhir</string>
+    <string name="hiddenHomeHint" formatted="false">Sembunyikan awal? Rumah Anda di sini</string>
+    <string name="hiddenLocalCardBody">%1$s dan %2$s darinya tidak akan masuk ke feed atau salinan cloud.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Tidak ada yang akan muncul di feed atau salinan cloud.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s tidak akan masuk ke feed atau salinan cloud.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Tersimpan di ponsel ini</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Bagian tersembunyi hanya ada di ponsel yang merekam perjalanan.</string>
+    <string name="hiddenNone" formatted="false">Tidak ada</string>
+    <string name="hiddenNothing" formatted="false">Tidak ada yang disembunyikan</string>
+    <string name="hiddenNumbersPreview">Orang lain melihat %1$s dan %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Angka untuk orang lain</string>
+    <string name="hiddenOption1000" formatted="false">lebih aman untuk berkemah</string>
+    <string name="hiddenOption200" formatted="false">halaman, parkir</string>
+    <string name="hiddenOption500" formatted="false">lingkungan, perkemahan</string>
+    <string name="hiddenOvernightHint" formatted="false">Sembunyikan akhir? Anda bermalam di sini</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Berlaku untuk perjalanan tanpa pengaturan khusus. Bagian tersembunyi tidak dikirim ke feed atau cloud.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">Mode rekaman menyembunyikan bagian privat, rumah, dan titik lokasi biru di peta dan Tempat. Layar rekaman tetap menampilkan titik.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Tampilan di feed dan profil</string>
+    <string name="hiddenPublishRow">Disembunyikan: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Rumah dan tempat bermalam tidak masuk ke feed atau salinan cloud. Anda tetap melihat seluruh perjalanan.</string>
+    <string name="hiddenQuestionSave" formatted="false">Simpan</string>
+    <string name="hiddenQuestionTitle" formatted="false">Sembunyikan awal dan akhir perjalanan?</string>
+    <string name="hiddenQuestionWholeTrips">Seluruh rute dari %1$d perjalanan publik akan disembunyikan</string>
+    <string name="hiddenQuickHide">Sembunyikan %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Batas bagian tersembunyi</string>
+    <string name="hiddenSave" formatted="false">Simpan</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Akhir bagian tersembunyi</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Awal bagian tersembunyi</string>
+    <string name="hiddenSectionTitle">Bagian %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Ubah di Pengaturan → Privasi</string>
+    <string name="hiddenShowOwn" formatted="false">Perjalanan Anda</string>
+    <string name="hiddenShowPublic" formatted="false">Pratinjau publik</string>
+    <string name="hiddenStart" formatted="false">Awal</string>
+    <string name="hiddenTapEnd" formatted="false">Ketuk lokasi akhir bagian</string>
+    <string name="hiddenTapMapHint" formatted="false">Ketuk rute untuk memilih bagian</string>
+    <string name="hiddenTapStart" formatted="false">Ketuk lokasi awal bagian</string>
+    <string name="hiddenTitleHint">Judul “%1$s” menyebut tujuan. Ubah judul</string>
+    <string name="hiddenTitleHintStart">Judul “%1$s” menyebut tempat awal. Ubah judul</string>
+    <string name="hiddenWithoutHidden" formatted="false">Tanpa bagian tersembunyi</string>
     <string name="hideFromFeedAlertBody" formatted="false">Perjalanan ini hilang dari feed publik dan profil Anda.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Ya, sembunyikan</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Sembunyikan dari beranda?</string>
@@ -1351,9 +1408,16 @@
     <string name="previewBannerSubtitle" formatted="false">Pratinjau · mengikuti dan bereaksi belum tersedia</string>
     <string name="previewThisIsYou" formatted="false">Ini Anda</string>
     <string name="privacyCompanionSub" formatted="false">Beri tahu saya kalau ada yang menandai saya sebagai teman perjalanan</string>
+    <string name="privacyEdge1000" formatted="false">lebih aman saat berkemah</string>
+    <string name="privacyEdge200" formatted="false">halaman, parkir</string>
+    <string name="privacyEdge500" formatted="false">lingkungan, perkemahan</string>
+    <string name="privacyEdgeFootnote" formatted="false">Berlaku untuk semua perjalanan, kecuali jika jaraknya diatur khusus.</string>
+    <string name="privacyEdgeNever" formatted="false">Jangan sembunyikan</string>
+    <string name="privacyEdgesTitle" formatted="false">Awal dan akhir perjalanan</string>
     <string name="privacyFootnote" formatted="false">Perjalanan privat hanya terlihat oleh Anda dan teman perjalanan yang Anda undang. Sakelar ini tidak mengubahnya.</string>
     <string name="privacyOnlyMe" formatted="false">Hanya saya</string>
     <string name="privacyOnlyMeHint" formatted="false">Privat — hanya Anda yang melihat</string>
+    <string name="privacyPlacesSection" formatted="false">Tempat yang tidak terlihat orang lain</string>
     <string name="privacyPlusBadgeSub" formatted="false">Tampilkan lencana di samping nama Anda di beranda, profil, dan komentar.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Lencana PRO</string>
     <string name="privacyPolicy" formatted="false">Kebijakan Privasi</string>
@@ -1596,6 +1660,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Rekam perjalanan untuk membuka sebuah jalan</string>
     <string name="roadCollectionRoadCollection" formatted="false">Koleksi jalan</string>
     <string name="roadCollectionRoads" formatted="false">jalan</string>
+    <string name="routeHiddenByAuthor" formatted="false">Rute disembunyikan oleh pemiliknya</string>
     <string name="routeLinePickerFootnote" formatted="false">Warna hanya berubah di layar Anda, termasuk pada rute orang lain. Orang lain melihat rute Anda seperti biasa.</string>
     <string name="routeLineSpeedGradient" formatted="false">Gradien kecepatan</string>
     <string name="save" formatted="false">Simpan</string>

@@ -25,7 +25,7 @@ class PortingCoverageTests {
         val manifest = JSONObject(File(root, "tools/strings/manifest.json").readText())
         val functions = manifest.getJSONArray("functions")
         val incomplete = (0 until functions.length()).map { functions.getJSONObject(it) }.filter { !it.getBoolean("complete") }
-        assertEquals(180, incomplete.size)
+        assertEquals(186, incomplete.size)
         for (function in incomplete) {
             val location = "${function.getString("file")}:${function.getInt("line")}"
             val name = function.getString("function")

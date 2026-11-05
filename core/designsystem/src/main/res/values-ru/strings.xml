@@ -25,6 +25,18 @@
         <item quantity="many">подписок</item>
         <item quantity="other">подписки</item>
     </plurals>
+    <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d скрытый кусок</item>
+        <item quantity="few">%1$d скрытых куска</item>
+        <item quantity="many">%1$d скрытых кусков</item>
+        <item quantity="other">%1$d скрытых кусков</item>
+    </plurals>
+    <plurals name="hiddenMiddleCount" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d участок в середине</item>
+        <item quantity="few">%1$d участка в середине</item>
+        <item quantity="many">%1$d участков в середине</item>
+        <item quantity="other">%1$d участков в середине</item>
+    </plurals>
     <plurals name="logic_publishedTripsSignOutMessage_noun" tools:ignore="ImpliedQuantity,StringFormatCount">
         <item quantity="one">публичная поездка</item>
         <item quantity="few">публичные поездки</item>
@@ -823,6 +835,12 @@
     <string name="feedTryADifferent" formatted="false">Попробуйте сменить сеть или подождите — мы повторим автоматически.</string>
     <string name="feedViewModelLastMonth" formatted="false">Прошлый месяц</string>
     <string name="feedViewModelThisMonth" formatted="false">Этот месяц</string>
+    <string name="filmingAutoSubtitle" formatted="false">Сам включится и выключится</string>
+    <string name="filmingAutoTitle" formatted="false">Включать при записи экрана</string>
+    <string name="filmingFootnote" formatted="false">В режиме съёмки карты и «Места» показывают поездки без скрытых участков, дома и синей точки. На экране записи точка остаётся.</string>
+    <string name="filmingPreparing" formatted="false">Готовим режим съёмки</string>
+    <string name="filmingSubtitle" formatted="false">Скрытое не видно и на ваших экранах</string>
+    <string name="filmingTitle" formatted="false">Режим съёмки</string>
     <string name="filters" formatted="false">Фильтры</string>
     <string name="findFirstLabel" formatted="false">Нашли первым</string>
     <string name="findPeople" formatted="false">Найти людей</string>
@@ -916,6 +934,51 @@
     <string name="groupsWaitlistFirst" formatted="false">Вы можете быть первым</string>
     <string name="guest" formatted="false">Гость</string>
     <string name="guestFeedBanner" formatted="false">Войдите, чтобы подписываться и реагировать</string>
+    <string name="hiddenAddSection" formatted="false">+ Скрыть участок в середине</string>
+    <string name="hiddenAllTrip" formatted="false">Вся поездка</string>
+    <string name="hiddenAlreadySeen" formatted="false">Кто уже видел поездку, мог запомнить её целиком.</string>
+    <string name="hiddenChooseEdge" formatted="false">Скрыть расстояние</string>
+    <string name="hiddenDefault" formatted="false">по умолчанию</string>
+    <string name="hiddenEditorTitle" formatted="false">Скрыть от других</string>
+    <string name="hiddenEnd" formatted="false">Конец</string>
+    <string name="hiddenHomeHint" formatted="false">Скрыть начало? Здесь ваш дом</string>
+    <string name="hiddenLocalCardBody">%1$s и %2$s с них не попадут ни в ленту, ни в облачную копию.</string>
+    <string name="hiddenLocalCardEmpty" formatted="false">Ничего отсюда не попадёт ни в ленту, ни в облачную копию.</string>
+    <string name="hiddenLocalCardPiecesOnly">%1$s не попадут ни в ленту, ни в облачную копию.</string>
+    <string name="hiddenLocalCardTitle" formatted="false">Останется только на этом телефоне</string>
+    <string name="hiddenLocalOnlyNotice" formatted="false">Скрытые куски есть только на телефоне, где записана поездка.</string>
+    <string name="hiddenNone" formatted="false">Нет</string>
+    <string name="hiddenNothing" formatted="false">Ничего не скрыто</string>
+    <string name="hiddenNumbersPreview">Другие увидят %1$s и %2$s</string>
+    <string name="hiddenNumbersTitle" formatted="false">Цифры для других</string>
+    <string name="hiddenOption1000" formatted="false">надёжнее для кемпинга</string>
+    <string name="hiddenOption200" formatted="false">двор, парковка</string>
+    <string name="hiddenOption500" formatted="false">квартал, стоянка</string>
+    <string name="hiddenOvernightHint" formatted="false">Скрыть конец? Здесь вы ночевали</string>
+    <string name="hiddenPrivacyIntro" formatted="false">Скрывается у всех поездок, кроме тех, где вы задали своё. Ни в ленту, ни в облако не уходит.</string>
+    <string name="hiddenPrivacyModeFootnote" formatted="false">В режиме съёмки карты и «Места» скрывают закрытые участки, дом и синюю точку. Экран записи сохраняет точку.</string>
+    <string name="hiddenPublishPreviewTitle" formatted="false">Так её увидят в ленте и в профиле</string>
+    <string name="hiddenPublishRow">Скрыто: %1$s</string>
+    <string name="hiddenQuestionBody" formatted="false">Дом и место ночёвки не попадут ни в ленту, ни в облачную копию. Сами вы увидите поездку целиком.</string>
+    <string name="hiddenQuestionSave" formatted="false">Сохранить</string>
+    <string name="hiddenQuestionTitle" formatted="false">Скрывать начало и конец поездок?</string>
+    <string name="hiddenQuestionWholeTrips">The whole route of %1$d published trips will be hidden</string>
+    <string name="hiddenQuickHide">Скрыть %1$s</string>
+    <string name="hiddenRouteLockAccessibility" formatted="false">Граница скрытого участка</string>
+    <string name="hiddenSave" formatted="false">Сохранить</string>
+    <string name="hiddenSectionEndHandle" formatted="false">Конец скрытого участка</string>
+    <string name="hiddenSectionStartHandle" formatted="false">Начало скрытого участка</string>
+    <string name="hiddenSectionTitle">Участок %1$s — %2$s</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Поменять можно в Настройках → Конфиденциальность</string>
+    <string name="hiddenShowOwn" formatted="false">Ваша поездка</string>
+    <string name="hiddenShowPublic" formatted="false">Как увидят другие</string>
+    <string name="hiddenStart" formatted="false">Начало</string>
+    <string name="hiddenTapEnd" formatted="false">Нажмите на маршрут, где заканчивается участок</string>
+    <string name="hiddenTapMapHint" formatted="false">Нажмите на маршрут, чтобы выбрать участок</string>
+    <string name="hiddenTapStart" formatted="false">Нажмите на маршрут, где начинается участок</string>
+    <string name="hiddenTitleHint">Название «%1$s» называет место финиша. Изменить название</string>
+    <string name="hiddenTitleHintStart">Название «%1$s» называет место старта. Изменить название</string>
+    <string name="hiddenWithoutHidden" formatted="false">Без скрытого</string>
     <string name="hideFromFeedAlertBody" formatted="false">Её не будет в общей ленте и в вашем профиле.</string>
     <string name="hideFromFeedAlertConfirm" formatted="false">Да, скрыть</string>
     <string name="hideFromFeedAlertTitle" formatted="false">Точно скрыть из ленты?</string>
@@ -1441,9 +1504,16 @@
     <string name="previewBannerSubtitle" formatted="false">Превью · подписки и реакции недоступны</string>
     <string name="previewThisIsYou" formatted="false">Это вы</string>
     <string name="privacyCompanionSub" formatted="false">Уведомлять, когда вас отмечают попутчиком</string>
+    <string name="privacyEdge1000" formatted="false">надёжнее для кемпинга</string>
+    <string name="privacyEdge200" formatted="false">двор, парковка</string>
+    <string name="privacyEdge500" formatted="false">квартал, стоянка</string>
+    <string name="privacyEdgeFootnote" formatted="false">Применяется ко всем поездкам, если для поездки не задано своё значение.</string>
+    <string name="privacyEdgeNever" formatted="false">Не скрывать</string>
+    <string name="privacyEdgesTitle" formatted="false">Начало и конец поездок</string>
     <string name="privacyFootnote" formatted="false">Приватную поездку видите только вы и попутчики, которых вы пригласили. Эти переключатели её не открывают.</string>
     <string name="privacyOnlyMe" formatted="false">Только для меня</string>
     <string name="privacyOnlyMeHint" formatted="false">Приватная — видите только вы</string>
+    <string name="privacyPlacesSection" formatted="false">Места, которые не видны другим</string>
     <string name="privacyPlusBadgeSub" formatted="false">Показывать значок рядом с именем — в ленте, в профиле и в комментариях.</string>
     <string name="privacyPlusBadgeTitle" formatted="false">Значок PRO</string>
     <string name="privacyPolicy" formatted="false">Политика конфиденциальности</string>
@@ -1686,6 +1756,7 @@
     <string name="roadCollectionRecordATrip" formatted="false">Запишите поездку, чтобы открыть дорогу</string>
     <string name="roadCollectionRoadCollection" formatted="false">Коллекция дорог</string>
     <string name="roadCollectionRoads" formatted="false">дорог</string>
+    <string name="routeHiddenByAuthor" formatted="false">Маршрут скрыт автором</string>
     <string name="routeLinePickerFootnote" formatted="false">Цвет меняется только у вас на экране, в том числе на чужих маршрутах. Другие видят ваши маршруты как обычно.</string>
     <string name="routeLineSpeedGradient" formatted="false">Градиент скорости</string>
     <string name="save" formatted="false">Сохранить</string>
@@ -2057,54 +2128,4 @@
     <string name="year" formatted="false">Год</string>
     <string name="yesterday" formatted="false">Вчера</string>
     <string name="youtubeSub" formatted="false">Видео о разработке</string>
-    <string name="hiddenEditorTitle" formatted="false">Скрыть от других</string>
-    <string name="hiddenFromOthers" formatted="false">Скрыто от других</string>
-    <string name="hiddenStartLabel" formatted="false">Начало</string>
-    <string name="hiddenEndLabel" formatted="false">Конец</string>
-    <string name="hiddenNone" formatted="false">Нет</string>
-    <string name="hiddenByDefault" formatted="false">по умолчанию</string>
-    <string name="hiddenNothing" formatted="false">Ничего не скрыто</string>
-    <string name="hiddenSummaryStart" formatted="false">начало {value}</string>
-    <string name="hiddenSummaryEnd" formatted="false">конец {value}</string>
-    <string name="hiddenSummaryMiddle" formatted="false">в середине: {count}</string>
-    <string name="hiddenAddSection" formatted="false">Скрыть участок в середине</string>
-    <string name="hiddenPickStart" formatted="false">Нажмите на маршрут, где начинается участок</string>
-    <string name="hiddenPickEnd" formatted="false">Теперь там, где он заканчивается</string>
-    <string name="hiddenNumbersTitle" formatted="false">Цифры для других</string>
-    <string name="hiddenNumbersWhole" formatted="false">Вся поездка</string>
-    <string name="hiddenNumbersVisible" formatted="false">Без скрытого</string>
-    <string name="hiddenNumbersCaption" formatted="false">Другие увидят {distance} и {duration}</string>
-    <string name="hiddenStaysTitle" formatted="false">Останется только на этом телефоне</string>
-    <string name="hiddenStaysBody" formatted="false">Скрытые куски маршрута и фото с них не уйдут ни в ленту, ни в облачную копию.</string>
-    <string name="hiddenPreviewToggle" formatted="false">Как увидят другие</string>
-    <string name="hiddenTitleNamesStart" formatted="false">Название «{title}» называет место старта.</string>
-    <string name="hiddenTitleNamesFinish" formatted="false">Название «{title}» называет место финиша.</string>
-    <string name="hiddenRename" formatted="false">Изменить название</string>
-    <string name="hiddenAlreadySeen" formatted="false">Кто уже видел поездку, мог запомнить её целиком.</string>
-    <string name="hiddenOnlyOnRecordingPhone" formatted="false">Скрытые куски есть только на телефоне, где записана поездка.</string>
-    <string name="hiddenPill" formatted="false">Другим не видно {distance}</string>
-    <string name="routeHiddenByAuthor" formatted="false">Маршрут скрыт автором</string>
-    <string name="publishPreviewCaption" formatted="false">Так её увидят в ленте и в профиле</string>
-    <string name="publishHiddenRow" formatted="false">Скрыто: {summary}</string>
-    <string name="publishHintOvernight" formatted="false">Скрыть конец? Здесь вы ночевали</string>
-    <string name="publishHintHome" formatted="false">Скрыть начало? Здесь ваш дом</string>
-    <string name="publishHintAction" formatted="false">Скрыть {value}</string>
-    <string name="edgeQuestionTitle" formatted="false">Скрывать начало и конец поездок?</string>
-    <string name="edgeQuestionBody" formatted="false">Дом и место ночёвки не попадут ни в ленту, ни в облачную копию. Сами вы увидите поездку целиком.</string>
-    <string name="edgeOptionNone" formatted="false">Не скрывать</string>
-    <string name="edgeOption200Note" formatted="false">двор, парковка</string>
-    <string name="edgeOption500Note" formatted="false">квартал, стоянка</string>
-    <string name="edgeOption1000Note" formatted="false">надёжнее для кемпинга</string>
-    <string name="edgeQuestionFootnote" formatted="false">Поменять можно в Настройках → Конфиденциальность</string>
-    <string name="edgeQuestionWholeTrips" formatted="false">Целиком скроется маршрут у {count} {trips}</string>
-    <string name="privacyPlacesSection" formatted="false">Места, которые не видны другим</string>
-    <string name="privacyEdgesRow" formatted="false">Начало и конец поездок</string>
-    <string name="privacyEdgesFootnote" formatted="false">Скрывается у всех поездок, кроме тех, где вы задали своё. Ни в ленту, ни в облако не уходит.</string>
-    <string name="filmingSection" formatted="false">Режим съёмки</string>
-    <string name="filmingToggleSubtitle" formatted="false">Скрытое не видно и на ваших экранах</string>
-    <string name="filmingAutoToggle" formatted="false">Включать при записи экрана</string>
-    <string name="filmingAutoSubtitle" formatted="false">Сам включится и выключится</string>
-    <string name="filmingFootnote" formatted="false">В режиме съёмки «Атлас», карты поездок и «Места» показывают ваши поездки без скрытых кусков, без дома и без синей точки, где вы сейчас. Экран записи поездки точку оставляет.</string>
-    <string name="filmingPreparing" formatted="false">Готовим режим съёмки</string>
-    <string name="android_filming_auto_unavailable" formatted="false">На этой версии Android запись экрана не определить</string>
 </resources>

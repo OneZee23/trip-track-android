@@ -143,33 +143,57 @@ def integer_tokens(function):
 def read_translations(path):
     """Resolve chunks in actual merge order, then apply table[key] overrides."""
     tokens = lex(path.read_text(encoding="utf-8"))
-    chunks, main = {}, None
-    for index in range(len(tokens) - 2):
-        if [token.value for token in tokens[index:index + 2]] != ["static", "let"]:
-            continue
-        name = tokens[index + 2].value
-        equals = index + 3
-        while tokens[equals].value != "=":
-            equals += 1
-        start = equals + 1
-        end = matching(tokens, start)
-        if tokens[start].value == "{":
-            if main is not None:
-                raise Unsupported(f"multiple translation builders in {path.name}")
-            main = tokens[start + 1:end]
-        elif tokens[start].value == "[":
-            entries = {}
-            for part in split(tokens[start + 1:end]):
-                halves = split(part, ":")
-                if len(halves) != 2:
-                    raise Unsupported(f"unsupported translation row in {path.name}:{part[0].line}")
-                key = literal(halves[0])
-                if key in entries:
-                    raise Unsupported(f"duplicate dictionary key {key} in {path.name}")
-                entries[key] = (literal(halves[1]), halves[0][0].line)
-            chunks[name] = entries
-        else:
-            raise Unsupported(f"unsupported translation initializer in {path.name}")
+    extra_path = path.parent / "Translations+HiddenPrivacy.swift"
+    extra_tokens = lex(extra_path.read_text(encoding="utf-8")) if extra_path.exists() else []
+    language_suffix = path.stem.split("+")[-1]
+    chunks, main, hidden_parts_keys = {}, None, None
+    for source_tokens in (tokens, extra_tokens):
+        for index in range(len(source_tokens) - 2):
+            if [token.value for token in source_tokens[index:index + 2]] != ["static", "let"]:
+                continue
+            name = source_tokens[index + 2].value
+            if source_tokens is extra_tokens and name != "hiddenPartsKeys" and name.startswith(("hiddenPrivacy", "hiddenParts")) and not name.endswith(language_suffix):
+                continue
+            equals = index + 3
+            while source_tokens[equals].value != "=":
+                equals += 1
+            start = equals + 1
+            if source_tokens[start].value == "{" and source_tokens is tokens:
+                end = matching(source_tokens, start)
+                if main is not None:
+                    raise Unsupported(f"multiple translation builders in {path.name}")
+                main = source_tokens[start + 1:end]
+            elif source_tokens[start].value == "[":
+                end = matching(source_tokens, start)
+                if name == "hiddenPartsKeys":
+                    hidden_parts_keys = [literal(part) for part in split(source_tokens[start + 1:end])]
+                    continue
+                entries = {}
+                for part in split(source_tokens[start + 1:end]):
+                    halves = split(part, ":")
+                    if len(halves) != 2:
+                        raise Unsupported(f"unsupported translation row in {path.name}:{part[0].line}")
+                    key = literal(halves[0])
+                    if key in entries:
+                        raise Unsupported(f"duplicate dictionary key {key} in {path.name}")
+                    entries[key] = (literal(halves[1]), halves[0][0].line)
+                chunks[name] = entries
+            elif source_tokens[start].kind == "code" and source_tokens[start].value == "makeHiddenParts":
+                call_open = start + 1
+                if source_tokens[call_open].value != "(":
+                    raise Unsupported(f"unsupported translation initializer in {path.name}")
+                call_end = matching(source_tokens, call_open)
+                args = split(source_tokens[call_open + 1:call_end])
+                if len(args) != 1 or len(args[0]) < 2 or args[0][0].value != "[":
+                    raise Unsupported(f"unsupported makeHiddenParts initializer in {path.name}")
+                if hidden_parts_keys is None:
+                    raise Unsupported(f"missing hiddenPartsKeys in {path.name}")
+                values = [literal(part) for part in split(args[0][1:-1])]
+                if len(hidden_parts_keys) != len(values):
+                    raise Unsupported(f"hiddenPartsKeys count mismatch in {path.name}")
+                chunks[name] = dict(zip(hidden_parts_keys, [(value, source_tokens[start].line) for value in values]))
+            elif source_tokens is tokens:
+                raise Unsupported(f"unsupported translation initializer in {path.name}")
     if main is None:
         raise Unsupported(f"no translation builder in {path.name}")
     table, used, index = {}, set(), 0
@@ -182,8 +206,10 @@ def read_translations(path):
             index += 4
         elif values[:4] == ["table", ".", "merge", "("]:
             end = matching(main, index + 3)
-            chunk = main[index + 4].value
-            if end != index + 5:
+            chunk = "".join(token.value for token in main[index + 4:end])
+            if chunk.startswith("Translations."):
+                chunk = chunk[len("Translations."):]
+            if not chunk or "," in chunk:
                 raise Unsupported("unsupported table.merge arguments")
             closure_end = matching(main, end + 1)
             if [t.value for t in main[end + 2:closure_end]] != ["_", ",", "new", "in", "new"]:
@@ -413,6 +439,7 @@ class Generator:
             path = localization / f"Translations/Translations+{lang.upper()}.swift"
             self.source(path)
             self.tables[lang] = read_translations(path)
+        self.source(localization / "Translations/Translations+HiddenPrivacy.swift")
         paths = sorted(path for path in localization.glob("*.swift") if path.name.startswith("AppStrings") or "extension AppStrings" in path.read_text(encoding="utf-8"))
         if not paths:
             raise Unsupported("no AppStrings sources found")

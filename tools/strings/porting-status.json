@@ -3,5 +3,11 @@
   "notifAutoStartFailedBody": "Intentionally skipped: UI-only MapViewModel.StartRefusal is not ported; notifStartFailedNoGeo/Recovery/Manual resources are available for the recording UI adapter.",
   "table": "Intentionally skipped: private Foundation DateFormatter builder; LocalizedDateFormatter.patterns/templates build Android ICU formatters.",
   "live_pick": "Intentionally skipped: private widget language-table selector; Android uses the chosen-language resource context.",
-  "live_slavic": "Intentionally skipped: private widget duplicate of pluralForm; live_distanceShort delegates to the shared facade."
+  "live_slavic": "Intentionally skipped: private widget duplicate of pluralForm; live_distanceShort delegates to the shared facade.",
+  "hiddenSummary": "Intentionally skipped: the app composes summaries in HiddenPartsCopy from generated labels, Measure.radius, and the shared plural resources.",
+  "hiddenMiddleCount": "Intentionally skipped: the app calls the generated Android hiddenMiddleCount plural directly from HiddenPartsCopy.",
+  "hiddenLocalCardBody": "Intentionally skipped: Android uses generated local-card resources and composes their plural arguments in HiddenPartsCopy.",
+  "hiddenQuestionWholeTrips": "Intentionally skipped: Android does not load published-trip totals for the onboarding question; current question copy omits the optional nonzero count.",
+  "hiddenOptionDetail": "Intentionally skipped: descriptors are generated privacyEdge resources and are composed with Measure.radius by Android screens.",
+  "hiddenPublishRow": "Intentionally skipped: the app composes the generated hiddenPublishRow resource with the shared hidden summary in HiddenPartsCopy."
 }
