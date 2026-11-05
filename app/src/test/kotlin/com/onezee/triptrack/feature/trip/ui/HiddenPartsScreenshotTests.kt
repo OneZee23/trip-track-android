@@ -75,6 +75,16 @@ class HiddenPartsScreenshotTests(private val dark: Boolean) {
         captureScreenRoboImage("src/test/screenshots/hidden_parts_editor_$theme.png")
     }
 
+    /** A middle section reads «Участок 13:01 — 13:03» with its length; build 15 printed raw ISO instants. */
+    @Test fun editorSection() {
+        val section = com.onezee.triptrack.model.HiddenSection(java.util.UUID.randomUUID(), t0.plusSeconds(60), t0.plusSeconds(180))
+        frame { HiddenPartsEditorSheet(trip.copy(hiddenParts = com.onezee.triptrack.model.TripHiddenParts(sections = listOf(section))), 500, GeoPoint(45.0, 38.0) to 100.0, {}, {}) }
+        val title = compose.onNodeWithTag("hidden_section_title", useUnmergedTree = true).fetchSemanticsNode()
+            .config[androidx.compose.ui.semantics.SemanticsProperties.Text].joinToString("") { it.text }
+        org.junit.Assert.assertTrue(title, title.startsWith("Участок ") && !title.contains("Z") && !title.contains("2026"))
+        captureScreenRoboImage("src/test/screenshots/hidden_parts_editor_section_$theme.png")
+    }
+
     @Test fun publishSheet() {
         frame { PublishTripSheet(false, trip, 500, GeoPoint(45.0, 38.0) to 100.0, {}, null, {}, {}, {}) }
         captureScreenRoboImage("src/test/screenshots/hidden_parts_publish_$theme.png")

@@ -201,9 +201,17 @@ fun HiddenPartsEditorSheet(
                 HiddenEdgePicker(strings.hiddenStart(), parts.startMetres, defaultEdgeMetres) { parts = parts.copy(startMetres = it) }
                 HiddenEdgePicker(strings.hiddenEnd(), parts.endMetres, defaultEdgeMetres) { parts = parts.copy(endMetres = it) }
                 if (parts.sections.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                    // «Участок 20:08 — 20:11» and its length, like iOS; build 15 printed raw ISO instants here.
+                    val clock = java.time.format.DateTimeFormatter.ofLocalizedTime(java.time.format.FormatStyle.SHORT).withLocale(strings.language.locale)
                     parts.sections.forEach { section ->
+                        val metres = trip.trackPoints.filter { it.timestamp >= section.from && it.timestamp <= section.to }
+                            .zipWithNext { a, b -> GeometryUtils.haversineDistance(GeoPoint(a.latitude, a.longitude), GeoPoint(b.latitude, b.longitude)) }.sum()
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Text("${section.from} · ${section.to}", Modifier.weight(1f), style = inter(12f), color = colors.text)
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(strings.hiddenSectionTitle(clock.format(section.from.atZone(strings.zone)), clock.format(section.to.atZone(strings.zone))),
+                                    Modifier.testTag("hidden_section_title"), style = inter(13f, InterWeight.semibold), color = colors.text)
+                                Text(Measure.distance(metres, LocalDistanceUnit.current, strings.language.code, strings), style = inter(11.5f), color = colors.textSecondary)
+                            }
                             Text("×", Modifier.clickable(role = Role.Button) { parts = parts.copy(sections = parts.sections - section) }.padding(horizontal = 10.dp, vertical = 6.dp), style = inter(20f), color = colors.textSecondary)
                         }
                     }
