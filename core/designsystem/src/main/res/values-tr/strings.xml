@@ -17,6 +17,10 @@
         <item quantity="one">takip edilen</item>
         <item quantity="other">takip edilen</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d gizli bölüm akışa veya bulut kopyasına gitmez.</item>
+        <item quantity="other">%1$d gizli bölüm akışa veya bulut kopyasına gitmez.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d gizli bölüm</item>
         <item quantity="other">%1$d gizli bölüm</item>
@@ -880,7 +884,6 @@
     <string name="hiddenHomeHint" formatted="false">Başlangıcı gizle? Eviniz burada</string>
     <string name="hiddenLocalCardBody">%1$s ve bunlardan %2$s akışa veya bulut kopyasına gitmez.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Bunların hiçbiri akışta veya bulut kopyasında görünmez.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s akışa veya bulut kopyasına gitmez.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Bu telefonda kalır</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Gizli bölümler yalnızca yolculuğun kaydedildiği telefondadır.</string>
     <string name="hiddenNone" formatted="false">Yok</string>

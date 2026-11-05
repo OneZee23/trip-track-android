@@ -13,6 +13,9 @@
     <plurals name="followingCaption" tools:ignore="ImpliedQuantity">
         <item quantity="other">diikuti</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="other">%1$d bagian tersembunyi tidak akan masuk ke feed atau salinan cloud.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="other">%1$d bagian tersembunyi</item>
     </plurals>
@@ -848,7 +851,6 @@
     <string name="hiddenHomeHint" formatted="false">Sembunyikan awal? Rumah Anda di sini</string>
     <string name="hiddenLocalCardBody">%1$s dan %2$s darinya tidak akan masuk ke feed atau salinan cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Tidak ada yang akan muncul di feed atau salinan cloud.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s tidak akan masuk ke feed atau salinan cloud.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Tersimpan di ponsel ini</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Bagian tersembunyi hanya ada di ponsel yang merekam perjalanan.</string>
     <string name="hiddenNone" formatted="false">Tidak ada</string>

@@ -21,6 +21,11 @@
         <item quantity="many">abonnements</item>
         <item quantity="other">abonnements</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d portion masquée ne sera envoyée ni dans le fil ni dans la copie cloud.</item>
+        <item quantity="many">%1$d portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud.</item>
+        <item quantity="other">%1$d portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d portion masquée</item>
         <item quantity="many">%1$d portions masquées</item>
@@ -910,9 +915,8 @@
     <string name="hiddenEditorTitle" formatted="false">Masquer aux autres</string>
     <string name="hiddenEnd" formatted="false">Fin</string>
     <string name="hiddenHomeHint" formatted="false">Masquer le début ? Votre domicile est ici</string>
-    <string name="hiddenLocalCardBody">%1$s et %2$s de ces portions ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
+    <string name="hiddenLocalCardBody">%1$s et %2$s ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Rien de tout cela ne paraîtra dans le fil ni dans la copie cloud.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Reste sur ce téléphone</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Les tronçons masqués restent uniquement sur le téléphone qui a enregistré le trajet.</string>
     <string name="hiddenNone" formatted="false">Aucun</string>

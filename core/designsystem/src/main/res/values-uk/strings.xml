@@ -25,6 +25,12 @@
         <item quantity="many">підписок</item>
         <item quantity="other">підписки</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d прихована ділянка не потрапить ні у стрічку, ні в хмарну копію.</item>
+        <item quantity="few">%1$d приховані ділянки не потраплять ні у стрічку, ні в хмарну копію.</item>
+        <item quantity="many">%1$d прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію.</item>
+        <item quantity="other">%1$d прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d прихована ділянка</item>
         <item quantity="few">%1$d приховані ділянки</item>
@@ -942,9 +948,8 @@
     <string name="hiddenEditorTitle" formatted="false">Приховати від інших</string>
     <string name="hiddenEnd" formatted="false">Кінець</string>
     <string name="hiddenHomeHint" formatted="false">Приховати початок? Тут ваш дім</string>
-    <string name="hiddenLocalCardBody">%1$s та %2$s з них не потраплять ні у стрічку, ні в хмарну копію.</string>
+    <string name="hiddenLocalCardBody">%1$s і %2$s звідти не потраплять ні у стрічку, ні в хмарну копію.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Нічого з цього не потрапить у стрічку чи хмарну копію.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s не потраплять ні у стрічку, ні в хмарну копію.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Залишиться на цьому телефоні</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Приховані ділянки є лише на телефоні, де записано поїздку.</string>
     <string name="hiddenNone" formatted="false">Немає</string>

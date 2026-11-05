@@ -42,7 +42,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "bd23e779dcf6046760998fe4c04b8eb7390ea75abe407ca904df4175530be1d0"
+    "tools/strings/android.json": "fe72f73e2454468217f280d52f92b7c6c36152b2b4e14f1d343f9cb60777a769"
   },
   "languages": [
     "en",
@@ -139,68 +139,68 @@
   },
   "counts": {
     "en": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 1
     },
     "de": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1935,
-      "plurals": 32,
+      "strings": 1934,
+      "plurals": 33,
       "english_fallbacks": 24
     }
   },
@@ -15855,6 +15855,27 @@
       }
     },
     {
+      "name": "hiddenLocalCardPiecesOnly",
+      "kind": "plurals",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "count": {
+          "index": 1,
+          "type": "d"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "one": {
+          "1": "d"
+        },
+        "other": {
+          "1": "d"
+        }
+      }
+    },
+    {
       "name": "hiddenLocalPieceCount",
       "kind": "plurals",
       "file": "tools/strings/android.json",
@@ -25113,24 +25134,6 @@
       "formatted": false,
       "signatures": {
         "text": {}
-      }
-    },
-    {
-      "name": "hiddenLocalCardPiecesOnly",
-      "kind": "string",
-      "file": "tools/strings/android.json",
-      "line": 1,
-      "placeholders": {
-        "pieces": {
-          "index": 1,
-          "type": "s"
-        }
-      },
-      "formatted": true,
-      "signatures": {
-        "text": {
-          "1": "s"
-        }
       }
     },
     {

@@ -27,9 +27,11 @@ internal fun hiddenPartsSummary(
 
 internal fun hiddenPartsLocalCopy(strings: AppStrings, hiddenParts: Int, hiddenPhotos: Int): String {
     if (hiddenParts == 0) return strings.tr(R.string.hiddenLocalCardEmpty)
+    if (hiddenPhotos == 0) {
+        return strings.plural(R.plurals.hiddenLocalCardPiecesOnly, hiddenParts, hiddenParts)
+    }
     val pieces = strings.plural(R.plurals.hiddenLocalPieceCount, hiddenParts, hiddenParts)
-    return if (hiddenPhotos == 0) strings.tr(R.string.hiddenLocalCardPiecesOnly, pieces)
-    else strings.tr(R.string.hiddenLocalCardBody, pieces, strings.photosCount(hiddenPhotos))
+    return strings.tr(R.string.hiddenLocalCardBody, pieces, strings.photosCount(hiddenPhotos))
 }
 
 internal fun hiddenPublishRow(strings: AppStrings, summary: String): String =

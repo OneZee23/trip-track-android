@@ -25,6 +25,12 @@
         <item quantity="many">obserwowanych</item>
         <item quantity="other">obserwowanych</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d ukryty odcinek nie trafi do kanału ani kopii w chmurze.</item>
+        <item quantity="few">%1$d ukryte odcinki nie trafią do kanału ani kopii w chmurze.</item>
+        <item quantity="many">%1$d ukrytych odcinków nie trafi do kanału ani kopii w chmurze.</item>
+        <item quantity="other">%1$d ukrytych odcinków nie trafi do kanału ani kopii w chmurze.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d ukryty odcinek</item>
         <item quantity="few">%1$d ukryte odcinki</item>
@@ -942,9 +948,8 @@
     <string name="hiddenEditorTitle" formatted="false">Ukryj przed innymi</string>
     <string name="hiddenEnd" formatted="false">Koniec</string>
     <string name="hiddenHomeHint" formatted="false">Ukryć początek? Tu jest twój dom</string>
-    <string name="hiddenLocalCardBody">%1$s i %2$s z nich nie trafią do kanału ani kopii w chmurze.</string>
+    <string name="hiddenLocalCardBody">%1$s i %2$s stamtąd nie trafią do kanału ani kopii w chmurze.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nic z tego nie trafi do kanału ani kopii w chmurze.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s nie trafią do kanału ani kopii w chmurze.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Zostaje na tym telefonie</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Ukryte odcinki są tylko na telefonie, który zapisał podróż.</string>
     <string name="hiddenNone" formatted="false">Brak</string>

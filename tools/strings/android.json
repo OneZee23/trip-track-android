@@ -1530,37 +1530,39 @@
     }
   },
   "hiddenLocalCardPiecesOnly": {
+    "kind": "plurals",
+    "integer_tokens": ["count"],
     "values": {
-      "en": "{pieces} will not reach the feed or cloud copy.",
-      "ru": "{pieces} не попадут ни в ленту, ни в облачную копию.",
-      "de": "{pieces} erscheinen weder im Feed noch in der Cloud-Kopie.",
-      "es": "{pieces} no aparecerán en el feed ni en la copia en la nube.",
-      "fr": "{pieces} ne seront envoyées ni dans le fil ni dans la copie cloud.",
-      "it": "{pieces} non finiranno nel feed né nella copia cloud.",
-      "pl": "{pieces} nie trafią do kanału ani kopii w chmurze.",
-      "id": "{pieces} tidak akan masuk ke feed atau salinan cloud.",
-      "tr": "{pieces} akışa veya bulut kopyasına gitmez.",
-      "fil": "Hindi mapupunta sa feed o cloud copy ang {pieces}.",
-      "uk": "{pieces} не потраплять ні у стрічку, ні в хмарну копію.",
-      "kk": "{pieces} лентаға да, бұлттағы көшірмеге де жіберілмейді.",
-      "pt": "{pieces} não irão para o feed nem para a cópia na nuvem."
+      "en": {"one": "{count} hidden piece won't reach the feed or cloud copy.", "other": "{count} hidden pieces won't reach the feed or cloud copy."},
+      "ru": {"one": "{count} скрытый кусок не попадёт ни в ленту, ни в облачную копию.", "few": "{count} скрытых куска не попадут ни в ленту, ни в облачную копию.", "many": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию.", "other": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию."},
+      "de": {"one": "{count} verborgener Abschnitt erscheint weder im Feed noch in der Cloud-Kopie.", "other": "{count} verborgene Abschnitte erscheinen weder im Feed noch in der Cloud-Kopie."},
+      "es": {"one": "{count} tramo oculto no aparecerá en el feed ni en la copia en la nube.", "many": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube.", "other": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube."},
+      "fr": {"one": "{count} portion masquée ne sera envoyée ni dans le fil ni dans la copie cloud.", "many": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud.", "other": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud."},
+      "it": {"one": "{count} tratto nascosto non finirà nel feed né nella copia cloud.", "many": "{count} tratti nascosti non finiranno nel feed né nella copia cloud.", "other": "{count} tratti nascosti non finiranno nel feed né nella copia cloud."},
+      "pl": {"one": "{count} ukryty odcinek nie trafi do kanału ani kopii w chmurze.", "few": "{count} ukryte odcinki nie trafią do kanału ani kopii w chmurze.", "many": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze.", "other": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze."},
+      "id": {"other": "{count} bagian tersembunyi tidak akan masuk ke feed atau salinan cloud."},
+      "tr": {"one": "{count} gizli bölüm akışa veya bulut kopyasına gitmez.", "other": "{count} gizli bölüm akışa veya bulut kopyasına gitmez."},
+      "fil": {"one": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi.", "other": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi."},
+      "uk": {"one": "{count} прихована ділянка не потрапить ні у стрічку, ні в хмарну копію.", "few": "{count} приховані ділянки не потраплять ні у стрічку, ні в хмарну копію.", "many": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію.", "other": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію."},
+      "kk": {"one": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді.", "other": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді."},
+      "pt": {"one": "{count} trecho oculto não irá para o feed nem para a cópia na nuvem.", "many": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem.", "other": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem."}
     }
   },
   "hiddenLocalCardBody": {
     "values": {
-      "en": "{pieces} and {photos} from them will not reach the feed or cloud copy.",
-      "ru": "{pieces} и {photos} с них не попадут ни в ленту, ни в облачную копию.",
+      "en": "{pieces} and {photos} from them won't reach the feed or cloud copy.",
+      "ru": "{pieces} и {photos} оттуда не попадут ни в ленту, ни в облачную копию.",
       "de": "{pieces} und {photos} davon erscheinen weder im Feed noch in der Cloud-Kopie.",
-      "es": "{pieces} y {photos} de ellos no aparecerán en el feed ni en la copia en la nube.",
-      "fr": "{pieces} et {photos} de ces portions ne seront envoyées ni dans le fil ni dans la copie cloud.",
+      "es": "{pieces} y {photos} no aparecerán en el feed ni en la copia en la nube.",
+      "fr": "{pieces} et {photos} ne seront envoyées ni dans le fil ni dans la copie cloud.",
       "it": "{pieces} e {photos} non finiranno nel feed né nella copia cloud.",
-      "pl": "{pieces} i {photos} z nich nie trafią do kanału ani kopii w chmurze.",
+      "pl": "{pieces} i {photos} stamtąd nie trafią do kanału ani kopii w chmurze.",
       "id": "{pieces} dan {photos} darinya tidak akan masuk ke feed atau salinan cloud.",
       "tr": "{pieces} ve bunlardan {photos} akışa veya bulut kopyasına gitmez.",
-      "fil": "Hindi mapupunta sa feed o cloud copy ang {pieces} at {photos} mula rito.",
-      "uk": "{pieces} та {photos} з них не потраплять ні у стрічку, ні в хмарну копію.",
-      "kk": "{pieces} және олардағы {photos} лентаға да, бұлттағы көшірмеге де жіберілмейді.",
-      "pt": "{pieces} e {photos} deles não irão para o feed nem para a cópia na nuvem."
+      "fil": "Hindi mapupunta sa feed o cloud copy ang {pieces} at {photos} kasama nito.",
+      "uk": "{pieces} і {photos} звідти не потраплять ні у стрічку, ні в хмарну копію.",
+      "kk": "{pieces} пен олардағы {photos} лентаға да, бұлттағы көшірмеге де жіберілмейді.",
+      "pt": "{pieces} e {photos} não irão para o feed nem para a cópia na nuvem."
     }
   },
   "hiddenQuestionSave": {

@@ -21,6 +21,11 @@
         <item quantity="many">siguiendo</item>
         <item quantity="other">siguiendo</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d tramo oculto no aparecerá en el feed ni en la copia en la nube.</item>
+        <item quantity="many">%1$d tramos ocultos no aparecerán en el feed ni en la copia en la nube.</item>
+        <item quantity="other">%1$d tramos ocultos no aparecerán en el feed ni en la copia en la nube.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d tramo oculto</item>
         <item quantity="many">%1$d tramos ocultos</item>
@@ -910,9 +915,8 @@
     <string name="hiddenEditorTitle" formatted="false">Ocultar a los demás</string>
     <string name="hiddenEnd" formatted="false">Final</string>
     <string name="hiddenHomeHint" formatted="false">¿Ocultar el inicio? Aquí está tu casa</string>
-    <string name="hiddenLocalCardBody">%1$s y %2$s de ellos no aparecerán en el feed ni en la copia en la nube.</string>
+    <string name="hiddenLocalCardBody">%1$s y %2$s no aparecerán en el feed ni en la copia en la nube.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nada de esto aparecerá en el feed ni en la copia en la nube.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s no aparecerán en el feed ni en la copia en la nube.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Solo en este teléfono</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Los tramos ocultos solo están en el teléfono que grabó el viaje.</string>
     <string name="hiddenNone" formatted="false">Ninguno</string>

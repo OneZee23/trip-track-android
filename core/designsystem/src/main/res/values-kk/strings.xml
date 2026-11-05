@@ -17,6 +17,10 @@
         <item quantity="one">жазылым</item>
         <item quantity="other">жазылым</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді.</item>
+        <item quantity="other">%1$d жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d жасырын бөлік</item>
         <item quantity="other">%1$d жасырын бөлік</item>
@@ -878,9 +882,8 @@
     <string name="hiddenEditorTitle" formatted="false">Басқалардан жасыру</string>
     <string name="hiddenEnd" formatted="false">Соңы</string>
     <string name="hiddenHomeHint" formatted="false">Басын жасыру керек пе? Үйіңіз осында</string>
-    <string name="hiddenLocalCardBody">%1$s және олардағы %2$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
+    <string name="hiddenLocalCardBody">%1$s пен олардағы %2$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Мұның ешқайсысы таспаға да, бұлттағы көшірмеге де түспейді.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Осы телефонда қалады</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Жасырын бөліктер сапар жазылған телефонда ғана бар.</string>
     <string name="hiddenNone" formatted="false">Жоқ</string>

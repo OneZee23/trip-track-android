@@ -17,6 +17,10 @@
         <item quantity="one">following</item>
         <item quantity="other">following</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d hidden piece won\'t reach the feed or cloud copy.</item>
+        <item quantity="other">%1$d hidden pieces won\'t reach the feed or cloud copy.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d hidden piece</item>
         <item quantity="other">%1$d hidden pieces</item>
@@ -878,9 +882,8 @@
     <string name="hiddenEditorTitle" formatted="false">Hide from others</string>
     <string name="hiddenEnd" formatted="false">End</string>
     <string name="hiddenHomeHint" formatted="false">Hide the start? Your home is here</string>
-    <string name="hiddenLocalCardBody">%1$s and %2$s from them will not reach the feed or cloud copy.</string>
+    <string name="hiddenLocalCardBody">%1$s and %2$s from them won\'t reach the feed or cloud copy.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nothing hidden will appear in the feed or cloud copy.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s will not reach the feed or cloud copy.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Stays on this phone</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Hidden sections are available only on the phone that recorded this trip.</string>
     <string name="hiddenNone" formatted="false">None</string>

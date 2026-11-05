@@ -25,6 +25,12 @@
         <item quantity="many">подписок</item>
         <item quantity="other">подписки</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d скрытый кусок не попадёт ни в ленту, ни в облачную копию.</item>
+        <item quantity="few">%1$d скрытых куска не попадут ни в ленту, ни в облачную копию.</item>
+        <item quantity="many">%1$d скрытых кусков не попадут ни в ленту, ни в облачную копию.</item>
+        <item quantity="other">%1$d скрытых кусков не попадут ни в ленту, ни в облачную копию.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d скрытый кусок</item>
         <item quantity="few">%1$d скрытых куска</item>
@@ -942,9 +948,8 @@
     <string name="hiddenEditorTitle" formatted="false">Скрыть от других</string>
     <string name="hiddenEnd" formatted="false">Конец</string>
     <string name="hiddenHomeHint" formatted="false">Скрыть начало? Здесь ваш дом</string>
-    <string name="hiddenLocalCardBody">%1$s и %2$s с них не попадут ни в ленту, ни в облачную копию.</string>
+    <string name="hiddenLocalCardBody">%1$s и %2$s оттуда не попадут ни в ленту, ни в облачную копию.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Ничего отсюда не попадёт ни в ленту, ни в облачную копию.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s не попадут ни в ленту, ни в облачную копию.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Останется только на этом телефоне</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Скрытые куски есть только на телефоне, где записана поездка.</string>
     <string name="hiddenNone" formatted="false">Нет</string>

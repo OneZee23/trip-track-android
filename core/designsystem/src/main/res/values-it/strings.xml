@@ -21,6 +21,11 @@
         <item quantity="many">seguiti</item>
         <item quantity="other">seguiti</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d tratto nascosto non finirà nel feed né nella copia cloud.</item>
+        <item quantity="many">%1$d tratti nascosti non finiranno nel feed né nella copia cloud.</item>
+        <item quantity="other">%1$d tratti nascosti non finiranno nel feed né nella copia cloud.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d tratto nascosto</item>
         <item quantity="many">%1$d tratti nascosti</item>
@@ -912,7 +917,6 @@
     <string name="hiddenHomeHint" formatted="false">Nascondere l’inizio? Qui c’è casa tua</string>
     <string name="hiddenLocalCardBody">%1$s e %2$s non finiranno nel feed né nella copia cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Niente di tutto questo apparirà nel feed né nella copia cloud.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s non finiranno nel feed né nella copia cloud.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Resta su questo telefono</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">I tratti nascosti sono solo sul telefono che ha registrato il viaggio.</string>
     <string name="hiddenNone" formatted="false">Nessuno</string>

@@ -17,6 +17,10 @@
         <item quantity="one">gefolgt</item>
         <item quantity="other">gefolgt</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">%1$d verborgener Abschnitt erscheint weder im Feed noch in der Cloud-Kopie.</item>
+        <item quantity="other">%1$d verborgene Abschnitte erscheinen weder im Feed noch in der Cloud-Kopie.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d verborgener Abschnitt</item>
         <item quantity="other">%1$d verborgene Abschnitte</item>
@@ -880,7 +884,6 @@
     <string name="hiddenHomeHint" formatted="false">Anfang verbergen? Hier ist dein Zuhause</string>
     <string name="hiddenLocalCardBody">%1$s und %2$s davon erscheinen weder im Feed noch in der Cloud-Kopie.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nichts davon erscheint im Feed oder in der Cloud-Kopie.</string>
-    <string name="hiddenLocalCardPiecesOnly">%1$s erscheinen weder im Feed noch in der Cloud-Kopie.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Bleibt auf diesem Telefon</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Verborgene Abschnitte gibt es nur auf dem Telefon, das die Fahrt aufgezeichnet hat.</string>
     <string name="hiddenNone" formatted="false">Keine</string>

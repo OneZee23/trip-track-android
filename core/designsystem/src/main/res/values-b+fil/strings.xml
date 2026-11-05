@@ -17,6 +17,10 @@
         <item quantity="one">sinusundan</item>
         <item quantity="other">sinusundan</item>
     </plurals>
+    <plurals name="hiddenLocalCardPiecesOnly" tools:ignore="ImpliedQuantity">
+        <item quantity="one">Hindi mapupunta sa feed o cloud copy ang %1$d nakatagong bahagi.</item>
+        <item quantity="other">Hindi mapupunta sa feed o cloud copy ang %1$d nakatagong bahagi.</item>
+    </plurals>
     <plurals name="hiddenLocalPieceCount" tools:ignore="ImpliedQuantity">
         <item quantity="one">%1$d nakatagong bahagi</item>
         <item quantity="other">%1$d nakatagong bahagi</item>
@@ -878,9 +882,8 @@
     <string name="hiddenEditorTitle" formatted="false">Itago sa iba</string>
     <string name="hiddenEnd" formatted="false">Dulo</string>
     <string name="hiddenHomeHint" formatted="false">Itago ang simula? Nandito ang bahay mo</string>
-    <string name="hiddenLocalCardBody">Hindi mapupunta sa feed o cloud copy ang %1$s at %2$s mula rito.</string>
+    <string name="hiddenLocalCardBody">Hindi mapupunta sa feed o cloud copy ang %1$s at %2$s kasama nito.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Walang lalabas dito sa feed o cloud copy.</string>
-    <string name="hiddenLocalCardPiecesOnly">Hindi mapupunta sa feed o cloud copy ang %1$s.</string>
     <string name="hiddenLocalCardTitle" formatted="false">Mananatili sa teleponong ito</string>
     <string name="hiddenLocalOnlyNotice" formatted="false">Nasa teleponong nagrekord lang ng biyahe ang mga nakatagong bahagi.</string>
     <string name="hiddenNone" formatted="false">Wala</string>
