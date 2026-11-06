@@ -1184,6 +1184,8 @@
     <string name="manualTripTapMapHint" formatted="false">Haritada bir noktaya dokunun</string>
     <string name="manualTripTo" formatted="false">Nereye</string>
     <string name="manualTripVia" formatted="false">Üzerinden</string>
+    <string name="manual_trip_attribution" formatted="false">Arama ve rotalar: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Üzerinden</string>
     <string name="map" formatted="false">Harita</string>
     <string name="mapExplored" formatted="false">keşfedildi</string>
     <string name="mapOpenTrip" formatted="false">Geziyi aç</string>

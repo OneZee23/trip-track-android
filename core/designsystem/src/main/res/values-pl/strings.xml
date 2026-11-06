@@ -1250,6 +1250,8 @@
     <string name="manualTripTapMapHint" formatted="false">Dotknij punktu na mapie</string>
     <string name="manualTripTo" formatted="false">Dokąd</string>
     <string name="manualTripVia" formatted="false">Przez</string>
+    <string name="manual_trip_attribution" formatted="false">Wyszukiwanie i trasy: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Przez</string>
     <string name="map" formatted="false">Mapa</string>
     <string name="mapExplored" formatted="false">odkryte</string>
     <string name="mapOpenTrip" formatted="false">Otwórz trasę</string>

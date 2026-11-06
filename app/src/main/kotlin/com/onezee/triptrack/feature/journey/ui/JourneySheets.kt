@@ -297,7 +297,7 @@ fun JourneyEditSheet(vm: JourneyEditViewModel, photos: List<PhotoState>, onFinis
             actions = { c -> listOf(AppDialogAction(strings.confirmationAction(c), AppDialogAction.Kind.destructive, testTag = "journey_edit_delete_confirm") { vm.acceptDelete(c.id) }) },
         )
         picking?.let { start ->
-            DatePickerSheet(
+            HouseDatePickerSheet(
                 selection = if (start) state.start else state.end,
                 bounds = if (start) state.startBounds else state.endBounds,
                 zone = strings.zone,
@@ -335,7 +335,7 @@ private fun DatePill(date: Instant, tag: String, onClick: () -> Unit) {
  * system calendar popover here; a sheet of our own keeps the look (house rules: pickers are sheets).
  */
 @Composable
-private fun DatePickerSheet(selection: Instant, bounds: ClosedRange<Instant>, zone: java.time.ZoneId, onPick: (Instant) -> Unit, onDismissRequest: () -> Unit) {
+internal fun HouseDatePickerSheet(selection: Instant, bounds: ClosedRange<Instant>, zone: java.time.ZoneId, onPick: (Instant) -> Unit, onDismissRequest: () -> Unit) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()

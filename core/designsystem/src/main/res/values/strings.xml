@@ -1184,6 +1184,8 @@
     <string name="manualTripTapMapHint" formatted="false">Tap a spot on the map</string>
     <string name="manualTripTo" formatted="false">To</string>
     <string name="manualTripVia" formatted="false">Via</string>
+    <string name="manual_trip_attribution" formatted="false">Search and routes: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Via</string>
     <string name="map" formatted="false">Map</string>
     <string name="mapExplored" formatted="false">explored</string>
     <string name="mapOpenTrip" formatted="false">Open trip</string>

@@ -1217,6 +1217,8 @@
     <string name="manualTripTapMapHint" formatted="false">Touchez un point sur la carte</string>
     <string name="manualTripTo" formatted="false">Arrivée</string>
     <string name="manualTripVia" formatted="false">Par</string>
+    <string name="manual_trip_attribution" formatted="false">Recherche et itinéraires : Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Par</string>
     <string name="map" formatted="false">Carte</string>
     <string name="mapExplored" formatted="false">exploré</string>
     <string name="mapOpenTrip" formatted="false">Ouvrir le trajet</string>

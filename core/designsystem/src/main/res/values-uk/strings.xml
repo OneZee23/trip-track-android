@@ -1250,6 +1250,8 @@
     <string name="manualTripTapMapHint" formatted="false">Торкніться точки на карті</string>
     <string name="manualTripTo" formatted="false">Куди</string>
     <string name="manualTripVia" formatted="false">Через</string>
+    <string name="manual_trip_attribution" formatted="false">Пошук і маршрути: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Через</string>
     <string name="map" formatted="false">Карта</string>
     <string name="mapExplored" formatted="false">досліджено</string>
     <string name="mapOpenTrip" formatted="false">Відкрити поїздку</string>

@@ -82,6 +82,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.emptyFlow
@@ -197,6 +200,9 @@ class AppGraph(
         logger = com.onezee.triptrack.network.ApiLogger(meDiagnostics::append),
     )
     val plusApi = com.onezee.triptrack.network.PlusApi(apiClient)
+    val manualTripsApi = com.onezee.triptrack.network.ManualTripsApi(apiClient)
+    private val mutableManualTripCapabilities = MutableStateFlow<com.onezee.triptrack.model.ManualTripCapabilities?>(null)
+    val manualTripCapabilities = mutableManualTripCapabilities.asStateFlow()
 
     @Volatile private var settingsManagerReady = false
     val settingsManager: SettingsManager = SettingsManager(
@@ -236,6 +242,16 @@ class AppGraph(
         RouteLineStyle.rememberPlus(it?.active == true)
         RouteLineStyleMapState.refresh()
     } } }
+    init {
+        scope.launch {
+            combine(auth.state.map { it.signedInAccountId }.distinctUntilChanged(), plusEntitlement.isPlus) { account, _ -> account }
+                .collect { account ->
+                    mutableManualTripCapabilities.value = null
+                    if (account == null) return@collect
+                    mutableManualTripCapabilities.value = runCatching { manualTripsApi.capabilities() }.getOrNull()
+                }
+        }
+    }
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */
     val tripsFeature: TripsFeature by lazy {

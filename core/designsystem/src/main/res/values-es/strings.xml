@@ -1217,6 +1217,8 @@
     <string name="manualTripTapMapHint" formatted="false">Toca un punto del mapa</string>
     <string name="manualTripTo" formatted="false">Hasta</string>
     <string name="manualTripVia" formatted="false">Pasando por</string>
+    <string name="manual_trip_attribution" formatted="false">Búsqueda y rutas: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Pasando por</string>
     <string name="map" formatted="false">Mapa</string>
     <string name="mapExplored" formatted="false">explorado</string>
     <string name="mapOpenTrip" formatted="false">Abrir viaje</string>

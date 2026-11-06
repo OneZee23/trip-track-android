@@ -42,7 +42,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "6d4c6793e62a828b77743154bccbaaeb3d84eaaf19330f7db43f8532f19c3087"
+    "tools/strings/android.json": "bd28b7292d73b41f93da37ccc1e1d4032d51b753c312bf68435c2e5ad4879225"
   },
   "languages": [
     "en",
@@ -139,67 +139,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 1
     },
     "de": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1956,
+      "strings": 1958,
       "plurals": 33,
       "english_fallbacks": 24
     }
@@ -33654,6 +33654,28 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 8644,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "manual_trip_attribution",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "manual_trip_via",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {

@@ -102,7 +102,9 @@ internal fun monthName(date: LocalDate, locale: java.util.Locale): String =
  */
 @Composable
 internal fun ProfileHistoryCalendar(calendar: HistoryCalendar, from: Instant?, to: Instant?, filteredCount: Int,
-                                     onRange: (Instant?, Instant?) -> Unit, today: LocalDate = LocalClock.current.instant().atZone(appStrings.zone).toLocalDate()) {
+                                     onRange: (Instant?, Instant?) -> Unit,
+                                     today: LocalDate = LocalClock.current.instant().atZone(appStrings.zone).toLocalDate(),
+                                     onEmptyDayTap: ((LocalDate) -> Unit)? = null) {
     val strings = appStrings
     val zone = strings.zone
     val locale = strings.language.locale
@@ -183,8 +185,11 @@ internal fun ProfileHistoryCalendar(calendar: HistoryCalendar, from: Instant?, t
                                     // Every day filters, including days without recorded distance; a day to come cannot.
                                     .clickable(enabled = day <= today, role = Role.Button) {
                                         haptics.tap(); bounced = day
-                                        val next = range.tap(day)
-                                        onRange(next.from?.atStartOfDay(zone)?.toInstant(), next.to?.atStartOfDay(zone)?.toInstant())
+                                        val hasTrip = calendar.kmByDay.keys.any { it.atZone(zone).toLocalDate() == day }
+                                        if (!hasTrip && onEmptyDayTap != null) onEmptyDayTap(day) else {
+                                            val next = range.tap(day)
+                                            onRange(next.from?.atStartOfDay(zone)?.toInstant(), next.to?.atStartOfDay(zone)?.toInstant())
+                                        }
                                     }.semantics { selected = range.contains(day); contentDescription = day.format(DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.LONG).withLocale(locale)) }
                                     .testTag("calendar_day_$day"), contentAlignment = Alignment.Center) {
                                     Text(day.dayOfMonth.toString(), style = inter(13f, InterWeight.semibold), color = look.numeral)

@@ -22,7 +22,7 @@ import com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter
 @Composable
 internal fun ProManageSheet(identity: ProfileIdentity, until: Instant?, onDismiss: () -> Unit, onBackground: () -> Unit, onRedeem: () -> Unit,
                             vehicleChoice: String = "", routeChoice: String = "",
-                            onFutureFeature: (PlusFeature) -> Unit = {}) {
+                            showManualTrip: Boolean = false, onFutureFeature: (PlusFeature) -> Unit = {}) {
     val strings = appStrings
     val date = until?.let { LocalizedDateFormatter.templates("dMMMyyyy", strings.zone).getValue(strings.language).format(it) }
     ContentSizedSheet(onDismiss, background = AppTheme.colors.bg, detent = SheetDetent.large) {
@@ -38,6 +38,9 @@ internal fun ProManageSheet(identity: ProfileIdentity, until: Instant?, onDismis
                 MeRow(strings.showcaseFrame(), identity.avatarFrame.displayName.ifBlank { strings.cosmeticDefaultOption() }, tag = "pro_manage_avatar_frame", onClick = { sheet.dismiss(); onFutureFeature(PlusFeature.avatarFrame) })
                 MeRow(strings.showcaseCar(), vehicleChoice, tag = "pro_manage_vehicle_card", onClick = { sheet.dismiss(); onFutureFeature(PlusFeature.vehicleCardStyle) })
                 MeRow(strings.showcaseLine(), routeChoice, tag = "pro_manage_route_line", onClick = { sheet.dismiss(); onFutureFeature(PlusFeature.routeLineStyle) })
+                if (showManualTrip) MeRow(strings.tr(R.string.proFeatureManual), value = strings.tr(R.string.proManageManualOn), tag = "pro_manage_manual_trip", onClick = {
+                    sheet.dismiss(); onFutureFeature(PlusFeature.manualTrip)
+                })
             }
             Column(Modifier.surfaceCard(16.dp)) {
                 MeRow(strings.tr(R.string.promo_another), tag = "pro_manage_redeem", onClick = {

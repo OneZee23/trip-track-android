@@ -60,16 +60,27 @@ import com.onezee.triptrack.ui.cards.dayMonth
  * search bar. At the largest text sizes the two views go under the title.
  */
 @Composable
-internal fun ProfileHistoryHeader(query: String, onQuery: (String) -> Unit, mode: HistoryMode, onMode: (HistoryMode) -> Unit, modifier: Modifier = Modifier) {
+internal fun ProfileHistoryHeader(query: String, onQuery: (String) -> Unit, mode: HistoryMode, onMode: (HistoryMode) -> Unit,
+                                 onManualTrip: (() -> Unit)? = null, modifier: Modifier = Modifier) {
     val strings = appStrings
     val accessibility = isAccessibilitySize()
     Column(modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 4.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(strings.historySection(), Modifier.weight(1f).semantics { heading() }.testTag("profile_history_header"),
                 style = interScaled(22f, InterWeight.bold), color = AppTheme.colors.text)
-            if (!accessibility) HistoryModeControls(mode, onMode)
+            if (!accessibility) {
+                if (onManualTrip != null) Box(Modifier.size(44.dp).clickable(role = Role.Button, onClick = onManualTrip).testTag("profile_manual_trip_add"), contentAlignment = Alignment.Center) {
+                    Glyph(AppGlyph.plusCircleFill, null, tint = AppTheme.accent, size = symbolBox(22f))
+                }
+                HistoryModeControls(mode, onMode)
+            }
         }
-        if (accessibility) HistoryModeControls(mode, onMode)
+        if (accessibility) Row(verticalAlignment = Alignment.CenterVertically) {
+            if (onManualTrip != null) Box(Modifier.size(44.dp).clickable(role = Role.Button, onClick = onManualTrip).testTag("profile_manual_trip_add"), contentAlignment = Alignment.Center) {
+                Glyph(AppGlyph.plusCircleFill, null, tint = AppTheme.accent, size = symbolBox(22f))
+            }
+            HistoryModeControls(mode, onMode)
+        }
         HistorySearchBar(query, onQuery)
     }
 }

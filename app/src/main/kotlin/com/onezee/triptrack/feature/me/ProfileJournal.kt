@@ -53,6 +53,7 @@ import com.onezee.triptrack.ui.LocalClock
 import com.onezee.triptrack.ui.cards.ProfileCardVehicle
 import com.onezee.triptrack.ui.cards.ProfileTripCard
 import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -135,6 +136,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         onAcceptHome: (GeoPoint) -> Unit = {}, onDeclineHome: () -> Unit = {}, onCombineSuggestion: (List<Trip>) -> Unit = {}, onDismissSuggestion: () -> Unit = {},
                         filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null,
                         proUntil: Instant? = null, onProManage: () -> Unit = {},
+                        showManualTripEntry: Boolean = false, onManualTrip: () -> Unit = {}, onEmptyDayTap: (LocalDate) -> Unit = {},
                         loadTrip: (suspend (java.util.UUID) -> Trip?)? = null,
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
@@ -194,7 +196,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                 // Zero trips is not zero cars: the garage is the one section with something to do before the first kilometre.
                 if (!signedIn) item(key = "account") { Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp)) { account() } }
                 if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { PinsElsewhereRow(state.showcaseElsewhere.size, onUnpinElsewhere, Modifier.padding(bottom = 12.dp)) }
-                item(key = "welcome") { FirstTripWelcomeCard(onRecord, Modifier.padding(bottom = 12.dp)) }
+                item(key = "welcome") { FirstTripWelcomeCard(onRecord, onManualTrip.takeIf { showManualTripEntry }, Modifier.padding(bottom = 12.dp)) }
                 if (state.drafts.isNotEmpty()) item(key = "drafts") { DraftsSection(state, now, onDrafts) }
                 item(key = "garage") { GarageSection(state.vehicles, mainVehicle(state), unit, onGarage, Modifier.padding(bottom = 12.dp)) }
                 if (signedIn && hero.identity.isPlus) item(key = "pro") { ProProfileRow(proUntil, strings, onProManage) }
@@ -219,7 +221,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                     }
                 }
                 if (state.drafts.isNotEmpty()) item(key = "drafts") { DraftsSection(state, now, onDrafts) }
-                item(key = "history_header") { ProfileHistoryHeader(state.query, onQuery, state.mode, onMode) }
+                item(key = "history_header") { ProfileHistoryHeader(state.query, onQuery, state.mode, onMode, onManualTrip.takeIf { showManualTripEntry }) }
                 if (homeCandidate != null || suggestedTrips.isNotEmpty()) item(key = "journey_prompts") {
                     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         homeCandidate?.let { (point, place) -> HomeQuestionCard(place, { onAcceptHome(point) }, onDeclineHome) }
@@ -228,7 +230,8 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                 }
                 item(key = "calendar") {
                     // Canon's 16 pt to the first card is padding, so it survives a filter that matches nothing.
-                    Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange) }
+                    Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) { ProfileHistoryCalendar(state.calendar, state.from, state.to, state.history.visibleTrips.size, onRange,
+                        onEmptyDayTap = onEmptyDayTap.takeIf { showManualTripEntry }) }
                 }
                 if (state.showcaseElsewhere.isNotEmpty()) item(key = "pins_elsewhere") { PinsElsewhereRow(state.showcaseElsewhere.size, onUnpinElsewhere, Modifier.padding(bottom = 12.dp)) }
                 profileJournal(state, unit, onTrip, onJourney, onPin, onComposeJourney, filmingMode, defaultHiddenEdgeMetres, homeZone, filmingTrips)

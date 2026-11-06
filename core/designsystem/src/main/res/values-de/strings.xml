@@ -1184,6 +1184,8 @@
     <string name="manualTripTapMapHint" formatted="false">Tippe auf einen Punkt der Karte</string>
     <string name="manualTripTo" formatted="false">Nach</string>
     <string name="manualTripVia" formatted="false">Über</string>
+    <string name="manual_trip_attribution" formatted="false">Suche und Routen: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Über</string>
     <string name="map" formatted="false">Karte</string>
     <string name="mapExplored" formatted="false">erkundet</string>
     <string name="mapOpenTrip" formatted="false">Fahrt öffnen</string>

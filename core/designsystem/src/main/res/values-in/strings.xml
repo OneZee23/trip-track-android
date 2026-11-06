@@ -1151,6 +1151,8 @@
     <string name="manualTripTapMapHint" formatted="false">Ketuk titik di peta</string>
     <string name="manualTripTo" formatted="false">Ke</string>
     <string name="manualTripVia" formatted="false">Lewat</string>
+    <string name="manual_trip_attribution" formatted="false">Pencarian dan rute: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Lewat</string>
     <string name="map" formatted="false">Peta</string>
     <string name="mapExplored" formatted="false">dijelajahi</string>
     <string name="mapOpenTrip" formatted="false">Buka perjalanan</string>

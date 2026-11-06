@@ -1184,6 +1184,8 @@
     <string name="manualTripTapMapHint" formatted="false">Картадағы нүктені түртіңіз</string>
     <string name="manualTripTo" formatted="false">Қайда</string>
     <string name="manualTripVia" formatted="false">Арқылы</string>
+    <string name="manual_trip_attribution" formatted="false">Іздеу және бағыттар: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Арқылы</string>
     <string name="map" formatted="false">Карта</string>
     <string name="mapExplored" formatted="false">игерілді</string>
     <string name="mapOpenTrip" formatted="false">Сапарды ашу</string>

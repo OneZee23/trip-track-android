@@ -20,6 +20,7 @@ import com.onezee.triptrack.data.sync.SyncEntityType
 import com.onezee.triptrack.data.sync.SyncRequest
 import com.onezee.triptrack.data.sync.SyncRequestSink
 import com.onezee.triptrack.logic.Drive2Link
+import com.onezee.triptrack.logic.encodePolyline
 import com.onezee.triptrack.logic.RecordingBreaks
 import com.onezee.triptrack.logic.VehicleLevelSystem
 import com.onezee.triptrack.logic.VehicleModTags
@@ -113,6 +114,46 @@ class RoomTripRepository(
     override suspend fun fetchTripDetail(id: UUID): Trip? {
         val entity = trips.trip(id) ?: return null
         return tripsFrom(listOf(entity)) { true }.firstOrNull()
+    }
+
+    override suspend fun insertManualTrip(trip: Trip): Boolean {
+        require(trip.source == TripOrigin.manual)
+        val end = trip.endDate ?: return false
+        val vehicleId = recordableVehicleId(trip.vehicleId)
+        val entity = TripEntity(
+            id = trip.id,
+            startDate = trip.startDate,
+            endDate = end,
+            distance = trip.distance,
+            maxSpeed = trip.maxSpeed,
+            averageSpeed = trip.averageSpeed,
+            elevation = trip.elevation,
+            isPrivate = true,
+            title = trip.title,
+            titleIsCustom = trip.titleIsCustom,
+            previewPolyline = Trip.encodePolyline(trip.trackPoints.map { GeoPoint(it.latitude, it.longitude) }),
+            lastModifiedAt = now(),
+            userId = environment.localUserId(),
+            vehicleId = vehicleId,
+            source = TripOrigin.manual.rawValue,
+            confirmation = TripConfirmation.confirmed.rawValue,
+            roadFillState = com.onezee.triptrack.model.RoadFillState.done.rawValue,
+            isTrackProcessed = true,
+        )
+        db.withTransaction {
+            trips.upsertTrip(entity)
+            trips.insertTrackPoints(trip.trackPoints.map { point ->
+                TrackPointEntity(
+                    id = point.id, altitude = point.altitude, course = point.course,
+                    horizontalAccuracy = point.horizontalAccuracy, isInterpolated = point.isInterpolated,
+                    latitude = point.latitude, longitude = point.longitude, speed = point.speed,
+                    timestamp = point.timestamp, tripId = trip.id,
+                )
+            })
+        }
+        vehicleId?.let { recomputeOdometers(listOf(it)) }
+        sync.enqueue(SyncRequest(SyncEntityType.trip, trip.id, SyncAction.upload))
+        return true
     }
 
     override suspend fun fetchTripCount(): Int = trips.countCompletedTrips()

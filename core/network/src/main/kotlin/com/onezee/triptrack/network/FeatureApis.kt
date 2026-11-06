@@ -28,6 +28,27 @@ class SocialCommentsApi(private val client: ApiClient) {
         client.post(ApiEndpoint.socialComment, request, singleAttempt = true)
 }
 
+// iOS: ManualTripSuggestions.swift, ManualTripRouter.swift. Geoapify credentials stay on the server.
+class ManualTripsApi(private val client: ApiClient) {
+    suspend fun capabilities(): ManualTripCapabilities =
+        client.post(ApiEndpoint.webRoutingCapabilities, EmptyRequest())
+
+    suspend fun search(query: String, language: String): ManualTripSearchResponse {
+        require(query.length in 3..200)
+        require(language in LANGUAGES)
+        return client.post(ApiEndpoint.webRoutingSearch, ManualTripSearchRequest(query, language))
+    }
+
+    suspend fun route(waypoints: List<com.onezee.triptrack.model.GeoPoint>): ManualTripRouteResponse {
+        require(waypoints.size in 2..5)
+        return client.post(ApiEndpoint.webRoutingRoute, ManualTripRouteRequest(waypoints.map { listOf(it.latitude, it.longitude) }))
+    }
+
+    companion object {
+        val LANGUAGES = setOf("en", "ru", "de", "es", "fr", "it", "pl", "id", "tr", "uk", "kk", "pt")
+    }
+}
+
 // iOS: Views/Admin/AdminModel.swift. Server authorization remains authoritative for every call.
 class AdminApi(private val client: ApiClient) {
     suspend fun summary(): AdminSummary = client.post(ApiEndpoint.adminSummary, EmptyRequest())

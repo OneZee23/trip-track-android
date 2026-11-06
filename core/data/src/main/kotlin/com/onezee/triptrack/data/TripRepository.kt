@@ -55,6 +55,8 @@ interface TripRepository {
     suspend fun fetchTripsModifiedSince(date: Instant): List<Trip>
     /** The trip screen: drafts included, with points. */
     suspend fun fetchTripDetail(id: UUID): Trip?
+    /** iOS: TripManager manual-trip save. Persists a completed trip and ordered track atomically. */
+    suspend fun insertManualTrip(trip: Trip): Boolean
     suspend fun fetchTripCount(): Int
     suspend fun fetchLastTripDate(): Instant?
     suspend fun fetchTripStats(): TripStats

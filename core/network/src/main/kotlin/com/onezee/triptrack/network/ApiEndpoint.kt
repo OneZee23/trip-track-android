@@ -91,6 +91,9 @@ object ApiEndpoint {
     const val googleLogin = "/auth/google/login"
     const val usageSnapshot = "/usage/snapshot"
     const val usageErase = "/usage/erase"
+    const val webRoutingCapabilities = "/web-routing/capabilities"
+    const val webRoutingSearch = "/web-routing/search"
+    const val webRoutingRoute = "/web-routing/route"
 
     private fun query(path: String, vararg values: Pair<String, String?>): String {
         val url = defaultBaseUrl.toHttpUrl().newBuilder().encodedPath(path)

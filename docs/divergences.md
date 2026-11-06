@@ -4,6 +4,7 @@ Every intentional difference is listed here with its reason. Anything not listed
 behave exactly like the iPhone app.
 
 | Area | Android | iPhone | Why |
+| Manual trip search and routing | `ManualTripsApi` calls the authenticated `/web-routing/capabilities`, `/web-routing/search` and `/web-routing/route` endpoints; Geoapify credentials stay on the server. Search and route errors are converted to app-owned states, and attribution names Geoapify and OpenStreetMap. | `ManualTripSuggestions` and `ManualTripRouter` use MapKit local search and directions. | Android must use the server's verified-PRO routing proxy. The provider key never ships in the app; routing accepts up to three via points in one request. |
 |---|---|---|---|
 | Test application | Robolectric uses a lazy test graph, skips recording/auth/backfill startup and cancels owned work on termination | XCTest uses the AppBootstrap service-start seam | Robolectric recreates Application within one JVM; process-lifetime jobs must not escape into the next test. Production still starts all services |
 | Screenshot verification | Roborazzi compares Mac baselines locally by default; Linux CI runs the rendering tests with `-Proborazzi.test.verify=false` | XCTest screenshots on the canonical iPhone simulator | macOS and Ubuntu render fonts/shadows differently; baselines are recorded and verified on the Mac |

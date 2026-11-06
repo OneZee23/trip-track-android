@@ -1184,6 +1184,8 @@
     <string name="manualTripTapMapHint" formatted="false">I-tap ang isang lugar sa mapa</string>
     <string name="manualTripTo" formatted="false">Papunta sa</string>
     <string name="manualTripVia" formatted="false">Dadaan sa</string>
+    <string name="manual_trip_attribution" formatted="false">Paghahanap at ruta: Geoapify, © OpenStreetMap</string>
+    <string name="manual_trip_via" formatted="false">Dadaan sa</string>
     <string name="map" formatted="false">Mapa</string>
     <string name="mapExplored" formatted="false">natuklasan</string>
     <string name="mapOpenTrip" formatted="false">Buksan ang biyahe</string>

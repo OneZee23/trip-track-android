@@ -2005,5 +2005,39 @@
       "kk": "Дайын",
       "pt": "Concluído"
     }
+  },
+  "manual_trip_attribution": {
+    "values": {
+      "en": "Search and routes: Geoapify, © OpenStreetMap",
+      "ru": "Поиск и маршрут: Geoapify, © OpenStreetMap",
+      "de": "Suche und Routen: Geoapify, © OpenStreetMap",
+      "es": "Búsqueda y rutas: Geoapify, © OpenStreetMap",
+      "fr": "Recherche et itinéraires : Geoapify, © OpenStreetMap",
+      "it": "Ricerca e percorsi: Geoapify, © OpenStreetMap",
+      "pl": "Wyszukiwanie i trasy: Geoapify, © OpenStreetMap",
+      "id": "Pencarian dan rute: Geoapify, © OpenStreetMap",
+      "tr": "Arama ve rotalar: Geoapify, © OpenStreetMap",
+      "fil": "Paghahanap at ruta: Geoapify, © OpenStreetMap",
+      "uk": "Пошук і маршрути: Geoapify, © OpenStreetMap",
+      "kk": "Іздеу және бағыттар: Geoapify, © OpenStreetMap",
+      "pt": "Pesquisa e rotas: Geoapify, © OpenStreetMap"
+    }
+  },
+  "manual_trip_via": {
+    "values": {
+      "en": "Via",
+      "ru": "Через",
+      "de": "Über",
+      "es": "Pasando por",
+      "fr": "Par",
+      "it": "Passando per",
+      "pl": "Przez",
+      "id": "Lewat",
+      "tr": "Üzerinden",
+      "fil": "Dadaan sa",
+      "uk": "Через",
+      "kk": "Арқылы",
+      "pt": "Passando por"
+    }
   }
 }

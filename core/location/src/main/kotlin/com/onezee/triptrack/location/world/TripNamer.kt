@@ -71,6 +71,17 @@ class TripNamer(
     /** iOS: TripAutoTitle.generate, the start date in the app's language. */
     private val autoTitle: (Instant) -> String,
 ) {
+    suspend fun nameForPoint(point: GeoPoint): String? {
+        val cell = key(point)
+        val cached = trips.cachedGeocode(cell)
+        if (cached != null) return cached.locality ?: cached.region
+        val mark = geocoder.placemark(point)
+        val locality = mark?.locality?.takeIf(String::isNotBlank)
+        val region = mark?.administrativeArea?.takeIf(String::isNotBlank)
+        trips.saveGeocode(cell, locality, region)
+        return locality ?: region
+    }
+
     suspend fun name(tripId: UUID, startDate: Instant) {
         val points = recording.trackPoints(tripId)
         val first = points.firstOrNull() ?: return

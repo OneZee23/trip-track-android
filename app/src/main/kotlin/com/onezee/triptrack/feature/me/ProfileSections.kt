@@ -307,12 +307,27 @@ internal fun clubsRowSubtitle(total: Int, joined: Boolean, strings: com.onezee.t
 
 /** iOS recordFirstTripRow: with no trips yet, the one action that matters, in a card. */
 @Composable
-internal fun FirstTripWelcomeCard(onRecord: () -> Unit, modifier: Modifier = Modifier) {
+internal fun FirstTripWelcomeCard(onRecord: () -> Unit, onManualTrip: (() -> Unit)? = null, modifier: Modifier = Modifier) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
-    PressableCard(onClick = { haptics.tap(); onRecord() }, modifier = modifier.padding(horizontal = 16.dp).fillMaxWidth().testTag("profile_welcome_record")) {
-        Row(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
+    if (onManualTrip == null) {
+        PressableCard(onClick = { haptics.tap(); onRecord() }, modifier = modifier.padding(horizontal = 16.dp).fillMaxWidth().testTag("profile_welcome_record")) {
+            Row(Modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(52.dp).background(AppTheme.accentBg, CircleShape), contentAlignment = Alignment.Center) {
+                    MeGlyphIcon(MeGlyph.carSideFill, null, tint = AppTheme.accent, size = 34.dp)
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(strings.profileRecordYourFirst(), style = inter(15f, InterWeight.semibold), color = colors.text)
+                    Text(strings.profileYourKilometersStreaks(), style = inter(12f), color = colors.textSecondary)
+                }
+                Glyph(AppGlyph.chevronRight, null, tint = colors.textTertiary, size = symbolBox(13f))
+            }
+        }
+        return
+    }
+    Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().surfaceCard(16.dp).testTag("profile_welcome_record")) {
+        Row(Modifier.fillMaxWidth().clickable { haptics.tap(); onRecord() }.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(52.dp).background(AppTheme.accentBg, CircleShape), contentAlignment = Alignment.Center) {
                 MeGlyphIcon(MeGlyph.carSideFill, null, tint = AppTheme.accent, size = 34.dp)
             }
@@ -322,6 +337,9 @@ internal fun FirstTripWelcomeCard(onRecord: () -> Unit, modifier: Modifier = Mod
             }
             Glyph(AppGlyph.chevronRight, null, tint = colors.textTertiary, size = symbolBox(13f))
         }
+        Text(strings.tr(com.onezee.triptrack.designsystem.R.string.manualTripEntry),
+            Modifier.fillMaxWidth().clickable { haptics.tap(); onManualTrip() }.padding(horizontal = 14.dp, vertical = 12.dp),
+            style = inter(14f, InterWeight.semibold), color = AppTheme.accent)
     }
 }
 

@@ -58,6 +58,18 @@ Backend `JsonRpcExceptionFilter` currently returns only `status/code/message` fo
 
 All endpoint rows inherit the envelope, auth-error and validation behavior above. Additional errors and idempotency are stated per row or area. A replay-safe state change may still increment `conflictVersion`; replay safety does not promise an identical response.
 
+## Web routing for manual trips
+
+The Android client does not call Geoapify directly. These authenticated endpoints proxy the provider and verify PRO server-side; provider keys stay on the server. The client reads capabilities once per signed-in session and refreshes them after a PRO entitlement change. `manualTrips` belongs to the website editor and does not gate the Android manual-trip sheet; Android requires both `search` and `routing`.
+
+| Method and path | Request | Payload | Additional errors |
+|---|---|---|---|
+| POST `/web-routing/capabilities` | `{}` | `{manualTrips:boolean,search:boolean,routing:boolean}` | — |
+| POST `/web-routing/search` | `{query:string,language:string}`; query length 3…200; language `en`, `ru`, `de`, `es`, `fr`, `it`, `pl`, `id`, `tr`, `uk`, `kk` or `pt` | `{places:[{name:string,latitude:number,longitude:number}]}`; at most six | `PRO_REQUIRED`, `MANUAL_TRIPS_DISABLED`, `ROUTING_NOT_CONFIGURED`, `ROUTING_UNAVAILABLE`, `TOO_MANY_REQUESTS` |
+| POST `/web-routing/route` | `{waypoints:[[latitude,longitude],...]}`; start, up to three stops, end | `{coordinates:[[latitude,longitude],...],distance:number,durationSeconds:number}` | `ROUTE_NOT_FOUND`, `PRO_REQUIRED`, `MANUAL_TRIPS_DISABLED`, `ROUTING_NOT_CONFIGURED`, `ROUTING_UNAVAILABLE`, `TOO_MANY_REQUESTS` |
+
+Business errors use HTTP 200 and the ordinary `{status:"error",code}` envelope. Android maps `ROUTE_NOT_FOUND` to the no-route state, `PRO_REQUIRED` to the locked path and other route codes to the generic failure state. Only transport `offline` is retryable; throttling shows the generic failure line. Never display provider/server messages. Filipino UI sends language `en`. Results and the route map carry the Geoapify / OpenStreetMap attribution string.
+
 ## Auth and session
 
 Sources: `AuthDTOs.swift`, `AuthService.swift`, `TokenStore.swift`, `KeychainHelper.swift`; backend `auth/auth.controller.ts`, `auth/dto/`, `auth/services/{apple-auth,token}.service.ts`.

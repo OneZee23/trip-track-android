@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
+import com.onezee.triptrack.designsystem.R
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.account.AccountEntry
 import com.onezee.triptrack.feature.feed.asTrip
@@ -45,6 +46,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     val identityFailed by feature.identity.failed.collectAsState()
     val auth by graph.auth.state.collectAsState()
     val plus by graph.plusEntitlement.entitlement.collectAsState()
+    val manualCapabilities by graph.manualTripCapabilities.collectAsState()
     val settings by graph.settingsManager.state.collectAsState()
     SideEffect { RouteLineStyle.rememberPlus(plus?.active == true) }
     // iOS: TrackingView.showGarage. Its own stack returns to recording, independent of the Я tab.
@@ -71,6 +73,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var pendingShowcase by rememberSaveable { mutableStateOf<ProShowcaseKind?>(null) }
     var showcaseVehicleId by remember { mutableStateOf<UUID?>(null) }
     var showcaseVehicleEditModel by remember { mutableStateOf<VehicleEditViewModel?>(null) }
+    var manualTripOpen by rememberSaveable { mutableStateOf(false) }
+    var manualTripDay by remember { mutableStateOf<java.time.LocalDate?>(null) }
+    var manualTripReturnTrip by remember { mutableStateOf<Trip?>(null) }
+    var manualTripToast by remember { mutableStateOf<ToastItem?>(null) }
     var promoOpen by rememberSaveable { mutableStateOf(false) }
     var pendingBackgroundPicker by rememberSaveable { mutableStateOf(false) }
     var pinnedBadgeId by remember { mutableStateOf(feature.pinnedBadgeId) }
@@ -154,6 +160,18 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 onPin = profile::togglePin, onReload = { profile.reload(); scope.launch { feature.identity.refreshRemote() } },
                 account = { if (!auth.isSignedIn) AccountEntry(graph) }, coverPhotos = coverPhotos, api = graph.apiClient, onPhotos = { photosOpen = true },
                 proUntil = plus?.until, onProManage = { proManageOpen = true },
+                showManualTripEntry = ManualTripEntry.level(manualCapabilities, state.hero.identity.isPlus) != PlusAccessLevel.hidden,
+                onManualTrip = {
+                    if (ManualTripEntry.level(manualCapabilities, state.hero.identity.isPlus) == PlusAccessLevel.open) {
+                        manualTripReturnTrip = null; manualTripOpen = true
+                    } else promoOpen = true
+                },
+                onEmptyDayTap = { day ->
+                    manualTripDay = day
+                    if (ManualTripEntry.level(manualCapabilities, state.hero.identity.isPlus) == PlusAccessLevel.open) {
+                        manualTripReturnTrip = null; manualTripOpen = true
+                    } else promoOpen = true
+                },
                 coverPromptHidden = feature.coverPromptHidden, onHideCoverPrompt = feature::hideCoverPrompt,
                 onComposeJourney = { composerOpening++; composerAnchor = it },
                 onUnpinElsewhere = { scope.launch { feature.identity.setPinnedTrips(state.hero.identity.pinnedTripIds - state.showcaseElsewhere.toSet()) } },
@@ -255,6 +273,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
 
             }
         }
+        ToastHost(manualTripToast, onDismiss = { manualTripToast = null })
         if (state.pinLimitReached) ToastView(remember { ToastItem(ToastType.info, strings.profileShowcaseLimit()) }, profile::dismissPinLimit, Modifier.align(Alignment.BottomCenter).padding(16.dp))
         if (mutationFailed) ToastView(remember { ToastItem(ToastType.info, strings.garageLoadFailed()) }, { mutationFailed = false }, Modifier.align(Alignment.BottomCenter).padding(16.dp))
     }
@@ -273,12 +292,23 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         onRedeem = { promoOpen = true },
         vehicleChoice = showcaseVehicle?.cardStyle?.let { (VehicleCardStyle.fromRawValue(it) ?: VehicleCardStyle.none).displayName }?.ifBlank { strings.cosmeticDefaultOption() } ?: strings.cosmeticDefaultOption(),
         routeChoice = graph.routeLineStyle().displayName.ifBlank { strings.routeLineSpeedGradient() },
-        onFutureFeature = { feature -> pendingShowcase = when (feature) {
-            PlusFeature.avatarFrame -> ProShowcaseKind.avatarFrame
-            PlusFeature.vehicleCardStyle -> ProShowcaseKind.vehicleCard
-            PlusFeature.routeLineStyle -> ProShowcaseKind.routeLine
-            else -> null
-        } })
+        showManualTrip = ManualTripEntry.level(manualCapabilities, state.hero.identity.isPlus) != PlusAccessLevel.hidden,
+        onFutureFeature = { feature ->
+            if (feature == PlusFeature.manualTrip) manualTripOpen = true
+            else pendingShowcase = when (feature) {
+                PlusFeature.avatarFrame -> ProShowcaseKind.avatarFrame
+                PlusFeature.vehicleCardStyle -> ProShowcaseKind.vehicleCard
+                PlusFeature.routeLineStyle -> ProShowcaseKind.routeLine
+                else -> null
+            }
+        })
+    if (manualTripOpen) ManualTripSheet(graph, onDismiss = { manualTripOpen = false; manualTripDay = null; manualTripReturnTrip = null },
+        onCreated = { trip ->
+            manualTripOpen = false; manualTripDay = null; manualTripReturnTrip = trip; profile.reload()
+            manualTripToast = ToastItem(ToastType.undo, strings.tr(R.string.manualTripSuccessMessage),
+                undoLabel = strings.tr(R.string.manualTripReturnShort), undoAction = { manualTripOpen = true })
+        }, initialDay = manualTripDay, initialReturnTrip = manualTripReturnTrip,
+        onLocked = { manualTripOpen = false; promoOpen = true })
     if (promoOpen) com.onezee.triptrack.feature.settings.PromoCodeSheet(graph, auth.isSignedIn) { promoOpen = false }
     if (signInOpen) com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, graph.auth, onDismissRequest = { signInOpen = false })
     profileEditor?.let { field -> ProfileTextEditor(field, if (field == ProfileTextField.displayName) state.hero.identity.name else state.hero.identity.bio,
