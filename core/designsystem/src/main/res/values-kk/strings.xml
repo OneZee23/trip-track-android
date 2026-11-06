@@ -908,7 +908,7 @@
     <string name="hiddenSectionEndHandle" formatted="false">Жасырын бөліктің соңы</string>
     <string name="hiddenSectionStartHandle" formatted="false">Жасырын бөліктің басы</string>
     <string name="hiddenSectionTitle">Бөлік %1$s — %2$s</string>
-    <string name="hiddenSettingsFootnote" formatted="false">Баптаулар → Құпиялық бөлімінен өзгертуге болады</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Параметрлер → Құпиялық бөлімінен өзгертуге болады</string>
     <string name="hiddenShowOwn" formatted="false">Сапарыңыз</string>
     <string name="hiddenShowPublic" formatted="false">Ашық алдын ала көрініс</string>
     <string name="hiddenStart" formatted="false">Басы</string>

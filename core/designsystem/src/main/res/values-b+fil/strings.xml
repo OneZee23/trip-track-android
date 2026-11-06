@@ -908,7 +908,7 @@
     <string name="hiddenSectionEndHandle" formatted="false">Dulo ng nakatagong bahagi</string>
     <string name="hiddenSectionStartHandle" formatted="false">Simula ng nakatagong bahagi</string>
     <string name="hiddenSectionTitle">Bahagi %1$s — %2$s</string>
-    <string name="hiddenSettingsFootnote" formatted="false">Palitan sa Mga Setting → Privacy</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Palitan sa Settings → Privacy</string>
     <string name="hiddenShowOwn" formatted="false">Iyong biyahe</string>
     <string name="hiddenShowPublic" formatted="false">Pampublikong preview</string>
     <string name="hiddenStart" formatted="false">Simula</string>

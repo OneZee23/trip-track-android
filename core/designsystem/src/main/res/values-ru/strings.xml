@@ -974,7 +974,7 @@
     <string name="hiddenSectionEndHandle" formatted="false">Конец скрытого участка</string>
     <string name="hiddenSectionStartHandle" formatted="false">Начало скрытого участка</string>
     <string name="hiddenSectionTitle">Участок %1$s — %2$s</string>
-    <string name="hiddenSettingsFootnote" formatted="false">Поменять можно в Настройках → Конфиденциальность</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Поменять можно в Настройках → Приватность</string>
     <string name="hiddenShowOwn" formatted="false">Ваша поездка</string>
     <string name="hiddenShowPublic" formatted="false">Как увидят другие</string>
     <string name="hiddenStart" formatted="false">Начало</string>

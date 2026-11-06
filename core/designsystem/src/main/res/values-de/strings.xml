@@ -908,7 +908,7 @@
     <string name="hiddenSectionEndHandle" formatted="false">Ende des verborgenen Abschnitts</string>
     <string name="hiddenSectionStartHandle" formatted="false">Anfang des verborgenen Abschnitts</string>
     <string name="hiddenSectionTitle">Abschnitt %1$s — %2$s</string>
-    <string name="hiddenSettingsFootnote" formatted="false">Ändern unter Einstellungen → Datenschutz</string>
+    <string name="hiddenSettingsFootnote" formatted="false">Ändern unter Einstellungen → Privatsphäre</string>
     <string name="hiddenShowOwn" formatted="false">Deine Fahrt</string>
     <string name="hiddenShowPublic" formatted="false">So sehen es andere</string>
     <string name="hiddenStart" formatted="false">Anfang</string>
