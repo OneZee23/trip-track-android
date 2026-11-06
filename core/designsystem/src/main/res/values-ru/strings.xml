@@ -1607,6 +1607,11 @@
     <string name="proTermsTrial">Потом %1$s в год. Отменить можно в любой момент</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Примерить оформление</string>
+    <string name="pro_feature_background" formatted="false">Фон профиля</string>
+    <string name="pro_manage_title" formatted="false">Ваш PRO</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Показывать значок PRO</string>
+    <string name="pro_works_until">PRO работает до %1$s</string>
     <string name="profile" formatted="false">Профиль</string>
     <string name="profileAddCover" formatted="false">Добавить обложку</string>
     <string name="profileAddPhoto" formatted="false">Добавить фото</string>
@@ -1647,6 +1652,23 @@
     <string name="profileUnpin" formatted="false">Открепить из профиля</string>
     <string name="profileYourKilometersStreaks" formatted="false">Здесь будут ваши поездки, пробег и достижения.</string>
     <string name="profileYourTripsWill" formatted="false">Здесь появятся ваши поездки</string>
+    <string name="promo_already_redeemed" formatted="false">Этот код уже активирован на вашем аккаунте.</string>
+    <string name="promo_another" formatted="false">Ввести ещё код</string>
+    <string name="promo_body" formatted="false">Код включит PRO на этом аккаунте.</string>
+    <string name="promo_code" formatted="false">Промокод</string>
+    <string name="promo_done" formatted="false">Готово</string>
+    <string name="promo_expired" formatted="false">Срок этого кода закончился.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Этот код больше не действует.</string>
+    <string name="promo_not_found" formatted="false">Такого кода нет. Проверьте, нет ли опечатки.</string>
+    <string name="promo_offline" formatted="false">Нет связи. Попробуйте ещё раз.</string>
+    <string name="promo_redeem" formatted="false">Активировать</string>
+    <string name="promo_signed_out" formatted="false">Войдите, чтобы активировать код: PRO привязан к аккаунту.</string>
+    <string name="promo_success" formatted="false">PRO включён</string>
+    <string name="promo_too_many" formatted="false">Слишком много попыток. Попробуйте через час.</string>
+    <string name="promo_until">PRO до %1$s</string>
+    <string name="promo_used_up" formatted="false">Этот код уже использовали.</string>
+    <string name="promo_validation" formatted="false">Введите код целиком.</string>
     <string name="publicDataLoadFailed" formatted="false">Не удалось загрузить</string>
     <string name="publicDataPartial" formatted="false">Загрузилось не всё — числа могут быть занижены</string>
     <string name="publicGarageEmpty" formatted="false">Здесь пока пусто. Поездки и карта — по-прежнему на месте.</string>

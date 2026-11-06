@@ -44,6 +44,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     val coverPhotos by feature.profilePhotos.photos.collectAsState()
     val identityFailed by feature.identity.failed.collectAsState()
     val auth by graph.auth.state.collectAsState()
+    val plus by graph.plusEntitlement.entitlement.collectAsState()
     val settings by graph.settingsManager.state.collectAsState()
     // iOS: TrackingView.showGarage. Its own stack returns to recording, independent of the Я tab.
     val initialNavigator = remember { if (garageOnly) MeNavigator() else feature.navigator }
@@ -64,6 +65,9 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var mutating by remember { mutableStateOf(false) }
     // iOS journalSignIn: the compact sign-in row on a journal that already has trips opens the prompt sheet.
     var signInOpen by rememberSaveable { mutableStateOf(false) }
+    var proManageOpen by rememberSaveable { mutableStateOf(false) }
+    var promoOpen by rememberSaveable { mutableStateOf(false) }
+    var pendingBackgroundPicker by rememberSaveable { mutableStateOf(false) }
     var pinnedBadgeId by remember { mutableStateOf(feature.pinnedBadgeId) }
     // iOS GroupsWaitlistStore: the row under the sections and the clubs screen read one answer.
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
@@ -128,7 +132,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         MeNavHost(graph.tripsFeature, navigator, root = {
             if (garageOnly) GarageScreen(garage, settings.distanceUnit, onGarageBack, { editing = "" },
                 onVehicle = { navigator.push(MeRoute.Passport(it)) }, onSelect = { graph.settingsManager.selectVehicle(it) }, onDelete = { deleting = it },
-                onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } })
+                onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } }, isPlus = state.hero.identity.isPlus)
             else MeContent(state.copy(failed = state.failed || identityFailed, hero = state.hero.copy(roadTime = feature.roadTimeOverride ?: state.hero.roadTime, signedIn = auth.isSignedIn)), settings.distanceUnit,
                 onSettings = { settingsOpen = true }, onGarage = { navigator.push(MeRoute.Garage) },
                 onVehicle = { navigator.push(MeRoute.Passport(it)) }, onAddVehicle = { editing = "" },
@@ -138,6 +142,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                 onTrip = { navigator.push(MeRoute.Trip(it.id, it)) }, onJourney = { navigator.push(MeRoute.Journey(it.id)) },
                 onPin = profile::togglePin, onReload = { profile.reload(); scope.launch { feature.identity.refreshRemote() } },
                 account = { if (!auth.isSignedIn) AccountEntry(graph) }, coverPhotos = coverPhotos, api = graph.apiClient, onPhotos = { photosOpen = true },
+                proUntil = plus?.until, onProManage = { proManageOpen = true },
                 coverPromptHidden = feature.coverPromptHidden, onHideCoverPrompt = feature::hideCoverPrompt,
                 onComposeJourney = { composerOpening++; composerAnchor = it },
                 onUnpinElsewhere = { scope.launch { feature.identity.setPinnedTrips(state.hero.identity.pinnedTripIds - state.showcaseElsewhere.toSet()) } },
@@ -164,8 +169,9 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
             when (destination) {
                 MeRoute.Garage -> GarageScreen(garage, settings.distanceUnit, { navigator.pop() }, { editing = "" },
                     onVehicle = { navigator.push(MeRoute.Passport(it)) }, onSelect = { graph.settingsManager.selectVehicle(it) }, onDelete = { deleting = it },
-                    onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } })
+                    onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } }, isPlus = state.hero.identity.isPlus)
                 MeRoute.Profile -> MyProfileScreen(state.hero.identity, feature.identity, { navigator.pop() }, { profileEditor = it }, { photosOpen = true }, { navigator.push(MeRoute.Levels) }, { navigator.push(MeRoute.Country) },
+                    openBackgroundPicker = pendingBackgroundPicker, onBackgroundPickerOpened = { pendingBackgroundPicker = false },
                     social = auth.signedInAccountId?.let { account ->
                         MyProfileSocial(account, graph.social.api,
                             onFollowList = { mode -> navigator.push(com.onezee.triptrack.feature.TripsDestination.FollowList(account, mode)) },
@@ -203,7 +209,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                         onSelect = { if (passport.vehicle?.soldAt == null) graph.settingsManager.selectVehicle(destination.id) },
                         onTrip = { navigator.push(MeRoute.Trip(it.id, it)) },
                         stereo = rememberStereoStatus(graph, settings, destination.id), autoRecordOn = settings.autoRecordMode != AutoRecordMode.off,
-                        onBluetoothSettings = { context.startActivity(android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)) })
+                        onBluetoothSettings = { context.startActivity(android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)) }, isPlus = state.hero.identity.isPlus)
                     VehiclePassportSheets(graph, model, passport, settings, onEdit = { editing = destination.id.toString(); model.dismissSheet() },
                         onDelete = { deleting = destination.id; model.dismissSheet() }, onTrip = { navigator.push(MeRoute.Trip(it.id, it)) })
                 }
@@ -245,6 +251,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         JourneyComposerSheet(model, onCreated = { profile.reload() }, onDismissRequest = { composerAnchor = null; composerPreselected = null })
     }
     if (settingsOpen) SettingsRoute(graph) { settingsOpen = false }
+    if (proManageOpen && state.hero.identity.isPlus) ProManageSheet(state.hero.identity, plus?.until, onDismiss = { proManageOpen = false },
+        onBackground = { if (navigator.current != MeRoute.Profile) navigator.push(MeRoute.Profile); pendingBackgroundPicker = true },
+        onRedeem = { promoOpen = true })
+    if (promoOpen) com.onezee.triptrack.feature.settings.PromoCodeSheet(graph, auth.isSignedIn) { promoOpen = false }
     if (signInOpen) com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, graph.auth, onDismissRequest = { signInOpen = false })
     profileEditor?.let { field -> ProfileTextEditor(field, if (field == ProfileTextField.displayName) state.hero.identity.name else state.hero.identity.bio,
         onSave = { value -> if (field == ProfileTextField.displayName) graph.auth.updateUserName(value) else feature.identity.setBio(value) },

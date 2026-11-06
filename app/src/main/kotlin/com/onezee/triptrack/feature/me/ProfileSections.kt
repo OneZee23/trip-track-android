@@ -65,11 +65,16 @@ private fun SectionLink(text: String, tag: String, onClick: () -> Unit) {
  * chevron that turns over when it is open. Rare destinations stay one tap away, above the history.
  */
 @Composable
-internal fun ProfileSectionsToggle(open: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
+internal fun ProfileSectionsToggle(open: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, showPro: Boolean = false) {
     val strings = appStrings
     val colors = AppTheme.colors
     val haptics = rememberHaptics()
-    val title = listOf(strings.garage(), strings.achievementsSection(), strings.clubsTitle()).joinToString(" · ")
+    val title = buildList {
+        add(strings.garage())
+        if (showPro) add("PRO")
+        add(strings.achievementsSection())
+        add(strings.clubsTitle())
+    }.joinToString(" · ")
     val state = if (open) strings.historySectionsExpanded() else strings.historySectionsCollapsed()
     PressableCard(onClick = { haptics.tap(); onToggle() }, modifier = modifier.padding(horizontal = 16.dp).fillMaxWidth().semantics { stateDescription = state }.testTag("profile_sections_toggle")) {
         Row(Modifier.fillMaxWidth().heightIn(min = 52.dp).background(colors.card, ContinuousRoundedRectangle(16.dp)).padding(horizontal = 14.dp),

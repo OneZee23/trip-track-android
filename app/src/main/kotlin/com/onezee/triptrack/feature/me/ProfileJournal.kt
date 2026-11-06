@@ -134,6 +134,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                         homeCandidate: Pair<GeoPoint, String>? = null, suggestedTrips: List<Trip> = emptyList(), suggestionSubtitle: String = "",
                         onAcceptHome: (GeoPoint) -> Unit = {}, onDeclineHome: () -> Unit = {}, onCombineSuggestion: (List<Trip>) -> Unit = {}, onDismissSuggestion: () -> Unit = {},
                         filmingMode: Boolean = false, defaultHiddenEdgeMetres: Int? = null, homeZone: Pair<GeoPoint, Double>? = null,
+                        proUntil: Instant? = null, onProManage: () -> Unit = {},
                         loadTrip: (suspend (java.util.UUID) -> Trip?)? = null,
                         safeTop: androidx.compose.ui.unit.Dp = statusBarTop()) {
     val strings = appStrings
@@ -196,12 +197,13 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                 item(key = "welcome") { FirstTripWelcomeCard(onRecord, Modifier.padding(bottom = 12.dp)) }
                 if (state.drafts.isNotEmpty()) item(key = "drafts") { DraftsSection(state, now, onDrafts) }
                 item(key = "garage") { GarageSection(state.vehicles, mainVehicle(state), unit, onGarage, Modifier.padding(bottom = 12.dp)) }
+                if (signedIn && hero.identity.isPlus) item(key = "pro") { ProProfileRow(proUntil, strings, onProManage) }
                 item(key = "clubs") { ClubsSection(clubsSubtitle ?: strings.groupsWaitlistFirst(), onClubs, Modifier.padding(bottom = 12.dp)) }
             } else if (state.loaded) {
                 if (!signedIn) item(key = "journal_signin") { JournalSignInRow(needsReauth, onSignIn, Modifier.padding(bottom = 12.dp)) }
                 item(key = "sections") {
                     Column(Modifier.padding(bottom = 12.dp)) {
-                        ProfileSectionsToggle(sections, { sections = !sections })
+                        ProfileSectionsToggle(sections, { sections = !sections }, showPro = signedIn && hero.identity.isPlus)
                         AnimatedVisibility(sections, enter = if (reduceMotion) expandVertically(tween(0)) else expandVertically(tween(200)) + fadeIn(tween(200)),
                             exit = if (reduceMotion) shrinkVertically(tween(0)) else shrinkVertically(tween(200)) + fadeOut(tween(200))) {
                             Column {
@@ -210,6 +212,7 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
                                 Spacer(Modifier.height(12.dp))
                                 GarageSection(state.vehicles, mainVehicle(state), unit, onGarage, Modifier.padding(bottom = 12.dp))
                                 Spacer(Modifier.height(12.dp))
+                                if (signedIn && hero.identity.isPlus) ProProfileRow(proUntil, strings, onProManage)
                                 ClubsSection(clubsSubtitle ?: strings.groupsWaitlistFirst(), onClubs, Modifier.padding(bottom = 12.dp))
                             }
                         }
@@ -236,6 +239,15 @@ internal fun MeContent(state: MeState, unit: DistanceUnit, onSettings: () -> Uni
             }
         }
         if (hasCover && scrolled) Box(Modifier.align(Alignment.TopStart).fillMaxWidth().height(safeTop).background(colors.bg))
+    }
+}
+
+@Composable
+private fun ProProfileRow(until: Instant?, strings: com.onezee.triptrack.designsystem.strings.AppStrings, onOpen: () -> Unit) {
+    val date = until?.let { com.onezee.triptrack.designsystem.strings.LocalizedDateFormatter.templates("dMMM", strings.zone).getValue(strings.language).format(it) }
+    Box(Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp).surfaceCard(16.dp)) {
+        MeRow(strings.tr(com.onezee.triptrack.designsystem.R.string.pro_profile_section), date?.let { strings.tr(com.onezee.triptrack.designsystem.R.string.promo_until, it) }.orEmpty(),
+            tag = "me_pro_row", glyph = AppGlyph.starFill, onClick = onOpen)
     }
 }
 

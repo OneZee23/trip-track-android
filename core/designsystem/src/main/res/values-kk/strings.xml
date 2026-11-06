@@ -1541,6 +1541,11 @@
     <string name="proTermsTrial">Содан кейін жылына %1$s. Кез келген уақытта бас тартуға болады</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Жаңа безендіруді байқап көру</string>
+    <string name="pro_feature_background" formatted="false">Профиль фоны</string>
+    <string name="pro_manage_title" formatted="false">PRO қызметіңіз</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">PRO белгісін көрсету</string>
+    <string name="pro_works_until">PRO %1$s дейін жұмыс істейді</string>
     <string name="profile" formatted="false">Профиль</string>
     <string name="profileAddCover" formatted="false">Мұқаба қосу</string>
     <string name="profileAddPhoto" formatted="false">Фото қосу</string>
@@ -1581,6 +1586,23 @@
     <string name="profileUnpin" formatted="false">Профильден босату</string>
     <string name="profileYourKilometersStreaks" formatted="false">Мұнда сапарларыңыз, жүрген жолыңыз және жетістіктеріңіз болады.</string>
     <string name="profileYourTripsWill" formatted="false">Мұнда сапарларыңыз пайда болады</string>
+    <string name="promo_already_redeemed" formatted="false">Бұл код аккаунтыңызда әлдеқашан белсендірілген.</string>
+    <string name="promo_another" formatted="false">Тағы код енгізу</string>
+    <string name="promo_body" formatted="false">Код осы аккаунтта PRO қызметін қосады.</string>
+    <string name="promo_code" formatted="false">Промокод</string>
+    <string name="promo_done" formatted="false">Дайын</string>
+    <string name="promo_expired" formatted="false">Бұл кодтың мерзімі аяқталды.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Бұл код енді жұмыс істемейді.</string>
+    <string name="promo_not_found" formatted="false">Мұндай код жоқ. Қате терілмегенін тексеріңіз.</string>
+    <string name="promo_offline" formatted="false">Байланыс жоқ. Қайталап көріңіз.</string>
+    <string name="promo_redeem" formatted="false">Белсендіру</string>
+    <string name="promo_signed_out" formatted="false">Кодты белсендіру үшін кіріңіз: PRO аккаунтыңызға байланысты.</string>
+    <string name="promo_success" formatted="false">PRO қосылды</string>
+    <string name="promo_too_many" formatted="false">Әрекет тым көп. Бір сағаттан кейін қайталаңыз.</string>
+    <string name="promo_until">PRO %1$s дейін</string>
+    <string name="promo_used_up" formatted="false">Бұл код әлдеқашан қолданылған.</string>
+    <string name="promo_validation" formatted="false">Кодты толық енгізіңіз.</string>
     <string name="publicDataLoadFailed" formatted="false">Жүктеу мүмкін болмады</string>
     <string name="publicDataPartial" formatted="false">Бәрі жүктелмеді — сандар кем болуы мүмкін</string>
     <string name="publicGarageEmpty" formatted="false">Мұнда әзірге бос. Сапарлары мен картасы орнында.</string>

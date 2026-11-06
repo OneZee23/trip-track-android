@@ -97,6 +97,13 @@ class ProfileWireTests {
         }
     }
 
+    @Test fun plusUntilIsOptionalAndBadgePreferenceUsesProfileUpdate() {
+        assertNull(json.decodeFromString<MeResponse>("""{"isPublic":true}""").plusUntil)
+        assertEquals("2026-12-06T10:00:00Z", json.decodeFromString<MeResponse>("""{"isPublic":true,"plusUntil":"2026-12-06T10:00:00Z"}""").plusUntil)
+        val update = jsonObject(json.encodeToString(ProfileUpdateRequest(showPlusBadge = false)))
+        assertEquals(JsonPrimitive(false), update["showPlusBadge"])
+    }
+
     @Test fun visibilityResponseDoesNotInventServerSupport() {
         val absent = json.decodeFromString<MeResponse>("""{"id":"$id","email":null,"displayName":"A","isPublic":true}""")
         assertNull(absent.countersPublic)

@@ -222,8 +222,9 @@ private fun IdentityText(state: ProfileHeroState, name: HeroName, ink: HeroInk, 
     val strings = appStrings
     Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         PressableCard(onClick = actions.onProfile, onClickLabel = strings.myProfileTitle(), modifier = Modifier.testTag("profile_identity")) {
-            Box(Modifier.heightIn(min = if (ink.hasPhotos) 26.dp else 32.dp), contentAlignment = Alignment.CenterStart) {
-                HeroNameText(name.text, if (name.isPlaceholder) ink.secondary else ink.ink)
+            Row(Modifier.heightIn(min = if (ink.hasPhotos) 26.dp else 32.dp), horizontalArrangement = Arrangement.spacedBy(7.dp), verticalAlignment = Alignment.CenterVertically) {
+                HeroNameText(name.text, if (name.isPlaceholder) ink.secondary else ink.ink, Modifier.weight(1f))
+                if (state.identity.isPlus && state.identity.showPlusBadge) ProBadge(height = 15.dp)
             }
         }
         LevelRow(state.identity.level, ink, actions.onLevel)

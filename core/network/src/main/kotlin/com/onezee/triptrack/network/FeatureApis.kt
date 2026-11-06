@@ -6,6 +6,7 @@ import com.onezee.triptrack.model.*
 // iOS: PlusAPI.swift
 class PlusApi(private val client: ApiClient) {
     suspend fun status(): PlusStatusResponse = client.post(ApiEndpoint.plusStatus, EmptyRequest())
+    suspend fun redeem(code: String): PromoRedeemResponse = client.post(ApiEndpoint.promoRedeem, PromoRedeemRequest(code.trim()))
     suspend fun attach(signedTransaction: String): PlusStatusResponse = client.post(ApiEndpoint.plusAttach, PlusAttachRequest(signedTransaction))
 }
 

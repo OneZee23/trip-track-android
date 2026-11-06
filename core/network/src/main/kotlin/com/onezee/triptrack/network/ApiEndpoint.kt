@@ -41,6 +41,7 @@ object ApiEndpoint {
     const val secretsForgetAll = "/secrets/forget-all"
     const val plusAttach = "/plus/attach"
     const val plusStatus = "/plus/status"
+    const val promoRedeem = "/promo/redeem"
     const val syncPull = "/sync/pull"
     const val syncPush = "/sync/push"
     const val syncManifest = "/sync/manifest"

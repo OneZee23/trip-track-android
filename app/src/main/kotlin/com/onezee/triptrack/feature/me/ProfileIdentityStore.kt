@@ -31,11 +31,13 @@ class ProfileIdentityStore(
     private val badgeLedger: com.onezee.triptrack.location.world.BadgeLedgerStore,
     private val progress: ProfileProgressStore,
     private val profilePhotos: ProfilePhotoStore,
+    private val plus: StateFlow<Boolean> = MutableStateFlow(false),
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
 ) : ProfileIdentitySource {
     private val mutable = MutableStateFlow(ProfileIdentity(bio = preferences.string(BIO).orEmpty(), pinnedTripIds = readPins(),
         username = preferences.string(USERNAME).orEmpty(), country = preferences.string(COUNTRY).orEmpty(),
-        effectiveBackground = (preferences.string(BACKGROUND)?.let(ProfileBackground::fromRawValue) ?: ProfileBackground.none).effective(false)))
+        effectiveBackground = (preferences.string(BACKGROUND)?.let(ProfileBackground::fromRawValue) ?: ProfileBackground.none).effective(plus.value), isPlus = plus.value,
+        showPlusBadge = preferences.string(SHOW_PLUS_BADGE)?.toBooleanStrictOrNull() ?: true))
     override val identity = mutable.asStateFlow()
     private val mutableFailed = MutableStateFlow(false)
     val failed = mutableFailed.asStateFlow()
@@ -46,6 +48,10 @@ class ProfileIdentityStore(
     private var lastSyncedProgress: ProfileProgress? = null
 
     init {
+        scope.launch { plus.collect { enabled -> mutable.update { old ->
+            val stored = preferences.string(BACKGROUND)?.let(ProfileBackground::fromRawValue) ?: ProfileBackground.none
+            old.copy(isPlus = enabled, effectiveBackground = stored.effective(enabled))
+        } } }
         scope.launch { combine(auth.state, settingsManager.state) { account, local -> account.userName to local.selectedVehicleId }.collect {
             mutable.update { old -> old.copy(name = it.first.orEmpty(), selectedVehicleId = it.second) }
         } }
@@ -81,7 +87,7 @@ class ProfileIdentityStore(
         mutable.update { it.copy(avatarEmoji = emoji) }; revision++; syncJournal()
     }
     suspend fun setBackground(background: ProfileBackground) = withContext(dispatcher) {
-        require(!background.rawValue.startsWith("plus_"))
+        require(!background.rawValue.startsWith("plus_") || plus.value)
         if (preferences.string(BACKGROUND).orEmpty() == background.rawValue) return@withContext
         preferences.set(BACKGROUND, background.rawValue); preferences.set(BACKGROUND_DIRTY, "true")
         mutable.update { it.copy(effectiveBackground = background) }; revision++; syncJournal()
@@ -89,6 +95,14 @@ class ProfileIdentityStore(
     fun setCountry(value: String) {
         require(value in listOf("", "WORLD", "NEUTRAL") || (value.length == 2 && value.all { it in 'A'..'Z' }))
         preferences.set(COUNTRY, value); mutable.update { it.copy(country = value) }
+    }
+    fun setShowPlusBadge(value: Boolean) {
+        if (value == identity.value.showPlusBadge) return
+        preferences.set(SHOW_PLUS_BADGE, value.toString())
+        preferences.set(SHOW_PLUS_BADGE_DIRTY, "true")
+        revision++
+        mutable.update { it.copy(showPlusBadge = value) }
+        scope.launch { syncJournal() }
     }
     fun setUsername(value: String) {
         val clean = ProfileIdentityChoices.username(value)
@@ -148,7 +162,11 @@ class ProfileIdentityStore(
         response.profileBackground?.takeIf { preferences.string(BACKGROUND_DIRTY) != "true" }?.let { raw ->
             val background = ProfileBackground.fromRawValue(raw) ?: ProfileBackground.none
             preferences.set("com.triptrack.settings.profileBackground", raw)
-            mutable.update { it.copy(effectiveBackground = background.effective(isPlus = false)) }
+            mutable.update { it.copy(effectiveBackground = background.effective(isPlus = plus.value)) }
+        }
+        response.showPlusBadge?.takeIf { preferences.string(SHOW_PLUS_BADGE_DIRTY) != "true" }?.let { enabled ->
+            preferences.set(SHOW_PLUS_BADGE, enabled.toString())
+            mutable.update { it.copy(showPlusBadge = enabled) }
         }
         if (preferences.string(BIO_DIRTY) != "true" && (response.bioProvided || response.bio != null)) {
             preferences.set(BIO, response.bio.orEmpty())
@@ -179,6 +197,7 @@ class ProfileIdentityStore(
             val pinsDirty = preferences.string(PINS_DIRTY) == "true"
             val backgroundDirty = preferences.string(BACKGROUND_DIRTY) == "true"
             val avatarDirty = preferences.string(AVATAR_DIRTY) == "true"
+            val showBadgeDirty = preferences.string(SHOW_PLUS_BADGE_DIRTY) == "true"
             val baseDirty = preferences.string(BASE_DIRTY) == "true"
             val snapshot = identity.value
             // A pin from another phone stays. A known local trip waits for its upload.
@@ -192,7 +211,7 @@ class ProfileIdentityStore(
                 if (auth.state.value.signedInAccountId != account || generation != epoch) return@withLock
                 val earned = if (hydratedProgressAccount == account) profileProgress(row) else ProfileProgress()
                 val changedProgress = earned != lastSyncedProgress && earned != ProfileProgress()
-                if (!bioDirty && !pinsReady && !backgroundDirty && !avatarDirty && !baseDirty && !changedProgress) return@withLock
+                if (!bioDirty && !pinsReady && !backgroundDirty && !avatarDirty && !showBadgeDirty && !baseDirty && !changedProgress) return@withLock
                 api.post<ProfileUpdateRequest, EmptyResponse>(ApiEndpoint.profileUpdate, ProfileUpdateRequest(
                     avatarEmoji = snapshot.avatarEmoji.takeIf { avatarDirty },
                     profileLevel = earned.level.takeIf { changedProgress }, profileXp = earned.xp.takeIf { changedProgress },
@@ -200,6 +219,7 @@ class ProfileIdentityStore(
                     activeVehicleId = row.selectedVehicleId?.toString().takeIf { baseDirty },
                     language = settingsManager.state.value.language.takeIf { baseDirty },
                     showOnPublicMap = settingsManager.state.value.showOnPublicMap.takeIf { baseDirty },
+                    showPlusBadge = snapshot.showPlusBadge.takeIf { showBadgeDirty },
                     profileBackground = preferences.string(BACKGROUND).takeIf { backgroundDirty },
                     bio = snapshot.bio.takeIf { bioDirty }, pinnedTripIds = snapshot.pinnedTripIds.map(UUID::toString).takeIf { pinsReady }))
                 if (auth.state.value.signedInAccountId != account || generation != epoch) return@withLock
@@ -209,6 +229,7 @@ class ProfileIdentityStore(
                     if (pinsReady) preferences.set(PINS_DIRTY, "false")
                     if (backgroundDirty) preferences.set(BACKGROUND_DIRTY, "false")
                     if (avatarDirty) preferences.set(AVATAR_DIRTY, "false")
+                    if (showBadgeDirty) preferences.set(SHOW_PLUS_BADGE_DIRTY, "false")
                     if (baseDirty) preferences.set(BASE_DIRTY, "false")
                     mutableFailed.value = false
                     return@withLock
@@ -225,7 +246,7 @@ class ProfileIdentityStore(
         hydratedProgressAccount = null
         lastSyncedProgress = null
         revision++
-        listOf(BIO, PINS, BIO_DIRTY, PINS_DIRTY, BACKGROUND, BACKGROUND_DIRTY, AVATAR_DIRTY, BASE_DIRTY, USERNAME, COUNTRY).forEach { preferences.set(it, null) }
+        listOf(BIO, PINS, BIO_DIRTY, PINS_DIRTY, BACKGROUND, BACKGROUND_DIRTY, AVATAR_DIRTY, SHOW_PLUS_BADGE, SHOW_PLUS_BADGE_DIRTY, BASE_DIRTY, USERNAME, COUNTRY).forEach { preferences.set(it, null) }
         mutable.update { it.copy(name = "", bio = "", username = "", country = "", pinnedTripIds = emptyList(), coverPhotoIds = emptyList(), effectiveBackground = ProfileBackground.none) }
     }
 
@@ -237,6 +258,8 @@ class ProfileIdentityStore(
         private const val BACKGROUND = "com.triptrack.settings.profileBackground"
         private const val BACKGROUND_DIRTY = "profileBackgroundDirty"
         private const val AVATAR_DIRTY = "profileAvatarDirty"
+        private const val SHOW_PLUS_BADGE = "profileShowPlusBadge"
+        private const val SHOW_PLUS_BADGE_DIRTY = "profileShowPlusBadgeDirty"
         private const val BASE_DIRTY = "profileBaseDirty"
         private const val USERNAME = "com.triptrack.settings.profileUsername"
         private const val COUNTRY = "com.triptrack.settings.profileCountry"

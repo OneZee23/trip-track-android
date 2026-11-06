@@ -1531,21 +1531,71 @@
   },
   "hiddenLocalCardPiecesOnly": {
     "kind": "plurals",
-    "integer_tokens": ["count"],
+    "integer_tokens": [
+      "count"
+    ],
     "values": {
-      "en": {"one": "{count} hidden piece won't reach the feed or cloud copy.", "other": "{count} hidden pieces won't reach the feed or cloud copy."},
-      "ru": {"one": "{count} скрытый кусок не попадёт ни в ленту, ни в облачную копию.", "few": "{count} скрытых куска не попадут ни в ленту, ни в облачную копию.", "many": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию.", "other": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию."},
-      "de": {"one": "{count} verborgener Abschnitt erscheint weder im Feed noch in der Cloud-Kopie.", "other": "{count} verborgene Abschnitte erscheinen weder im Feed noch in der Cloud-Kopie."},
-      "es": {"one": "{count} tramo oculto no aparecerá en el feed ni en la copia en la nube.", "many": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube.", "other": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube."},
-      "fr": {"one": "{count} portion masquée ne sera envoyée ni dans le fil ni dans la copie cloud.", "many": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud.", "other": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud."},
-      "it": {"one": "{count} tratto nascosto non finirà nel feed né nella copia cloud.", "many": "{count} tratti nascosti non finiranno nel feed né nella copia cloud.", "other": "{count} tratti nascosti non finiranno nel feed né nella copia cloud."},
-      "pl": {"one": "{count} ukryty odcinek nie trafi do kanału ani kopii w chmurze.", "few": "{count} ukryte odcinki nie trafią do kanału ani kopii w chmurze.", "many": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze.", "other": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze."},
-      "id": {"other": "{count} bagian tersembunyi tidak akan masuk ke feed atau salinan cloud."},
-      "tr": {"one": "{count} gizli bölüm akışa veya bulut kopyasına gitmez.", "other": "{count} gizli bölüm akışa veya bulut kopyasına gitmez."},
-      "fil": {"one": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi.", "other": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi."},
-      "uk": {"one": "{count} прихована ділянка не потрапить ні у стрічку, ні в хмарну копію.", "few": "{count} приховані ділянки не потраплять ні у стрічку, ні в хмарну копію.", "many": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію.", "other": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію."},
-      "kk": {"one": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді.", "other": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді."},
-      "pt": {"one": "{count} trecho oculto não irá para o feed nem para a cópia na nuvem.", "many": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem.", "other": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem."}
+      "en": {
+        "one": "{count} hidden piece won't reach the feed or cloud copy.",
+        "other": "{count} hidden pieces won't reach the feed or cloud copy."
+      },
+      "ru": {
+        "one": "{count} скрытый кусок не попадёт ни в ленту, ни в облачную копию.",
+        "few": "{count} скрытых куска не попадут ни в ленту, ни в облачную копию.",
+        "many": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию.",
+        "other": "{count} скрытых кусков не попадут ни в ленту, ни в облачную копию."
+      },
+      "de": {
+        "one": "{count} verborgener Abschnitt erscheint weder im Feed noch in der Cloud-Kopie.",
+        "other": "{count} verborgene Abschnitte erscheinen weder im Feed noch in der Cloud-Kopie."
+      },
+      "es": {
+        "one": "{count} tramo oculto no aparecerá en el feed ni en la copia en la nube.",
+        "many": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube.",
+        "other": "{count} tramos ocultos no aparecerán en el feed ni en la copia en la nube."
+      },
+      "fr": {
+        "one": "{count} portion masquée ne sera envoyée ni dans le fil ni dans la copie cloud.",
+        "many": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud.",
+        "other": "{count} portions masquées ne seront envoyées ni dans le fil ni dans la copie cloud."
+      },
+      "it": {
+        "one": "{count} tratto nascosto non finirà nel feed né nella copia cloud.",
+        "many": "{count} tratti nascosti non finiranno nel feed né nella copia cloud.",
+        "other": "{count} tratti nascosti non finiranno nel feed né nella copia cloud."
+      },
+      "pl": {
+        "one": "{count} ukryty odcinek nie trafi do kanału ani kopii w chmurze.",
+        "few": "{count} ukryte odcinki nie trafią do kanału ani kopii w chmurze.",
+        "many": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze.",
+        "other": "{count} ukrytych odcinków nie trafi do kanału ani kopii w chmurze."
+      },
+      "id": {
+        "other": "{count} bagian tersembunyi tidak akan masuk ke feed atau salinan cloud."
+      },
+      "tr": {
+        "one": "{count} gizli bölüm akışa veya bulut kopyasına gitmez.",
+        "other": "{count} gizli bölüm akışa veya bulut kopyasına gitmez."
+      },
+      "fil": {
+        "one": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi.",
+        "other": "Hindi mapupunta sa feed o cloud copy ang {count} nakatagong bahagi."
+      },
+      "uk": {
+        "one": "{count} прихована ділянка не потрапить ні у стрічку, ні в хмарну копію.",
+        "few": "{count} приховані ділянки не потраплять ні у стрічку, ні в хмарну копію.",
+        "many": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію.",
+        "other": "{count} прихованих ділянок не потраплять ні у стрічку, ні в хмарну копію."
+      },
+      "kk": {
+        "one": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді.",
+        "other": "{count} жасырын бөлік лентаға да, бұлттағы көшірмеге де жіберілмейді."
+      },
+      "pt": {
+        "one": "{count} trecho oculto não irá para o feed nem para a cópia na nuvem.",
+        "many": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem.",
+        "other": "{count} trechos ocultos não irão para o feed nem para a cópia na nuvem."
+      }
     }
   },
   "hiddenLocalCardBody": {
@@ -1580,6 +1630,380 @@
       "uk": "Зберегти",
       "kk": "Сақтау",
       "pt": "Guardar"
+    }
+  },
+  "promo_code": {
+    "values": {
+      "en": "Promo code",
+      "ru": "Промокод",
+      "de": "Promo-Code",
+      "es": "Código promocional",
+      "fr": "Code promo",
+      "it": "Codice promozionale",
+      "pl": "Kod promocyjny",
+      "id": "Kode promo",
+      "tr": "Promosyon kodu",
+      "fil": "Promo code",
+      "uk": "Промокод",
+      "kk": "Промокод",
+      "pt": "Código promocional"
+    }
+  },
+  "promo_body": {
+    "values": {
+      "en": "The code turns on PRO for this account.",
+      "ru": "Код включит PRO на этом аккаунте.",
+      "de": "Der Code schaltet PRO für dieses Konto frei.",
+      "es": "El código activa PRO para esta cuenta.",
+      "fr": "Le code active PRO pour ce compte.",
+      "it": "Il codice attiva PRO per questo account.",
+      "pl": "Kod włącza PRO na tym koncie.",
+      "id": "Kode ini mengaktifkan PRO untuk akun ini.",
+      "tr": "Kod bu hesapta PRO’yu etkinleştirir.",
+      "fil": "Isinasaaktibo ng code ang PRO para sa account na ito.",
+      "uk": "Код увімкне PRO для цього акаунта.",
+      "kk": "Код осы аккаунтта PRO қызметін қосады.",
+      "pt": "O código ativa o PRO para esta conta."
+    }
+  },
+  "promo_redeem": {
+    "values": {
+      "en": "Redeem",
+      "ru": "Активировать",
+      "de": "Einlösen",
+      "es": "Canjear",
+      "fr": "Activer",
+      "it": "Riscatta",
+      "pl": "Aktywuj",
+      "id": "Tukarkan",
+      "tr": "Kullan",
+      "fil": "I-redeem",
+      "uk": "Активувати",
+      "kk": "Белсендіру",
+      "pt": "Ativar"
+    }
+  },
+  "promo_success": {
+    "values": {
+      "en": "PRO is on",
+      "ru": "PRO включён",
+      "de": "PRO ist aktiviert",
+      "es": "PRO está activado",
+      "fr": "PRO est activé",
+      "it": "PRO è attivo",
+      "pl": "PRO jest włączone",
+      "id": "PRO aktif",
+      "tr": "PRO etkin",
+      "fil": "Naka-on ang PRO",
+      "uk": "PRO увімкнено",
+      "kk": "PRO қосылды",
+      "pt": "PRO está ativo"
+    }
+  },
+  "promo_until": {
+    "values": {
+      "en": "PRO until {date}",
+      "ru": "PRO до {date}",
+      "de": "PRO bis {date}",
+      "es": "PRO hasta {date}",
+      "fr": "PRO jusqu’au {date}",
+      "it": "PRO fino al {date}",
+      "pl": "PRO do {date}",
+      "id": "PRO sampai {date}",
+      "tr": "PRO {date} tarihine kadar",
+      "fil": "PRO hanggang {date}",
+      "uk": "PRO до {date}",
+      "kk": "PRO {date} дейін",
+      "pt": "PRO até {date}"
+    }
+  },
+  "pro_works_until": {
+    "values": {
+      "en": "PRO works until {date}",
+      "ru": "PRO работает до {date}",
+      "de": "PRO läuft bis {date}",
+      "es": "PRO funciona hasta el {date}",
+      "fr": "PRO fonctionne jusqu’au {date}",
+      "it": "PRO è attivo fino al {date}",
+      "pl": "PRO działa do {date}",
+      "id": "PRO aktif sampai {date}",
+      "tr": "PRO {date} tarihine kadar çalışır",
+      "fil": "Gagana ang PRO hanggang {date}",
+      "uk": "PRO працює до {date}",
+      "kk": "PRO {date} дейін жұмыс істейді",
+      "pt": "O PRO funciona até {date}"
+    }
+  },
+  "promo_not_found": {
+    "values": {
+      "en": "No such code. Check it for typos.",
+      "ru": "Такого кода нет. Проверьте, нет ли опечатки.",
+      "de": "Dieser Code wurde nicht gefunden. Prüfe auf Tippfehler.",
+      "es": "No existe ese código. Comprueba si hay errores.",
+      "fr": "Code introuvable. Vérifiez qu’il n’y a pas de faute.",
+      "it": "Codice inesistente. Controlla che non ci siano errori.",
+      "pl": "Nie ma takiego kodu. Sprawdź, czy nie ma literówki.",
+      "id": "Kode tidak ditemukan. Periksa kemungkinan salah ketik.",
+      "tr": "Böyle bir kod yok. Yazım hatası olup olmadığını kontrol edin.",
+      "fil": "Walang ganoong code. Tingnan kung may typo.",
+      "uk": "Такого коду немає. Перевірте, чи немає помилки.",
+      "kk": "Мұндай код жоқ. Қате терілмегенін тексеріңіз.",
+      "pt": "Esse código não existe. Confira se há erros de digitação."
+    }
+  },
+  "promo_already_redeemed": {
+    "values": {
+      "en": "This code is already on your account.",
+      "ru": "Этот код уже активирован на вашем аккаунте.",
+      "de": "Dieser Code ist bereits für dein Konto aktiviert.",
+      "es": "Este código ya está activado en tu cuenta.",
+      "fr": "Ce code est déjà activé sur votre compte.",
+      "it": "Questo codice è già attivo sul tuo account.",
+      "pl": "Ten kod jest już aktywowany na Twoim koncie.",
+      "id": "Kode ini sudah aktif di akun Anda.",
+      "tr": "Bu kod hesabınızda zaten etkin.",
+      "fil": "Aktibo na ang code na ito sa account mo.",
+      "uk": "Цей код уже активовано у вашому акаунті.",
+      "kk": "Бұл код аккаунтыңызда әлдеқашан белсендірілген.",
+      "pt": "Este código já está ativo na sua conta."
+    }
+  },
+  "promo_inactive": {
+    "values": {
+      "en": "This code no longer works.",
+      "ru": "Этот код больше не действует.",
+      "de": "Dieser Code funktioniert nicht mehr.",
+      "es": "Este código ya no funciona.",
+      "fr": "Ce code ne fonctionne plus.",
+      "it": "Questo codice non è più valido.",
+      "pl": "Ten kod już nie działa.",
+      "id": "Kode ini sudah tidak berlaku.",
+      "tr": "Bu kod artık çalışmıyor.",
+      "fil": "Hindi na gumagana ang code na ito.",
+      "uk": "Цей код більше не діє.",
+      "kk": "Бұл код енді жұмыс істемейді.",
+      "pt": "Este código já não funciona."
+    }
+  },
+  "promo_expired": {
+    "values": {
+      "en": "This code has expired.",
+      "ru": "Срок этого кода закончился.",
+      "de": "Dieser Code ist abgelaufen.",
+      "es": "Este código ha caducado.",
+      "fr": "Ce code a expiré.",
+      "it": "Questo codice è scaduto.",
+      "pl": "Ten kod wygasł.",
+      "id": "Masa berlaku kode ini habis.",
+      "tr": "Bu kodun süresi doldu.",
+      "fil": "Nag-expire na ang code na ito.",
+      "uk": "Строк дії цього коду завершився.",
+      "kk": "Бұл кодтың мерзімі аяқталды.",
+      "pt": "Este código expirou."
+    }
+  },
+  "promo_used_up": {
+    "values": {
+      "en": "This code has already been used.",
+      "ru": "Этот код уже использовали.",
+      "de": "Dieser Code wurde bereits verwendet.",
+      "es": "Este código ya se ha utilizado.",
+      "fr": "Ce code a déjà été utilisé.",
+      "it": "Questo codice è già stato usato.",
+      "pl": "Ten kod został już wykorzystany.",
+      "id": "Kode ini sudah digunakan.",
+      "tr": "Bu kod daha önce kullanılmış.",
+      "fil": "Nagamit na ang code na ito.",
+      "uk": "Цей код уже використали.",
+      "kk": "Бұл код әлдеқашан қолданылған.",
+      "pt": "Este código já foi usado."
+    }
+  },
+  "promo_too_many": {
+    "values": {
+      "en": "Too many tries. Try again in an hour.",
+      "ru": "Слишком много попыток. Попробуйте через час.",
+      "de": "Zu viele Versuche. Versuche es in einer Stunde erneut.",
+      "es": "Demasiados intentos. Vuelve a probar dentro de una hora.",
+      "fr": "Trop de tentatives. Réessayez dans une heure.",
+      "it": "Troppi tentativi. Riprova tra un’ora.",
+      "pl": "Za dużo prób. Spróbuj ponownie za godzinę.",
+      "id": "Terlalu banyak percobaan. Coba lagi dalam satu jam.",
+      "tr": "Çok fazla deneme. Bir saat sonra tekrar deneyin.",
+      "fil": "Napakaraming pagsubok. Subukan muli pagkalipas ng isang oras.",
+      "uk": "Забагато спроб. Спробуйте за годину.",
+      "kk": "Әрекет тым көп. Бір сағаттан кейін қайталаңыз.",
+      "pt": "Demasiadas tentativas. Tente novamente daqui a uma hora."
+    }
+  },
+  "promo_validation": {
+    "values": {
+      "en": "Enter the whole code.",
+      "ru": "Введите код целиком.",
+      "de": "Gib den vollständigen Code ein.",
+      "es": "Introduce el código completo.",
+      "fr": "Saisissez le code complet.",
+      "it": "Inserisci il codice completo.",
+      "pl": "Wpisz cały kod.",
+      "id": "Masukkan kode lengkap.",
+      "tr": "Kodun tamamını girin.",
+      "fil": "Ilagay ang buong code.",
+      "uk": "Введіть код повністю.",
+      "kk": "Кодты толық енгізіңіз.",
+      "pt": "Digite o código completo."
+    }
+  },
+  "promo_offline": {
+    "values": {
+      "en": "No connection. Try again.",
+      "ru": "Нет связи. Попробуйте ещё раз.",
+      "de": "Keine Verbindung. Versuche es erneut.",
+      "es": "Sin conexión. Inténtalo de nuevo.",
+      "fr": "Pas de connexion. Réessayez.",
+      "it": "Nessuna connessione. Riprova.",
+      "pl": "Brak połączenia. Spróbuj ponownie.",
+      "id": "Tidak ada koneksi. Coba lagi.",
+      "tr": "Bağlantı yok. Tekrar deneyin.",
+      "fil": "Walang koneksyon. Subukan ulit.",
+      "uk": "Немає зв’язку. Спробуйте ще раз.",
+      "kk": "Байланыс жоқ. Қайталап көріңіз.",
+      "pt": "Sem ligação. Tente novamente."
+    }
+  },
+  "promo_signed_out": {
+    "values": {
+      "en": "Sign in to redeem a code: PRO belongs to your account.",
+      "ru": "Войдите, чтобы активировать код: PRO привязан к аккаунту.",
+      "de": "Melde dich an, um den Code einzulösen: PRO gehört zu deinem Konto.",
+      "es": "Inicia sesión para canjear el código: PRO pertenece a tu cuenta.",
+      "fr": "Connectez-vous pour activer le code : PRO est lié à votre compte.",
+      "it": "Accedi per riscattare il codice: PRO è legato al tuo account.",
+      "pl": "Zaloguj się, aby aktywować kod: PRO jest przypisane do konta.",
+      "id": "Masuk untuk menukarkan kode: PRO terhubung ke akun Anda.",
+      "tr": "Kodu kullanmak için giriş yapın: PRO hesabınıza bağlıdır.",
+      "fil": "Mag-sign in para i-redeem ang code: nakatali ang PRO sa account mo.",
+      "uk": "Увійдіть, щоб активувати код: PRO прив’язаний до акаунта.",
+      "kk": "Кодты белсендіру үшін кіріңіз: PRO аккаунтыңызға байланысты.",
+      "pt": "Inicie sessão para resgatar o código: o PRO pertence à sua conta."
+    }
+  },
+  "pro_manage_title": {
+    "values": {
+      "en": "Your PRO",
+      "ru": "Ваш PRO",
+      "de": "Dein PRO",
+      "es": "Tu PRO",
+      "fr": "Votre PRO",
+      "it": "Il tuo PRO",
+      "pl": "Twoje PRO",
+      "id": "PRO Anda",
+      "tr": "PRO’nuz",
+      "fil": "PRO mo",
+      "uk": "Ваш PRO",
+      "kk": "PRO қызметіңіз",
+      "pt": "O seu PRO"
+    }
+  },
+  "promo_another": {
+    "values": {
+      "en": "Redeem another code",
+      "ru": "Ввести ещё код",
+      "de": "Weiteren Code einlösen",
+      "es": "Canjear otro código",
+      "fr": "Saisir un autre code",
+      "it": "Riscatta un altro codice",
+      "pl": "Wpisz kolejny kod",
+      "id": "Tukarkan kode lain",
+      "tr": "Başka kod kullan",
+      "fil": "Mag-redeem ng isa pang code",
+      "uk": "Ввести ще один код",
+      "kk": "Тағы код енгізу",
+      "pt": "Resgatar outro código"
+    }
+  },
+  "pro_show_badge": {
+    "values": {
+      "en": "Show PRO badge",
+      "ru": "Показывать значок PRO",
+      "de": "PRO-Abzeichen anzeigen",
+      "es": "Mostrar insignia PRO",
+      "fr": "Afficher le badge PRO",
+      "it": "Mostra badge PRO",
+      "pl": "Pokaż odznakę PRO",
+      "id": "Tampilkan lencana PRO",
+      "tr": "PRO rozetini göster",
+      "fil": "Ipakita ang PRO badge",
+      "uk": "Показувати значок PRO",
+      "kk": "PRO белгісін көрсету",
+      "pt": "Mostrar selo PRO"
+    }
+  },
+  "pro_feature_background": {
+    "values": {
+      "en": "Profile background",
+      "ru": "Фон профиля",
+      "de": "Profilhintergrund",
+      "es": "Fondo del perfil",
+      "fr": "Fond du profil",
+      "it": "Sfondo del profilo",
+      "pl": "Tło profilu",
+      "id": "Latar profil",
+      "tr": "Profil arka planı",
+      "fil": "Background ng profile",
+      "uk": "Фон профілю",
+      "kk": "Профиль фоны",
+      "pt": "Fundo do perfil"
+    }
+  },
+  "pro_profile_section": {
+    "values": {
+      "en": "PRO",
+      "ru": "PRO",
+      "de": "PRO",
+      "es": "PRO",
+      "fr": "PRO",
+      "it": "PRO",
+      "pl": "PRO",
+      "id": "PRO",
+      "tr": "PRO",
+      "fil": "PRO",
+      "uk": "PRO",
+      "kk": "PRO",
+      "pt": "PRO"
+    }
+  },
+  "promo_hint": {
+    "values": {
+      "en": "XXXX-XXXX-XXXX",
+      "ru": "XXXX-XXXX-XXXX",
+      "de": "XXXX-XXXX-XXXX",
+      "es": "XXXX-XXXX-XXXX",
+      "fr": "XXXX-XXXX-XXXX",
+      "it": "XXXX-XXXX-XXXX",
+      "pl": "XXXX-XXXX-XXXX",
+      "id": "XXXX-XXXX-XXXX",
+      "tr": "XXXX-XXXX-XXXX",
+      "fil": "XXXX-XXXX-XXXX",
+      "uk": "XXXX-XXXX-XXXX",
+      "kk": "XXXX-XXXX-XXXX",
+      "pt": "XXXX-XXXX-XXXX"
+    }
+  },
+  "promo_done": {
+    "values": {
+      "en": "Done",
+      "ru": "Готово",
+      "de": "Fertig",
+      "es": "Listo",
+      "fr": "Terminé",
+      "it": "Fatto",
+      "pl": "Gotowe",
+      "id": "Selesai",
+      "tr": "Bitti",
+      "fil": "Tapos na",
+      "uk": "Готово",
+      "kk": "Дайын",
+      "pt": "Concluído"
     }
   }
 }

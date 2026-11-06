@@ -22,6 +22,7 @@ import kotlinx.coroutines.sync.withLock
 // iOS: ProfileHeroCard.swift. The identity/profile-sync owner supplies this snapshot.
 data class ProfileIdentity(
     val isPlus: Boolean = false,
+    val showPlusBadge: Boolean = true,
     val name: String = "",
     val avatarEmoji: String = "😎",
     val bio: String = "",

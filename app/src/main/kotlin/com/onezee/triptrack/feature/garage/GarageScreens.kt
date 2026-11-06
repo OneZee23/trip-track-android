@@ -61,7 +61,7 @@ private fun GarageEmptyState(onAdd: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 internal fun GarageScreen(state: GarageState, unit: DistanceUnit, onBack: () -> Unit, onAdd: () -> Unit,
-                          onVehicle: (UUID) -> Unit, onSelect: (UUID) -> Unit, onDelete: (UUID) -> Unit, onUnsell: (UUID) -> Unit = {}) {
+                          onVehicle: (UUID) -> Unit, onSelect: (UUID) -> Unit, onDelete: (UUID) -> Unit, onUnsell: (UUID) -> Unit = {}, isPlus: Boolean = false) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("garage_screen")) {
         // iOS GarageView.navRow sets navBarInSheet whether the list is pushed or presented.
@@ -158,7 +158,7 @@ private fun GarageFact(glyph: AppGlyph, text: String) {
 @Composable
 internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: DistanceUnit, onBack: () -> Unit,
                                    onSheet: (VehicleSheet) -> Unit, onSelect: () -> Unit, onTrip: (Trip) -> Unit,
-                                   stereo: StereoStatus = StereoStatus.NotLinked, autoRecordOn: Boolean = false, onBluetoothSettings: () -> Unit = {}) {
+                                   stereo: StereoStatus = StereoStatus.NotLinked, autoRecordOn: Boolean = false, onBluetoothSettings: () -> Unit = {}, isPlus: Boolean = false) {
     val strings = appStrings
     val vehicle = state.vehicle
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).statusBarsPadding().testTag("vehicle_passport")) {
@@ -183,14 +183,14 @@ internal fun VehiclePassportScreen(state: VehiclePassportState, appUnit: Distanc
             val width = vehicleStageWidth()
             VehicleHeroCard(
                 name = vehicle.name.ifBlank { strings.unnamedVehicle() }, make = vehicle.make, model = vehicle.model, year = vehicle.year, bodyType = vehicle.bodyType,
-                variant = state.catalogVariant, tags = VehicleModTags.effective(vehicle.modTags, isPlus = false),
+                variant = state.catalogVariant, tags = VehicleModTags.effective(vehicle.modTags, isPlus = isPlus),
                 soldLine = vehicle.soldAt?.let { strings.vehicleSoldState(monthYearPrepositional(it, strings)) }, plate = vehicle.plate,
                 level = vehicle.level, onLevel = { onSheet(VehicleSheet.level) },
                 stats = VehicleHeroStats(state.passport.tripCount, state.passport.regionCount, state.passport.daysOnRoad, ready = state.loaded),
                 since = com.onezee.triptrack.feature.stats.StatsPeriodFormat.monthYearGenitive(vehicle.createdAt, strings.language, strings.zone), foreign = false,
             ) {
                 Box(Modifier.clickable(role = Role.Button, onClickLabel = strings.vehiclePhotos()) { onSheet(VehicleSheet.photos) }) {
-                    VehicleStage(vehicle, width = width, photoFilename = state.mainPhoto?.filename, remoteURL = state.mainPhoto?.remoteURL)
+                    VehicleStage(vehicle, width = width, photoFilename = state.mainPhoto?.filename, isPlus = isPlus, remoteURL = state.mainPhoto?.remoteURL)
                 }
             }
             Drive2LogbookRow(vehicle.drive2URL, onConnect = if (Drive2Audience.invitesOnPage(strings.language.code)) ({ onSheet(VehicleSheet.drive2) }) else null)

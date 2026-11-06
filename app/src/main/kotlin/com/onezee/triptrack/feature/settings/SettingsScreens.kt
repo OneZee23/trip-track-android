@@ -45,7 +45,10 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     val privacyState = privacy?.state?.collectAsState()?.value ?: PrivacySettingsState()
     val usageEnabled by graph.me.analytics.enabled.collectAsState()
     val profile by graph.me.profile.state.collectAsState()
+    val isPlus by graph.plusEntitlement.isPlus.collectAsState()
+    val identity by graph.me.identity.identity.collectAsState()
     var adminOpen by rememberSaveable { mutableStateOf(false) }
+    var promoOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) { if (manager.state.value.sheets.isEmpty()) manager.openSheet(SettingsSheet.settings) }
     DisposableEffect(Unit) { onDispose { manager.closeSheets() } }
     val context = LocalContext.current
@@ -68,7 +71,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                         onWriteAuthor = { open("mailto:privacy@trip-track.app") }, onTelegram = { open("https://t.me/onezee_co") },
                         onPolicy = { open("https://trip-track.app/privacy") }, onTerms = { open("https://trip-track.app/terms") },
                         onOpenStreetMap = { open("https://www.openstreetmap.org/copyright") },
-                        account = { AccountEntry(graph) })
+                        account = { AccountEntry(graph) }, onPromo = { promoOpen = true })
                     SettingsSheet.appPreferences -> SettingsSheetPage(strings.settingsAppPrefs()) {
                         SettingsPreferencesCard(state, onOpen = manager::openSheet)
                         Text(strings.appPrefsFootnote(), Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 10.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
@@ -77,6 +80,9 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                         Column(Modifier.surfaceCard(16.dp)) {
                             MeToggle(strings.usageTitle(), usageEnabled, { graph.me.analytics.setEnabled(it, profile.hero.tripCount > 0) }, strings.usageDetail(), tag = "settings_usage_analytics")
                             if (auth.isSignedIn) {
+                                if (isPlus && PlusGate.allows(PlusFeature.avatarFrame, isPlus = true, storefrontHidesPlus = true) == PlusAccessLevel.open) {
+                                    MeToggle(strings.tr(com.onezee.triptrack.designsystem.R.string.pro_show_badge), identity.showPlusBadge, graph.me.identity::setShowPlusBadge, tag = "privacy_show_plus_badge")
+                                }
                                 MeToggle(strings.publicProfileTitle(), privacyState.isPublic, { privacy?.setPublicProfile(it) }, strings.privacyPublicProfileSub(), enabled = privacyState.loaded, tag = "privacy_public_profile")
                                 MeToggle(strings.settingsPublicProfile(), state.showOnPublicMap, manager::setShowOnPublicMap)
                                 if (privacyState.supportsBlocks) ProfileVisibilityBlock.entries.forEach { block ->
@@ -156,6 +162,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     if (adminOpen) ContentSizedSheet({ adminOpen = false }, background = AppTheme.colors.bg, detent = SheetDetent.large) {
         com.onezee.triptrack.feature.settings.AdminPanelScreen(graph.apiClient) { adminOpen = false }
     }
+    if (promoOpen) PromoCodeSheet(graph, auth.isSignedIn) { promoOpen = false }
 }
 
 /** The sheets iOS gives `presentationDragIndicator(.visible)`: Настройки, its sub-pages, auto-record and the stereo picker. */
@@ -176,7 +183,7 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
                              onNotificationMaster: (Boolean) -> Unit, onWriteAuthor: () -> Unit, onTelegram: () -> Unit,
                              onPolicy: () -> Unit = {}, onTerms: () -> Unit = {}, onOpenStreetMap: () -> Unit = {},
                              account: @Composable () -> Unit = {}, isAdmin: Boolean = false, onAdmin: () -> Unit = {},
-                             adminNewAccounts: Boolean = true, onAdminNewAccounts: (Boolean) -> Unit = {}) {
+                             adminNewAccounts: Boolean = true, onAdminNewAccounts: (Boolean) -> Unit = {}, onPromo: () -> Unit = {}) {
     val strings = appStrings
     Column(Modifier.fillMaxSize().background(AppTheme.colors.bg).testTag("settings_sheet")) {
         MeSheetHeader(strings.settingsTitle(), 12.dp, onClose)
@@ -184,12 +191,15 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
             Column(Modifier.surfaceCard(16.dp)) {
                 SettingsIconRow(strings.privacyTitle(), glyph = AppGlyph.handRaisedFill, subtitle = if (signedIn) strings.privacyRowSub() else strings.usageTitle(), tag = "settings_privacy",
                     onClick = { onOpen(SettingsSheet.privacy) }, trailing = { SettingsRowChevron() }, stacksTrailing = false)
+                MeDivider()
                 if (signedIn) {
                     MeDivider()
                     SettingsToggleRow(strings.settingsNotifications(), notifications.master, onNotificationMaster, AppGlyph.bellFill, enabled = notifications.loaded, tag = "settings_notifications")
                     MeDivider()
                     account()
                 }
+                MeDivider()
+                SettingsIconRow(strings.tr(com.onezee.triptrack.designsystem.R.string.promo_code), glyph = AppGlyph.starFill, tag = "settings_promo_code", onClick = onPromo) { SettingsRowChevron() }
             }
             if (isAdmin) Column(Modifier.surfaceCard(16.dp).testTag("settings_admin_group")) {
                 ProfileSectionLabel(strings.adminSectionTitle(), Modifier.padding(horizontal = 14.dp).padding(top = 10.dp))

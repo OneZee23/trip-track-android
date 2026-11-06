@@ -83,9 +83,9 @@ class SettingsLookTests {
     @Test fun everyIconSquareIs30AndEveryRowStartsAt14() {
         settings()
         val tiles = compose.onAllNodesWithTag("settings_tile", useUnmergedTree = true)
-        // privacy, notifications, account, language, theme, units, write, telegram, logs.
-        tiles.assertCountEquals(9)
-        for (index in 0 until 9) {
+        // privacy, promo code, notifications, account, language, theme, units, write, telegram, logs.
+        tiles.assertCountEquals(10)
+        for (index in 0 until 10) {
             val tile = tiles[index].getBoundsInRoot()
             near(30f, tile.width.value, "tile $index width"); near(30f, tile.height.value, "tile $index height")
             // The cards stand 14 from the edge and the rows are 14 inside them.
@@ -105,7 +105,7 @@ class SettingsLookTests {
         compose.onNodeWithTag("settings_privacy").assertExists()
         compose.onNodeWithTag("settings_notifications").assertDoesNotExist()
         compose.onNodeWithTag("settings_account_sync").assertDoesNotExist()
-        compose.onAllNodesWithTag("settings_tile", useUnmergedTree = true).assertCountEquals(7)
+        compose.onAllNodesWithTag("settings_tile", useUnmergedTree = true).assertCountEquals(8)
     }
 
     @Test fun theFooterStacksTheLinksAndTheCreditsCentredUnderTheCards() {

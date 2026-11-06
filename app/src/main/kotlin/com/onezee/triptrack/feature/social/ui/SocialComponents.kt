@@ -119,8 +119,8 @@ fun SkeletonRows(count: Int, modifier: Modifier = Modifier) {
 // MARK: - Paid cosmetics, drawn for someone else's profile
 
 /**
- * iOS ProfileBackground.gradient: every background, the eight PRO ones included. Android sells no
- * PRO, but an iPhone subscriber's profile still shows what they paid for (`showsPaidCosmetics`).
+ * iOS ProfileBackground.gradient: every background, the eight PRO ones included. Remote profiles
+ * keep showing paid choices through `showsPaidCosmetics`.
  */
 fun ProfileBackground.coverColors(): List<Color> = when (this) {
     ProfileBackground.none -> emptyList()

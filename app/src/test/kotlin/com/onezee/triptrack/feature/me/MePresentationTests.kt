@@ -110,9 +110,20 @@ class MePresentationTests {
         VehicleAvatar.styles.forEach { style -> VehicleAvatar.colors.forEach { color -> assertTrue("pixel_${style}_$color" in MeArtwork.drawables) } }
     }
     @Test fun everyProEntryUsesTheHiddenStorefrontGate() {
-        PlusFeature.entries.forEach { assertEquals(PlusAccessLevel.hidden, MePlusGate.access(it)) }
-        assertEquals(11, MePlusGate.backgrounds.size)
-        assertTrue(MePlusGate.backgrounds.none { it.rawValue.startsWith("plus_") })
+        PlusFeature.entries.forEach {
+            assertEquals(PlusAccessLevel.hidden, MePlusGate.access(it, false))
+            assertEquals(PlusAccessLevel.open, MePlusGate.access(it, true))
+        }
+        assertEquals(11, MePlusGate.backgrounds(false).size)
+        assertTrue(MePlusGate.backgrounds(false).none { it.rawValue.startsWith("plus_") })
+        assertEquals(19, MePlusGate.backgrounds(true).size)
+    }
+    @Test fun everyProfileBackgroundKeepsItsIosNameAndGradient() {
+        val names = listOf("", "Sunset", "Ocean", "Forest", "Mountain", "Midnight", "Dawn", "Copper", "Slate", "Aurora", "Sand",
+            "Nebula", "Lava", "Glacier", "Neon", "Carbon", "Gold", "Tropic", "Storm")
+        assertEquals(names, ProfileBackground.entries.map(ProfileBackground::displayName))
+        assertTrue(ProfileBackground.entries.drop(1).all { it.colors().size == 3 })
+        assertTrue(ProfileBackground.none.colors().isEmpty())
     }
     @Test fun profileIdentityPresetsAndLocalUsernameKeepTheIphoneContract() {
         assertEquals(12, ProfileIdentityChoices.avatars.size)

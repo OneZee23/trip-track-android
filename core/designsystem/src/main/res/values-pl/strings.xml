@@ -1607,6 +1607,11 @@
     <string name="proTermsTrial">Potem %1$s na rok. Można anulować w każdej chwili</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Nowy wygląd do wypróbowania</string>
+    <string name="pro_feature_background" formatted="false">Tło profilu</string>
+    <string name="pro_manage_title" formatted="false">Twoje PRO</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Pokaż odznakę PRO</string>
+    <string name="pro_works_until">PRO działa do %1$s</string>
     <string name="profile" formatted="false">Profil</string>
     <string name="profileAddCover" formatted="false">Dodaj okładkę</string>
     <string name="profileAddPhoto" formatted="false">Dodaj zdjęcie</string>
@@ -1647,6 +1652,23 @@
     <string name="profileUnpin" formatted="false">Odepnij od profilu</string>
     <string name="profileYourKilometersStreaks" formatted="false">Tu pojawią się przejazdy, przebyta droga i osiągnięcia.</string>
     <string name="profileYourTripsWill" formatted="false">Tutaj pojawią się trasy</string>
+    <string name="promo_already_redeemed" formatted="false">Ten kod jest już aktywowany na Twoim koncie.</string>
+    <string name="promo_another" formatted="false">Wpisz kolejny kod</string>
+    <string name="promo_body" formatted="false">Kod włącza PRO na tym koncie.</string>
+    <string name="promo_code" formatted="false">Kod promocyjny</string>
+    <string name="promo_done" formatted="false">Gotowe</string>
+    <string name="promo_expired" formatted="false">Ten kod wygasł.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Ten kod już nie działa.</string>
+    <string name="promo_not_found" formatted="false">Nie ma takiego kodu. Sprawdź, czy nie ma literówki.</string>
+    <string name="promo_offline" formatted="false">Brak połączenia. Spróbuj ponownie.</string>
+    <string name="promo_redeem" formatted="false">Aktywuj</string>
+    <string name="promo_signed_out" formatted="false">Zaloguj się, aby aktywować kod: PRO jest przypisane do konta.</string>
+    <string name="promo_success" formatted="false">PRO jest włączone</string>
+    <string name="promo_too_many" formatted="false">Za dużo prób. Spróbuj ponownie za godzinę.</string>
+    <string name="promo_until">PRO do %1$s</string>
+    <string name="promo_used_up" formatted="false">Ten kod został już wykorzystany.</string>
+    <string name="promo_validation" formatted="false">Wpisz cały kod.</string>
     <string name="publicDataLoadFailed" formatted="false">Nie udało się wczytać</string>
     <string name="publicDataPartial" formatted="false">Nie wszystko się wczytało — liczby mogą być zaniżone</string>
     <string name="publicGarageEmpty" formatted="false">Tu jeszcze pusto. Przejazdy i mapa są tam, gdzie były.</string>

@@ -116,6 +116,8 @@ data class MeResponse(
     val notifyWeeklyRecap: Boolean? = null,
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     val createdAt: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val plusUntil: String? = null,
 )
 
 // iOS: AuthDTOs.swift

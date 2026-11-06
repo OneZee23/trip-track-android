@@ -32,4 +32,18 @@ data class PlusStatusResponse(
     val productId: String? = null,
     @EncodeDefault
     val isTrial: Boolean = false,
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val promoUntil: Instant? = null,
 )
+
+@Serializable
+@kotlinx.serialization.json.JsonIgnoreUnknownKeys
+data class PromoRedeemRequest(val code: String)
+
+@Serializable
+@kotlinx.serialization.json.JsonIgnoreUnknownKeys
+data class PromoRedemption(val durationDays: Int, val startsAt: Instant, val endsAt: Instant)
+
+@Serializable
+@kotlinx.serialization.json.JsonIgnoreUnknownKeys
+data class PromoRedeemResponse(val redemption: PromoRedemption, val plus: PlusStatusResponse)

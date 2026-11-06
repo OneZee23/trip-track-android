@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -35,6 +35,7 @@ import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.model.ProfileBackground
+import com.onezee.triptrack.feature.social.ui.drawCover
 import java.util.Locale
 import kotlinx.coroutines.*
 
@@ -63,7 +64,7 @@ internal object ProfileIdentityChoices {
 @Composable
 internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentityStore, onBack: () -> Unit,
                              onEdit: (ProfileTextField) -> Unit, onCover: () -> Unit, onLevel: () -> Unit, onCountry: () -> Unit,
-                             social: MyProfileSocial? = null) {
+                             social: MyProfileSocial? = null, openBackgroundPicker: Boolean = false, onBackgroundPickerOpened: () -> Unit = {}) {
     val strings = appStrings
     val scope = rememberCoroutineScope()
     var avatars by rememberSaveable { mutableStateOf(false) }
@@ -71,6 +72,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
     var username by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
+    LaunchedEffect(openBackgroundPicker) { if (openBackgroundPicker) { backgrounds = true; onBackgroundPickerOpened() } }
     fun save(action: suspend () -> Unit) {
         if (busy) return
         busy = true
@@ -85,7 +87,9 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
         CustomNavBar(strings.myProfileTitle(), onBack)
         Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = tabBarContentClearance())) {
             val colors = identity.effectiveBackground.colors()
-            Box(Modifier.fillMaxWidth().height(112.dp).then(if (colors.isNotEmpty()) Modifier.background(Brush.linearGradient(colors)) else Modifier.background(AppTheme.accentBg)))
+            Box(Modifier.fillMaxWidth().height(112.dp).drawBehind {
+                if (colors.isNotEmpty()) drawCover(identity.effectiveBackground) else drawRect(AppTheme.accentBg)
+            })
             Column(Modifier.fillMaxWidth().offset(y = (-48).dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(Modifier.size(96.dp).background(AppTheme.colors.card, CircleShape).clickable(role = Role.Button) { avatars = !avatars }, contentAlignment = Alignment.Center) {
                     Text(identity.avatarEmoji, style = inter(52f))
@@ -119,7 +123,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
                 MeSection(strings.profileAppearanceGroup()) {
                     MeRow(strings.myProfileRowCover(), if (identity.coverPhotoIds.isEmpty()) strings.myProfileCoverUnset() else strings.photosCount(identity.coverPhotoIds.size), onClick = onCover)
                     MeDivider()
-                    MeRow(strings.settingsProfileBackground(), if (identity.effectiveBackground == ProfileBackground.none) strings.cosmeticDefaultOption() else identity.effectiveBackground.rawValue.replaceFirstChar(Char::uppercase), onClick = { backgrounds = true })
+                    MeRow(strings.settingsProfileBackground(), identity.effectiveBackground.displayNameOrDefault(strings), onClick = { backgrounds = true })
                     // «Как видят другие» sits with the rows that decide how that identity looks; only
                     // with a public profile: signed out the screen behind it has nothing to draw.
                     if (social != null) { MeDivider(); MeRow(strings.myProfileRowPreview(), tag = "my_profile_row_preview", onClick = social.onPreview) }
@@ -132,8 +136,8 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
             }
         }
     }
-    if (backgrounds) SettingsOptionPicker(strings.settingsProfileBackground(), MePlusGate.backgrounds, identity.effectiveBackground, "",
-        label = { if (it == ProfileBackground.none) strings.cosmeticDefaultOption() else it.rawValue.replaceFirstChar(Char::uppercase) },
+    if (backgrounds) SettingsOptionPicker(strings.settingsProfileBackground(), MePlusGate.backgrounds(identity.isPlus), identity.effectiveBackground, "",
+        label = { it.displayNameOrDefault(strings) },
         badgeTint = { it.colors().firstOrNull() },
         onSelect = { save { store.setBackground(it) } }, onDismissRequest = { backgrounds = false }, testTagPrefix = "profile_background")
     if (username) UsernameEditor(identity.username, { store.setUsername(it) }, { username = false })

@@ -182,6 +182,7 @@ class AppGraph(
         onIdentityChanged = sessionEvents::identityChanged,
         logger = com.onezee.triptrack.network.ApiLogger(meDiagnostics::append),
     )
+    val plusApi = com.onezee.triptrack.network.PlusApi(apiClient)
 
     @Volatile private var settingsManagerReady = false
     val settingsManager: SettingsManager = SettingsManager(
@@ -213,6 +214,9 @@ class AppGraph(
         appContext = context,
         scope = CoroutineScope(scope.coroutineContext + Dispatchers.Main.immediate),
     ).also { sessionEvents.listener = it }
+
+    val plusEntitlement = com.onezee.triptrack.feature.me.PlusEntitlementStore(preferences,
+        com.onezee.triptrack.feature.me.ApiPlusEntitlementApi(apiClient), scope).also { it.bind(auth) }
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */
     val tripsFeature: TripsFeature by lazy {
@@ -350,6 +354,7 @@ class AppGraph(
     fun onForeground() {
         syncHost.onForeground()
         auth.onForeground()
+        scope.launch { plusEntitlement.refresh() }
         // iOS NotificationsInboxStore: the unread count is honest when the app comes back.
         scope.launch { social.inbox.refreshUnreadOnly() }
     }

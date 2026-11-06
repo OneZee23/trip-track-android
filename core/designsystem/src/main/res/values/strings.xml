@@ -1541,6 +1541,11 @@
     <string name="proTermsTrial">Then %1$s a year. Cancel anytime</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Try your new look</string>
+    <string name="pro_feature_background" formatted="false">Profile background</string>
+    <string name="pro_manage_title" formatted="false">Your PRO</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Show PRO badge</string>
+    <string name="pro_works_until">PRO works until %1$s</string>
     <string name="profile" formatted="false">Profile</string>
     <string name="profileAddCover" formatted="false">Add cover</string>
     <string name="profileAddPhoto" formatted="false">Add photo</string>
@@ -1581,6 +1586,23 @@
     <string name="profileUnpin" formatted="false">Unpin from profile</string>
     <string name="profileYourKilometersStreaks" formatted="false">Your trips, distance and achievements will appear here.</string>
     <string name="profileYourTripsWill" formatted="false">Your trips will show up here</string>
+    <string name="promo_already_redeemed" formatted="false">This code is already on your account.</string>
+    <string name="promo_another" formatted="false">Redeem another code</string>
+    <string name="promo_body" formatted="false">The code turns on PRO for this account.</string>
+    <string name="promo_code" formatted="false">Promo code</string>
+    <string name="promo_done" formatted="false">Done</string>
+    <string name="promo_expired" formatted="false">This code has expired.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">This code no longer works.</string>
+    <string name="promo_not_found" formatted="false">No such code. Check it for typos.</string>
+    <string name="promo_offline" formatted="false">No connection. Try again.</string>
+    <string name="promo_redeem" formatted="false">Redeem</string>
+    <string name="promo_signed_out" formatted="false">Sign in to redeem a code: PRO belongs to your account.</string>
+    <string name="promo_success" formatted="false">PRO is on</string>
+    <string name="promo_too_many" formatted="false">Too many tries. Try again in an hour.</string>
+    <string name="promo_until">PRO until %1$s</string>
+    <string name="promo_used_up" formatted="false">This code has already been used.</string>
+    <string name="promo_validation" formatted="false">Enter the whole code.</string>
     <string name="publicDataLoadFailed" formatted="false">Couldn\'t load this</string>
     <string name="publicDataPartial" formatted="false">Not everything loaded — these numbers may be low</string>
     <string name="publicGarageEmpty" formatted="false">Nothing here yet. Their trips and map are where they were.</string>

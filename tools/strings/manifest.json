@@ -42,7 +42,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "fe72f73e2454468217f280d52f92b7c6c36152b2b4e14f1d343f9cb60777a769"
+    "tools/strings/android.json": "6d4c6793e62a828b77743154bccbaaeb3d84eaaf19330f7db43f8532f19c3087"
   },
   "languages": [
     "en",
@@ -139,67 +139,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 1
     },
     "de": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1934,
+      "strings": 1956,
       "plurals": 33,
       "english_fallbacks": 24
     }
@@ -37860,6 +37860,68 @@
       }
     },
     {
+      "name": "pro_feature_background",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "pro_manage_title",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "pro_profile_section",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "pro_show_badge",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "pro_works_until",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "date": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
       "name": "profile",
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
@@ -38340,6 +38402,200 @@
       "kind": "string",
       "file": "TripTrack/Localization/AppStrings.swift",
       "line": 6698,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_already_redeemed",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_another",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_body",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_code",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_done",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_expired",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_hint",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_inactive",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_not_found",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_offline",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_redeem",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_signed_out",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_success",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_too_many",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_until",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {
+        "date": {
+          "index": 1,
+          "type": "s"
+        }
+      },
+      "formatted": true,
+      "signatures": {
+        "text": {
+          "1": "s"
+        }
+      }
+    },
+    {
+      "name": "promo_used_up",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "promo_validation",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
       "placeholders": {},
       "formatted": false,
       "signatures": {

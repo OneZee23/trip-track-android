@@ -1574,6 +1574,11 @@
     <string name="proTermsTrial">Poi %1$s all’anno. Può annullare quando vuole</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Provi il Suo nuovo stile</string>
+    <string name="pro_feature_background" formatted="false">Sfondo del profilo</string>
+    <string name="pro_manage_title" formatted="false">Il tuo PRO</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Mostra badge PRO</string>
+    <string name="pro_works_until">PRO è attivo fino al %1$s</string>
     <string name="profile" formatted="false">Profilo</string>
     <string name="profileAddCover" formatted="false">Aggiungi copertina</string>
     <string name="profileAddPhoto" formatted="false">Aggiungi foto</string>
@@ -1614,6 +1619,23 @@
     <string name="profileUnpin" formatted="false">Rimuovi dal profilo</string>
     <string name="profileYourKilometersStreaks" formatted="false">Qui compariranno i Suoi viaggi, la distanza e i traguardi.</string>
     <string name="profileYourTripsWill" formatted="false">Qui compariranno i Suoi viaggi</string>
+    <string name="promo_already_redeemed" formatted="false">Questo codice è già attivo sul tuo account.</string>
+    <string name="promo_another" formatted="false">Riscatta un altro codice</string>
+    <string name="promo_body" formatted="false">Il codice attiva PRO per questo account.</string>
+    <string name="promo_code" formatted="false">Codice promozionale</string>
+    <string name="promo_done" formatted="false">Fatto</string>
+    <string name="promo_expired" formatted="false">Questo codice è scaduto.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Questo codice non è più valido.</string>
+    <string name="promo_not_found" formatted="false">Codice inesistente. Controlla che non ci siano errori.</string>
+    <string name="promo_offline" formatted="false">Nessuna connessione. Riprova.</string>
+    <string name="promo_redeem" formatted="false">Riscatta</string>
+    <string name="promo_signed_out" formatted="false">Accedi per riscattare il codice: PRO è legato al tuo account.</string>
+    <string name="promo_success" formatted="false">PRO è attivo</string>
+    <string name="promo_too_many" formatted="false">Troppi tentativi. Riprova tra un’ora.</string>
+    <string name="promo_until">PRO fino al %1$s</string>
+    <string name="promo_used_up" formatted="false">Questo codice è già stato usato.</string>
+    <string name="promo_validation" formatted="false">Inserisci il codice completo.</string>
     <string name="publicDataLoadFailed" formatted="false">Impossibile caricare</string>
     <string name="publicDataPartial" formatted="false">Non è stato caricato tutto: i numeri possono essere in difetto</string>
     <string name="publicGarageEmpty" formatted="false">Qui non c\'è ancora nulla. I viaggi e la mappa sono dove erano.</string>

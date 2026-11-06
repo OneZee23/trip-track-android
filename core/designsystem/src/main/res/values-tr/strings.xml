@@ -1541,6 +1541,11 @@
     <string name="proTermsTrial">Sonra yılda %1$s. İstediğiniz an iptal edebilirsiniz</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Yeni görünümünüzü deneyin</string>
+    <string name="pro_feature_background" formatted="false">Profil arka planı</string>
+    <string name="pro_manage_title" formatted="false">PRO’nuz</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">PRO rozetini göster</string>
+    <string name="pro_works_until">PRO %1$s tarihine kadar çalışır</string>
     <string name="profile" formatted="false">Profil</string>
     <string name="profileAddCover" formatted="false">Kapak ekle</string>
     <string name="profileAddPhoto" formatted="false">Fotoğraf ekle</string>
@@ -1581,6 +1586,23 @@
     <string name="profileUnpin" formatted="false">Profilden kaldır</string>
     <string name="profileYourKilometersStreaks" formatted="false">Yolculuklarınız, mesafeniz ve başarımlarınız burada görünecek.</string>
     <string name="profileYourTripsWill" formatted="false">Gezileriniz burada görünecek</string>
+    <string name="promo_already_redeemed" formatted="false">Bu kod hesabınızda zaten etkin.</string>
+    <string name="promo_another" formatted="false">Başka kod kullan</string>
+    <string name="promo_body" formatted="false">Kod bu hesapta PRO’yu etkinleştirir.</string>
+    <string name="promo_code" formatted="false">Promosyon kodu</string>
+    <string name="promo_done" formatted="false">Bitti</string>
+    <string name="promo_expired" formatted="false">Bu kodun süresi doldu.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Bu kod artık çalışmıyor.</string>
+    <string name="promo_not_found" formatted="false">Böyle bir kod yok. Yazım hatası olup olmadığını kontrol edin.</string>
+    <string name="promo_offline" formatted="false">Bağlantı yok. Tekrar deneyin.</string>
+    <string name="promo_redeem" formatted="false">Kullan</string>
+    <string name="promo_signed_out" formatted="false">Kodu kullanmak için giriş yapın: PRO hesabınıza bağlıdır.</string>
+    <string name="promo_success" formatted="false">PRO etkin</string>
+    <string name="promo_too_many" formatted="false">Çok fazla deneme. Bir saat sonra tekrar deneyin.</string>
+    <string name="promo_until">PRO %1$s tarihine kadar</string>
+    <string name="promo_used_up" formatted="false">Bu kod daha önce kullanılmış.</string>
+    <string name="promo_validation" formatted="false">Kodun tamamını girin.</string>
     <string name="publicDataLoadFailed" formatted="false">Yüklenemedi</string>
     <string name="publicDataPartial" formatted="false">Her şey yüklenmedi — sayılar olduğundan az olabilir</string>
     <string name="publicGarageEmpty" formatted="false">Burada henüz bir şey yok. Yolculukları ve haritası yerinde.</string>

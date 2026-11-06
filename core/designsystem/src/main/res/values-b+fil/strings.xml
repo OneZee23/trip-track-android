@@ -1541,6 +1541,11 @@
     <string name="proTermsTrial">Pagkatapos %1$s kada taon. Puwedeng kanselahin anumang oras</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Subukan ang bagong hitsura</string>
+    <string name="pro_feature_background" formatted="false">Background ng profile</string>
+    <string name="pro_manage_title" formatted="false">PRO mo</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Ipakita ang PRO badge</string>
+    <string name="pro_works_until">Gagana ang PRO hanggang %1$s</string>
     <string name="profile" formatted="false">Profile</string>
     <string name="profileAddCover" formatted="false">Magdagdag ng pabalat</string>
     <string name="profileAddPhoto" formatted="false">Magdagdag ng larawan</string>
@@ -1581,6 +1586,23 @@
     <string name="profileUnpin" formatted="false">Alisin sa profile</string>
     <string name="profileYourKilometersStreaks" formatted="false">Dito lalabas ang inyong mga biyahe, layo at mga tagumpay.</string>
     <string name="profileYourTripsWill" formatted="false">Lalabas dito ang inyong mga biyahe</string>
+    <string name="promo_already_redeemed" formatted="false">Aktibo na ang code na ito sa account mo.</string>
+    <string name="promo_another" formatted="false">Mag-redeem ng isa pang code</string>
+    <string name="promo_body" formatted="false">Isinasaaktibo ng code ang PRO para sa account na ito.</string>
+    <string name="promo_code" formatted="false">Promo code</string>
+    <string name="promo_done" formatted="false">Tapos na</string>
+    <string name="promo_expired" formatted="false">Nag-expire na ang code na ito.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Hindi na gumagana ang code na ito.</string>
+    <string name="promo_not_found" formatted="false">Walang ganoong code. Tingnan kung may typo.</string>
+    <string name="promo_offline" formatted="false">Walang koneksyon. Subukan ulit.</string>
+    <string name="promo_redeem" formatted="false">I-redeem</string>
+    <string name="promo_signed_out" formatted="false">Mag-sign in para i-redeem ang code: nakatali ang PRO sa account mo.</string>
+    <string name="promo_success" formatted="false">Naka-on ang PRO</string>
+    <string name="promo_too_many" formatted="false">Napakaraming pagsubok. Subukan muli pagkalipas ng isang oras.</string>
+    <string name="promo_until">PRO hanggang %1$s</string>
+    <string name="promo_used_up" formatted="false">Nagamit na ang code na ito.</string>
+    <string name="promo_validation" formatted="false">Ilagay ang buong code.</string>
     <string name="publicDataLoadFailed" formatted="false">Hindi ma-load</string>
     <string name="publicDataPartial" formatted="false">Hindi lahat na-load — maaaring mas mababa ang mga bilang</string>
     <string name="publicGarageEmpty" formatted="false">Wala pa rito. Nasa dati pa rin ang mga biyahe at mapa niya.</string>

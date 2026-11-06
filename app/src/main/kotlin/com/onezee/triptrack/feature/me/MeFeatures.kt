@@ -33,7 +33,7 @@ class MeFeatures(graph: AppGraph, private val preferences: PresentationPreferenc
     fun hideCoverPrompt() { preferences.set("profileCoverPromptHidden", "true"); coverPromptHidden = true }
     val profilePhotos = ProfilePhotoStore(java.io.File(files, "ProfilePhotos"), ApiProfilePhotoService(graph.apiClient), com.onezee.triptrack.sync.RasterPhotoEncoder(),
         { graph.auth.state.value.signedInAccountId }, scope)
-    val identity = ProfileIdentityStore(graph.settings, graph.trips, photos, preferences, graph.auth, graph.apiClient, graph.settingsManager, scope, changes, badgeLedger, ProfileProgressStore(graph.database), profilePhotos)
+    val identity = ProfileIdentityStore(graph.settings, graph.trips, photos, preferences, graph.auth, graph.apiClient, graph.settingsManager, scope, changes, badgeLedger, ProfileProgressStore(graph.database), profilePhotos, graph.plusEntitlement.isPlus)
     init { graph.auth.addMeListener { response ->
         val account = graph.auth.state.value.signedInAccountId
         scope.launch { if (account != null && graph.auth.state.value.signedInAccountId == account) identity.applyRemote(response) }

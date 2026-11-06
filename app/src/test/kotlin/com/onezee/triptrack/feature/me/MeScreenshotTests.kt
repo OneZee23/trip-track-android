@@ -25,6 +25,7 @@ import com.onezee.triptrack.designsystem.components.Glyph
 import com.onezee.triptrack.designsystem.components.AppGlyph
 import com.onezee.triptrack.designsystem.components.AppConfirmDialog
 import com.onezee.triptrack.designsystem.components.AppDialogAction
+import com.onezee.triptrack.designsystem.components.SettingsOptionPicker
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.settings.*
@@ -156,6 +157,28 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun heroChosenBackground() = shot("hero_chosen") {
         ProfileHeroCard(MeFixtures.hero.copy(identity = MeFixtures.hero.identity.copy(effectiveBackground = ProfileBackground.ocean)), DistanceUnit.km, {}, {}, {})
     }
+    @Test fun heroPaidBackgroundPattern() = shot("hero_paid_background") {
+        ProfileHeroCard(MeFixtures.hero.copy(identity = MeFixtures.hero.identity.copy(isPlus = true, effectiveBackground = ProfileBackground.plusNebula)), DistanceUnit.km, {}, {}, {})
+    }
+    @Test fun heroShowsOwnProBadge() = shot("hero_pro_badge") {
+        ProfileHeroCard(MeFixtures.hero.copy(identity = MeFixtures.hero.identity.copy(isPlus = true, showPlusBadge = true)), DistanceUnit.km, {}, {}, {})
+    }
+    @Test fun proRow() = shot("pro_row", before = {
+        compose.onNodeWithTag("screen_me").performScrollToNode(hasTestTag("profile_sections_toggle"))
+        compose.onNodeWithTag("profile_sections_toggle").performClick()
+    }) {
+        MePage(MeFixtures.page.copy(hero = MeFixtures.page.hero.copy(identity = MeFixtures.page.hero.identity.copy(isPlus = true))), signedIn = true,
+            proUntil = Instant.parse("2026-12-06T10:00:00Z"))
+    }
+    @Test fun proManage() = shot("pro_manage") {
+        ProManageSheet(MeFixtures.hero.identity.copy(isPlus = true), Instant.parse("2026-12-06T10:00:00Z"), {}, {}, {})
+    }
+    @Test fun paidBackgroundPicker() = shot("pro_background_picker") {
+        val defaultLabel = appStrings.cosmeticDefaultOption()
+        SettingsOptionPicker(appStrings.settingsProfileBackground(), MePlusGate.backgrounds(true), ProfileBackground.plusGold, "",
+            label = { if (it == ProfileBackground.none) defaultLabel else it.displayName },
+            badgeTint = { it.colors().firstOrNull() }, onSelect = {}, onDismissRequest = {}, testTagPrefix = "profile_background")
+    }
     @Test fun heroWithCoverPhotos() = shot("hero_cover") {
         // 47: the status bar of the iPhone the shots of the tour were taken on; the renders have no bar of their own.
         ProfileHeroCard(MeFixtures.hero, DistanceUnit.km, {}, {}, {}, coverPhotos = MeFixtures.cover, safeTop = 47.dp)
@@ -215,10 +238,10 @@ class MeScreenshotTests(private val dark: Boolean) {
     @Test fun nameEditor() = shot("name_editor") { ProfileTextEditor(ProfileTextField.displayName, "Путешественник", {}, {}) }
     @Test fun bioEditor() = shot("bio_editor") { ProfileTextEditor(ProfileTextField.bio, MeFixtures.hero.identity.bio, {}, {}) }
     /** The real Я content on a fixture, every callback a no-op. */
-    @Composable private fun MePage(state: MeState, signedIn: Boolean = false, covers: List<ProfileCoverPhoto> = emptyList()) {
+    @Composable private fun MePage(state: MeState, signedIn: Boolean = false, covers: List<ProfileCoverPhoto> = emptyList(), proUntil: Instant? = null) {
         MeContent(state, DistanceUnit.km, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { _, _ -> }, {}, {}, {}, {}, {}, {},
             account = { com.onezee.triptrack.feature.account.GuestSignInCard(expired = false, isAuthenticating = false, onSignIn = { _, _, _ -> }) },
-            coverPhotos = covers, signedIn = signedIn, safeTop = if (covers.isEmpty()) 0.dp else 47.dp)
+            coverPhotos = covers, signedIn = signedIn, proUntil = proUntil, safeTop = if (covers.isEmpty()) 0.dp else 47.dp)
     }
     companion object {
         @JvmStatic @ParameterizedRobolectricTestRunner.Parameters(name = "dark={0}")

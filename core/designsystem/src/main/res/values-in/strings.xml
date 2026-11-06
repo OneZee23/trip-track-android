@@ -1508,6 +1508,11 @@
     <string name="proTermsTrial">Lalu %1$s per tahun. Bisa dibatalkan kapan saja</string>
     <string name="proTitle" formatted="false">TripTrack PRO</string>
     <string name="proTryYourStyle" formatted="false">Coba tampilan baru Anda</string>
+    <string name="pro_feature_background" formatted="false">Latar profil</string>
+    <string name="pro_manage_title" formatted="false">PRO Anda</string>
+    <string name="pro_profile_section" formatted="false">PRO</string>
+    <string name="pro_show_badge" formatted="false">Tampilkan lencana PRO</string>
+    <string name="pro_works_until">PRO aktif sampai %1$s</string>
     <string name="profile" formatted="false">Profil</string>
     <string name="profileAddCover" formatted="false">Tambah sampul</string>
     <string name="profileAddPhoto" formatted="false">Tambah foto</string>
@@ -1548,6 +1553,23 @@
     <string name="profileUnpin" formatted="false">Lepas dari profil</string>
     <string name="profileYourKilometersStreaks" formatted="false">Perjalanan, jarak, dan pencapaian Anda akan muncul di sini.</string>
     <string name="profileYourTripsWill" formatted="false">Perjalanan Anda akan muncul di sini</string>
+    <string name="promo_already_redeemed" formatted="false">Kode ini sudah aktif di akun Anda.</string>
+    <string name="promo_another" formatted="false">Tukarkan kode lain</string>
+    <string name="promo_body" formatted="false">Kode ini mengaktifkan PRO untuk akun ini.</string>
+    <string name="promo_code" formatted="false">Kode promo</string>
+    <string name="promo_done" formatted="false">Selesai</string>
+    <string name="promo_expired" formatted="false">Masa berlaku kode ini habis.</string>
+    <string name="promo_hint" formatted="false">XXXX-XXXX-XXXX</string>
+    <string name="promo_inactive" formatted="false">Kode ini sudah tidak berlaku.</string>
+    <string name="promo_not_found" formatted="false">Kode tidak ditemukan. Periksa kemungkinan salah ketik.</string>
+    <string name="promo_offline" formatted="false">Tidak ada koneksi. Coba lagi.</string>
+    <string name="promo_redeem" formatted="false">Tukarkan</string>
+    <string name="promo_signed_out" formatted="false">Masuk untuk menukarkan kode: PRO terhubung ke akun Anda.</string>
+    <string name="promo_success" formatted="false">PRO aktif</string>
+    <string name="promo_too_many" formatted="false">Terlalu banyak percobaan. Coba lagi dalam satu jam.</string>
+    <string name="promo_until">PRO sampai %1$s</string>
+    <string name="promo_used_up" formatted="false">Kode ini sudah digunakan.</string>
+    <string name="promo_validation" formatted="false">Masukkan kode lengkap.</string>
     <string name="publicDataLoadFailed" formatted="false">Gagal memuat</string>
     <string name="publicDataPartial" formatted="false">Tidak semuanya termuat — angkanya bisa lebih rendah</string>
     <string name="publicGarageEmpty" formatted="false">Belum ada apa-apa di sini. Perjalanan dan petanya tetap di tempatnya.</string>

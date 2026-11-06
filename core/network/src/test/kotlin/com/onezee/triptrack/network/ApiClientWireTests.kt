@@ -85,6 +85,24 @@ class ApiClientWireTests {
             NetworkJson.wire.parseToJsonElement(request.body!!.utf8()))
     }
 
+    @Test fun plusStatusAndPromoRedemptionUseTheirFixturesAndExactWireContract() = runBlocking {
+        server.enqueue(ok(fixture("PromoCodeTests-statusIncludesPromoUntil")))
+        val status = PlusApi(client).status()
+        assertEquals(Instant.parse("2026-12-06T10:00:00Z"), status.promoUntil)
+        val statusRequest = server.takeRequest()
+        assertEquals(ApiEndpoint.plusStatus, statusRequest.url.encodedPath)
+        assertEquals("expired", statusRequest.headers["x-access-token"])
+        assertEquals("{}", statusRequest.body!!.utf8())
+
+        server.enqueue(ok(fixture("PromoCodeTests-redeemSuccess")))
+        val response = PlusApi(client).redeem("  AbC-1234  ")
+        assertEquals(30, response.redemption.durationDays)
+        val redeemRequest = server.takeRequest()
+        assertEquals(ApiEndpoint.promoRedeem, redeemRequest.url.encodedPath)
+        assertEquals("expired", redeemRequest.headers["x-access-token"])
+        assertEquals("{\"code\":\"AbC-1234\"}", redeemRequest.body!!.utf8())
+    }
+
     @Test fun failedLoginKeepsPreviousIdentityAndTokens() = runBlocking {
         server.enqueue(rejected("INVALID_GOOGLE_TOKEN"))
         assertFailsWith<ApiError.UnknownServer> { client.loginGoogle(GoogleLoginRequest("test", "local", "raw", appVersion = "1")) }
