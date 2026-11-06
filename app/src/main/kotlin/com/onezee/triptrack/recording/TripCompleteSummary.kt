@@ -56,6 +56,7 @@ import com.onezee.triptrack.map.fog.FogPalette
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
 import com.onezee.triptrack.map.route.RouteShape
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.ui.LiveMaps
@@ -334,7 +335,7 @@ private fun SummaryHero(trip: Trip, fog: RevealedLayer?, revealed: Boolean, modi
     Box(modifier.testTag("summary_hero_map")) {
         if (!LocalLiveMaps.current || LocalInspectionMode.current) TrackingMapPlaceholder(coordinates, Modifier.fillMaxSize())
         else MapHost(map, Modifier.fillMaxSize(), fog = fog?.let { MapFog(it, FogLook(FogPalette.NIGHT)) },
-            routes = route?.let { MapRoutes(listOf(it), RouteAppearance.overFog(FogPalette.NIGHT)) },
+            routes = route?.let { MapRoutes(listOf(it), RouteAppearance.overFog(FogPalette.NIGHT).withSelectedRouteStyle()) },
             gesturesEnabled = false, textureMode = true, styleUri = LiveMaps.style(true), systemInsets = WindowInsets(0))
         if (revealed) SummaryRevealVeil(coordinates, Modifier.fillMaxSize())
     }

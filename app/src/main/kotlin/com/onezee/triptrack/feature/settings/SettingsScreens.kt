@@ -49,6 +49,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
     val identity by graph.me.identity.identity.collectAsState()
     var adminOpen by rememberSaveable { mutableStateOf(false) }
     var promoOpen by rememberSaveable { mutableStateOf(false) }
+    var routeShowcaseOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) { if (manager.state.value.sheets.isEmpty()) manager.openSheet(SettingsSheet.settings) }
     DisposableEffect(Unit) { onDispose { manager.closeSheets() } }
     val context = LocalContext.current
@@ -73,7 +74,7 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
                         onOpenStreetMap = { open("https://www.openstreetmap.org/copyright") },
                         account = { AccountEntry(graph) }, onPromo = { promoOpen = true })
                     SettingsSheet.appPreferences -> SettingsSheetPage(strings.settingsAppPrefs()) {
-                        SettingsPreferencesCard(state, onOpen = manager::openSheet)
+                        SettingsPreferencesCard(state, isPlus, onOpen = manager::openSheet, onRouteLine = { routeShowcaseOpen = true })
                         Text(strings.appPrefsFootnote(), Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 10.dp), style = inter(11.5f), color = AppTheme.colors.textTertiary)
                     }
                     SettingsSheet.privacy -> SettingsSheetPage(strings.privacyTitle()) {
@@ -163,6 +164,10 @@ internal fun SettingsRoute(graph: AppGraph, onDismiss: () -> Unit) {
         com.onezee.triptrack.feature.settings.AdminPanelScreen(graph.apiClient) { adminOpen = false }
     }
     if (promoOpen) PromoCodeSheet(graph, auth.isSignedIn) { promoOpen = false }
+    if (routeShowcaseOpen && isPlus) com.onezee.triptrack.feature.me.ProShowcaseSheet(ProShowcaseKind.routeLine,
+        graph.routeLineStyle().rawValue, true, auth.isSignedIn, state.cloudSyncEnabled,
+        onPick = { graph.setRouteLineStyle(RouteLineStyle.fromRawValue(it) ?: RouteLineStyle.speed) },
+        onDismiss = { routeShowcaseOpen = false })
 }
 
 /** The sheets iOS gives `presentationDragIndicator(.visible)`: Настройки, its sub-pages, auto-record and the stereo picker. */
@@ -237,7 +242,7 @@ internal fun SettingsContent(state: SettingsState, theme: ThemeMode, language: A
 
 /** iOS AppPreferencesView.card: the units and the average speed; each shows its value and opens a picker. */
 @Composable
-internal fun SettingsPreferencesCard(state: SettingsState, onOpen: (SettingsSheet) -> Unit) {
+internal fun SettingsPreferencesCard(state: SettingsState, isPlus: Boolean = false, onOpen: (SettingsSheet) -> Unit, onRouteLine: () -> Unit = {}) {
     val strings = appStrings
     Column(Modifier.surfaceCard(16.dp)) {
         SettingsIconRow(strings.settingsUnits(), glyph = AppGlyph.ruler, tag = "settings_units", onClick = { onOpen(SettingsSheet.units) }) { SettingsRowValue(strings.unitDistanceBadge(state.distanceUnit)) }
@@ -245,8 +250,17 @@ internal fun SettingsPreferencesCard(state: SettingsState, onOpen: (SettingsShee
         SettingsIconRow(strings.avgSpeedModeTitle(), glyph = AppGlyph.speedometer, tag = "settings_average_speed", onClick = { onOpen(SettingsSheet.averageSpeed) }) {
             SettingsRowValue(if (state.averageSpeed == AvgSpeedMode.overall) strings.avgSpeedOverall() else strings.avgSpeedMoving())
         }
+        if (isPlus) {
+            MeDivider()
+            SettingsIconRow(strings.showcaseLine(), glyph = AppGlyph.map, tag = "settings_route_line", onClick = onRouteLine) {
+                SettingsRowValue(graphRouteLineName(strings))
+            }
+        }
     }
 }
+
+private fun graphRouteLineName(strings: AppStrings): String =
+    RouteLineStyle.stored().displayName.ifBlank { strings.routeLineSpeedGradient() }
 
 /**
  * iOS footer(): centred under the cards, 12 below them. The mark in the pixel face and the version, the two legal

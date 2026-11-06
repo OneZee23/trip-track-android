@@ -41,8 +41,10 @@ import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
 import com.onezee.triptrack.map.route.RouteShape
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.map.replay.MapPlayback
 import com.onezee.triptrack.model.GeoPoint
+import com.onezee.triptrack.model.RouteLineStyle
 import com.onezee.triptrack.ui.LightRoutePreview
 import com.onezee.triptrack.ui.LiveMaps
 
@@ -118,7 +120,7 @@ fun TripLiveMap(
             input.hiddenLockPoints.mapIndexed { index, point -> MapMarker("hidden_lock:$index", point, MapMarker.Kind.HIDDEN_LOCK, image = hiddenLockBitmap()) }
     }
     val style = remember { LiveMaps.style(dark) }
-    val appearance = RouteAppearance.plain.copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
+    val appearance = RouteAppearance.plain.withSelectedRouteStyle().copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
     MapHost(
         state = state,
         modifier = modifier.testTag("detail_live_map"),

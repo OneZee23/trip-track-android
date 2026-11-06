@@ -189,7 +189,10 @@ class StorageContractTests {
         }
         val mod = VehicleMod(id = id, title = "CarPlay", date = "2026-10-20", odometerKm = 142000.0, photoIds = listOf(id))
         val updated = absent.copy(drive2Url = "https://www.drive2.ru/r/vw/polo/123/", modTags = listOf("CarPlay"),
-            paintFinish = "matte", mods = listOf(mod), catalogModelId = "vw-polo", catalogGenerationId = "polo-v", catalogVariantId = "1.6-at")
+            cardStyle = "card_sunset", paintFinish = "matte", mods = listOf(mod), catalogModelId = "vw-polo", catalogGenerationId = "polo-v", catalogVariantId = "1.6-at")
+        val encodedUpdated = jsonObject(wire.encodeToString(updated))
+        assertEquals(JsonPrimitive("card_sunset"), encodedUpdated["cardStyle"])
+        assertEquals(JsonPrimitive("matte"), encodedUpdated["paintFinish"])
         val back = wire.decodeFromString<VehicleSyncPayload>(wire.encodeToString(updated))
         assertEquals(updated.copy(manualOdometerKnown = true, soldAtKnown = true), back)
         val cleared = absent.copy(drive2Url = "", modTags = emptyList(), mods = emptyList(), catalogModelId = "", paintFinish = "gloss")

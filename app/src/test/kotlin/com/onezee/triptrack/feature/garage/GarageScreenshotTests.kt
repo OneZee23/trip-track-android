@@ -22,6 +22,7 @@ import com.github.takahirom.roborazzi.captureScreenRoboImage
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
+import com.onezee.triptrack.designsystem.theme.appStrings
 import com.onezee.triptrack.model.*
 import com.onezee.triptrack.ui.LocalAppVersion
 import java.time.Instant
@@ -98,6 +99,14 @@ class GarageScreenshotTests(private val dark: Boolean) {
             DistanceUnit.km, isNew = false, {}, {}, {}, {}, {}, { _, _ -> }, {}, { _, _, _, _, _ -> }, { _, _, _, _ -> }, {}, {}, onSold = {})
     }
     @Test fun formTop() { form(GarageFixtures.car); shot("form_top") }
+    @Test fun vehicleFinishChooser() {
+        content {
+            val gloss = appStrings.vehicleFinishGloss(); val matte = appStrings.vehicleFinishMatte()
+            com.onezee.triptrack.designsystem.components.SettingsOptionPicker(appStrings.garageFinish(), VehicleFinish.availableFinishes, VehicleFinish.matte, "",
+                { if (it == VehicleFinish.matte) matte else gloss }, {}, {}, testTagPrefix = "vehicle_finish")
+        }
+        shot("vehicle_finish_chooser")
+    }
     @Test fun formEngine() { form(GarageFixtures.car.copy(powertrain = Powertrain.pluginHybrid)); shot("form_engine", scrollTo = "vehicle_powertrain_row", scroller = "vehicle_edit_scroll") }
     @Test fun newVehicleFormUsesAddFlowFields() {
         content {

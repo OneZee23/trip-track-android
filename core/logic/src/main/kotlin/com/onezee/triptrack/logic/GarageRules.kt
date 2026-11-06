@@ -18,7 +18,7 @@ object VehicleModTags {
     fun sanitized(input: List<String>): List<String> {
         val result = mutableListOf<String>()
         for (value in input) {
-            val tag = prefixCharacters(value.trim(), 24)
+            val tag = limited(value.trim())
             if (tag.isNotEmpty() && !result.contains(tag)) result.add(tag)
             if (result.size == 3) break
         }
@@ -38,6 +38,8 @@ object VehicleModTags {
 
     /** An empty list is written as `[]`, not NULL: on the wire that is an explicit clear. */
     fun encodeJSON(tags: List<String>): String = ModelJson.storage.encodeToString(strings, sanitized(tags))
+
+    fun limited(value: String): String = prefixCharacters(value, 24)
 
     // Swift prefixes grapheme clusters, including emoji modifiers and joined families.
     private fun prefixCharacters(text: String, count: Int): String =
@@ -81,10 +83,4 @@ fun VehicleFinish.Companion.parse(raw: String?): VehicleFinish? = raw?.let(Vehic
 val VehicleType.hasPlate: Boolean get() = this == VehicleType.car || this == VehicleType.moto
 
 // iOS: VehicleCardStyle.swift, VehicleFinish.swift, VehicleModTags.swift. Display fallbacks never erase a saved choice.
-fun VehicleCardStyle.Companion.effective(raw: String?, isPlus: Boolean): VehicleCardStyle =
-    if (isPlus) raw?.let { fromRawValue(it) } ?: VehicleCardStyle.none else VehicleCardStyle.none
-
-fun VehicleFinish.Companion.effective(raw: String?, isPlus: Boolean): VehicleFinish =
-    (parse(raw) ?: VehicleFinish.gloss).let { if (it != VehicleFinish.gloss && !isPlus) VehicleFinish.gloss else it }
-
 fun VehicleModTags.effective(tags: List<String>, isPlus: Boolean): List<String> = if (isPlus) sanitized(tags) else emptyList()

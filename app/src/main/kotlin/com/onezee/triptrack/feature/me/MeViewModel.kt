@@ -23,6 +23,7 @@ import kotlinx.coroutines.sync.withLock
 data class ProfileIdentity(
     val isPlus: Boolean = false,
     val showPlusBadge: Boolean = true,
+    val avatarFrame: com.onezee.triptrack.model.AvatarFrame = com.onezee.triptrack.model.AvatarFrame.none,
     val name: String = "",
     val avatarEmoji: String = "😎",
     val bio: String = "",

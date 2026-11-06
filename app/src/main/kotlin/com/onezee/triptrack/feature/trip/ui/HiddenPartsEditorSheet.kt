@@ -73,6 +73,7 @@ import com.onezee.triptrack.map.camera.MapCameraCommand
 import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.map.route.RouteLine
 import com.onezee.triptrack.map.route.RouteShape
@@ -146,7 +147,7 @@ fun HiddenPartsEditorSheet(
                 if (LocalLiveMaps.current) MapHost(
                     state = mapState,
                     modifier = Modifier.fillMaxSize(),
-                    routes = MapRoutes(listOf(mapShape), RouteAppearance.plain.copy(hiddenInkArgb = colors.text.copy(alpha = 0.55f).toArgb())),
+                    routes = MapRoutes(listOf(mapShape), RouteAppearance.plain.withSelectedRouteStyle().copy(hiddenInkArgb = colors.text.copy(alpha = 0.55f).toArgb())),
                     markers = lockMarkers,
                     onMapTap = { tap ->
                         val nearest = trip.trackPoints.indices.minByOrNull { index ->

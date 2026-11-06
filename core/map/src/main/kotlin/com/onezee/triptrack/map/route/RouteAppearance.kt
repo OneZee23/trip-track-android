@@ -1,6 +1,10 @@
 package com.onezee.triptrack.map.route
 
 import com.onezee.triptrack.map.fog.FogPalette
+import com.onezee.triptrack.model.RouteLineStyle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 
 /**
  * How route lines are stroked (iOS: RouteMapView.Coordinator.routeRenderer and rendererFor(overlay:),
@@ -19,7 +23,7 @@ data class RouteAppearance(
     val casingExtraPoints: Double = CASING_EXTRA,
     /**
      * A colour that replaces the speed gradient (iOS: RouteLineStyle.currentUIColor, a PRO cosmetic).
-     * Android hides PRO, so screens pass null; the parameter keeps the iOS rule in one place.
+     * The selected phone-local style is supplied only while PRO is active.
      */
     val lineColorOverride: Int? = null,
     val showsEndpoints: Boolean = true,
@@ -61,5 +65,18 @@ data class RouteAppearance(
         lineColorOverride != null -> lineColorOverride
         line.speed == null -> ACCENT
         else -> SpeedColorScale.argb(line.speed)
+    }
+}
+
+fun RouteAppearance.withSelectedRouteStyle(): RouteAppearance = copy(lineColorOverride = RouteLineStyleMapState.currentColor())
+
+object RouteLineStyleMapState {
+    private var revision by mutableIntStateOf(0)
+
+    fun refresh() { revision++ }
+
+    fun currentColor(): Int? {
+        revision
+        return RouteLineStyle.currentColorArgb()
     }
 }

@@ -14,5 +14,12 @@ enum class VehicleCardStyle(val rawValue: String) {
 
     companion object {
         fun fromRawValue(value: String): VehicleCardStyle? = entries.find { it.rawValue == value }
+        fun effective(id: String?, isPlus: Boolean) = (fromRawValue(id.orEmpty()) ?: none).effective(isPlus)
     }
+
+    val isPlus: Boolean get() = this != none
+    val displayName: String get() = when (this) {
+        none -> ""; carbon -> "Carbon"; gold -> "Gold"; neon -> "Neon"; racing -> "Racing"; chrome -> "Chrome"; matte -> "Matte"; camo -> "Camo"; sunset -> "Sunset"
+    }
+    fun effective(isPlus: Boolean) = if (this.isPlus && !isPlus) none else this
 }

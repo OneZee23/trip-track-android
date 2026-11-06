@@ -112,6 +112,7 @@ import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.map.MapHost
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.ui.LiveMaps
 import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.model.Journey
@@ -1211,7 +1212,7 @@ internal fun PublishTripSheet(cloudSyncEnabled: Boolean, trip: com.onezee.triptr
                 }
                 if (routes.isNotEmpty()) {
                     val mapModifier = Modifier.fillMaxWidth().height(112.dp).clip(RoundedCornerShape(12.dp))
-                    if (LocalLiveMaps.current) MapHost(previewMap, mapModifier, routes = MapRoutes(listOf(previewShape), RouteAppearance.plain),
+                    if (LocalLiveMaps.current) MapHost(previewMap, mapModifier, routes = MapRoutes(listOf(previewShape), RouteAppearance.plain.withSelectedRouteStyle()),
                         systemInsets = androidx.compose.foundation.layout.WindowInsets(0),
                         styleUri = LiveMaps.style(AppTheme.isDark), gesturesEnabled = false, textureMode = true)
                     else com.onezee.triptrack.ui.LightRoutePreview(routes, mapModifier)

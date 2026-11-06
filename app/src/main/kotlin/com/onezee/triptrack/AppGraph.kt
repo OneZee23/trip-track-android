@@ -59,6 +59,8 @@ import com.onezee.triptrack.feature.tripChanges
 import com.onezee.triptrack.location.LocationGraph
 import com.onezee.triptrack.logic.GeohashEncoder
 import com.onezee.triptrack.model.EmptyRequest
+import com.onezee.triptrack.model.RouteLineStyle
+import com.onezee.triptrack.map.route.RouteLineStyleMapState
 import com.onezee.triptrack.model.SocialBlockedListResponse
 import com.onezee.triptrack.network.ApiClient
 import com.onezee.triptrack.network.ApiEndpoint
@@ -102,6 +104,18 @@ class AppGraph(
     // The iOS UserDefaults.standard: the app's default preferences file.
     private val preferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
     private val presentationPreferences = AndroidPresentationPreferences(preferences)
+
+    init {
+        RouteLineStyle.setStored(routeLineStyle())
+        RouteLineStyleMapState.refresh()
+    }
+
+    fun routeLineStyle(): RouteLineStyle = RouteLineStyle.fromRawValue(presentationPreferences.string(RouteLineStyle.storageKey).orEmpty()) ?: RouteLineStyle.speed
+    fun setRouteLineStyle(style: RouteLineStyle) {
+        presentationPreferences.set(RouteLineStyle.storageKey, style.rawValue)
+        RouteLineStyle.setStored(style)
+        RouteLineStyleMapState.refresh()
+    }
 
     val themeManager = ThemeManager(preferences)
     val languageManager = LanguageManager()
@@ -217,6 +231,11 @@ class AppGraph(
 
     val plusEntitlement = com.onezee.triptrack.feature.me.PlusEntitlementStore(preferences,
         com.onezee.triptrack.feature.me.ApiPlusEntitlementApi(apiClient), scope).also { it.bind(auth) }
+
+    init { scope.launch { plusEntitlement.entitlement.collect {
+        RouteLineStyle.rememberPlus(it?.active == true)
+        RouteLineStyleMapState.refresh()
+    } } }
 
     /** The trip screens: feed, trip, journey and drafts, with their view models. */
     val tripsFeature: TripsFeature by lazy {

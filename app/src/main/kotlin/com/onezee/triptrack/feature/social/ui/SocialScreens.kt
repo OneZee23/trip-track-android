@@ -288,6 +288,9 @@ fun PublicGarageScreen(dest: TripsDestination.PublicGarage, social: SocialFeatur
     val colors = AppTheme.colors
     val vm = entryViewModel("garage:${dest.id}") { social.garage(dest.id) }
     val state by vm.state.collectAsState()
+    val showsPaidCosmetics by produceState(false, dest.id) {
+        value = runCatching { social.api.profile(dest.id).showsPaidCosmetics }.getOrDefault(false)
+    }
     HideAppTabBar()
     Column(Modifier.fillMaxSize().background(colors.bg).statusBarsPadding().testTag("public_garage")) {
         CustomNavBar(strings.garage(), onBack = { navigator.pop() }, subtitle = dest.name)
@@ -302,7 +305,7 @@ fun PublicGarageScreen(dest: TripsDestination.PublicGarage, social: SocialFeatur
                             Box(Modifier.fillMaxWidth().padding(top = 12.dp), contentAlignment = Alignment.Center) {
                                 val photo = car.mainPhoto?.takeIf { it.isNotEmpty() }
                                 if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1080, Modifier.fillMaxWidth().height(150.dp).padding(horizontal = 12.dp).clip(RoundedCornerShape(12.dp)))
-                                else VehicleStage(car.asVehicle(), width = 220.dp)
+                                else VehicleStage(car.asVehicle(), width = 220.dp, isPlus = showsPaidCosmetics)
                             }
                             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -342,6 +345,9 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
     val unit = LocalDistanceUnit.current
     val vm = entryViewModel("car:${dest.id}:${dest.vehicleId}") { social.vehicle(dest.id, dest.vehicleId, dest.preloaded) }
     val state by vm.state.collectAsState()
+    val showsPaidCosmetics by produceState(false, dest.id) {
+        value = runCatching { social.api.profile(dest.id).showsPaidCosmetics }.getOrDefault(false)
+    }
     var actions by remember { mutableStateOf(false) }
     var report by remember { mutableStateOf<ReportTarget?>(null) }
     var gallery by remember { mutableStateOf<PublicPhotoSelection?>(null) }
@@ -374,7 +380,7 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
                 val stageWidth = com.onezee.triptrack.feature.garage.vehicleStageWidth()
                 com.onezee.triptrack.feature.garage.VehicleHeroCard(
                     name = car.name, make = car.make.orEmpty(), model = car.model.orEmpty(), year = car.year ?: 0, bodyType = car.bodyType.orEmpty(), variant = state.catalogVariant,
-                    tags = VehicleModTags.effective(car.modTags.orEmpty(), isPlus = true), soldLine = if (car.soldAt != null) strings.publicVehicleSold() else null, plate = car.plate,
+                    tags = VehicleModTags.effective(car.modTags.orEmpty(), isPlus = showsPaidCosmetics), soldLine = if (car.soldAt != null) strings.publicVehicleSold() else null, plate = car.plate,
                     level = car.level,
                     // Someone else's numbers appear only when there is something to fill them with: a hidden map sends no geometry, and
                     // «0 поездок · 0 регионов» beside a six-figure odometer would tell on whoever hides it.
@@ -383,7 +389,7 @@ fun PublicCarScreen(dest: TripsDestination.PublicCar, social: SocialFeature, nav
                 ) {
                     PressableCard(onClick = { gallery = PublicPhotoSelection(pages, mainIndex) }, enabled = pages.isNotEmpty(), modifier = Modifier.testTag("public_vehicle_cover")) {
                         if (photo != null) PhotoImage(PhotoSource.Remote(photo), 1440, Modifier.size(stageWidth, stageWidth * .60f).clip(RoundedCornerShape(20.dp)))
-                        else VehicleStage(car.asVehicle(), width = stageWidth, isPlus = true)
+                        else VehicleStage(car.asVehicle(), width = stageWidth, isPlus = showsPaidCosmetics)
                     }
                 }
                 com.onezee.triptrack.feature.garage.Drive2LogbookRow(car.drive2Url)

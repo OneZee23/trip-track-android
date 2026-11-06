@@ -183,7 +183,7 @@ internal fun VehicleMapScreen(vehicleName: String, routes: List<List<GeoPoint>>,
         LaunchedEffect(points) {
             if (points.isNotEmpty()) map.execute(MapCameraCommand.FitRoute(GeoBounds(points.minOf { it.latitude }, points.maxOf { it.latitude }, points.minOf { it.longitude }, points.maxOf { it.longitude }), animated = false))
         }
-        MapHost(map, Modifier.fillMaxSize(), routes = MapRoutes(routes.map { RouteGeometry.build(it, preview = true) }, RouteAppearance.plain), systemInsets = WindowInsets(0))
+        MapHost(map, Modifier.fillMaxSize(), routes = MapRoutes(routes.map { RouteGeometry.build(it, preview = true) }, RouteAppearance.plain.withSelectedRouteStyle()), systemInsets = WindowInsets(0))
         Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 14.dp).padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(36.dp).background(colors.card, CircleShape).clickable(role = Role.Button, onClickLabel = strings.back(), onClick = onBack).testTag("nav_back"), contentAlignment = Alignment.Center) {
                 Glyph(AppGlyph.chevronLeft, null, tint = colors.text, size = 19.2.dp)

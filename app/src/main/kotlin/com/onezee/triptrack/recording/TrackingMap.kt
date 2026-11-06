@@ -29,7 +29,9 @@ import com.onezee.triptrack.map.replay.MapCarMood
 import com.onezee.triptrack.map.replay.MapPlayback
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.model.GeoPoint
+import com.onezee.triptrack.model.RouteLineStyle
 import com.onezee.triptrack.model.Vehicle
 import com.onezee.triptrack.ui.LightRoutePreview
 import com.onezee.triptrack.ui.LiveMaps
@@ -114,7 +116,7 @@ internal fun TrackingMap(
         val head = if (recorder.isRecording && !recorder.isPaused) state.head.dropLast(1) + listOfNotNull(animatedHead) else emptyList()
         MapHost(map, modifier.testTag("tracking_live_map"),
             fog = fog?.let { MapFog(it, FogLook(FogPalette.NIGHT), hole?.let { point -> LiveReveal(point, reveal.value.toDouble()) }) },
-            routes = state.route.let { MapRoutes(listOf(it), RouteAppearance.plain.copy(showsEndpoints = false)) },
+            routes = state.route.let { MapRoutes(listOf(it), RouteAppearance.plain.withSelectedRouteStyle().copy(showsEndpoints = false)) },
             playback = playback,
             liveHead = head,
             gesturesEnabled = !recorder.isRecording,

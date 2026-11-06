@@ -128,6 +128,9 @@ class VehicleEditViewModel(
     fun setPlate(plate: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(plate = plate)) } }
     fun setPowertrain(powertrain: Powertrain) { mutableState.update { it.copy(vehicle = it.vehicle.copy(powertrain = powertrain)) } }
     fun setCurrency(symbol: String) { mutableState.update { it.copy(vehicle = it.vehicle.copy(fuelCurrency = symbol)) } }
+    fun setCardStyle(style: VehicleCardStyle) { mutableState.update { it.copy(vehicle = it.vehicle.copy(cardStyle = style.rawValue.takeIf(String::isNotEmpty))) } }
+    fun setFinish(finish: VehicleFinish) { mutableState.update { it.copy(vehicle = it.vehicle.copy(paintFinish = finish.rawValue)) } }
+    fun setModTags(tags: List<String>) { mutableState.update { it.copy(vehicle = it.vehicle.copy(modTags = tags.take(3))) } }
     internal fun setEnergy(field: VehicleEnergyField, text: String) { mutableState.update { it.copy(energy = it.energy.edit(field, text, it.vehicle.dashboardUnit(appUnit))) } }
     fun setVisibility(visible: Boolean = state.value.vehicle.visibleToOthers, plate: Boolean = state.value.vehicle.plateVisible,
                       map: Boolean = state.value.vehicle.mapVisible, photos: Boolean = state.value.vehicle.photosVisible) {
@@ -170,6 +173,9 @@ class VehicleEditViewModel(
                 }
                 vehicleStore.updateVehicleIdentity(id, vehicle.name, vehicle.avatarEmoji, vehicle.type,
                     vehicle.plate, vehicle.plateVisible, vehicle.visibleToOthers, vehicle.avatarStyle)
+                if (existing?.cardStyle != vehicle.cardStyle) vehicleStore.setCardStyle(id, VehicleCardStyle.fromRawValue(vehicle.cardStyle.orEmpty()) ?: VehicleCardStyle.none)
+                if (existing?.paintFinish != vehicle.paintFinish) vehicleStore.updateVehicleGarage(id, null, null, VehicleFinish.effective(vehicle.paintFinish, true), null, null, null, null)
+                if (existing?.modTags != vehicle.modTags) vehicleStore.updateVehicleGarage(id, modTags = VehicleModTags.sanitized(vehicle.modTags))
                 vehicleStore.updateVehiclePassport(id, vehicle.make, vehicle.model, vehicle.year, vehicle.bodyType, vehicle.about)
                 if (existing == null || existing.visibleToOthers != vehicle.visibleToOthers || existing.plateVisible != vehicle.plateVisible || existing.mapVisible != vehicle.mapVisible || existing.photosVisible != vehicle.photosVisible)
                     vehicleStore.updateVehicleVisibility(id, vehicle.visibleToOthers, vehicle.plateVisible, vehicle.mapVisible, vehicle.photosVisible)

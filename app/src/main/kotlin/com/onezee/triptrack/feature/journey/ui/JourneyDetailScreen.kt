@@ -88,6 +88,7 @@ import com.onezee.triptrack.map.camera.MapInsets
 import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.map.route.RouteGeometry
 import com.onezee.triptrack.logic.distance
 import com.onezee.triptrack.logic.distanceParts
@@ -392,7 +393,7 @@ private fun JourneyRouteMap(state: JourneyDetailState, modifier: Modifier, fulls
         route.bounds?.let { bounds -> mapState.execute(MapCameraCommand.FitRoute(bounds,
             if (fullscreen) MapInsets.all(40.0) else MapInsets(top = 64.0, bottom = 96.0, left = 24.0, right = 24.0), animated = false)) }
     }
-    val appearance = RouteAppearance.plain.copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
+    val appearance = RouteAppearance.plain.withSelectedRouteStyle().copy(hiddenInkArgb = AppTheme.colors.text.copy(alpha = 0.55f).toArgb())
     if (LocalLiveMaps.current) MapHost(mapState, modifier, routes = MapRoutes(legRoutes, appearance), markers = markers,
         systemInsets = if (fullscreen) WindowInsets.safeDrawing else WindowInsets(0), styleUri = style,
         gesturesEnabled = fullscreen, textureMode = true)

@@ -32,8 +32,8 @@ import com.onezee.triptrack.designsystem.R as Words
 
 @Composable
 internal fun VehicleEditSheet(model: VehicleEditViewModel, catalog: com.onezee.triptrack.logic.CarCatalog,
-                              appUnit: DistanceUnit, isNew: Boolean, onDismiss: () -> Unit, onSaved: () -> Unit,
-                              onSold: (() -> Unit)? = null) {
+                              appUnit: DistanceUnit, isNew: Boolean, isPlus: Boolean = false, onDismiss: () -> Unit, onSaved: () -> Unit,
+                              onSold: (() -> Unit)? = null, onCardStyleShowcase: (java.util.UUID) -> Unit = {}) {
     val state by model.state.collectAsState()
     val strings = appStrings
     LaunchedEffect(state.savedId) { if (state.savedId != null) onSaved() }
@@ -54,7 +54,9 @@ internal fun VehicleEditSheet(model: VehicleEditViewModel, catalog: com.onezee.t
                 onAvatar = model::setAvatar, onPlate = model::setPlate,
                 onPassport = model::setPassport, onVisibility = model::setVisibility,
                 onSave = model::save, onClose = { dismiss() }, onSold = onSold,
-                onPowertrain = model::setPowertrain, onEnergy = model::setEnergy, onCurrency = model::setCurrency)
+                onPowertrain = model::setPowertrain, onEnergy = model::setEnergy, onCurrency = model::setCurrency,
+                onCardStyleShowcase = { onCardStyleShowcase(state.vehicle.id) }, onFinish = model::setFinish,
+                onModTags = model::setModTags, isPlus = isPlus)
         }
     }
     if (state.showsDashboardPicker) DashboardUnitsPicker(state.vehicle.dashboardUnits, appUnit, state.vehicle.type.hasPlate,
@@ -69,11 +71,13 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     onAvatar: (String, String) -> Unit, onPlate: (String) -> Unit, onPassport: (String, String, Int, String, String) -> Unit,
     onVisibility: (Boolean, Boolean, Boolean, Boolean) -> Unit, onSave: () -> Unit, onClose: () -> Unit, onSold: (() -> Unit)? = null,
     onPowertrain: (Powertrain) -> Unit = {}, onEnergy: (VehicleEnergyField, String) -> Unit = { _, _ -> }, onCurrency: (String) -> Unit = {},
-    onTypeSelect: (VehicleType) -> Unit = {}) {
+    onTypeSelect: (VehicleType) -> Unit = {}, onCardStyleShowcase: () -> Unit = {}, onFinish: (VehicleFinish) -> Unit = {},
+    onModTags: (List<String>) -> Unit = {}, isPlus: Boolean = false) {
     val strings = appStrings
     val vehicle = state.vehicle
     var powertrainPicker by remember { mutableStateOf(false) }
     var currencyPicker by remember { mutableStateOf(false) }
+    var finishPicker by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().testTag("vehicle_edit_form")) {
         MeSheetHeader(if (isNew) strings.addVehicleTitle() else strings.editVehicleTitle(), onClose)
         Column(Modifier.weight(1f).testTag("vehicle_edit_scroll").verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -107,6 +111,15 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
                 MeRow(strings.vehicleDashboardTitle(), vehicle.dashboardUnits.label(strings.language.code, vehicle.type.hasPlate, strings), tag = "vehicle_dashboard", onClick = onDashboard)
             }
             if (isNew) VehicleAvatarCard(vehicle, onAvatar)
+            if (isPlus) MeSection(strings.proFeatureCar()) {
+                MeRow(strings.settingsVehicleCardStyle(), (VehicleCardStyle.fromRawValue(vehicle.cardStyle.orEmpty()) ?: VehicleCardStyle.none).displayName.ifBlank { strings.cosmeticDefaultOption() }, tag = "vehicle_card_style", onClick = onCardStyleShowcase)
+                MeDivider()
+                MeRow(strings.garageFinish(), if (VehicleFinish.effective(vehicle.paintFinish, isPlus) == VehicleFinish.matte) strings.vehicleFinishMatte() else strings.vehicleFinishGloss(), tag = "vehicle_finish", onClick = { finishPicker = true })
+                MeDivider()
+                VehicleModTagsEditor(vehicle.modTags, onModTags)
+            } else {
+                MeRow(strings.garageTags(), glyph = AppGlyph.lock, tag = "vehicle_tags_locked")
+            }
             if (vehicle.type != VehicleType.bicycle) {
                 PowertrainCard(vehicle.powertrain, onClick = { powertrainPicker = true })
                 if (vehicle.powertrain != Powertrain.electric) MeSection(strings.fuelSectionLabel()) {
@@ -149,6 +162,9 @@ internal fun VehicleEditContent(state: VehicleEditState, appUnit: DistanceUnit, 
     if (currencyPicker) SettingsOptionPicker(strings.currencyPickerTitle(), VehicleCurrency.entries, VehicleCurrency.entries.firstOrNull { it.symbol == vehicle.fuelCurrency } ?: VehicleCurrency.eur,
         strings.currencyPickerHint(), label = { java.util.Currency.getInstance(it.code).getDisplayName(strings.language.locale) + " · " + it.code }, badge = { it.symbol },
         onSelect = { onCurrency(it.symbol) }, onDismissRequest = { currencyPicker = false }, testTagPrefix = "vehicle_currency")
+    if (finishPicker) SettingsOptionPicker(strings.garageFinish(), VehicleFinish.availableFinishes, VehicleFinish.effective(vehicle.paintFinish, isPlus), "",
+        label = { if (it == VehicleFinish.matte) strings.vehicleFinishMatte() else strings.vehicleFinishGloss() }, onSelect = onFinish,
+        onDismissRequest = { finishPicker = false }, testTagPrefix = "vehicle_finish")
 }
 
 @Composable
@@ -158,6 +174,22 @@ internal fun VehicleSaleAction(sold: Boolean, onChange: () -> Unit) {
     MeRow(if (sold) strings.vehicleUnsell() else strings.vehicleMarkSold(), tag = "vehicle_sold", onClick = { if (sold) onChange() else confirm = true })
     if (confirm) AppConfirmDialog(strings.vehicleSellConfirmTitle(), strings.vehicleSellConfirmBody(),
         listOf(AppDialogAction(strings.vehicleMarkSold(), AppDialogAction.Kind.destructive, testTag = "vehicle_sell_confirm", handler = onChange)), onDismiss = { confirm = false })
+}
+
+@Composable
+private fun VehicleModTagsEditor(tags: List<String>, onTags: (List<String>) -> Unit) {
+    val strings = appStrings
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(strings.garageTags(), style = inter(13f, InterWeight.semibold), color = AppTheme.colors.text)
+        (0..2).forEach { index ->
+            MeField(null, tags.getOrElse(index) { "" }, { value ->
+                onTags((0..2).map { slot ->
+                    if (slot == index) VehicleModTags.limited(value) else tags.getOrElse(slot) { "" }
+                })
+            }, tag = "vehicle_mod_tag_$index", placeholder = strings.garageTags())
+        }
+        Text(strings.garageTagsHint(), style = AppType.caption, color = AppTheme.colors.textTertiary)
+    }
 }
 
 // iOS: GamificationModels.swift, FuelCurrency. ISO currency names come from the system locale.

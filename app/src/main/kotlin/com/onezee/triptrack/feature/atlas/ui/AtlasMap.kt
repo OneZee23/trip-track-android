@@ -46,6 +46,7 @@ import com.onezee.triptrack.map.marker.MapMarker
 import com.onezee.triptrack.map.route.MapRoutes
 import com.onezee.triptrack.map.route.RouteAppearance
 import com.onezee.triptrack.map.route.RouteGeometry
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import com.onezee.triptrack.map.vein.MapVein
 import com.onezee.triptrack.model.AtlasPlacePin
 import com.onezee.triptrack.model.GeoPoint
@@ -223,7 +224,7 @@ fun AtlasMapLayer(
     }
     val routes = remember(state.selectedRoute, palette) {
         state.selectedRoute.takeIf { it.size > 1 }?.let {
-            MapRoutes(listOf(RouteGeometry.build(it, preview = true)), RouteAppearance.overFog(palette).copy(lineColorOverride = selectedRouteColour(palette)))
+            MapRoutes(listOf(RouteGeometry.build(it, preview = true)), RouteAppearance.overFog(palette).copy(lineColorOverride = selectedRouteColour(palette)).withSelectedRouteStyle())
         }
     }
     val vein = remember(state.revealed, palette) { MapVein(state.revealed, palette) }

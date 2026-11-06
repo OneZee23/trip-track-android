@@ -35,6 +35,8 @@ import com.onezee.triptrack.designsystem.navigation.tabBarContentClearance
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.model.ProfileBackground
+import com.onezee.triptrack.model.AvatarFrame
+import com.onezee.triptrack.feature.social.ui.avatarFrame
 import com.onezee.triptrack.feature.social.ui.drawCover
 import java.util.Locale
 import kotlinx.coroutines.*
@@ -64,7 +66,8 @@ internal object ProfileIdentityChoices {
 @Composable
 internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentityStore, onBack: () -> Unit,
                              onEdit: (ProfileTextField) -> Unit, onCover: () -> Unit, onLevel: () -> Unit, onCountry: () -> Unit,
-                             social: MyProfileSocial? = null, openBackgroundPicker: Boolean = false, onBackgroundPickerOpened: () -> Unit = {}) {
+                             social: MyProfileSocial? = null, openBackgroundPicker: Boolean = false, onBackgroundPickerOpened: () -> Unit = {},
+                             onFrameShowcase: () -> Unit = {}) {
     val strings = appStrings
     val scope = rememberCoroutineScope()
     var avatars by rememberSaveable { mutableStateOf(false) }
@@ -91,7 +94,7 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
                 if (colors.isNotEmpty()) drawCover(identity.effectiveBackground) else drawRect(AppTheme.accentBg)
             })
             Column(Modifier.fillMaxWidth().offset(y = (-48).dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(Modifier.size(96.dp).background(AppTheme.colors.card, CircleShape).clickable(role = Role.Button) { avatars = !avatars }, contentAlignment = Alignment.Center) {
+                Box(Modifier.size(96.dp).background(AppTheme.colors.card, CircleShape).avatarFrame(identity.avatarFrame, 3.dp).clickable(role = Role.Button) { avatars = !avatars }, contentAlignment = Alignment.Center) {
                     Text(identity.avatarEmoji, style = inter(52f))
                     Box(Modifier.align(Alignment.BottomEnd).size(28.dp).background(AppTheme.accent, CircleShape), contentAlignment = Alignment.Center) {
                         Glyph(AppGlyph.pencil, null, tint = Color.White, size = 13.dp)
@@ -122,6 +125,8 @@ internal fun MyProfileScreen(identity: ProfileIdentity, store: ProfileIdentitySt
                 }
                 MeSection(strings.profileAppearanceGroup()) {
                     MeRow(strings.myProfileRowCover(), if (identity.coverPhotoIds.isEmpty()) strings.myProfileCoverUnset() else strings.photosCount(identity.coverPhotoIds.size), onClick = onCover)
+                    MeDivider()
+                    MeRow(strings.showcaseFrame(), identity.avatarFrame.displayName.ifBlank { strings.cosmeticDefaultOption() }, tag = "profile_avatar_frame", onClick = onFrameShowcase)
                     MeDivider()
                     MeRow(strings.settingsProfileBackground(), identity.effectiveBackground.displayNameOrDefault(strings), onClick = { backgrounds = true })
                     // «Как видят другие» sits with the rows that decide how that identity looks; only

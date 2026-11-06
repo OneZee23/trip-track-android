@@ -265,7 +265,7 @@ class RoomVehicleStore(
     /** «No background» is NULL, not "": nothing chosen has one form. */
     override suspend fun setCardStyle(vehicleId: UUID, style: VehicleCardStyle) {
         edit(vehicleId, SyncAction.update) {
-            it.copy(cardStyle = if (style == VehicleCardStyle.none) null else style.rawValue).flagged()
+            it.copy(cardStyle = if (style == VehicleCardStyle.none) null else style.rawValue).stamped()
         }
     }
 

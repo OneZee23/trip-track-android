@@ -42,6 +42,7 @@ import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
 import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.social.ui.drawCover
+import com.onezee.triptrack.feature.social.ui.avatarFrame
 import com.onezee.triptrack.feature.social.ui.rankTitle
 import com.onezee.triptrack.model.DistanceUnit
 import com.onezee.triptrack.model.DriverRank
@@ -198,7 +199,7 @@ private fun HeroIdentityRow(state: ProfileHeroState, ink: HeroInk, actions: Hero
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
             val side = if (ink.hasPhotos) 46.dp else 60.dp
             PressableCard(onClick = actions.onProfile, onClickLabel = strings.myProfileTitle(), modifier = Modifier.testTag("profile_avatar")) {
-                Box(Modifier.size(side).background(ink.avatarFill, CircleShape), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(side).background(ink.avatarFill, CircleShape).avatarFrame(state.identity.avatarFrame, 2.5.dp), contentAlignment = Alignment.Center) {
                     Text(state.identity.avatarEmoji, style = inter(if (ink.hasPhotos) 26f else 32f))
                 }
             }

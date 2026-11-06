@@ -104,6 +104,14 @@ class ProfileWireTests {
         assertEquals(JsonPrimitive(false), update["showPlusBadge"])
     }
 
+    @Test fun avatarFrameUsesProfileUpdateAndMeResponse() {
+        val update = jsonObject(json.encodeToString(ProfileUpdateRequest(avatarFrame = "frame_gold")))
+        assertEquals(setOf("avatarFrame"), update.keys)
+        assertEquals(JsonPrimitive("frame_gold"), update["avatarFrame"])
+        val me = json.decodeFromString<MeResponse>("""{"isPublic":true,"avatarFrame":"frame_gold"}""")
+        assertEquals("frame_gold", me.avatarFrame)
+    }
+
     @Test fun visibilityResponseDoesNotInventServerSupport() {
         val absent = json.decodeFromString<MeResponse>("""{"id":"$id","email":null,"displayName":"A","isPublic":true}""")
         assertNull(absent.countersPublic)

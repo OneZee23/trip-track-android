@@ -4,6 +4,7 @@ package com.onezee.triptrack.feature.me
 import android.content.ComponentName
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -11,6 +12,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -31,6 +35,9 @@ import com.onezee.triptrack.feature.garage.*
 import com.onezee.triptrack.feature.settings.*
 import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.model.*
+import com.onezee.triptrack.map.route.RouteAppearance
+import com.onezee.triptrack.map.route.RouteLine
+import com.onezee.triptrack.map.route.withSelectedRouteStyle
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -171,7 +178,40 @@ class MeScreenshotTests(private val dark: Boolean) {
             proUntil = Instant.parse("2026-12-06T10:00:00Z"))
     }
     @Test fun proManage() = shot("pro_manage") {
-        ProManageSheet(MeFixtures.hero.identity.copy(isPlus = true), Instant.parse("2026-12-06T10:00:00Z"), {}, {}, {})
+        ProManageSheet(MeFixtures.hero.identity.copy(isPlus = true), Instant.parse("2026-12-06T10:00:00Z"), {}, {}, {},
+            vehicleChoice = "Carbon", routeChoice = "Ice")
+    }
+    @Test fun proShowcaseBackground() = shot("pro_showcase_background") {
+        ProShowcaseSheet(ProShowcaseKind.profileBackground, ProfileBackground.plusStorm.rawValue, true, true, true, onPick = {}, onDismiss = {})
+    }
+    @Test fun proShowcaseFrame() = shot("pro_showcase_frame") {
+        ProShowcaseSheet(ProShowcaseKind.avatarFrame, AvatarFrame.gold.rawValue, true, true, true, onPick = {}, onDismiss = {})
+    }
+    @Test fun proShowcaseVehicle() = shot("pro_showcase_vehicle") {
+        ProShowcaseSheet(ProShowcaseKind.vehicleCard, VehicleCardStyle.sunset.rawValue, true, true, true, onPick = {}, onDismiss = {})
+    }
+    @Test fun proShowcaseRouteLine() = shot("pro_showcase_route_line") {
+        ProShowcaseSheet(ProShowcaseKind.routeLine, RouteLineStyle.ice.rawValue, true, true, true, onPick = {}, onDismiss = {})
+    }
+    @Test fun tripMapSelectedRouteColour() {
+        RouteLineStyle.setStored(RouteLineStyle.ice)
+        RouteLineStyle.rememberPlus(true)
+        try {
+            shot("trip_map_selected_route_colour") {
+                val appearance = RouteAppearance.plain.withSelectedRouteStyle()
+                Canvas(Modifier.fillMaxWidth().height(132.dp).padding(20.dp)) {
+                    val path = Path().apply {
+                        moveTo(0f, size.height * .72f)
+                        cubicTo(size.width * .16f, size.height * .78f, size.width * .21f, size.height * .25f, size.width * .39f, size.height * .43f)
+                        cubicTo(size.width * .56f, size.height * .61f, size.width * .69f, size.height * .2f, size.width, size.height * .27f)
+                    }
+                    drawPath(path, Color(appearance.argb(RouteLine(emptyList(), 8.0))), style = Stroke(4.dp.toPx()))
+                }
+            }
+        } finally {
+            RouteLineStyle.setStored(RouteLineStyle.speed)
+            RouteLineStyle.rememberPlus(false)
+        }
     }
     @Test fun paidBackgroundPicker() = shot("pro_background_picker") {
         val defaultLabel = appStrings.cosmeticDefaultOption()

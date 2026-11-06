@@ -46,6 +46,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     val auth by graph.auth.state.collectAsState()
     val plus by graph.plusEntitlement.entitlement.collectAsState()
     val settings by graph.settingsManager.state.collectAsState()
+    SideEffect { RouteLineStyle.rememberPlus(plus?.active == true) }
     // iOS: TrackingView.showGarage. Its own stack returns to recording, independent of the Я tab.
     val initialNavigator = remember { if (garageOnly) MeNavigator() else feature.navigator }
     val navigator = rememberSaveable(saver = MeNavigator.saver(initialNavigator)) { initialNavigator }
@@ -66,6 +67,10 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     // iOS journalSignIn: the compact sign-in row on a journal that already has trips opens the prompt sheet.
     var signInOpen by rememberSaveable { mutableStateOf(false) }
     var proManageOpen by rememberSaveable { mutableStateOf(false) }
+    var showcaseKind by rememberSaveable { mutableStateOf<ProShowcaseKind?>(null) }
+    var pendingShowcase by rememberSaveable { mutableStateOf<ProShowcaseKind?>(null) }
+    var showcaseVehicleId by remember { mutableStateOf<UUID?>(null) }
+    var showcaseVehicleEditModel by remember { mutableStateOf<VehicleEditViewModel?>(null) }
     var promoOpen by rememberSaveable { mutableStateOf(false) }
     var pendingBackgroundPicker by rememberSaveable { mutableStateOf(false) }
     var pinnedBadgeId by remember { mutableStateOf(feature.pinnedBadgeId) }
@@ -73,6 +78,12 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
     var waitlist by remember { mutableStateOf<GroupsWaitlistState?>(null) }
     val scope = rememberCoroutineScope()
     val strings = appStrings
+    LaunchedEffect(proManageOpen) {
+        if (!proManageOpen && pendingShowcase != null) {
+            showcaseKind = pendingShowcase
+            pendingShowcase = null
+        }
+    }
     val filmingMode by graph.tripsFeature.filmingMode.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(state.allTrips, settings.home, settings.homeAsked, settings.homeDeclinedAt, strings.language) {
@@ -172,6 +183,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                     onUnsell = { id -> mutate { graph.vehicles.setVehicleSold(id, null); feature.garage.reload() } }, isPlus = state.hero.identity.isPlus)
                 MeRoute.Profile -> MyProfileScreen(state.hero.identity, feature.identity, { navigator.pop() }, { profileEditor = it }, { photosOpen = true }, { navigator.push(MeRoute.Levels) }, { navigator.push(MeRoute.Country) },
                     openBackgroundPicker = pendingBackgroundPicker, onBackgroundPickerOpened = { pendingBackgroundPicker = false },
+                    onFrameShowcase = { showcaseKind = ProShowcaseKind.avatarFrame },
                     social = auth.signedInAccountId?.let { account ->
                         MyProfileSocial(account, graph.social.api,
                             onFollowList = { mode -> navigator.push(com.onezee.triptrack.feature.TripsDestination.FollowList(account, mode)) },
@@ -251,9 +263,22 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         JourneyComposerSheet(model, onCreated = { profile.reload() }, onDismissRequest = { composerAnchor = null; composerPreselected = null })
     }
     if (settingsOpen) SettingsRoute(graph) { settingsOpen = false }
-    if (proManageOpen && state.hero.identity.isPlus) ProManageSheet(state.hero.identity, plus?.until, onDismiss = { proManageOpen = false },
-        onBackground = { if (navigator.current != MeRoute.Profile) navigator.push(MeRoute.Profile); pendingBackgroundPicker = true },
-        onRedeem = { promoOpen = true })
+    val showcaseVehicle = showcaseVehicleEditModel?.state?.value?.vehicle
+        ?: showcaseVehicleId?.let { id -> garage.vehicles.firstOrNull { it.vehicle.id == id }?.vehicle }
+        ?: garage.vehicles.firstOrNull { it.vehicle.id == settings.selectedVehicleId }?.vehicle
+        ?: garage.vehicles.firstOrNull()?.vehicle
+    if (proManageOpen && state.hero.identity.isPlus) ProManageSheet(state.hero.identity, plus?.until,
+        onDismiss = { proManageOpen = false },
+        onBackground = { pendingShowcase = ProShowcaseKind.profileBackground },
+        onRedeem = { promoOpen = true },
+        vehicleChoice = showcaseVehicle?.cardStyle?.let { (VehicleCardStyle.fromRawValue(it) ?: VehicleCardStyle.none).displayName }?.ifBlank { strings.cosmeticDefaultOption() } ?: strings.cosmeticDefaultOption(),
+        routeChoice = graph.routeLineStyle().displayName.ifBlank { strings.routeLineSpeedGradient() },
+        onFutureFeature = { feature -> pendingShowcase = when (feature) {
+            PlusFeature.avatarFrame -> ProShowcaseKind.avatarFrame
+            PlusFeature.vehicleCardStyle -> ProShowcaseKind.vehicleCard
+            PlusFeature.routeLineStyle -> ProShowcaseKind.routeLine
+            else -> null
+        } })
     if (promoOpen) com.onezee.triptrack.feature.settings.PromoCodeSheet(graph, auth.isSignedIn) { promoOpen = false }
     if (signInOpen) com.onezee.triptrack.feature.account.SignInPromptSheet(com.onezee.triptrack.feature.account.SignInAction.generic, graph.auth, onDismissRequest = { signInOpen = false })
     profileEditor?.let { field -> ProfileTextEditor(field, if (field == ProfileTextField.displayName) state.hero.identity.name else state.hero.identity.bio,
@@ -264,7 +289,7 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
         val vehicle = garage.vehicles.firstOrNull { it.vehicle.id.toString() == key }?.vehicle
         if (key.isEmpty() || vehicle != null) {
             val model = rememberMeModel(key) { feature.edit(vehicle) }
-            VehicleEditSheet(model, feature.catalog, settings.distanceUnit, key.isEmpty(), onDismiss = { editing = null }, onSaved = {
+            VehicleEditSheet(model, feature.catalog, settings.distanceUnit, key.isEmpty(), isPlus = plus?.active == true, onDismiss = { editing = null }, onSaved = {
                 editing = null; feature.garage.reload(); profile.reload()
             }, onSold = vehicle?.let { value -> {
                 mutate {
@@ -272,8 +297,33 @@ fun MeTab(graph: AppGraph, resumeTick: Int = 0, garageOnly: Boolean = false, onG
                     if (value.soldAt == null && settings.selectedVehicleId == value.id) graph.settingsManager.selectVehicle(graph.vehicles.vehicles().firstOrNull { it.soldAt == null }?.id)
                     editing = null; feature.garage.reload()
                 }
-            } })
+            } }, onCardStyleShowcase = { vehicleId ->
+                showcaseVehicleId = vehicleId
+                showcaseVehicleEditModel = model
+                showcaseKind = ProShowcaseKind.vehicleCard
+            })
         }
+    }
+    showcaseKind?.let { kind ->
+        val current = when (kind) {
+            ProShowcaseKind.profileBackground -> state.hero.identity.effectiveBackground.rawValue
+            ProShowcaseKind.avatarFrame -> state.hero.identity.avatarFrame.rawValue
+            ProShowcaseKind.vehicleCard -> showcaseVehicle?.cardStyle.orEmpty()
+            ProShowcaseKind.routeLine -> graph.routeLineStyle().rawValue
+        }
+        ProShowcaseSheet(kind, current, state.hero.identity.isPlus, auth.isSignedIn, settings.cloudSyncEnabled,
+            profileBackground = state.hero.identity.effectiveBackground, avatarFrame = state.hero.identity.avatarFrame,
+            avatarEmoji = state.hero.identity.avatarEmoji,
+            displayName = state.hero.identity.name, vehicle = showcaseVehicle, onPick = { id ->
+                when (kind) {
+                    ProShowcaseKind.profileBackground -> mutate { feature.identity.setBackground(ProfileBackground.fromRawValue(id) ?: ProfileBackground.none) }
+                    ProShowcaseKind.avatarFrame -> mutate { feature.identity.setAvatarFrame(AvatarFrame.fromRawValue(id) ?: AvatarFrame.none) }
+                    ProShowcaseKind.vehicleCard -> showcaseVehicleEditModel?.let { model ->
+                        model.setCardStyle(VehicleCardStyle.fromRawValue(id) ?: VehicleCardStyle.none)
+                    } ?: showcaseVehicle?.let { vehicle -> mutate { graph.vehicles.setCardStyle(vehicle.id, VehicleCardStyle.fromRawValue(id) ?: VehicleCardStyle.none); feature.garage.reload() } }
+                    ProShowcaseKind.routeLine -> graph.setRouteLineStyle(RouteLineStyle.fromRawValue(id) ?: RouteLineStyle.speed)
+                }
+            }, onDismiss = { showcaseKind = null; showcaseVehicleId = null; showcaseVehicleEditModel = null })
     }
     deleting?.let { id -> AppConfirmDialog(strings.deleteVehicleConfirm(), strings.deleteVehicleBody(),
         actions = listOf(AppDialogAction(strings.deleteVehicle(), AppDialogAction.Kind.destructive) {
