@@ -86,6 +86,8 @@ internal data class ManualTripUiSeed(
     val start: Instant = Instant.parse("2026-11-06T14:42:00Z"),
     val routeLengthMetres: Double = 0.0,
     val suggestedDurationSeconds: Double = 0.0,
+    /** The day the date line calls «today»; screenshots pin it, the app reads the clock. */
+    val today: LocalDate? = null,
 )
 private const val MANUAL_TRIP_MAX_VIA = 3
 
@@ -351,7 +353,7 @@ internal fun ManualTripSheet(graph: AppGraph, onDismiss: () -> Unit, onCreated: 
                             styleUri = mapStyle)
                     }
                     Text(strings.tr(R.string.manual_trip_attribution), style = inter(11f), color = AppTheme.colors.textTertiary)
-                    Text(dateLine(start, strings), style = pressStart2P(9f), color = AppTheme.colors.textSecondary,
+                    Text(dateLine(start, strings, seed?.today ?: LocalDate.now(strings.zone)), style = pressStart2P(9f), color = AppTheme.colors.textSecondary,
                         maxLines = 1, modifier = Modifier.testTag("manual_trip_date_line"))
                     if (titleEditing) BasicTextField(title, { title = it },
                         Modifier.fillMaxWidth().focusRequester(titleFocusRequester).padding(vertical = 6.dp).testTag("manual_trip_title"),
@@ -527,9 +529,8 @@ private fun durationText(seconds: Double, strings: com.onezee.triptrack.designsy
     }
 }
 
-private fun dateLine(start: Instant, strings: com.onezee.triptrack.designsystem.strings.AppStrings): String {
+private fun dateLine(start: Instant, strings: com.onezee.triptrack.designsystem.strings.AppStrings, today: LocalDate): String {
     val day = start.atZone(strings.zone).toLocalDate()
-    val today = LocalDate.now(strings.zone)
     val label = when (day) {
         today -> strings.today()
         today.minusDays(1) -> strings.yesterday()

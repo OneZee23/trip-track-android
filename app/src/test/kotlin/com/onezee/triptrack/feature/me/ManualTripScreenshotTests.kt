@@ -20,6 +20,7 @@ import com.onezee.triptrack.designsystem.theme.AppTheme
 import com.onezee.triptrack.designsystem.theme.TripTrackTheme
 import com.onezee.triptrack.model.GeoPoint
 import com.onezee.triptrack.model.ManualTripPlaceDTO
+import java.time.LocalDate
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -66,7 +67,7 @@ class ManualTripScreenshotTests(private val dark: Boolean) {
                                 undoLabel = graph.strings.tr(com.onezee.triptrack.designsystem.R.string.manualTripReturnShort),
                                 undoAction = {},
                             ), {}, Modifier.align(Alignment.BottomCenter),
-                        ) else ManualTripSheet(graph, {}, {}, seed = seed)
+                        ) else ManualTripSheet(graph, {}, {}, seed = seed.copy(today = seed.today ?: LocalDate.of(2026, 11, 6)))
                     }
                 }
             }
