@@ -21,6 +21,18 @@ import com.onezee.triptrack.location.LocationGraph
 import com.onezee.triptrack.location.permissions.*
 
 @Composable
+internal fun BackgroundGpsRestrictionCard(onOpenSettings: () -> Unit, modifier: Modifier = Modifier) {
+    val strings = appStrings
+    Column(modifier.fillMaxWidth().surfaceCard(16.dp).padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(strings.tr(Words.string.android_recording_gps_restricted_title), style = inter(14f, InterWeight.bold), color = AppTheme.colors.text)
+        Text(strings.tr(Words.string.android_recording_gps_restricted_body), style = inter(12f), color = AppTheme.colors.textSecondary)
+        Box(Modifier.testTag("recording_gps_restriction_settings")) {
+            MeAction(strings.tr(Words.string.android_recording_gps_restricted_action), onOpenSettings)
+        }
+    }
+}
+
+@Composable
 internal fun RecordingPermissionSheet(graph: LocationGraph, resumeTick: Int, onComplete: () -> Unit) {
     val context = LocalContext.current
     val strings = appStrings

@@ -16,6 +16,108 @@
       "pt": "TripTrack"
     }
   },
+  "android_recording_gps_restricted_title": {
+    "values": {
+      "en": "Battery restrictions can stop GPS",
+      "ru": "Ограничение батареи отключит GPS",
+      "de": "Akkubeschränkungen können GPS stoppen",
+      "es": "Las restricciones de batería pueden detener el GPS",
+      "fr": "Les restrictions de batterie peuvent couper le GPS",
+      "it": "Le restrizioni della batteria possono fermare il GPS",
+      "pl": "Ograniczenia baterii mogą zatrzymać GPS",
+      "id": "Pembatasan baterai dapat menghentikan GPS",
+      "tr": "Pil kısıtlamaları GPS'i durdurabilir",
+      "fil": "Maaaring ihinto ng limitasyon sa baterya ang GPS",
+      "uk": "Обмеження батареї можуть вимкнути GPS",
+      "kk": "Батарея шектеулері GPS-ті тоқтатуы мүмкін",
+      "pt": "As restrições de bateria podem parar o GPS"
+    }
+  },
+  "android_recording_gps_restricted_body": {
+    "values": {
+      "en": "With these restrictions, Android stops GPS about a minute after the screen locks. Allow TripTrack to run without battery restrictions. On Xiaomi, also enable Autostart.",
+      "ru": "С такими ограничениями Android отключит GPS примерно через минуту после блокировки экрана. Разрешите TripTrack работать без ограничений батареи. На Xiaomi также включите автозапуск.",
+      "de": "Mit diesen Einschränkungen stoppt Android GPS etwa eine Minute nach dem Sperren des Bildschirms. Erlaube TripTrack den Betrieb ohne Akku-Einschränkungen. Aktiviere auf Xiaomi auch den Autostart.",
+      "es": "Con estas restricciones, Android detiene el GPS aproximadamente un minuto después de bloquear la pantalla. Permite que TripTrack funcione sin restricciones de batería. En Xiaomi, activa también el inicio automático.",
+      "fr": "Avec ces restrictions, Android coupe le GPS environ une minute après le verrouillage de l’écran. Autorisez TripTrack à fonctionner sans restriction de batterie. Sur Xiaomi, activez aussi le démarrage automatique.",
+      "it": "Con queste restrizioni, Android ferma il GPS circa un minuto dopo il blocco dello schermo. Consenti a TripTrack di funzionare senza restrizioni della batteria. Su Xiaomi, attiva anche l'avvio automatico.",
+      "pl": "Przy tych ograniczeniach Android zatrzymuje GPS około minuty po zablokowaniu ekranu. Zezwól TripTrack działać bez ograniczeń baterii. Na Xiaomi włącz też autostart.",
+      "id": "Dengan pembatasan ini, Android menghentikan GPS sekitar satu menit setelah layar dikunci. Izinkan TripTrack berjalan tanpa pembatasan baterai. Di Xiaomi, aktifkan juga Mulai otomatis.",
+      "tr": "Bu kısıtlamalarla Android, ekran kilitlendikten yaklaşık bir dakika sonra GPS'i durdurur. TripTrack'in pil kısıtlaması olmadan çalışmasına izin verin. Xiaomi'de Otomatik başlat'ı da açın.",
+      "fil": "Kapag may ganitong limitasyon, itinitigil ng Android ang GPS mga isang minuto matapos i-lock ang screen. Payagan ang TripTrack na tumakbo nang walang limitasyon sa baterya. Sa Xiaomi, paganahin din ang Autostart.",
+      "uk": "За таких обмежень Android вимикає GPS приблизно за хвилину після блокування екрана. Дозвольте TripTrack працювати без обмежень батареї. На Xiaomi також увімкніть автозапуск.",
+      "kk": "Осындай шектеулермен экран құлыпталғаннан кейін Android GPS-ті шамамен бір минутта тоқтатады. TripTrack-ке батарея шектеулерінсіз жұмыс істеуге рұқсат беріңіз. Xiaomi-де автоматты іске қосуды да қосыңыз.",
+      "pt": "Com estas restrições, o Android para o GPS cerca de um minuto depois de bloquear o ecrã. Permita que o TripTrack funcione sem restrições de bateria. Na Xiaomi, ative também o arranque automático."
+    }
+  },
+  "android_recording_gps_restricted_action": {
+    "values": {
+      "en": "Open battery settings",
+      "ru": "Открыть настройки батареи",
+      "de": "Akku-Einstellungen öffnen",
+      "es": "Abrir ajustes de batería",
+      "fr": "Ouvrir les réglages de batterie",
+      "it": "Apri impostazioni batteria",
+      "pl": "Otwórz ustawienia baterii",
+      "id": "Buka setelan baterai",
+      "tr": "Pil ayarlarını aç",
+      "fil": "Buksan ang mga setting ng baterya",
+      "uk": "Відкрити налаштування батареї",
+      "kk": "Батарея параметрлерін ашу",
+      "pt": "Abrir definições da bateria"
+    }
+  },
+  "android_recording_gps_lost_notification": {
+    "values": {
+      "en": "GPS was stopped by the system. Open TripTrack to continue recording.",
+      "ru": "GPS отключён системой. Откройте TripTrack, чтобы запись продолжилась.",
+      "de": "GPS wurde vom System gestoppt. Öffne TripTrack, damit die Aufzeichnung weiterläuft.",
+      "es": "El sistema detuvo el GPS. Abre TripTrack para continuar la grabación.",
+      "fr": "Le système a coupé le GPS. Ouvrez TripTrack pour poursuivre l’enregistrement.",
+      "it": "Il sistema ha fermato il GPS. Apri TripTrack per continuare la registrazione.",
+      "pl": "System zatrzymał GPS. Otwórz TripTrack, aby kontynuować nagrywanie.",
+      "id": "GPS dihentikan oleh sistem. Buka TripTrack untuk melanjutkan rekaman.",
+      "tr": "GPS sistem tarafından durduruldu. Kayda devam etmek için TripTrack'i açın.",
+      "fil": "Itinigil ng system ang GPS. Buksan ang TripTrack para magpatuloy ang pag-record.",
+      "uk": "Система вимкнула GPS. Відкрийте TripTrack, щоб продовжити запис.",
+      "kk": "Жүйе GPS-ті тоқтатты. Жазуды жалғастыру үшін TripTrack-ті ашыңыз.",
+      "pt": "O sistema parou o GPS. Abra o TripTrack para continuar a gravação."
+    }
+  },
+  "android_recording_preserved_too_short": {
+    "values": {
+      "en": "Kept as a draft because this recording was too short to confirm a trip.",
+      "ru": "Запись сохранена как черновик: она слишком короткая, чтобы подтвердить поездку.",
+      "de": "Als Entwurf gespeichert, weil diese Aufzeichnung zu kurz ist, um eine Fahrt zu bestätigen.",
+      "es": "Se guardó como borrador porque la grabación fue demasiado corta para confirmar un viaje.",
+      "fr": "Enregistré comme brouillon, car cette trace est trop courte pour confirmer un trajet.",
+      "it": "Salvato come bozza perché questa registrazione è troppo breve per confermare un viaggio.",
+      "pl": "Zapisano jako szkic, bo nagranie było za krótkie, by potwierdzić podróż.",
+      "id": "Disimpan sebagai draf karena rekaman ini terlalu singkat untuk mengonfirmasi perjalanan.",
+      "tr": "Bu kayıt bir yolculuğu doğrulamak için çok kısa olduğundan taslak olarak saklandı.",
+      "fil": "Itinago bilang draft dahil masyadong maikli ang recording para makumpirma ang biyahe.",
+      "uk": "Запис збережено як чернетку: він закороткий, щоб підтвердити поїздку.",
+      "kk": "Бұл жазба сапарды растауға тым қысқа болғандықтан, нобай ретінде сақталды.",
+      "pt": "Guardado como rascunho porque esta gravação foi demasiado curta para confirmar uma viagem."
+    }
+  },
+  "android_recording_preserved_slow": {
+    "values": {
+      "en": "Kept as a draft because driving speed was not confirmed.",
+      "ru": "Запись сохранена как черновик: скорость движения не подтвердилась.",
+      "de": "Als Entwurf gespeichert, weil keine Fahrgeschwindigkeit bestätigt wurde.",
+      "es": "Se guardó como borrador porque no se confirmó una velocidad de conducción.",
+      "fr": "Enregistré comme brouillon, car la vitesse de conduite n’a pas été confirmée.",
+      "it": "Salvato come bozza perché non è stata confermata una velocità di guida.",
+      "pl": "Zapisano jako szkic, bo nie potwierdzono prędkości jazdy.",
+      "id": "Disimpan sebagai draf karena kecepatan berkendara tidak terkonfirmasi.",
+      "tr": "Sürüş hızı doğrulanmadığı için taslak olarak saklandı.",
+      "fil": "Itinago bilang draft dahil hindi nakumpirma ang bilis ng pagmamaneho.",
+      "uk": "Запис збережено як чернетку: швидкість руху не підтверджено.",
+      "kk": "Қозғалыс жылдамдығы расталмағандықтан, жазба нобай ретінде сақталды.",
+      "pt": "Guardado como rascunho porque a velocidade de condução não foi confirmada."
+    }
+  },
   "android_sign_in_with_google": {
     "values": {
       "en": "Sign in with Google",

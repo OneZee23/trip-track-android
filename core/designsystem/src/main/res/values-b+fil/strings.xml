@@ -223,7 +223,13 @@
     <string name="android_map_link_unavailable" formatted="false">Walang browser na makakapagbukas ng link na ito.</string>
     <string name="android_permission_background_hint" formatted="false">Sa susunod na screen, piliin ang “Payagan sa lahat ng oras” para magsimula ang biyahe kapag sumakay ka sa kotse.</string>
     <string name="android_precise_location_body" formatted="false">Kailangan ng eksaktong lokasyon para iguhit ang ruta at sukatin ang layo. Buksan ang Mga Setting → Mga Pahintulot → Lokasyon at i-on ang “Gumamit ng eksaktong lokasyon”.</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">Itinigil ng system ang GPS. Buksan ang TripTrack para magpatuloy ang pag-record.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Buksan ang mga setting ng baterya</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">Kapag may ganitong limitasyon, itinitigil ng Android ang GPS mga isang minuto matapos i-lock ang screen. Payagan ang TripTrack na tumakbo nang walang limitasyon sa baterya. Sa Xiaomi, paganahin din ang Autostart.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Maaaring ihinto ng limitasyon sa baterya ang GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Itinago bilang draft dahil hindi nakumpirma ang bilis ng pagmamaneho.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Itinago bilang draft dahil masyadong maikli ang recording para makumpirma ang biyahe.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Hindi makapag-sign in gamit ang Google. Tingnan ang koneksyon at Google account sa teleponong ito, saka subukan muli.</string>

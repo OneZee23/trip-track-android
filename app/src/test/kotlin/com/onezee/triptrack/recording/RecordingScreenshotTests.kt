@@ -29,12 +29,18 @@ class RecordingScreenshotTests(private val dark: Boolean) : RecordingScreenTest(
     private val fixture = RecordingFixtures
     private val theme get() = if (dark) "dark" else "light"
     private fun shot(name: String) { compose.waitForIdle(); compose.onRoot().captureRoboImage("src/test/screenshots/recording_${name}_$theme.png") }
-    private fun screen(state: TrackingState, denied: Boolean = false, discarded: String? = null, unit: DistanceUnit = DistanceUnit.km) {
-        show(dark, unit) { TrackingScreen(state, fixture.car, denied, TrackingActions(), fixture.now, discarded = discarded) }
+    private fun screen(state: TrackingState, denied: Boolean = false, discarded: String? = null, unit: DistanceUnit = DistanceUnit.km, restricted: Boolean = false) {
+        show(dark, unit) { TrackingScreen(state, fixture.car, denied, TrackingActions(), fixture.now, discarded = discarded, backgroundGpsRestricted = restricted) }
     }
 
     @Test fun idleNoGPS() { screen(TrackingState()); shot("idle_no_gps") }
     @Test fun idleGoodGPS() { screen(TrackingState(recorder = RecorderState(gpsAccuracy = 8.0), totalMetres = 142_500_000.0, tripCount = 42)); shot("idle_good_gps") }
+    /** The owner's POCO, 7 Nov 2026: background-restricted, GPS gone a minute after the screen locked. */
+    @Test fun idleBackgroundRestricted() {
+        screen(TrackingState(recorder = RecorderState(gpsAccuracy = 8.0), totalMetres = 142_500_000.0, tripCount = 42), restricted = true)
+        shot("idle_gps_restricted")
+    }
+    @Test fun gpsLostWhileRecording() { screen(fixture.recording.copy(recorder = fixture.recording.recorder.copy(gpsLost = true))); shot("gps_lost") }
     @Test fun locationDenied() { screen(TrackingState(), denied = true); shot("location_denied") }
     @Test fun recording() { screen(fixture.recording); shot("running") }
     // iOS: RecordingStatesTests.test_recording_over_a_light_map.

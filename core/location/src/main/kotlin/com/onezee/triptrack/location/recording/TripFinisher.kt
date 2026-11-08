@@ -41,6 +41,8 @@ class TripDeletion(
     private val notices: TripNotices,
     private val isRecording: () -> Boolean,
 ) {
+    suspend fun preserveAsDraft(id: UUID): Boolean = trips.preserveAsDraft(id)
+
     suspend fun delete(id: UUID) {
         // Before the row goes: an upload left in the queue would land a permanent orphan on the server.
         val photoIds = trips.fetchTripDetail(id)?.photos?.map { it.id }.orEmpty()
@@ -74,11 +76,27 @@ class TripFinisher(
     private val notices: TripNotices,
     private val clock: () -> Instant = Instant::now,
 ) {
-    suspend fun finish(trip: Trip?): StopOutcome {
+    suspend fun finish(
+        trip: Trip?,
+        gpsLost: Boolean = false,
+        activeSeconds: Double? = null,
+    ): StopOutcome {
         if (trip == null) return StopOutcome.NotRecording
+        val duration = trip.endDate?.let { secondsBetween(trip.startDate, it) } ?: secondsBetween(trip.startDate, clock())
+        val junkReason = TripJunkClassifier.reason(trip.distance, duration, trip.maxSpeed)
+        // Junk by its points, but minutes of recording or a GPS the system took away: the points lie,
+        // the drive happened (owner's return trip, 7 Nov 2026, deleted with 26 minutes recorded).
+        // Active time, pauses excluded: a short recording left on pause stays junk.
+        if (junkReason != null && ((activeSeconds ?: duration) >= JUNK_PRESERVATION_MIN_ACTIVE_SECONDS || gpsLost)) {
+            deletion.preserveAsDraft(trip.id)
+            val draft = trip.copy(confirmation = TripConfirmation.draft)
+            notices.draftConfirmPrompt(draft.id, draft.distance)
+            step("process") { postProcessing.processTrip(draft.id) }
+            step("name") { namer?.name(draft.id, draft.startDate) }
+            return StopOutcome.AwaitingConfirmation(draft, junkReason)
+        }
         return when (world.route(trip)) {
             TripWorldEntry.Route.discardJunk -> {
-                val duration = trip.endDate?.let { secondsBetween(trip.startDate, it) } ?: secondsBetween(trip.startDate, clock())
                 deletion.delete(trip.id)
                 StopOutcome.Discarded(trip.id, TripJunkClassifier.reason(trip.distance, duration, trip.maxSpeed))
             }
@@ -111,5 +129,6 @@ class TripFinisher(
 
     private companion object {
         const val TAG = "TripFinisher"
+        const val JUNK_PRESERVATION_MIN_ACTIVE_SECONDS = 300.0
     }
 }

@@ -49,6 +49,8 @@ import com.onezee.triptrack.logic.*
 import com.onezee.triptrack.map.MapHost
 import com.onezee.triptrack.map.MapHostState
 import com.onezee.triptrack.map.camera.MapCameraCommand
+import com.onezee.triptrack.location.permissions.*
+import com.onezee.triptrack.recording.BackgroundGpsRestrictionCard
 import com.onezee.triptrack.model.*
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
@@ -57,11 +59,24 @@ import kotlinx.coroutines.withContext
 @Composable
 internal fun AutoRecordSettingsContent(graph: AppGraph, state: SettingsState, onBack: () -> Unit, vehicleId: UUID? = null, onStereo: (() -> Unit)? = null) {
     val manager = graph.settingsManager
+    val context = LocalContext.current
+    val owner = LocalLifecycleOwner.current
+    var restrictionRevision by remember { mutableIntStateOf(0) }
+    DisposableEffect(owner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) restrictionRevision++
+        }
+        owner.lifecycle.addObserver(observer)
+        onDispose { owner.lifecycle.removeObserver(observer) }
+    }
+    val health = remember(restrictionRevision) { RecordingHealth.read(context, autoRecord = true) }
     AutoRecordSettingsScreen(state, onBack, manager::setAutoRecordTrigger,
         onMode = { manager.setAutoRecord(it) },
         onTimeout = { manager.setAutoRecord(state.autoRecordMode, it) },
         onUnlink = { manager.removeStereo(it) },
-        onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId)
+        onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId,
+        backgroundGpsRestricted = health.backgroundGpsRestricted,
+        onOpenBackgroundSettings = { HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem)) })
 }
 
 // iOS: AutoRecordSettingsView.swift. State and callbacks also drive the screenshot fixtures.
@@ -75,6 +90,8 @@ internal fun AutoRecordSettingsScreen(
     onUnlink: (String) -> Unit,
     onStereo: () -> Unit,
     vehicleId: UUID? = null,
+    backgroundGpsRestricted: Boolean = false,
+    onOpenBackgroundSettings: () -> Unit = {},
 ) {
     val strings = appStrings
     val colors = AppTheme.colors
@@ -98,6 +115,7 @@ internal fun AutoRecordSettingsScreen(
                 Box(Modifier.fillMaxWidth().height(1.dp).background(colors.border))
                 Text(description, style = inter(13f), color = colors.textSecondary)
             }
+            if (backgroundGpsRestricted) BackgroundGpsRestrictionCard(onOpenBackgroundSettings)
             if (on) {
                 AutoRecordSectionLabel(strings.stereoSection())
                 Column(Modifier.fillMaxWidth().surfaceCard(16.dp)) {

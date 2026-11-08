@@ -230,7 +230,7 @@ class LocationGraph(
     fun onAppForeground() {
         scope.launch {
             awaitStarted()
-            if (recorder.state.value.isRecording) RecordingService.start(context)
+            if (recorder.state.value.isRecording) RecordingService.refreshLocation(context)
             autoTrip.onAppForeground()
             drafts.apply()
         }

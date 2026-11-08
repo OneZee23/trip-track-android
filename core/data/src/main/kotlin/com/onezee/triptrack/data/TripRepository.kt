@@ -89,6 +89,7 @@ interface TripRepository {
     suspend fun saveBadgesJSON(tripId: UUID, badgeIds: List<String>)
     /** A draft becomes confirmed exactly once (iOS `TripManager.setConfirmation`). */
     suspend fun setConfirmation(confirmation: TripConfirmation, tripId: UUID): Boolean
+    suspend fun preserveAsDraft(tripId: UUID): Boolean
     /** Deletes a draft without a trace; a confirmed trip is left alone (iOS `TripManager.discardDraft`). */
     suspend fun discardDraft(id: UUID): Boolean
     /** `jpeg` is already encoded at `TripPhotoFiles.JPEG_QUALITY`; capture metadata comes from the picker. */

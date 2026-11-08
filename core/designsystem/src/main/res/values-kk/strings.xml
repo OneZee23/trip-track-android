@@ -223,7 +223,13 @@
     <string name="android_map_link_unavailable" formatted="false">Бұл сілтемені ашатын браузер жоқ.</string>
     <string name="android_permission_background_hint" formatted="false">Келесі экранда «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.</string>
     <string name="android_precise_location_body" formatted="false">Бағытты сызу және қашықтықты өлшеу үшін нақты геолокация қажет. Баптаулар → Рұқсаттар → Орналасқан жер бөліміне өтіп, «Нақты орналасқан жерді пайдалану» параметрін қосыңыз.</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">Жүйе GPS-ті тоқтатты. Жазуды жалғастыру үшін TripTrack-ті ашыңыз.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Батарея параметрлерін ашу</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">Осындай шектеулермен экран құлыпталғаннан кейін Android GPS-ті шамамен бір минутта тоқтатады. TripTrack-ке батарея шектеулерінсіз жұмыс істеуге рұқсат беріңіз. Xiaomi-де автоматты іске қосуды да қосыңыз.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Батарея шектеулері GPS-ті тоқтатуы мүмкін</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Қозғалыс жылдамдығы расталмағандықтан, жазба нобай ретінде сақталды.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Бұл жазба сапарды растауға тым қысқа болғандықтан, нобай ретінде сақталды.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Google арқылы кіру мүмкін болмады. Интернетті және телефондағы Google есептік жазбасын тексеріп, қайталап көріңіз.</string>

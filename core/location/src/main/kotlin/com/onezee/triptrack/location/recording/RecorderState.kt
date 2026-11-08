@@ -26,6 +26,7 @@ data class RecorderState(
     /** Accuracy of the last accepted fix; zero means no fix has been accepted yet («Finding GPS»). */
     val gpsAccuracy: Double = 0.0,
     val gpsStale: Boolean = true,
+    val gpsLost: Boolean = false,
     /** iOS: MapViewModel.currentLocation. Accepted provider fix, never an unvalidated raw position. */
     val location: com.onezee.triptrack.logic.LocationFix? = null,
     val checkpointCount: Int = 0,
@@ -66,7 +67,7 @@ sealed interface StartResult {
 sealed interface StopOutcome {
     data object NotRecording : StopOutcome
     data class Discarded(val tripId: UUID, val reason: TripJunkClassifier.Reason?) : StopOutcome
-    data class AwaitingConfirmation(val trip: Trip) : StopOutcome
+    data class AwaitingConfirmation(val trip: Trip, val preservedJunkReason: TripJunkClassifier.Reason? = null) : StopOutcome
     data class Saved(val trip: Trip, val rewards: TripRewardsResult) : StopOutcome
 }
 

@@ -190,7 +190,13 @@
     <string name="android_map_link_unavailable" formatted="false">Tidak ada browser untuk membuka tautan ini.</string>
     <string name="android_permission_background_hint" formatted="false">Di layar berikutnya pilih “Izinkan sepanjang waktu” agar perjalanan bisa dimulai saat Anda masuk mobil.</string>
     <string name="android_precise_location_body" formatted="false">Perekaman memerlukan lokasi akurat untuk menggambar rute dan mengukur jarak. Buka Setelan → Izin → Lokasi dan aktifkan “Gunakan lokasi akurat”.</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">GPS dihentikan oleh sistem. Buka TripTrack untuk melanjutkan rekaman.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Buka setelan baterai</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">Dengan pembatasan ini, Android menghentikan GPS sekitar satu menit setelah layar dikunci. Izinkan TripTrack berjalan tanpa pembatasan baterai. Di Xiaomi, aktifkan juga Mulai otomatis.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Pembatasan baterai dapat menghentikan GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Disimpan sebagai draf karena kecepatan berkendara tidak terkonfirmasi.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Disimpan sebagai draf karena rekaman ini terlalu singkat untuk mengonfirmasi perjalanan.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Tidak bisa masuk dengan Google. Periksa koneksi dan akun Google di ponsel ini, lalu coba lagi.</string>

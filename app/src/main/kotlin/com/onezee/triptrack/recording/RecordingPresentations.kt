@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.onezee.triptrack.AppGraph
 import com.onezee.triptrack.designsystem.components.*
+import com.onezee.triptrack.designsystem.R as Words
 import com.onezee.triptrack.designsystem.navigation.AppTab
 import com.onezee.triptrack.designsystem.navigation.HideAppTabBar
 import com.onezee.triptrack.designsystem.theme.*
@@ -90,6 +91,7 @@ private fun SummaryPresentation(graph: AppGraph, initialTrip: Trip, outcome: Sto
     val discoveries = delta?.takeIf { it.first == trip.id }?.second?.let {
         TripDiscoveries(trip.id, it.openedKm, it.newRegionIds, emptyList(), emptyList(), emptyList())
     }
+    val preservedJunkReason = (outcome as? StopOutcome.AwaitingConfirmation)?.preservedJunkReason
     fun mutate(block: suspend () -> Unit) {
         if (busy) return
         busy = true
@@ -110,7 +112,15 @@ private fun SummaryPresentation(graph: AppGraph, initialTrip: Trip, outcome: Sto
         }
     }
     ContentSizedSheet({}, background = AppColors.light.bg, detent = SheetDetent.large, dismissible = false) {
-        TripCompleteSummary(trip, (outcome as? StopOutcome.Saved)?.rewards, discoveries,
+        Column(Modifier.fillMaxSize()) {
+            preservedJunkReason?.let { reason ->
+                val message = when (reason) {
+                    com.onezee.triptrack.model.TripJunkClassifier.Reason.tooShort -> Words.string.android_recording_preserved_too_short
+                    com.onezee.triptrack.model.TripJunkClassifier.Reason.noDrivingSpeed -> Words.string.android_recording_preserved_slow
+                }
+                Text(strings.tr(message), Modifier.padding(horizontal = 20.dp, vertical = 10.dp), style = AppType.body, color = AppTheme.colors.textSecondary)
+            }
+            TripCompleteSummary(trip, (outcome as? StopOutcome.Saved)?.rewards, discoveries,
             onDone = { notes, publish -> mutate {
                 if (notes != trip.tripDescription.orEmpty()) graph.trips.updateNotes(trip.id, notes)
                 if (publish) graph.trips.updatePrivacy(trip.id, false)
@@ -139,7 +149,8 @@ private fun SummaryPresentation(graph: AppGraph, initialTrip: Trip, outcome: Sto
                         }
                     }
                 }
-            })
+            }, modifier = Modifier.weight(1f))
+        }
     }
     if (discarding) AppConfirmDialog(strings.deleteTrip(), message = null, actions = listOf(AppDialogAction(strings.delete(), AppDialogAction.Kind.destructive) {
         mutate {

@@ -147,6 +147,18 @@ class PermissionPlanTests {
     }
 
     @Test
+    fun backgroundGpsRestrictionUsesEitherAndroidSignal() {
+        val unrestricted = RecordingHealth(
+            locationEnabled = true, preciseLocation = true, backgroundLocation = true, activityRecognition = true,
+            notifications = true, bluetoothConnect = true, ignoringBatteryOptimizations = true,
+            backgroundRestricted = false, powerSave = false, oem = Oem.other, autoRecord = false,
+        )
+        assertFalse(unrestricted.backgroundGpsRestricted)
+        assertTrue(unrestricted.copy(backgroundRestricted = true).backgroundGpsRestricted)
+        assertFalse(unrestricted.copy(ignoringBatteryOptimizations = false).backgroundGpsRestricted)
+    }
+
+    @Test
     fun vendorsAreRecognisedByManufacturerOrBrand() {
         assertEquals(Oem.samsung, Oem.from("samsung"))
         assertEquals(Oem.xiaomi, Oem.from("Xiaomi"))

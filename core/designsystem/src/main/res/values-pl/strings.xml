@@ -289,7 +289,13 @@
     <string name="android_map_link_unavailable" formatted="false">Brak przeglądarki do otwarcia tego łącza.</string>
     <string name="android_permission_background_hint" formatted="false">Na następnym ekranie wybierz „Zezwalaj cały czas”, aby trasy zaczynały się, gdy wsiadasz do auta.</string>
     <string name="android_precise_location_body" formatted="false">Nagrywanie trasy i pomiar odległości wymagają dokładnej lokalizacji. Otwórz Ustawienia → Uprawnienia → Lokalizacja i włącz „Używaj dokładnej lokalizacji”.</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">System zatrzymał GPS. Otwórz TripTrack, aby kontynuować nagrywanie.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Otwórz ustawienia baterii</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">Przy tych ograniczeniach Android zatrzymuje GPS około minuty po zablokowaniu ekranu. Zezwól TripTrack działać bez ograniczeń baterii. Na Xiaomi włącz też autostart.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Ograniczenia baterii mogą zatrzymać GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Zapisano jako szkic, bo nie potwierdzono prędkości jazdy.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Zapisano jako szkic, bo nagranie było za krótkie, by potwierdzić podróż.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Nie udało się zalogować przez Google. Sprawdź połączenie i konto Google na telefonie, potem spróbuj ponownie.</string>

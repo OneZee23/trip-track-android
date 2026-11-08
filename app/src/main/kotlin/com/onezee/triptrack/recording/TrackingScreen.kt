@@ -38,6 +38,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.onezee.triptrack.R
 import com.onezee.triptrack.designsystem.components.*
 import com.onezee.triptrack.designsystem.components.Text
+import com.onezee.triptrack.designsystem.R as Words
 import com.onezee.triptrack.designsystem.navigation.tabBarTappableInset
 import com.onezee.triptrack.designsystem.strings.AppStrings
 import com.onezee.triptrack.designsystem.theme.*
@@ -120,6 +121,8 @@ fun TrackingScreen(
     canZoomIn: Boolean = true,
     canZoomOut: Boolean = true,
     mapReady: Boolean = true,
+    backgroundGpsRestricted: Boolean = false,
+    onOpenBackgroundSettings: () -> Unit = {},
     onHudHeightChanged: (Double) -> Unit = {},
     map: @Composable () -> Unit = { TrackingMapPlaceholder(state.coordinates, Modifier.fillMaxSize()) },
 ) {
@@ -147,11 +150,12 @@ fun TrackingScreen(
                             if (recorder.isDraft) DraftPill(Modifier.testTag("recording_draft_label"))
                         }
                     }
-                    if (!locationDenied || recorder.isRecording) GPSIndicator(recorder.gpsAccuracy, recorder.isRecording && recorder.gpsStale)
+                    if (!locationDenied || recorder.isRecording) GPSIndicator(recorder.gpsAccuracy, recorder.isRecording && (recorder.gpsStale || recorder.gpsLost))
                 }
                 if (recorder.isRecording && recorder.isPaused) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { PausedPill() }
                 if (recorder.isRecording && !recorder.isPaused) {
-                    if (recorder.gpsStale) SignalLostBanner(strings.signalLostTitle(), strings.signalLostHint())
+                    // In the app the honest line is what happens to the track; «open TripTrack» belongs to the notification.
+                    if (recorder.gpsLost || recorder.gpsStale) SignalLostBanner(strings.signalLostTitle(), strings.signalLostHint())
                     else if (recorder.gpsAccuracy > 35) WeakSignalToast(strings.weakSignalTitle(), strings.weakSignalHint())
                 }
             }
@@ -175,6 +179,7 @@ fun TrackingScreen(
                     RefusalToast(refusal, strings, actions.startAnyway, Modifier.padding(bottom = 10.dp))
                 }
                 discarded?.let { DiscardToast(it, Modifier.padding(bottom = 10.dp)) }
+                if (backgroundGpsRestricted) BackgroundGpsRestrictionCard(onOpenBackgroundSettings, Modifier.padding(bottom = 10.dp))
                 IdleHUD(state, vehicle, hasVehicles, locationDenied, healthHint, actions, measureHud)
             }
         }

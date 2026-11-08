@@ -386,6 +386,13 @@ class RoomTripRepository(
             true
         }
 
+    override suspend fun preserveAsDraft(tripId: UUID): Boolean = db.withTransaction {
+        val entity = trips.trip(tripId) ?: return@withTransaction false
+        if (entity.confirmation == TripConfirmation.draft.rawValue) return@withTransaction true
+        trips.upsertTrip(entity.copy(confirmation = TripConfirmation.draft.rawValue, lastModifiedAt = now()))
+        true
+    }
+
     /** A draft was never on the server (`serverCreatedAt == null`), so `deleteTrip` leaves no tombstone. */
     override suspend fun discardDraft(id: UUID): Boolean {
         if (trips.trip(id)?.confirmation != TripConfirmation.draft.rawValue) return false

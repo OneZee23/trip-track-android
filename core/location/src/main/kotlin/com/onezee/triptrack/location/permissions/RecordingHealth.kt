@@ -63,6 +63,15 @@ data class RecordingHealth(
     /** Auto-record is on: background location, activity and the stereo matter only then. */
     val autoRecord: Boolean,
 ) {
+    /**
+     * The switch MIUI cut GPS with on the owner's POCO (7 Nov 2026): background-restricted, GPS gone a
+     * minute after the screen locked although the service ran. Battery optimisation alone is the
+     * default on nearly every phone and does not stop a location service, so it stays a health issue
+     * and never raises the record-screen card.
+     */
+    val backgroundGpsRestricted: Boolean
+        get() = backgroundRestricted
+
     val issues: List<HealthIssue>
         get() = buildList {
             if (!locationEnabled) add(HealthIssue.locationOff)
@@ -123,9 +132,8 @@ object HealthSettings {
                 component("com.samsung.android.sm", "com.samsung.android.sm.ui.battery.BatteryActivity"),
             )
             Oem.xiaomi -> listOf(
+                xiaomiBatterySettings(context),
                 component("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"),
-                component("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity")
-                    .putExtra("package_name", pkg),
             )
             Oem.huawei -> listOf(
                 component("com.huawei.systemmanager", "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity"),
@@ -137,6 +145,10 @@ object HealthSettings {
             HealthIssue.locationOff -> listOf(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             HealthIssue.notificationsOff -> listOf(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, pkg))
             HealthIssue.batteryOptimized -> listOf(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            HealthIssue.backgroundRestricted -> when (oem) {
+                Oem.xiaomi -> listOf(xiaomiBatterySettings(context))
+                else -> listOf(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", pkg, null)))
+            }
             HealthIssue.powerSave -> listOf(Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS))
             null -> vendor
             else -> emptyList()
@@ -160,4 +172,9 @@ object HealthSettings {
     }
 
     private fun component(pkg: String, cls: String) = Intent().setComponent(ComponentName(pkg, cls))
+
+    private fun xiaomiBatterySettings(context: Context): Intent =
+        component("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity")
+            .putExtra("package_name", context.packageName)
+            .putExtra("package_label", context.applicationInfo.loadLabel(context.packageManager).toString())
 }

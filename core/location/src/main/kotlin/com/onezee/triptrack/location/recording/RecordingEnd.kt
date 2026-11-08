@@ -28,6 +28,7 @@ object RecordingEnd {
     const val movingThresholdMs = 2.0
     /** Short stops at lights and car parks stay in the trip; only a longer still tail is cut. */
     const val minTailToTrim = 60.0
+    const val MAX_TRIMMED_DISPLACEMENT_METERS = 200.0
 
     /**
      * The trimmed tail first (it comes from real point times), then the caller's hint (the moment the
@@ -39,19 +40,37 @@ object RecordingEnd {
         return maxOf(proposed, startDate)
     }
 
-    /** The last moment where a point AND its predecessor both moved, if the still tail after it is a minute or more. */
+    /** The last movement inferred from speed or displacement, if the still tail after it is a minute or more. */
     fun trimmedEndDate(points: List<TrackPoint>): Instant? {
         if (points.size <= 2) return null
         var lastMoving: Int? = null
         for (i in points.lastIndex downTo 1) {
-            if (points[i].speed > movingThresholdMs && points[i - 1].speed > movingThresholdMs) {
+            val previous = points[i - 1]
+            val current = points[i]
+            val elapsed = secondsBetween(previous.timestamp, current.timestamp)
+            val displacementSpeed = if (elapsed > 0.0) {
+                GeometryUtils.haversineDistance(
+                    GeoPoint(previous.latitude, previous.longitude),
+                    GeoPoint(current.latitude, current.longitude),
+                ) / elapsed
+            } else 0.0
+            // Displacement speaks only for points without a speed (filled lines, unknown fixes): a parked
+            // car's GPS jitters by metres a second, and Doppler already says it stands.
+            val speedUnknown = current.speed < 0.0 || previous.speed < 0.0
+            if (current.speed > movingThresholdMs && previous.speed > movingThresholdMs ||
+                speedUnknown && displacementSpeed > movingThresholdMs
+            ) {
                 lastMoving = i
                 break
             }
         }
         val index = lastMoving ?: return null
         val lastMovingAt = points[index].timestamp
-        return if (secondsBetween(lastMovingAt, points.last().timestamp) >= minTailToTrim) lastMovingAt else null
+        if (secondsBetween(lastMovingAt, points.last().timestamp) < minTailToTrim) return null
+        val position = GeoPoint(points[index].latitude, points[index].longitude)
+        return points.asSequence().drop(index + 1)
+            .filter { GeometryUtils.haversineDistance(position, GeoPoint(it.latitude, it.longitude)) > MAX_TRIMMED_DISPLACEMENT_METERS }
+            .maxOfOrNull { it.timestamp } ?: lastMovingAt
     }
 
     data class Stats(val distance: Double, val maxSpeed: Double)

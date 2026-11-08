@@ -10,6 +10,9 @@ import com.onezee.triptrack.logic.RecordingMath
 import com.onezee.triptrack.logic.openGaps
 import com.onezee.triptrack.logic.SyntheticDrives
 import com.onezee.triptrack.logic.TrackTestKit
+import com.onezee.triptrack.logic.LocationFix
+import com.onezee.triptrack.location.provider.LocationSource
+import com.onezee.triptrack.location.provider.TrackingMode
 import com.onezee.triptrack.model.RoadFillState
 import com.onezee.triptrack.model.TrackGapFinder
 import com.onezee.triptrack.model.Trip
@@ -104,6 +107,37 @@ class RecordingLifecycleTests : RecorderTestCase() {
         assertEquals(listOf("accept", "reject:accuracy", "reject:stale"), lines.drop(1).map { it.substringAfterLast(',') })
     }
 
+    @Test
+    fun gpsWatchdogUsesEveryProviderFixAndDoesNotRunWhilePaused() = test {
+        val id = started()
+        var callback: ((LocationFix, Double) -> Unit)? = null
+        val source = object : LocationSource {
+            override fun start(mode: TrackingMode, onFix: (LocationFix, Double) -> Unit) { callback = onFix }
+            override fun stop() { callback = null }
+        }
+        source.start(TrackingMode.recording) { fix, age ->
+            blocking { recorder.onProviderFix(fix, age) }
+        }
+        callback!!(TrackTestKit.fix(north = 0.0, speed = 0.0, after = 0.0), 0.0)
+        now = TrackTestKit.at(29.0)
+        recorder.tick()
+        assertFalse(recorder.state.value.gpsLost)
+        now = TrackTestKit.at(30.0)
+        recorder.tick()
+        assertTrue(recorder.state.value.gpsLost)
+        callback!!(TrackTestKit.fix(north = 10.0, speed = 0.0, after = 31.0, accuracy = 250.0), 0.0)
+        now = TrackTestKit.at(31.0)
+        recorder.tick()
+        assertFalse(recorder.state.value.gpsLost, "a rejected provider fix still proves GPS is delivering")
+        val log = java.io.File(rawFixLog.directory, "${id.toString().uppercase()}.csv").readText()
+        assertTrue(log.contains(" gpsLost\n"))
+        recorder.setPaused(true)
+        now = TrackTestKit.at(90.0)
+        recorder.tick()
+        assertFalse(recorder.state.value.gpsLost)
+        source.stop()
+    }
+
     // iOS: TripManager.isPaused, RecordingBreaksPersistenceTests.
     @Test
     fun aPauseIsSavedAtOnceAndItsStretchCountsNothing() = test {
@@ -187,6 +221,30 @@ class RecordingLifecycleTests : RecorderTestCase() {
         assertNull(db.tripDao().trip(id))
         assertFalse(java.io.File(rawFixLog.directory, "${id.toString().uppercase()}.csv").exists())
         assertTrue(sink.enqueued.none { it.entityId == id && it.action == SyncAction.upload })
+    }
+
+    @Test
+    fun anExtendedSlowRecordingIsKeptAsADraftWithItsJunkReason() = test {
+        val id = started()
+        drive((0..181).map { TrackTestKit.fix(north = it * 0.2, speed = 0.2, after = it.toDouble()) })
+        now = TrackTestKit.at(300.0)
+        val outcome = assertIs<StopOutcome.AwaitingConfirmation>(recorder.stop())
+        assertEquals(TripJunkClassifier.Reason.noDrivingSpeed, outcome.preservedJunkReason)
+        assertEquals(TripConfirmation.draft, outcome.trip.confirmation)
+        assertEquals(TripConfirmation.draft.rawValue, db.tripDao().trip(id)?.confirmation)
+        assertEquals(listOf(id), notices.draftPrompts)
+    }
+
+    @Test
+    fun aWatchdogTripThatWouldBeJunkIsSavedAsADraft() = test {
+        val id = started()
+        now = TrackTestKit.at(30.0)
+        recorder.tick()
+        assertTrue(recorder.state.value.gpsLost)
+        now = TrackTestKit.at(60.0)
+        val outcome = assertIs<StopOutcome.AwaitingConfirmation>(recorder.stop())
+        assertEquals(TripJunkClassifier.Reason.tooShort, outcome.preservedJunkReason)
+        assertEquals(TripConfirmation.draft.rawValue, db.tripDao().trip(id)?.confirmation)
     }
 
     // iOS: TripWorldEntry.route, a draft gets its question and stays out of the world.

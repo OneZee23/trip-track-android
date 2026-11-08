@@ -256,7 +256,13 @@
     <string name="android_map_link_unavailable" formatted="false">Aucun navigateur ne permet d’ouvrir ce lien.</string>
     <string name="android_permission_background_hint" formatted="false">Sur l’écran suivant, choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.</string>
     <string name="android_precise_location_body" formatted="false">La position exacte est nécessaire pour tracer votre itinéraire et mesurer la distance. Ouvrez Paramètres → Autorisations → Position et activez « Utiliser la position exacte ».</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">Le système a coupé le GPS. Ouvrez TripTrack pour poursuivre l’enregistrement.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Ouvrir les réglages de batterie</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">Avec ces restrictions, Android coupe le GPS environ une minute après le verrouillage de l’écran. Autorisez TripTrack à fonctionner sans restriction de batterie. Sur Xiaomi, activez aussi le démarrage automatique.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Les restrictions de batterie peuvent couper le GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Enregistré comme brouillon, car la vitesse de conduite n’a pas été confirmée.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Enregistré comme brouillon, car cette trace est trop courte pour confirmer un trajet.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Connexion avec Google impossible. Vérifiez la connexion et votre compte Google sur ce téléphone, puis réessayez.</string>

@@ -289,7 +289,13 @@
     <string name="android_map_link_unavailable" formatted="false">На телефоне нет браузера для открытия ссылки.</string>
     <string name="android_permission_background_hint" formatted="false">На следующем экране выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.</string>
     <string name="android_precise_location_body" formatted="false">Для записи маршрута и расстояния нужна точная геолокация. Откройте Настройки → Разрешения → Местоположение и включите «Точное местоположение».</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">GPS отключён системой. Откройте TripTrack, чтобы запись продолжилась.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Открыть настройки батареи</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">С такими ограничениями Android отключит GPS примерно через минуту после блокировки экрана. Разрешите TripTrack работать без ограничений батареи. На Xiaomi также включите автозапуск.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Ограничение батареи отключит GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Запись сохранена как черновик: скорость движения не подтвердилась.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Запись сохранена как черновик: она слишком короткая, чтобы подтвердить поездку.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Не получилось войти через Google. Проверьте интернет и аккаунт Google на телефоне и попробуйте ещё раз.</string>

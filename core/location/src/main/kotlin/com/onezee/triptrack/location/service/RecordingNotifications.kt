@@ -61,6 +61,8 @@ class RecordingTexts(private val strings: AppStrings, private val unit: Distance
 
     fun autoStartFailedTitle(): String = strings.notifAutoStartFailedTitle()
 
+    fun gpsLostBody(): String = strings.tr(Strings.string.android_recording_gps_lost_notification)
+
     /** iOS: notifAutoStartFailedBody. */
     fun autoStartFailedBody(reason: StartRefusal): String = strings.tr(
         when (reason) {
@@ -160,6 +162,22 @@ class RecordingNotifications(
         manager.notify(ONGOING_ID, notification)
     }
 
+    fun gpsLost() {
+        val body = texts().gpsLostBody()
+        val notification = Notification.Builder(context, CHANNEL_RECORDING)
+            .setSmallIcon(R.drawable.ic_stat_recording)
+            .setContentTitle(texts().ongoingTitle(RecorderState(isRecording = true)))
+            .setContentText(body)
+            .setStyle(Notification.BigTextStyle().bigText(body))
+            .setContentIntent(openApp())
+            .setAutoCancel(false)
+            .setOnlyAlertOnce(true)
+            .build()
+        manager.notify(GPS_LOST_TAG, GPS_LOST_ID, notification)
+    }
+
+    fun clearGpsLost() = manager.cancel(GPS_LOST_TAG, GPS_LOST_ID)
+
     // MARK: AutoTripNotices
 
     override fun tripStopPrompt(minutes: Int?, reason: StopPromptReason) {
@@ -247,10 +265,12 @@ class RecordingNotifications(
         const val CHANNEL_DRAFTS = "drafts"
         const val ONGOING_ID = 1001
         private const val PROMPT_ID = 1002
+        private const val GPS_LOST_ID = 1003
         // The iOS request identifiers.
         const val STOP_PROMPT_TAG = "trip-stop-prompt"
         const val AUTO_START_FAILED_TAG = "trip-auto-start-failed"
         const val AUTO_STOPPED_TAG = "trip-auto-stopped"
+        const val GPS_LOST_TAG = "trip-gps-lost"
         fun draftConfirmTag(tripId: UUID) = "trip-draft-${tripId.toString().uppercase()}"
     }
 }

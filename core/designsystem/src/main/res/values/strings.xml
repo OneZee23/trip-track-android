@@ -223,7 +223,13 @@
     <string name="android_map_link_unavailable" formatted="false">No browser is available to open this link.</string>
     <string name="android_permission_background_hint" formatted="false">On the next screen choose “Allow all the time” so trips can start when you get in the car.</string>
     <string name="android_precise_location_body" formatted="false">Recording needs precise location to draw your route and measure distance. Open Settings → Permissions → Location and turn on “Use precise location”.</string>
+    <string name="android_recording_gps_lost_notification" formatted="false">GPS was stopped by the system. Open TripTrack to continue recording.</string>
+    <string name="android_recording_gps_restricted_action" formatted="false">Open battery settings</string>
+    <string name="android_recording_gps_restricted_body" formatted="false">With these restrictions, Android stops GPS about a minute after the screen locks. Allow TripTrack to run without battery restrictions. On Xiaomi, also enable Autostart.</string>
+    <string name="android_recording_gps_restricted_title" formatted="false">Battery restrictions can stop GPS</string>
     <string name="android_recording_level_up" formatted="false">LEVEL UP!</string>
+    <string name="android_recording_preserved_slow" formatted="false">Kept as a draft because driving speed was not confirmed.</string>
+    <string name="android_recording_preserved_too_short" formatted="false">Kept as a draft because this recording was too short to confirm a trip.</string>
     <string name="android_recording_xp">+%1$s XP</string>
     <string name="android_selected_item">• %1$s</string>
     <string name="android_sign_in_google_failed" formatted="false">Couldn’t sign in with Google. Check your connection and your Google account on this phone, then try again.</string>

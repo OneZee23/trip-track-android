@@ -75,6 +75,9 @@ class TripRecorder(
     private var currentCoordinate: GeoPoint? = null
     private var unsavedPoints = 0
     private var lastSave: Instant = Instant.EPOCH
+    private var lastProviderFixAt: Instant? = null
+    private var finishingGpsLost = false
+    private var finishingActiveSeconds = 0.0
 
     // MARK: Start
 
@@ -145,8 +148,10 @@ class TripRecorder(
             location = lastFix,
             gpsAccuracy = lastFix?.horizontalAccuracy ?: 0.0,
             gpsStale = false,
+            gpsLost = false,
             checkpointCount = trip.checkpoints.size,
         )
+        lastProviderFixAt = now
         saveSession()
     }
 
@@ -160,10 +165,11 @@ class TripRecorder(
     suspend fun onProviderFix(fix: LocationFix, ageSeconds: Double) {
         val accepted = mutex.withLock {
             val recording = math
+            val now = clock()
+            if (recording != null) lastProviderFixAt = now
             val decision = FixGate.decide(fix.horizontalAccuracy, ageSeconds, fix.speed, recording != null)
             if (recording != null) rawFixLog.record(RawFixLog.line(fix, decision))
             if (decision != FixGate.Decision.Accept) return@withLock null
-            val now = clock()
             liveSpeed.onFix(fix.speed, now)
             var point: TrackPoint? = null
             if (recording != null && !recording.isPaused) {
@@ -178,6 +184,7 @@ class TripRecorder(
                 speed = liveSpeed.speed,
                 gpsAccuracy = fix.horizontalAccuracy,
                 gpsStale = false,
+                gpsLost = false,
                 location = fix,
                 distance = recording?.trip?.distance ?: _state.value.distance,
                 maxSpeed = recording?.trip?.maxSpeed ?: _state.value.maxSpeed,
@@ -216,8 +223,12 @@ class TripRecorder(
         liveSpeed.tick(now)
         val stale = liveSpeed.isStale(now)
         val current = _state.value
-        if (current.speed != liveSpeed.speed || current.gpsStale != stale) {
-            _state.value = current.copy(speed = liveSpeed.speed, gpsStale = stale)
+        val gpsLost = math != null && !current.isPaused &&
+            lastProviderFixAt?.let { secondsBetween(it, now) >= GPS_LOST_AFTER_SECONDS } == true
+        if (gpsLost && !current.gpsLost) rawFixLog.mark("gpsLost")
+        if (!gpsLost && current.gpsLost) rawFixLog.mark("gpsRestored")
+        if (current.speed != liveSpeed.speed || current.gpsStale != stale || current.gpsLost != gpsLost) {
+            _state.value = current.copy(speed = liveSpeed.speed, gpsStale = stale, gpsLost = gpsLost)
         }
     }
 
@@ -243,10 +254,11 @@ class TripRecorder(
             if (paused) {
                 flush()
                 store.saveBreaks(recording.trip.id, recording.trip.recordingBreaks)
-                _state.value = current.copy(isPaused = true, pauseStartedAt = now)
+                _state.value = current.copy(isPaused = true, pauseStartedAt = now, gpsLost = false)
             } else {
                 val pausedFor = current.pauseStartedAt?.let { secondsBetween(it, now) } ?: 0.0
-                _state.value = current.copy(isPaused = false, pauseStartedAt = null, pausedSeconds = current.pausedSeconds + pausedFor)
+                lastProviderFixAt = now
+                _state.value = current.copy(isPaused = false, pauseStartedAt = null, pausedSeconds = current.pausedSeconds + pausedFor, gpsLost = false)
             }
             saveSession()
             true
@@ -301,6 +313,8 @@ class TripRecorder(
 
     private suspend fun stopLocked(suggestedEndDate: Instant?): Trip? {
         val recording = math ?: return null
+        finishingGpsLost = _state.value.gpsLost || rawFixLog.sawGpsLost(recording.trip.id)
+        finishingActiveSeconds = _state.value.elapsedSeconds(clock())
         // Out of the recording state before the slow part, so a second stop bails here.
         math = null
         _state.value = RecorderState(gpsAccuracy = _state.value.gpsAccuracy, location = _state.value.location, isFinishing = true)
@@ -328,8 +342,10 @@ class TripRecorder(
     private suspend fun finish(trip: Trip): StopOutcome {
         listener.recordingDidEnd()
         try {
-            return finisher.finish(trip).also { _completion.value = it }
+            return finisher.finish(trip, finishingGpsLost, finishingActiveSeconds).also { _completion.value = it }
         } finally {
+            finishingGpsLost = false
+            finishingActiveSeconds = 0.0
             _track.value = emptyList()
             _state.value = _state.value.copy(isFinishing = false)
         }
@@ -424,5 +440,6 @@ class TripRecorder(
     companion object {
         const val SAVE_BATCH_SIZE = 10
         const val SAVE_INTERVAL = 15.0
+        const val GPS_LOST_AFTER_SECONDS = 30.0
     }
 }

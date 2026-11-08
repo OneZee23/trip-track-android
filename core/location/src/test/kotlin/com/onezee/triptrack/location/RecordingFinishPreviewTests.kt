@@ -14,6 +14,31 @@ class RecordingFinishPreviewTests {
     private fun preview(id: UUID, distance: Double, duration: Double, speed: Double) =
         RecordingFinishPreview(id, start.plusNanos((duration * 1e9).toLong()), distance, duration, speed)
 
+    @Test fun testMissingSpeedDoesNotTrimTheRecordedDrive() {
+        val start = Instant.parse("2026-11-07T14:14:40Z")
+        val lastDriveFix = Instant.parse("2026-11-07T15:18:55Z")
+        val points = listOf(
+            TrackPoint(latitude = 55.000000, longitude = 37.000000, speed = -1.0, timestamp = start),
+            TrackPoint(latitude = 55.000100, longitude = 37.000000, speed = -1.0, timestamp = start.plusSeconds(10)),
+            TrackPoint(latitude = 55.076000, longitude = 37.000000, speed = -1.0, timestamp = lastDriveFix),
+            TrackPoint(latitude = 55.076000, longitude = 37.000000, speed = 0.0, timestamp = lastDriveFix.plusSeconds(70)),
+        )
+        assertEquals(lastDriveFix, com.onezee.triptrack.location.recording.RecordingEnd.trimmedEndDate(points))
+    }
+
+    @Test fun testJitterAtAStopWithAKnownSpeedStillTrimsTheTail() {
+        val start = Instant.parse("2026-11-07T15:00:00Z")
+        val points = listOf(
+            TrackPoint(latitude = 45.0, longitude = 38.0, speed = 10.0, timestamp = start),
+            TrackPoint(latitude = 45.001, longitude = 38.0, speed = 10.0, timestamp = start.plusSeconds(11)),
+            // Parked: Doppler says 0 while the position jumps 8 m in a second.
+            TrackPoint(latitude = 45.00107, longitude = 38.0, speed = 0.0, timestamp = start.plusSeconds(40)),
+            TrackPoint(latitude = 45.001, longitude = 38.0, speed = 0.0, timestamp = start.plusSeconds(41)),
+            TrackPoint(latitude = 45.00107, longitude = 38.0, speed = 0.0, timestamp = start.plusSeconds(100)),
+        )
+        assertEquals(start.plusSeconds(11), com.onezee.triptrack.location.recording.RecordingEnd.trimmedEndDate(points))
+    }
+
     @Test fun testShortTripRequiresBothDistanceAndTimeBelowTheExistingThresholds() {
         assertEquals(TripJunkClassifier.Reason.tooShort, reason(499.999, 119.999, 10.0))
         assertNull(reason(500.0, 119.999, 10.0)); assertNull(reason(499.999, 120.0, 10.0)); assertNull(reason(500.0, 120.0, 10.0))

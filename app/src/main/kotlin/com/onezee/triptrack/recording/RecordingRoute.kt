@@ -103,6 +103,8 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
         health = { healthOpen = true }, locate = { cameraMode = cameraMode.next() },
         zoom = { zoomIn -> map.camera?.let { camera -> map.execute(MapCameraCommand.Move(camera.centre, (camera.zoom + if (zoomIn) 1 else -1).coerceIn(MIN_ZOOM, MAX_ZOOM), true)) } },
     ), now, healthHint = health.issues.firstOrNull()?.message?.let(strings::tr), cameraMode = cameraMode, discarded = discarded,
+        backgroundGpsRestricted = !state.recorder.isRecording && health.backgroundGpsRestricted,
+        onOpenBackgroundSettings = { HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem)) },
         dockInset = dock, hasVehicles = vehicles.isNotEmpty(),
         // The + and − dim at the limits of the zoom the buttons step through.
         canZoomIn = canZoomIn, canZoomOut = canZoomOut,

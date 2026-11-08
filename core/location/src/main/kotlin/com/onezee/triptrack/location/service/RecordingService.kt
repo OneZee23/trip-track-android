@@ -53,6 +53,7 @@ class RecordingService : Service() {
             return START_NOT_STICKY
         }
         if (job == null) job = graph.scope.launch { run() }
+        else if (intent?.action == ACTION_REFRESH_LOCATION && graph.recorder.state.value.isRecording) startRecordingSource()
         return START_STICKY
     }
 
@@ -77,6 +78,7 @@ class RecordingService : Service() {
                     graph.recorder.tick()
                 }
             }
+            var gpsLostNotified = false
             // At most one repost a second (a StateFlow skips what a slow collector missed); the
             // chronometer ticks on its own in between.
             graph.recorder.state.first { state ->
@@ -85,12 +87,14 @@ class RecordingService : Service() {
                 if (state.isRecording != gpsOn) {
                     gpsOn = state.isRecording
                     if (gpsOn) {
-                        source.start(TrackingMode.recording) { fix, age ->
-                            graph.scope.launch { graph.recorder.onProviderFix(fix, age) }
-                        }
+                        startRecordingSource()
                     } else {
                         source.stop()
                     }
+                }
+                if (state.gpsLost != gpsLostNotified) {
+                    gpsLostNotified = state.gpsLost
+                    if (gpsLostNotified) graph.notifications.gpsLost() else graph.notifications.clearGpsLost()
                 }
                 when {
                     state.isRecording -> graph.notifications.updateOngoing(state)
@@ -107,15 +111,23 @@ class RecordingService : Service() {
 
     private fun finish() {
         source.stop()
+        graph.notifications.clearGpsLost()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         job = null
+    }
+
+    private fun startRecordingSource() {
+        source.start(TrackingMode.recording) { fix, age ->
+            graph.scope.launch { graph.recorder.onProviderFix(fix, age) }
+        }
     }
 
     companion object {
         private const val TAG = "RecordingService"
         private const val TICK_MS = 500L
         private const val UPDATE_MS = 1_000L
+        private const val ACTION_REFRESH_LOCATION = "com.onezee.triptrack.location.REFRESH_LOCATION"
 
         /** False when the system refused the start (a background start outside the exemptions). */
         fun start(context: Context): Boolean = try {
@@ -126,6 +138,17 @@ class RecordingService : Service() {
             false
         } catch (refused: SecurityException) {
             Log.w(TAG, "service start refused", refused)
+            false
+        }
+
+        fun refreshLocation(context: Context): Boolean = try {
+            context.startForegroundService(Intent(context, RecordingService::class.java).setAction(ACTION_REFRESH_LOCATION))
+            true
+        } catch (refused: IllegalStateException) {
+            Log.w(TAG, "location refresh refused", refused)
+            false
+        } catch (refused: SecurityException) {
+            Log.w(TAG, "location refresh refused", refused)
             false
         }
     }

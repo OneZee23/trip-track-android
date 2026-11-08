@@ -90,6 +90,10 @@ class RawFixLog(val directory: File, private val now: () -> Instant = Instant::n
         (directory.listFiles() ?: emptyArray()).filter { it.lastModified() >= modifiedSince.toEpochMilli() }
             .sortedByDescending { it.lastModified() }
 
+    @Synchronized
+    fun sawGpsLost(tripId: UUID): Boolean = file(tripId).takeIf(File::exists)
+        ?.useLines { lines -> lines.any { it.endsWith(" gpsLost") } } == true
+
     /** The account wipe takes every file, like `LocalDataWipe` on iOS. */
     @Synchronized
     fun wipe() {
