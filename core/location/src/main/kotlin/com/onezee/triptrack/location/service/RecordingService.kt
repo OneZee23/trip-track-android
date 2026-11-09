@@ -8,7 +8,9 @@ import android.os.IBinder
 import android.util.Log
 import com.onezee.triptrack.location.LocationGraph
 import com.onezee.triptrack.location.LocationGraphOwner
+import com.onezee.triptrack.location.provider.FusedLocationSource
 import com.onezee.triptrack.location.provider.PlatformLocationSource
+import com.onezee.triptrack.location.provider.StandbyLocationSource
 import com.onezee.triptrack.location.provider.TrackingMode
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -32,7 +34,11 @@ import kotlinx.coroutines.launch
 class RecordingService : Service() {
     private lateinit var graph: LocationGraph
     private var job: Job? = null
-    private val source by lazy { PlatformLocationSource(this) }
+    private val source by lazy {
+        StandbyLocationSource(PlatformLocationSource(this), FusedLocationSource.createIfAvailable(this)) { usingStandby ->
+            graph.rawFixLog.mark(if (usingStandby) "standbyOn" else "standbyOff")
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()

@@ -27,7 +27,8 @@ interface LocationSource {
  * (`kCLDistanceFilterNone`): a filter drops the slow manoeuvres in a yard and the Kalman filter,
  * the continuity gate and the odometer door downstream are the app's own and expect raw input.
  * The fused provider would hand them positions it already smoothed, with speeds it estimated, and
- * would not exist at all on phones without Google services.
+ * would not exist at all on phones without Google services; it only stands in while this one is
+ * silent (`StandbyLocationSource`).
  *
  * Idle (the record screen before a start) mirrors iOS's low-power mode: the network provider for a
  * quick first position plus GPS every five seconds or 50 metres.
