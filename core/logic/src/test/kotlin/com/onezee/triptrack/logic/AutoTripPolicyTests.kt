@@ -6,9 +6,9 @@ import kotlin.test.*
 
 // iOS: AutoStopOnPauseTests.swift, AutoTripDraftPolicyTests.swift
 class AutoTripPolicyTests {
-    private fun decide(mode: AutoRecordMode, isRecording: Boolean = true, isPaused: Boolean = false,
+    private fun decide(mode: AutoRecordMode, isRecording: Boolean = true, isPaused: Boolean = false, driving: Boolean = false,
                        idle: Boolean = false, distance: Double = 20_000.0, duration: Double = 3600.0, timeout: Int = 3) =
-        AutoTripPolicy.onBluetoothDisconnect(mode, isRecording, isPaused, idle, distance, duration, timeout)
+        AutoTripPolicy.onBluetoothDisconnect(mode, isRecording, isPaused, driving, idle, distance, duration, timeout)
 
     @Test fun testAPausedTripIsNeverStoppedByBluetooth() {
         for (mode in AutoRecordMode.entries) for (idle in listOf(false, true)) {
@@ -32,6 +32,16 @@ class AutoTripPolicyTests {
     @Test fun testAutoModeStillEndsAfterARealDrive() { assertEquals(StopNow, decide(AutoRecordMode.auto, distance = 20_000.0, duration = 3600.0)) }
     @Test fun testAutoModeStillGivesTheGraceToAShortTrip() {
         assertEquals(PromptThenStop(3), decide(AutoRecordMode.auto, distance = 100.0, duration = 60.0, timeout = 3))
+    }
+    // iOS: testAStereoLostWhileDrivingIsIgnored. The link drops or the car audio flaps on the move.
+    @Test fun testAStereoLostWhileDrivingIsIgnored() {
+        for (mode in AutoRecordMode.entries) assertEquals(Ignore, decide(mode, driving = true), "mode $mode ended or asked on the move")
+        assertEquals(Ignore, decide(AutoRecordMode.auto, driving = true, distance = 100.0, duration = 60.0))
+    }
+    // iOS: testParkingStillEndsTheTripRightAway. The speedometer reads zero before the engine is off.
+    @Test fun testParkingStillEndsTheTripRightAway() {
+        assertEquals(StopNow, decide(AutoRecordMode.auto, driving = false, distance = 11_128.0, duration = 2_288.0))
+        assertEquals(4.0, AutoTripPolicy.bluetoothDisconnectDrivingSpeed)
     }
     @Test fun testNothingHappensWhenNothingIsRecording() { assertEquals(Ignore, decide(AutoRecordMode.auto, isRecording = false, idle = true)) }
     @Test fun testStopModeTable() {

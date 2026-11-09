@@ -65,6 +65,18 @@ class AutoTripControllerTests : RecorderTestCase() {
         scope.cancel()
     }
 
+    /**
+     * The car stops before the engine goes off: no fixes, and the service's half-second tick lets the
+     * speedometer fall to zero, as it does in the seconds before a stereo disconnects at a stop.
+     */
+    private suspend fun parkAt(seconds: Double) {
+        val until = TrackTestKit.at(seconds)
+        while (now < until) {
+            now = minOf(until, now.plusMillis(500))
+            recorder.tick()
+        }
+    }
+
     /** Fires the armed auto-stop timer and waits for what it does. */
     private suspend fun fireTimer() {
         val timer = controller.stopTimer ?: error("no timer armed")
@@ -146,7 +158,7 @@ class AutoTripControllerTests : RecorderTestCase() {
     fun aPauseCancelsTheTimerArmedBeforeIt() = test {
         controller.onStereoConnected(stereo.uuid, stereo.name)
         drive(straight(0..60))
-        now = TrackTestKit.at(70.0)
+        parkAt(70.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         val timer = controller.stopTimer!!
         recorder.setPaused(true)
@@ -158,7 +170,7 @@ class AutoTripControllerTests : RecorderTestCase() {
     fun aShortTripGetsTheQuestionThenStopsAfterTheTimeout() = test {
         controller.onStereoConnected(stereo.uuid, stereo.name)
         drive(straight(0..60))
-        now = TrackTestKit.at(70.0)
+        parkAt(70.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         assertEquals(listOf<Pair<Int?, StopPromptReason>>(3 to StopPromptReason.bluetooth), prompts.stopPrompts)
         assertEquals(listOf(180_000L), waits)
@@ -172,10 +184,22 @@ class AutoTripControllerTests : RecorderTestCase() {
     fun aRealDriveEndsAtOnceWhenTheStereoGoes() = test {
         controller.onStereoConnected(stereo.uuid, stereo.name)
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         assertFalse(recorder.state.value.isRecording)
         assertEquals(1, prompts.autoStops.size, "the summary notice of a confirmed trip")
+    }
+
+    // iOS 0.9.4 (owner's drive, 7 Nov 2026): a stereo lost on the move neither ends nor asks.
+    @Test
+    fun aStereoLostWhileDrivingIsIgnored() = test {
+        controller.onStereoConnected(stereo.uuid, stereo.name)
+        drive(straight(0..240))
+        controller.onStereoDisconnected(stereo.uuid, stereo.name)
+        assertTrue(recorder.state.value.isRecording)
+        assertTrue(prompts.stopPrompts.isEmpty())
+        assertNull(controller.stopTimer)
+        assertTrue(prompts.autoStops.isEmpty())
     }
 
     // iOS: testRemindModeAsksAndDoesNotAct, for a trip the person started.
@@ -184,7 +208,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         autoSettings.mode = AutoRecordMode.remind
         assertIs<StartResult.Started>(recorder.start())
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         assertEquals(listOf<Pair<Int?, StopPromptReason>>(null to StopPromptReason.bluetooth), prompts.stopPrompts)
         assertTrue(recorder.state.value.isRecording)
@@ -197,7 +221,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         autoSettings.mode = AutoRecordMode.remind
         controller.onStereoConnected(stereo.uuid, stereo.name)
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         assertFalse(recorder.state.value.isRecording)
         assertTrue(prompts.autoStops.isEmpty(), "a draft gets its question at the finish instead")
@@ -281,7 +305,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         controller.onCarConnection(true)
         assertTrue(recorder.state.value.isRecording)
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onCarConnection(false)
         assertFalse(recorder.state.value.isRecording)
     }
@@ -308,7 +332,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         autoSettings.trigger = AutoRecordTrigger.stereoOnly
         controller.onStereoConnected(stereo.uuid, stereo.name)
         drive(straight(0..60))
-        now = TrackTestKit.at(70.0)
+        parkAt(70.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         val timer = controller.stopTimer
         controller.onAutomotiveDetected(null)
@@ -328,7 +352,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         assertEquals(car, db.tripDao().trip(recorder.state.value.tripId!!)!!.vehicleId)
         assertEquals(stereo.uuid, memory.connectedStereo)
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onStereoDisconnected(stereo.uuid, stereo.name)
         assertFalse(recorder.state.value.isRecording)
     }
@@ -356,7 +380,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         assertFalse(recorder.state.value.isRecording)
         recorder.start()
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onCarConnection(false)
         assertTrue(recorder.state.value.isRecording)
         assertTrue(prompts.stopPrompts.isEmpty())
@@ -370,7 +394,7 @@ class AutoTripControllerTests : RecorderTestCase() {
         assertTrue(recorder.state.value.isRecording)
         assertEquals(car, db.tripDao().trip(recorder.state.value.tripId!!)!!.vehicleId)
         drive(straight(0..240))
-        now = TrackTestKit.at(250.0)
+        parkAt(250.0)
         controller.onCarConnection(false)
         assertFalse(recorder.state.value.isRecording)
     }

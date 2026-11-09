@@ -15,6 +15,12 @@ val AutoTripPolicy.bluetoothDisconnectFastStopIdleThreshold: Double get() = 5.0 
 val AutoTripPolicy.meaningfulMovementDistance: Double get() = 100.0
 val AutoTripPolicy.immediateEndOnBtDisconnectMinDistance: Double get() = 500.0
 val AutoTripPolicy.immediateEndOnBtDisconnectMinDuration: Double get() = 180.0
+/**
+ * Speed (m/s, ~14 km/h) above which a lost stereo is ignored: the car is clearly driving. Compared
+ * with the live speedometer, which reads zero within about two seconds of a real stop, so parking
+ * and switching the engine off still end the trip.
+ */
+val AutoTripPolicy.bluetoothDisconnectDrivingSpeed: Double get() = 4.0
 val AutoTripPolicy.junkTripMinDistance: Double get() = 500.0
 val AutoTripPolicy.junkTripMinDuration: Double get() = 120.0
 val AutoTripPolicy.junkTripWalkingSpeedKmh: Double get() = 15.0
@@ -36,12 +42,16 @@ fun AutoTripPolicy.onBluetoothDisconnect(
     mode: AutoRecordMode,
     isRecording: Boolean,
     isPaused: Boolean,
+    isDriving: Boolean,
     isIdleBeyondFastStop: Boolean,
     tripDistance: Double,
     tripDuration: Double,
     autoStopTimeout: Int,
 ): BluetoothDisconnectDecision {
     if (!isRecording || isPaused) return BluetoothDisconnectDecision.Ignore
+    // A stereo lost on the move is not an arrival: the car drives on and the Bluetooth link dropped.
+    // Neither end the trip nor ask the driver at the wheel; parking ends it through inactivity.
+    if (isDriving) return BluetoothDisconnectDecision.Ignore
     return when (mode) {
         AutoRecordMode.off -> BluetoothDisconnectDecision.Ignore
         AutoRecordMode.remind -> BluetoothDisconnectDecision.PromptOnly

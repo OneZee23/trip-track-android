@@ -9,6 +9,7 @@ import com.onezee.triptrack.location.recording.TripRecorder
 import com.onezee.triptrack.location.recording.secondsBetween
 import com.onezee.triptrack.logic.RecordingMovementTracker
 import com.onezee.triptrack.logic.autoStopDelaySeconds
+import com.onezee.triptrack.logic.bluetoothDisconnectDrivingSpeed
 import com.onezee.triptrack.logic.bluetoothDisconnectFastStopIdleThreshold
 import com.onezee.triptrack.logic.eventDeduplicationWindow
 import com.onezee.triptrack.logic.inactivityTimeout
@@ -214,6 +215,7 @@ class AutoTripController(
             mode = effectiveStopMode,
             isRecording = state.isRecording,
             isPaused = state.isPaused,
+            isDriving = state.speed >= AutoTripPolicy.bluetoothDisconnectDrivingSpeed,
             isIdleBeyondFastStop = isStale(AutoTripPolicy.bluetoothDisconnectFastStopIdleThreshold),
             tripDistance = state.distance,
             tripDuration = state.startDate?.let { secondsBetween(it, now) } ?: 0.0,
