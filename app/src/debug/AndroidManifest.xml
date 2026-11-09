@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The bench drive keeps its injector awake with the screen off (debug only). -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- A local backend over HTTP, debug only (docs/sign-in.md). -->
     <application android:networkSecurityConfig="@xml/network_security_config">
         <!-- Debug builds only: a second launcher entry with the map and fog over seeded libraries. -->

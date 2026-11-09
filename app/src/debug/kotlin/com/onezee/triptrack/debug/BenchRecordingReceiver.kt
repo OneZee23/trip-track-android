@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * DUMP, a permission apps never get.
  *
  * adb shell am broadcast -n com.onezee.triptrack.dev/com.onezee.triptrack.debug.BenchRecordingReceiver -a start
- * (start | pause | resume | stop | health)
+ * (start | pause | resume | stop | health | mock [--ef speed 14 --ei seconds 300] | mockstop)
  */
 class BenchRecordingReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -33,6 +33,8 @@ class BenchRecordingReceiver : BroadcastReceiver() {
                     "stop" -> graph.stopRecording()
                     // What the phone tells the app about its own restrictions, read from the background.
                     "health" -> "${RecordingHealth.read(context, autoRecord = true)} miuiAutostartOp=${miuiAutostart(context)}"
+                    "mock" -> BenchMockGps.start(context, intent.getFloatExtra("speed", 14f), intent.getIntExtra("seconds", 300))
+                    "mockstop" -> BenchMockGps.stop(context)
                     else -> "unknown action"
                 }
                 Log.i(TAG, "$action -> $result")
