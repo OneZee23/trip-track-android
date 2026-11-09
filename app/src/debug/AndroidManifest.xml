@@ -17,5 +17,10 @@
             android:name=".debug.SeedActivity"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <!-- Debug builds only: start, pause, resume and stop a recording from adb on a locked phone. -->
+        <receiver
+            android:name=".debug.BenchRecordingReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP" />
     </application>
 </manifest>
