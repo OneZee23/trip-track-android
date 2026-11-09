@@ -16,7 +16,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # Green runs took 13-19 minutes by 4 Nov; the suite has grown since, and every master run
+    # from 5 Nov was cancelled at 20 minutes without a verdict.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6

@@ -112,7 +112,9 @@ class SimilarRecordedTripsTests {
             SimilarRecordedTrips.count(current, history)
             best = minOf(best, (System.nanoTime() - start) / 1e6)
         }
-        assertTrue(best < 100, "5000 trips took $best ms")
+        // A shared CI runner is several times slower than a laptop; a quadratic regression is still 50×.
+        val budgetMs = if (System.getenv("CI") == null) 100.0 else 400.0
+        assertTrue(best < budgetMs, "5000 trips took $best ms")
     }
 
     // iOS: GamificationModels.swift
