@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * DUMP, a permission apps never get.
  *
  * adb shell am broadcast -n com.onezee.triptrack.dev/com.onezee.triptrack.debug.BenchRecordingReceiver -a start
- * (start | pause | resume | stop | health | mock [--ef speed 14 --ei seconds 300] | mockstop)
+ * (start | pause | resume | stop | health | mock [--ef speed 14 --ei seconds 300] | mockstop | delete --es id <uuid>)
  */
 class BenchRecordingReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -35,6 +35,9 @@ class BenchRecordingReceiver : BroadcastReceiver() {
                     "health" -> "${RecordingHealth.read(context, autoRecord = true)} miuiAutostartOp=${miuiAutostart(context)}"
                     "mock" -> BenchMockGps.start(context, intent.getFloatExtra("speed", 14f), intent.getIntExtra("seconds", 300))
                     "mockstop" -> BenchMockGps.stop(context)
+                    // A bench trip goes through the app's own door, like a delete from the trip screen.
+                    "delete" -> intent.getStringExtra("id")?.let { java.util.UUID.fromString(it) }
+                        ?.let { graph.deletion.delete(it); "deleted $it" } ?: "no id"
                     else -> "unknown action"
                 }
                 Log.i(TAG, "$action -> $result")

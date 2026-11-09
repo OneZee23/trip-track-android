@@ -21,8 +21,9 @@ import android.util.Log
  */
 object BenchMockGps {
     private const val TAG = "BenchMockGps"
-    private const val START_LATITUDE = 45.035
-    private const val START_LONGITUDE = 38.975
+    // Open sea off West Africa: a bench drive must not open real roads in the Atlas of the phone it runs on.
+    private const val START_LATITUDE = 1.0
+    private const val START_LONGITUDE = 1.0
     private var thread: HandlerThread? = null
     private var wakeLock: PowerManager.WakeLock? = null
 
