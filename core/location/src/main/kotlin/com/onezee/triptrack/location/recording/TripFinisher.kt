@@ -82,6 +82,10 @@ class TripFinisher(
         activeSeconds: Double? = null,
     ): StopOutcome {
         if (trip == null) return StopOutcome.NotRecording
+        if (trip.trackPoints.isEmpty()) {
+            deletion.delete(trip.id)
+            return StopOutcome.Discarded(trip.id, DiscardReason.noTrackPoints)
+        }
         val duration = trip.endDate?.let { secondsBetween(trip.startDate, it) } ?: secondsBetween(trip.startDate, clock())
         val junkReason = TripJunkClassifier.reason(trip.distance, duration, trip.maxSpeed)
         // Junk by its points, but minutes of recording or a GPS the system took away: the points lie,
@@ -98,7 +102,7 @@ class TripFinisher(
         return when (world.route(trip)) {
             TripWorldEntry.Route.discardJunk -> {
                 deletion.delete(trip.id)
-                StopOutcome.Discarded(trip.id, TripJunkClassifier.reason(trip.distance, duration, trip.maxSpeed))
+                StopOutcome.Discarded(trip.id, TripJunkClassifier.reason(trip.distance, duration, trip.maxSpeed)?.toDiscardReason())
             }
             TripWorldEntry.Route.awaitConfirmation -> {
                 notices.draftConfirmPrompt(trip.id, trip.distance)
@@ -125,6 +129,11 @@ class TripFinisher(
         } catch (failure: Exception) {
             Log.w(TAG, "finish step $name failed", failure)
         }
+    }
+
+    private fun TripJunkClassifier.Reason.toDiscardReason(): DiscardReason = when (this) {
+        TripJunkClassifier.Reason.tooShort -> DiscardReason.tooShort
+        TripJunkClassifier.Reason.noDrivingSpeed -> DiscardReason.noDrivingSpeed
     }
 
     private companion object {

@@ -66,10 +66,12 @@ sealed interface StartResult {
 /** Where a finished recording went (iOS: `TripWorldEntry.Route` and what `stopRecording` did with it). */
 sealed interface StopOutcome {
     data object NotRecording : StopOutcome
-    data class Discarded(val tripId: UUID, val reason: TripJunkClassifier.Reason?) : StopOutcome
+    data class Discarded(val tripId: UUID, val reason: DiscardReason?) : StopOutcome
     data class AwaitingConfirmation(val trip: Trip, val preservedJunkReason: TripJunkClassifier.Reason? = null) : StopOutcome
     data class Saved(val trip: Trip, val rewards: TripRewardsResult) : StopOutcome
 }
+
+enum class DiscardReason { tooShort, noDrivingSpeed, noTrackPoints }
 
 // iOS: MapViewModel.stopRecording(confirming:). A changed outcome needs a new explicit answer.
 sealed interface FinishConfirmation {

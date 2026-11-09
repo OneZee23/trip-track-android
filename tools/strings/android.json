@@ -2141,5 +2141,39 @@
       "kk": "Арқылы",
       "pt": "Passando por"
     }
+  },
+  "android_health_autostart_off": {
+    "values": {
+      "en": "TripTrack’s Autostart is off: auto-record cannot start while the app is closed.",
+      "ru": "Автозапуск TripTrack выключен: автозапись не начнётся, пока приложение закрыто.",
+      "de": "Der Autostart von TripTrack ist aus: automatische Aufnahmen starten nicht, wenn die App geschlossen ist.",
+      "es": "El inicio automático de TripTrack está desactivado: la grabación automática no empezará con la app cerrada.",
+      "fr": "Le démarrage automatique de TripTrack est désactivé : l’enregistrement automatique ne démarre pas quand l’app est fermée.",
+      "it": "L’avvio automatico di TripTrack è disattivato: la registrazione automatica non parte con l’app chiusa.",
+      "pl": "Autostart TripTrack jest wyłączony: automatyczne nagrywanie nie rozpocznie się, gdy aplikacja jest zamknięta.",
+      "id": "Autostart TripTrack nonaktif: rekaman otomatis tidak akan dimulai saat aplikasi tertutup.",
+      "tr": "TripTrack otomatik başlatma kapalı: uygulama kapalıyken otomatik kayıt başlamaz.",
+      "fil": "Naka-off ang Autostart ng TripTrack: hindi magsisimula ang auto-record kapag sarado ang app.",
+      "uk": "Автозапуск TripTrack вимкнено: автоматичний запис не почнеться, коли застосунок закритий.",
+      "kk": "TripTrack автожүктеуі өшірулі: қолданба жабық кезде автоматты жазу басталмайды.",
+      "pt": "A inicialização automática do TripTrack está desativada: a gravação automática não começa com o app fechado."
+    }
+  },
+  "android_recording_discarded_no_points": {
+    "values": {
+      "en": "No GPS points were recorded. This recording was discarded.",
+      "ru": "В записи нет точек GPS. Она удалена.",
+      "de": "Es wurden keine GPS-Punkte aufgezeichnet. Diese Aufnahme wurde verworfen.",
+      "es": "No se registraron puntos GPS. Esta grabación se descartó.",
+      "fr": "Aucun point GPS n’a été enregistré. Cet enregistrement a été supprimé.",
+      "it": "Non sono stati registrati punti GPS. Questa registrazione è stata eliminata.",
+      "pl": "Nie zapisano punktów GPS. To nagranie zostało usunięte.",
+      "id": "Tidak ada titik GPS yang direkam. Rekaman ini dihapus.",
+      "tr": "GPS noktası kaydedilmedi. Bu kayıt silindi.",
+      "fil": "Walang naitalang GPS point. Itinapon ang recording na ito.",
+      "uk": "Точки GPS не записані. Цей запис видалено.",
+      "kk": "GPS нүктелері жазылмады. Бұл жазба жойылды.",
+      "pt": "Nenhum ponto GPS foi gravado. Esta gravação foi descartada."
+    }
   }
 }

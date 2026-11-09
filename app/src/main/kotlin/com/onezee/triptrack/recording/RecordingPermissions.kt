@@ -75,7 +75,13 @@ internal fun RecordingPermissionSheet(graph: LocationGraph, resumeTick: Int, onC
 
 // iOS: AutoRecordSettingsView.swift; Android's health issues stay in core:location.
 @Composable
-internal fun RecordingHealthSheet(health: RecordingHealth, onDismiss: () -> Unit, onPermission: () -> Unit, onStereo: () -> Unit) {
+internal fun RecordingHealthSheet(
+    health: RecordingHealth,
+    onDismiss: () -> Unit,
+    onPermission: () -> Unit,
+    onStereo: () -> Unit,
+    onIssueSettings: (HealthIssue) -> Unit,
+) {
     val context = LocalContext.current
     val strings = appStrings
     ContentSizedSheet(onDismiss, background = AppTheme.colors.bg) {
@@ -85,7 +91,7 @@ internal fun RecordingHealthSheet(health: RecordingHealth, onDismiss: () -> Unit
             if (health.issues.isEmpty()) Text(strings.tr(Words.string.android_health_ok), style = AppType.body, color = AppTheme.colors.textSecondary)
             health.issues.forEach { issue ->
                 MeRow(strings.tr(issue.message), subtitle = strings.tr(Words.string.android_health_open_settings), onClick = {
-                    HealthSettings.open(context, HealthSettings.targets(context, issue, health.oem))
+                onIssueSettings(issue)
                 })
             }
             health.oemSteps?.let { steps -> MeRow(strings.tr(steps), subtitle = strings.tr(Words.string.android_health_open_settings), onClick = {

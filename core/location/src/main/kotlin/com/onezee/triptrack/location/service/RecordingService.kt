@@ -84,6 +84,12 @@ class RecordingService : Service() {
                     graph.recorder.tick()
                 }
             }
+            val backgroundHealth = launch {
+                while (isActive && graph.recorder.state.value.isRecording) {
+                    delay(BACKGROUND_HEALTH_CHECK_MS)
+                    if (graph.recorder.state.value.isRecording) graph.sampleBackgroundRestriction()
+                }
+            }
             var gpsLostNotified = false
             // At most one repost a second (a StateFlow skips what a slow collector missed); the
             // chronometer ticks on its own in between.
@@ -111,6 +117,7 @@ class RecordingService : Service() {
                 false
             }
             ticks.cancel()
+            backgroundHealth.cancel()
         }
         finish()
     }
@@ -133,6 +140,7 @@ class RecordingService : Service() {
         private const val TAG = "RecordingService"
         private const val TICK_MS = 500L
         private const val UPDATE_MS = 1_000L
+        private const val BACKGROUND_HEALTH_CHECK_MS = 60_000L
         private const val ACTION_REFRESH_LOCATION = "com.onezee.triptrack.location.REFRESH_LOCATION"
 
         /** False when the system refused the start (a background start outside the exemptions). */

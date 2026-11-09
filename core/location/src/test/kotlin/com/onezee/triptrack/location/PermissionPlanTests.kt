@@ -8,6 +8,8 @@ import com.onezee.triptrack.location.permissions.PermissionPlan
 import com.onezee.triptrack.location.permissions.PermissionStep
 import com.onezee.triptrack.location.permissions.RecordingHealth
 import com.onezee.triptrack.location.permissions.RecordingPermission
+import com.onezee.triptrack.location.permissions.BackgroundRestrictionReading
+import com.onezee.triptrack.location.permissions.shouldShowBackgroundGpsRestriction
 import com.onezee.triptrack.location.permissions.RecordingPermission.activityRecognition
 import com.onezee.triptrack.location.permissions.RecordingPermission.backgroundLocation
 import com.onezee.triptrack.location.permissions.RecordingPermission.bluetoothConnect
@@ -159,6 +161,41 @@ class PermissionPlanTests {
     }
 
     @Test
+    fun xiaomiBackgroundGpsRestrictionUsesTheRememberedReadingAndAutostartRule() {
+        val cases = listOf(
+            // No Play services: MIUI's cut stops the recording, so the unknown default counts too.
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.unknown, null, false, standby = false, expected = true),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.restricted, false, false, standby = false, expected = true),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.free, true, false, standby = false, expected = false),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.free, true, true, standby = false, expected = true),
+            // Play services: the standby keeps a manual recording's GPS, auto-record still needs a wake.
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.unknown, null, false, standby = true, expected = false),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.restricted, false, false, standby = true, expected = false),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.unknown, false, true, standby = true, expected = false),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.restricted, false, true, standby = true, expected = true),
+            Case(Oem.xiaomi, false, BackgroundRestrictionReading.free, true, true, standby = true, expected = true),
+            Case(Oem.other, false, BackgroundRestrictionReading.restricted, true, true, standby = false, expected = false),
+            Case(Oem.samsung, true, BackgroundRestrictionReading.free, false, false, standby = true, expected = true),
+        )
+        cases.forEach { case ->
+            assertEquals(
+                case.expected,
+                shouldShowBackgroundGpsRestriction(case.oem, case.live, case.remembered, case.autostartDenied, case.autoRecord, case.standby),
+                case.toString(),
+            )
+        }
+        val autostartOff = RecordingHealth(
+            locationEnabled = true, preciseLocation = true, backgroundLocation = true, activityRecognition = true,
+            notifications = true, bluetoothConnect = true, ignoringBatteryOptimizations = true,
+            backgroundRestricted = false, powerSave = false, oem = Oem.xiaomi, autoRecord = true,
+            rememberedBackgroundRestriction = BackgroundRestrictionReading.free, autostartDenied = true,
+        )
+        assertTrue(HealthIssue.autoStartDisabled in autostartOff.issues)
+        assertTrue(HealthIssue.backgroundRestricted in autostartOff.issues)
+        assertFalse(HealthIssue.autoStartDisabled in autostartOff.copy(autoRecord = false).issues)
+    }
+
+    @Test
     fun vendorsAreRecognisedByManufacturerOrBrand() {
         assertEquals(Oem.samsung, Oem.from("samsung"))
         assertEquals(Oem.xiaomi, Oem.from("Xiaomi"))
@@ -166,4 +203,14 @@ class PermissionPlanTests {
         assertEquals(Oem.huawei, Oem.from("HONOR"))
         assertEquals(Oem.other, Oem.from("Google", "google"))
     }
+
+    private data class Case(
+        val oem: Oem,
+        val live: Boolean,
+        val remembered: BackgroundRestrictionReading,
+        val autostartDenied: Boolean?,
+        val autoRecord: Boolean,
+        val standby: Boolean,
+        val expected: Boolean,
+    )
 }

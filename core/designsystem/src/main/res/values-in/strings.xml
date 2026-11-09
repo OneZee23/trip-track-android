@@ -171,6 +171,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Akun Google</string>
     <string name="android_health_activity_off" formatted="false">Akses aktivitas fisik nonaktif: perjalanan tidak terdeteksi.</string>
+    <string name="android_health_autostart_off" formatted="false">Autostart TripTrack nonaktif: rekaman otomatis tidak akan dimulai saat aplikasi tertutup.</string>
     <string name="android_health_background_off" formatted="false">Akses lokasi “Sepanjang waktu” nonaktif: perjalanan tidak akan dimulai sendiri.</string>
     <string name="android_health_battery_optimized" formatted="false">Pengoptimalan baterai dapat menghentikan perekaman saat layar mati.</string>
     <string name="android_health_bluetooth_off" formatted="false">Akses perangkat di sekitar nonaktif: stereo mobil tidak dikenali.</string>
@@ -190,6 +191,7 @@
     <string name="android_map_link_unavailable" formatted="false">Tidak ada browser untuk membuka tautan ini.</string>
     <string name="android_permission_background_hint" formatted="false">Di layar berikutnya pilih “Izinkan sepanjang waktu” agar perjalanan bisa dimulai saat Anda masuk mobil.</string>
     <string name="android_precise_location_body" formatted="false">Perekaman memerlukan lokasi akurat untuk menggambar rute dan mengukur jarak. Buka Setelan → Izin → Lokasi dan aktifkan “Gunakan lokasi akurat”.</string>
+    <string name="android_recording_discarded_no_points" formatted="false">Tidak ada titik GPS yang direkam. Rekaman ini dihapus.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">GPS dihentikan oleh sistem. Buka TripTrack untuk melanjutkan rekaman.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Buka setelan baterai</string>
     <string name="android_recording_gps_restricted_body" formatted="false">Dengan pembatasan ini, Android menghentikan GPS sekitar satu menit setelah layar dikunci. Izinkan TripTrack berjalan tanpa pembatasan baterai. Di Xiaomi, aktifkan juga Mulai otomatis.</string>

@@ -204,6 +204,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google-Konto</string>
     <string name="android_health_activity_off" formatted="false">Zugriff auf körperliche Aktivität fehlt: Fahrten werden nicht erkannt.</string>
+    <string name="android_health_autostart_off" formatted="false">Der Autostart von TripTrack ist aus: automatische Aufnahmen starten nicht, wenn die App geschlossen ist.</string>
     <string name="android_health_background_off" formatted="false">Standortzugriff „Immer“ ist aus: Fahrten starten nicht von selbst.</string>
     <string name="android_health_battery_optimized" formatted="false">Die Akkuoptimierung kann die Aufnahme bei ausgeschaltetem Bildschirm stoppen.</string>
     <string name="android_health_bluetooth_off" formatted="false">Zugriff auf Geräte in der Nähe fehlt: das Autoradio wird nicht erkannt.</string>
@@ -223,6 +224,7 @@
     <string name="android_map_link_unavailable" formatted="false">Zum Öffnen dieses Links ist kein Browser verfügbar.</string>
     <string name="android_permission_background_hint" formatted="false">Wähle auf der nächsten Seite „Immer zulassen“, damit Fahrten beim Einsteigen beginnen können.</string>
     <string name="android_precise_location_body" formatted="false">Für Route und Entfernung wird der genaue Standort benötigt. Öffne Einstellungen → Berechtigungen → Standort und aktiviere „Genauen Standort verwenden“.</string>
+    <string name="android_recording_discarded_no_points" formatted="false">Es wurden keine GPS-Punkte aufgezeichnet. Diese Aufnahme wurde verworfen.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">GPS wurde vom System gestoppt. Öffne TripTrack, damit die Aufzeichnung weiterläuft.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Akku-Einstellungen öffnen</string>
     <string name="android_recording_gps_restricted_body" formatted="false">Mit diesen Einschränkungen stoppt Android GPS etwa eine Minute nach dem Sperren des Bildschirms. Erlaube TripTrack den Betrieb ohne Akku-Einschränkungen. Aktiviere auf Xiaomi auch den Autostart.</string>

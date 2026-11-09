@@ -204,6 +204,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google account</string>
     <string name="android_health_activity_off" formatted="false">Physical activity access is off: drives are not detected.</string>
+    <string name="android_health_autostart_off" formatted="false">TripTrack’s Autostart is off: auto-record cannot start while the app is closed.</string>
     <string name="android_health_background_off" formatted="false">Location “All the time” is off: trips will not start by themselves.</string>
     <string name="android_health_battery_optimized" formatted="false">Battery optimization can stop recording while the screen is off.</string>
     <string name="android_health_bluetooth_off" formatted="false">Nearby devices access is off: the car stereo is not recognised.</string>
@@ -223,6 +224,7 @@
     <string name="android_map_link_unavailable" formatted="false">No browser is available to open this link.</string>
     <string name="android_permission_background_hint" formatted="false">On the next screen choose “Allow all the time” so trips can start when you get in the car.</string>
     <string name="android_precise_location_body" formatted="false">Recording needs precise location to draw your route and measure distance. Open Settings → Permissions → Location and turn on “Use precise location”.</string>
+    <string name="android_recording_discarded_no_points" formatted="false">No GPS points were recorded. This recording was discarded.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">GPS was stopped by the system. Open TripTrack to continue recording.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Open battery settings</string>
     <string name="android_recording_gps_restricted_body" formatted="false">With these restrictions, Android stops GPS about a minute after the screen locks. Allow TripTrack to run without battery restrictions. On Xiaomi, also enable Autostart.</string>

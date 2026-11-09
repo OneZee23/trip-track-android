@@ -81,6 +81,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -94,6 +96,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
+private const val BACKGROUND_RESTRICTION_CHECK_DELAY_MS = 35_000L
+
 /**
  * The app's singletons, built once in `TripTrackApplication`: the shell, the data stores, the
  * recording side, the session and the sync engine of the signed-in account.
@@ -103,6 +107,8 @@ class AppGraph(
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
+    private var backgroundRestrictionCheck: Job? = null
+    private var backgroundSettingsOpened = false
 
     // The iOS UserDefaults.standard: the app's default preferences file.
     private val preferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
@@ -387,6 +393,12 @@ class AppGraph(
 
     /** The app came to the front: the 300-second timer, a pass, and a silent revival of a soft expiry. */
     fun onForeground() {
+        backgroundRestrictionCheck?.cancel()
+        backgroundRestrictionCheck = null
+        if (backgroundSettingsOpened) {
+            backgroundSettingsOpened = false
+            location.assumeBackgroundRestrictionCleared()
+        }
         syncHost.onForeground()
         auth.onForeground()
         scope.launch { plusEntitlement.refresh() }
@@ -394,7 +406,19 @@ class AppGraph(
         scope.launch { social.inbox.refreshUnreadOnly() }
     }
 
-    fun onBackground() = syncHost.onBackground()
+    fun onBackground() {
+        location.onAppBackground()
+        backgroundRestrictionCheck?.cancel()
+        backgroundRestrictionCheck = scope.launch {
+            delay(BACKGROUND_RESTRICTION_CHECK_DELAY_MS)
+            location.sampleBackgroundRestriction()
+        }
+        syncHost.onBackground()
+    }
+
+    fun backgroundRestrictionSettingsOpened() {
+        backgroundSettingsOpened = true
+    }
 
     /** «Account & Sync»'s state, one per opening of the screen. */
     fun accountViewModel(): AccountViewModel =

@@ -4,6 +4,7 @@ import com.onezee.triptrack.data.sync.SyncAction
 import com.onezee.triptrack.data.sync.SyncEntityType
 import com.onezee.triptrack.location.recording.StartRefusal
 import com.onezee.triptrack.location.recording.StartResult
+import com.onezee.triptrack.location.recording.DiscardReason
 import com.onezee.triptrack.location.recording.StopOutcome
 import com.onezee.triptrack.logic.PostTripTrackProcessor
 import com.onezee.triptrack.logic.RecordingMath
@@ -217,7 +218,7 @@ class RecordingLifecycleTests : RecorderTestCase() {
         drive(straight(0..59, speed = 2.0))
         now = TrackTestKit.at(60.0)
         val outcome = assertIs<StopOutcome.Discarded>(recorder.stop())
-        assertEquals(TripJunkClassifier.Reason.tooShort, outcome.reason)
+        assertEquals(DiscardReason.tooShort, outcome.reason)
         assertNull(db.tripDao().trip(id))
         assertFalse(java.io.File(rawFixLog.directory, "${id.toString().uppercase()}.csv").exists())
         assertTrue(sink.enqueued.none { it.entityId == id && it.action == SyncAction.upload })
@@ -236,15 +237,15 @@ class RecordingLifecycleTests : RecorderTestCase() {
     }
 
     @Test
-    fun aWatchdogTripThatWouldBeJunkIsSavedAsADraft() = test {
+    fun aGpsLostRecordingWithoutPointsIsDiscardedInsteadOfSavedAsADraft() = test {
         val id = started()
         now = TrackTestKit.at(30.0)
         recorder.tick()
         assertTrue(recorder.state.value.gpsLost)
         now = TrackTestKit.at(60.0)
-        val outcome = assertIs<StopOutcome.AwaitingConfirmation>(recorder.stop())
-        assertEquals(TripJunkClassifier.Reason.tooShort, outcome.preservedJunkReason)
-        assertEquals(TripConfirmation.draft.rawValue, db.tripDao().trip(id)?.confirmation)
+        val outcome = assertIs<StopOutcome.Discarded>(recorder.stop())
+        assertEquals(DiscardReason.noTrackPoints, outcome.reason)
+        assertNull(db.tripDao().trip(id))
     }
 
     // iOS: TripWorldEntry.route, a draft gets its question and stays out of the world.

@@ -42,7 +42,7 @@
     "TripTrack/Resources/uk.lproj/InfoPlist.strings": "b881f82389630eaf9b7bae81329ea208ee20a2a409cae44abea213df3f1c6364",
     "TripTrack/Resources/kk.lproj/InfoPlist.strings": "9a407fcf33a849dacec56e2c89d110fd205d3888d6b2b2b7673e3e7050a0bcdd",
     "TripTrack/Resources/pt.lproj/InfoPlist.strings": "b4aecf02e2f8887a4f2b0c379996fccfa4d316e1391de17cf6cb6048ec1b6830",
-    "tools/strings/android.json": "b6bacd5b7abc4b9b3f654e6b29a456afc6b3fe1446df68676b1f70891b1a3de3"
+    "tools/strings/android.json": "7255ff2b2c914dfeaad41fcee9698f5355ab07163546d4c31a8ebbb9600beb2e"
   },
   "languages": [
     "en",
@@ -139,67 +139,67 @@
   },
   "counts": {
     "en": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 0
     },
     "ru": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 1
     },
     "de": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "es": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fr": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "it": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pl": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "id": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "tr": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "fil": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "uk": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "kk": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     },
     "pt": {
-      "strings": 1964,
+      "strings": 1966,
       "plurals": 33,
       "english_fallbacks": 24
     }
@@ -17380,6 +17380,17 @@
       }
     },
     {
+      "name": "android_health_autostart_off",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
       "name": "android_health_background_off",
       "kind": "string",
       "file": "tools/strings/android.json",
@@ -17586,6 +17597,17 @@
     },
     {
       "name": "android_precise_location_body",
+      "kind": "string",
+      "file": "tools/strings/android.json",
+      "line": 1,
+      "placeholders": {},
+      "formatted": false,
+      "signatures": {
+        "text": {}
+      }
+    },
+    {
+      "name": "android_recording_discarded_no_points",
       "kind": "string",
       "file": "tools/strings/android.json",
       "line": 1,

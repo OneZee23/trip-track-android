@@ -2,6 +2,7 @@
 package com.onezee.triptrack.location
 
 import com.onezee.triptrack.location.recording.FinishConfirmation
+import com.onezee.triptrack.location.recording.DiscardReason
 import com.onezee.triptrack.location.recording.StartResult
 import com.onezee.triptrack.location.recording.StopOutcome
 import com.onezee.triptrack.logic.*
@@ -12,6 +13,16 @@ import kotlin.test.*
 import org.junit.Test
 
 class RecordingFinishFlowTests : RecorderTestCase() {
+    @Test fun testRecordingWithNoStoredPointsIsDiscardedEvenAfterGpsLoss() = test {
+        val id = assertIs<StartResult.Started>(recorder.start()).tripId
+        now = now.plusSeconds(180)
+        recorder.tick()
+        assertTrue(recorder.state.value.gpsLost)
+        val outcome = assertIs<StopOutcome.Discarded>(recorder.stop())
+        assertEquals(DiscardReason.noTrackPoints, outcome.reason)
+        assertNull(db.tripDao().trip(id))
+    }
+
     @Test fun testShortRecordingWarnsBeforeDiscardAndReturningPreservesPause() = test {
         val id = assertIs<StartResult.Started>(recorder.start()).tripId
         now = now.plusSeconds(2)

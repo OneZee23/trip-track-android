@@ -270,6 +270,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Аккаунт Google</string>
     <string name="android_health_activity_off" formatted="false">Нет доступа к физической активности: поездки не распознаются.</string>
+    <string name="android_health_autostart_off" formatted="false">Автозапуск TripTrack выключен: автозапись не начнётся, пока приложение закрыто.</string>
     <string name="android_health_background_off" formatted="false">Геолокация «в любом режиме» выключена: поездки не начнутся сами.</string>
     <string name="android_health_battery_optimized" formatted="false">Оптимизация батареи может остановить запись при выключенном экране.</string>
     <string name="android_health_bluetooth_off" formatted="false">Нет доступа к устройствам поблизости: магнитола не распознаётся.</string>
@@ -289,6 +290,7 @@
     <string name="android_map_link_unavailable" formatted="false">На телефоне нет браузера для открытия ссылки.</string>
     <string name="android_permission_background_hint" formatted="false">На следующем экране выберите «Разрешить в любом режиме», чтобы поездки начинались, когда вы садитесь в машину.</string>
     <string name="android_precise_location_body" formatted="false">Для записи маршрута и расстояния нужна точная геолокация. Откройте Настройки → Разрешения → Местоположение и включите «Точное местоположение».</string>
+    <string name="android_recording_discarded_no_points" formatted="false">В записи нет точек GPS. Она удалена.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">GPS отключён системой. Откройте TripTrack, чтобы запись продолжилась.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Открыть настройки батареи</string>
     <string name="android_recording_gps_restricted_body" formatted="false">С такими ограничениями Android отключит GPS примерно через минуту после блокировки экрана. Разрешите TripTrack работать без ограничений батареи. На Xiaomi также включите автозапуск.</string>

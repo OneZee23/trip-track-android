@@ -204,6 +204,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google есептік жазбасы</string>
     <string name="android_health_activity_off" formatted="false">Физикалық белсенділікке рұқсат жоқ: сапарлар анықталмайды.</string>
+    <string name="android_health_autostart_off" formatted="false">TripTrack автожүктеуі өшірулі: қолданба жабық кезде автоматты жазу басталмайды.</string>
     <string name="android_health_background_off" formatted="false">«Әрдайым» геолокация рұқсаты өшірулі: сапарлар өздігінен басталмайды.</string>
     <string name="android_health_battery_optimized" formatted="false">Батареяны оңтайландыру экран өшірулі кезде жазуды тоқтатуы мүмкін.</string>
     <string name="android_health_bluetooth_off" formatted="false">Маңайдағы құрылғыларға рұқсат жоқ: автомагнитола танылмайды.</string>
@@ -223,6 +224,7 @@
     <string name="android_map_link_unavailable" formatted="false">Бұл сілтемені ашатын браузер жоқ.</string>
     <string name="android_permission_background_hint" formatted="false">Келесі экранда «Әрдайым рұқсат ету» тармағын таңдаңыз. Сонда көлікке отырғанда сапарлар өздігінен бастала алады.</string>
     <string name="android_precise_location_body" formatted="false">Бағытты сызу және қашықтықты өлшеу үшін нақты геолокация қажет. Баптаулар → Рұқсаттар → Орналасқан жер бөліміне өтіп, «Нақты орналасқан жерді пайдалану» параметрін қосыңыз.</string>
+    <string name="android_recording_discarded_no_points" formatted="false">GPS нүктелері жазылмады. Бұл жазба жойылды.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">Жүйе GPS-ті тоқтатты. Жазуды жалғастыру үшін TripTrack-ті ашыңыз.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Батарея параметрлерін ашу</string>
     <string name="android_recording_gps_restricted_body" formatted="false">Осындай шектеулермен экран құлыпталғаннан кейін Android GPS-ті шамамен бір минутта тоқтатады. TripTrack-ке батарея шектеулерінсіз жұмыс істеуге рұқсат беріңіз. Xiaomi-де автоматты іске қосуды да қосыңыз.</string>

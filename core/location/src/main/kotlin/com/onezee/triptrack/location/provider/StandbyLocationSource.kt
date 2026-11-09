@@ -131,11 +131,10 @@ class FusedLocationSource private constructor(context: Context) : LocationSource
         private const val TAG = "FusedLocationSource"
         private const val INTERVAL_MS = 1_000L
 
+        fun isAvailable(context: Context): Boolean =
+            GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
+
         fun createIfAvailable(context: Context): FusedLocationSource? =
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
-                FusedLocationSource(context)
-            } else {
-                null
-            }
+            if (isAvailable(context)) FusedLocationSource(context) else null
     }
 }

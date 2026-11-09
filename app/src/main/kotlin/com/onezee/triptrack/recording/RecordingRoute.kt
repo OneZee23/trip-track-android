@@ -23,6 +23,7 @@ import com.onezee.triptrack.location.permissions.*
 import com.onezee.triptrack.location.provider.PlatformLocationSource
 import com.onezee.triptrack.location.provider.TrackingMode
 import com.onezee.triptrack.location.recording.StartRefusal
+import com.onezee.triptrack.location.recording.DiscardReason
 import com.onezee.triptrack.location.recording.StopOutcome
 import com.onezee.triptrack.logic.RevealedLayer
 import com.onezee.triptrack.map.MapHostState
@@ -83,7 +84,11 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
     }
     RecordingLocationEffect(graph, precise, resumeTick)
     val discarded = (outcome as? StopOutcome.Discarded)?.let {
-        if (it.reason == com.onezee.triptrack.model.TripJunkClassifier.Reason.noDrivingSpeed) strings.recordingDiscardedSlow() else strings.junkTripDiscarded()
+        when (it.reason) {
+            DiscardReason.noTrackPoints -> strings.tr(com.onezee.triptrack.designsystem.R.string.android_recording_discarded_no_points)
+            DiscardReason.noDrivingSpeed -> strings.recordingDiscardedSlow()
+            DiscardReason.tooShort, null -> strings.junkTripDiscarded()
+        }
     }
     fun openLocation() {
         if (RecordingPermission.fineLocation in graph.location.permissionLedger.asked()) {
@@ -104,7 +109,10 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
         zoom = { zoomIn -> map.camera?.let { camera -> map.execute(MapCameraCommand.Move(camera.centre, (camera.zoom + if (zoomIn) 1 else -1).coerceIn(MIN_ZOOM, MAX_ZOOM), true)) } },
     ), now, healthHint = health.issues.firstOrNull()?.message?.let(strings::tr), cameraMode = cameraMode, discarded = discarded,
         backgroundGpsRestricted = !state.recorder.isRecording && health.backgroundGpsRestricted,
-        onOpenBackgroundSettings = { HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem)) },
+        onOpenBackgroundSettings = {
+            graph.backgroundRestrictionSettingsOpened()
+            HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem))
+        },
         dockInset = dock, hasVehicles = vehicles.isNotEmpty(),
         // The + and − dim at the limits of the zoom the buttons step through.
         canZoomIn = canZoomIn, canZoomOut = canZoomOut,
@@ -150,7 +158,11 @@ fun RecordingRoute(graph: AppGraph, resumeTick: Int, onClose: () -> Unit) {
     }
     if (permissionOpen) RecordingPermissionSheet(graph.location, resumeTick, onComplete = { permissionOpen = false; permissionRevision++ })
     if (healthOpen) RecordingHealthSheet(health, onDismiss = { healthOpen = false }, onPermission = { healthOpen = false; permissionOpen = true },
-        onStereo = { healthOpen = false; graph.settingsManager.openSheet(SettingsSheet.autoRecord); settingsOpen = true })
+        onStereo = { healthOpen = false; graph.settingsManager.openSheet(SettingsSheet.autoRecord); settingsOpen = true },
+        onIssueSettings = { issue ->
+            if (issue == HealthIssue.backgroundRestricted || issue == HealthIssue.autoStartDisabled) graph.backgroundRestrictionSettingsOpened()
+            HealthSettings.open(context, HealthSettings.targets(context, issue, health.oem))
+        })
     if (settingsOpen) SettingsRoute(graph) { settingsOpen = false }
     if (state.failed || pickingFailed) ToastHost(remember(state.failed, pickingFailed) { ToastItem(ToastType.error, strings.manualFailedDbTitle()) }, { presenter.clearError(); pickingFailed = false })
 }

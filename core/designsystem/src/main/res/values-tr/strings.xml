@@ -204,6 +204,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Google hesabı</string>
     <string name="android_health_activity_off" formatted="false">Fiziksel aktivite izni kapalı: sürüşler algılanmaz.</string>
+    <string name="android_health_autostart_off" formatted="false">TripTrack otomatik başlatma kapalı: uygulama kapalıyken otomatik kayıt başlamaz.</string>
     <string name="android_health_background_off" formatted="false">“Her zaman” konum izni kapalı: yolculuklar kendiliğinden başlamaz.</string>
     <string name="android_health_battery_optimized" formatted="false">Pil optimizasyonu, ekran kapalıyken kaydı durdurabilir.</string>
     <string name="android_health_bluetooth_off" formatted="false">Yakındaki cihazlara erişim kapalı: araç teybi tanınmaz.</string>
@@ -223,6 +224,7 @@
     <string name="android_map_link_unavailable" formatted="false">Bu bağlantıyı açacak bir tarayıcı yok.</string>
     <string name="android_permission_background_hint" formatted="false">Sonraki ekranda “Her zaman izin ver” seçeneğini seçin; arabaya bindiğinizde yolculuklar başlayabilsin.</string>
     <string name="android_precise_location_body" formatted="false">Rotayı çizmek ve mesafeyi ölçmek için tam konum gerekir. Ayarlar → İzinler → Konum bölümünden “Tam konumu kullan” seçeneğini açın.</string>
+    <string name="android_recording_discarded_no_points" formatted="false">GPS noktası kaydedilmedi. Bu kayıt silindi.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">GPS sistem tarafından durduruldu. Kayda devam etmek için TripTrack\'i açın.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Pil ayarlarını aç</string>
     <string name="android_recording_gps_restricted_body" formatted="false">Bu kısıtlamalarla Android, ekran kilitlendikten yaklaşık bir dakika sonra GPS\'i durdurur. TripTrack\'in pil kısıtlaması olmadan çalışmasına izin verin. Xiaomi\'de Otomatik başlat\'ı da açın.</string>

@@ -31,6 +31,7 @@ import com.onezee.triptrack.location.drafts.DraftDecisions
 import com.onezee.triptrack.location.drafts.PreferencesDraftDecisionQueue
 import com.onezee.triptrack.location.permissions.PermissionLedger
 import com.onezee.triptrack.location.permissions.PreferencesPermissionLedger
+import com.onezee.triptrack.location.permissions.BackgroundRestrictionStore
 import com.onezee.triptrack.location.recording.PauseSource
 import com.onezee.triptrack.location.recording.PreferencesRecorderSessionStore
 import com.onezee.triptrack.location.recording.RawFixLog
@@ -60,6 +61,7 @@ import java.io.File
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -67,6 +69,8 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.app.ActivityManager
+import android.os.SystemClock
 
 /** Implemented by the Application: the service and the receivers find the graph through it. */
 interface LocationGraphOwner {
@@ -116,6 +120,8 @@ class LocationGraph(
 
     val rawFixLog = RawFixLog(File(context.noBackupFilesDir, RawFixLog.DIRECTORY))
     val permissionLedger: PermissionLedger = PreferencesPermissionLedger(context)
+    private val backgroundRestrictionStore = BackgroundRestrictionStore(context)
+    private val appBackgroundAt = AtomicLong(0)
     val notifications = RecordingNotifications(context, { RecordingTexts(strings(), distanceUnit) })
     val activityTransitions = ActivityTransitions(context)
 
@@ -228,6 +234,7 @@ class LocationGraph(
 
     /** The app came to the screen: a recording without its service gets it back, a stale one may end. */
     fun onAppForeground() {
+        appBackgroundAt.set(0)
         scope.launch {
             awaitStarted()
             if (recorder.state.value.isRecording) RecordingService.refreshLocation(context)
@@ -235,6 +242,19 @@ class LocationGraph(
             drafts.apply()
         }
     }
+
+    fun onAppBackground() {
+        appBackgroundAt.set(SystemClock.elapsedRealtime())
+    }
+
+    fun sampleBackgroundRestriction() {
+        val backgroundAt = appBackgroundAt.get().takeIf { it > 0 } ?: return
+        if (SystemClock.elapsedRealtime() - backgroundAt < BACKGROUND_SETTLE_MS) return
+        val activity = context.getSystemService(ActivityManager::class.java) ?: return
+        backgroundRestrictionStore.record(activity.isBackgroundRestricted)
+    }
+
+    fun assumeBackgroundRestrictionCleared() = backgroundRestrictionStore.assumeFree()
 
     /**
      * The system refused the foreground service (no location permission, or a background start it
@@ -257,6 +277,10 @@ class LocationGraph(
 
     private suspend fun refreshDistanceUnit() {
         distanceUnit = settings.settings()?.distanceUnit?.let(DistanceUnit::fromRawValue) ?: DistanceUnit.km
+    }
+
+    private companion object {
+        const val BACKGROUND_SETTLE_MS = 30_000L
     }
 
     /** iOS: SettingsManager.vehicleId(forDeviceName:) then selectVehicle. Only a car that may take trips. */

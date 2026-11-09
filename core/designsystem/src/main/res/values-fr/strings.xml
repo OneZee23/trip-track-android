@@ -237,6 +237,7 @@
     <string name="android_google_account_line">Google · %1$s</string>
     <string name="android_google_account_only" formatted="false">Compte Google</string>
     <string name="android_health_activity_off" formatted="false">L’accès à l’activité physique est désactivé : les trajets ne sont pas détectés.</string>
+    <string name="android_health_autostart_off" formatted="false">Le démarrage automatique de TripTrack est désactivé : l’enregistrement automatique ne démarre pas quand l’app est fermée.</string>
     <string name="android_health_background_off" formatted="false">La localisation « Toujours » est désactivée : les trajets ne démarreront pas seuls.</string>
     <string name="android_health_battery_optimized" formatted="false">L’optimisation de la batterie peut arrêter l’enregistrement quand l’écran est éteint.</string>
     <string name="android_health_bluetooth_off" formatted="false">L’accès aux appareils à proximité est désactivé : l’autoradio n’est pas reconnu.</string>
@@ -256,6 +257,7 @@
     <string name="android_map_link_unavailable" formatted="false">Aucun navigateur ne permet d’ouvrir ce lien.</string>
     <string name="android_permission_background_hint" formatted="false">Sur l’écran suivant, choisissez « Toujours autoriser » pour démarrer les trajets quand vous montez en voiture.</string>
     <string name="android_precise_location_body" formatted="false">La position exacte est nécessaire pour tracer votre itinéraire et mesurer la distance. Ouvrez Paramètres → Autorisations → Position et activez « Utiliser la position exacte ».</string>
+    <string name="android_recording_discarded_no_points" formatted="false">Aucun point GPS n’a été enregistré. Cet enregistrement a été supprimé.</string>
     <string name="android_recording_gps_lost_notification" formatted="false">Le système a coupé le GPS. Ouvrez TripTrack pour poursuivre l’enregistrement.</string>
     <string name="android_recording_gps_restricted_action" formatted="false">Ouvrir les réglages de batterie</string>
     <string name="android_recording_gps_restricted_body" formatted="false">Avec ces restrictions, Android coupe le GPS environ une minute après le verrouillage de l’écran. Autorisez TripTrack à fonctionner sans restriction de batterie. Sur Xiaomi, activez aussi le démarrage automatique.</string>

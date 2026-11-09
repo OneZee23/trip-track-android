@@ -76,7 +76,10 @@ internal fun AutoRecordSettingsContent(graph: AppGraph, state: SettingsState, on
         onUnlink = { manager.removeStereo(it) },
         onStereo = { onStereo?.invoke() ?: manager.openSheet(SettingsSheet.stereo) }, vehicleId = vehicleId,
         backgroundGpsRestricted = health.backgroundGpsRestricted,
-        onOpenBackgroundSettings = { HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem)) })
+        onOpenBackgroundSettings = {
+            graph.backgroundRestrictionSettingsOpened()
+            HealthSettings.open(context, HealthSettings.targets(context, HealthIssue.backgroundRestricted, health.oem))
+        })
 }
 
 // iOS: AutoRecordSettingsView.swift. State and callbacks also drive the screenshot fixtures.
