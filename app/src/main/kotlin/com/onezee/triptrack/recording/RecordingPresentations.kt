@@ -122,10 +122,15 @@ private fun SummaryPresentation(graph: AppGraph, initialTrip: Trip, outcome: Sto
             }
             TripCompleteSummary(trip, (outcome as? StopOutcome.Saved)?.rewards, discoveries,
             onDone = { notes, publish -> mutate {
-                if (notes != trip.tripDescription.orEmpty()) graph.trips.updateNotes(trip.id, notes)
-                if (publish) graph.trips.updatePrivacy(trip.id, false)
+                // The trip can be deleted while its summary is open (a pull from the other phone).
+                // Then there is nothing to save or open: the detail screen would only say «check your internet».
+                val stillSaved = graph.trips.fetchTripDetail(trip.id) != null
+                if (stillSaved) {
+                    if (notes != trip.tripDescription.orEmpty()) graph.trips.updateNotes(trip.id, notes)
+                    if (publish) graph.trips.updatePrivacy(trip.id, false)
+                }
                 graph.location.recorder.dismissCompletion(outcome)
-                graph.tripsFeature.feedNavigator.push(TripsDestination.TripDetail(trip.id))
+                if (stillSaved) graph.tripsFeature.feedNavigator.push(TripsDestination.TripDetail(trip.id))
                 graph.tabStore.select(AppTab.home)
             } },
             onSaveNotes = { notes -> mutate { graph.trips.updateNotes(trip.id, notes); trip = trip.copy(tripDescription = notes) } },
