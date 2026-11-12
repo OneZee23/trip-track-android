@@ -918,10 +918,23 @@
     <string name="hiddenAddSection" formatted="false">+ Masquer un tronçon intermédiaire</string>
     <string name="hiddenAllTrip" formatted="false">Trajet entier</string>
     <string name="hiddenAlreadySeen" formatted="false">Les personnes qui ont déjà vu le trajet peuvent se souvenir de tout l’itinéraire.</string>
-    <string name="hiddenChooseEdge" formatted="false">Distance à masquer</string>
-    <string name="hiddenDefault" formatted="false">par défaut</string>
+    <string name="hiddenDragHint" formatted="false">Faites glisser les cadenas le long du trajet. Pour masquer une partie au milieu, maintenez le doigt sur la ligne.</string>
     <string name="hiddenEditorTitle" formatted="false">Masquer aux autres</string>
     <string name="hiddenEnd" formatted="false">Fin</string>
+    <string name="hiddenHandleAfterStop">%1$s après l’arrêt</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s avant le départ</string>
+    <string name="hiddenHandleDragInward" formatted="false">Faites glisser le long du trajet pour masquer</string>
+    <string name="hiddenHandleEndHidden">Fin masquée : %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Limite de la fin masquée</string>
+    <string name="hiddenHandleEndVisible" formatted="false">La fin est visible</string>
+    <string name="hiddenHandleFrom">à partir de %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Reculer le long du trajet</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Avancer le long du trajet</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Seul le stationnement est masqué</string>
+    <string name="hiddenHandleStartHidden">Début masqué : %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Limite du début masqué</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Le début est visible</string>
+    <string name="hiddenHandleUntil">jusqu’à %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Masquer le début ? Votre domicile est ici</string>
     <string name="hiddenLocalCardBody">%1$s et %2$s ne seront envoyées ni dans le fil ni dans la copie cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Rien de tout cela ne paraîtra dans le fil ni dans la copie cloud.</string>
@@ -947,15 +960,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Limite du tronçon masqué</string>
     <string name="hiddenSave" formatted="false">Enregistrer</string>
     <string name="hiddenSectionEndHandle" formatted="false">Fin du tronçon masqué</string>
+    <string name="hiddenSectionRemoved" formatted="false">Partie retirée</string>
     <string name="hiddenSectionStartHandle" formatted="false">Début du tronçon masqué</string>
     <string name="hiddenSectionTitle">Tronçon %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">À modifier dans Réglages → Confidentialité</string>
     <string name="hiddenShowOwn" formatted="false">Votre trajet</string>
     <string name="hiddenShowPublic" formatted="false">Aperçu public</string>
     <string name="hiddenStart" formatted="false">Début</string>
-    <string name="hiddenTapEnd" formatted="false">Touchez l’endroit où le tronçon finit</string>
-    <string name="hiddenTapMapHint" formatted="false">Touchez l’itinéraire pour choisir un tronçon</string>
-    <string name="hiddenTapStart" formatted="false">Touchez l’endroit où le tronçon commence</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Stationnement à la fin</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Stationnement au début</string>
     <string name="hiddenTitleHint">Le titre « %1$s » indique la destination. Modifier le titre</string>
     <string name="hiddenTitleHintStart">Le titre « %1$s » indique le lieu de départ. Modifier le titre</string>
     <string name="hiddenWithoutHidden" formatted="false">Sans les tronçons masqués</string>
@@ -1700,6 +1713,7 @@
     <string name="recordTripCta" formatted="false">Enregistrer un trajet</string>
     <string name="recordingDiscardAction" formatted="false">Terminer sans enregistrer</string>
     <string name="recordingDiscardTitle" formatted="false">Terminer sans enregistrer ?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Aucun point GPS n’a été enregistré. Cet enregistrement a été supprimé.</string>
     <string name="recordingDiscardedSlow" formatted="false">Trajet non enregistré — la vitesse est restée trop faible</string>
     <string name="recordingPausedPill" formatted="false">Enregistrement en pause</string>
     <string name="recordingReturn" formatted="false">Revenir à l’enregistrement</string>

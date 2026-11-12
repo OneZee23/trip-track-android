@@ -852,10 +852,23 @@
     <string name="hiddenAddSection" formatted="false">+ Sembunyikan bagian tengah</string>
     <string name="hiddenAllTrip" formatted="false">Seluruh perjalanan</string>
     <string name="hiddenAlreadySeen" formatted="false">Orang yang sudah melihat perjalanan mungkin ingat seluruh rutenya.</string>
-    <string name="hiddenChooseEdge" formatted="false">Jarak yang disembunyikan</string>
-    <string name="hiddenDefault" formatted="false">default</string>
+    <string name="hiddenDragHint" formatted="false">Geser gembok di sepanjang rute. Untuk menyembunyikan bagian di tengah, tahan jari di garis.</string>
     <string name="hiddenEditorTitle" formatted="false">Sembunyikan dari orang lain</string>
     <string name="hiddenEnd" formatted="false">Akhir</string>
+    <string name="hiddenHandleAfterStop">%1$s setelah berhenti</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s sebelum berangkat</string>
+    <string name="hiddenHandleDragInward" formatted="false">Geser di sepanjang rute untuk menyembunyikan</string>
+    <string name="hiddenHandleEndHidden">Akhir disembunyikan: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Batas akhir yang disembunyikan</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Akhir terlihat</string>
+    <string name="hiddenHandleFrom">mulai %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Geser mundur di sepanjang rute</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Geser maju di sepanjang rute</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Hanya waktu parkir yang disembunyikan</string>
+    <string name="hiddenHandleStartHidden">Awal disembunyikan: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Batas awal yang disembunyikan</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Awal terlihat</string>
+    <string name="hiddenHandleUntil">sampai %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Sembunyikan awal? Rumah Anda di sini</string>
     <string name="hiddenLocalCardBody">%1$s dan %2$s darinya tidak akan masuk ke feed atau salinan cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Tidak ada yang akan muncul di feed atau salinan cloud.</string>
@@ -881,15 +894,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Batas bagian tersembunyi</string>
     <string name="hiddenSave" formatted="false">Simpan</string>
     <string name="hiddenSectionEndHandle" formatted="false">Akhir bagian tersembunyi</string>
+    <string name="hiddenSectionRemoved" formatted="false">Bagian dihapus</string>
     <string name="hiddenSectionStartHandle" formatted="false">Awal bagian tersembunyi</string>
     <string name="hiddenSectionTitle">Bagian %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Ubah di Pengaturan → Privasi</string>
     <string name="hiddenShowOwn" formatted="false">Perjalanan Anda</string>
     <string name="hiddenShowPublic" formatted="false">Pratinjau publik</string>
     <string name="hiddenStart" formatted="false">Awal</string>
-    <string name="hiddenTapEnd" formatted="false">Ketuk lokasi akhir bagian</string>
-    <string name="hiddenTapMapHint" formatted="false">Ketuk rute untuk memilih bagian</string>
-    <string name="hiddenTapStart" formatted="false">Ketuk lokasi awal bagian</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Waktu parkir di akhir</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Waktu parkir di awal</string>
     <string name="hiddenTitleHint">Judul “%1$s” menyebut tujuan. Ubah judul</string>
     <string name="hiddenTitleHintStart">Judul “%1$s” menyebut tempat awal. Ubah judul</string>
     <string name="hiddenWithoutHidden" formatted="false">Tanpa bagian tersembunyi</string>
@@ -1634,6 +1647,7 @@
     <string name="recordTripCta" formatted="false">Rekam perjalanan</string>
     <string name="recordingDiscardAction" formatted="false">Selesaikan tanpa menyimpan</string>
     <string name="recordingDiscardTitle" formatted="false">Selesaikan tanpa menyimpan?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Tidak ada titik GPS yang direkam. Rekaman ini dihapus.</string>
     <string name="recordingDiscardedSlow" formatted="false">Perjalanan tidak disimpan — kecepatan terlalu rendah</string>
     <string name="recordingPausedPill" formatted="false">Perekaman dijeda</string>
     <string name="recordingReturn" formatted="false">Kembali ke perekaman</string>

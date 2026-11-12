@@ -51,6 +51,42 @@ abstract class ResourceAppStrings {
     fun adminNothingYet(): String = tr(R.string.adminNothingYet)
     // iOS: AppStrings+Admin.swift:84
     fun adminLoadFailed(): String = tr(R.string.adminLoadFailed)
+    // iOS: AppStrings+HiddenLocks.swift:6
+    fun hiddenDragHint(): String = tr(R.string.hiddenDragHint)
+    // iOS: AppStrings+HiddenLocks.swift:7
+    fun hiddenHandleStartHidden(distance: String): String = tr(R.string.hiddenHandleStartHidden, distance)
+    // iOS: AppStrings+HiddenLocks.swift:11
+    fun hiddenHandleEndHidden(distance: String): String = tr(R.string.hiddenHandleEndHidden, distance)
+    // iOS: AppStrings+HiddenLocks.swift:15
+    fun hiddenHandleStartVisible(): String = tr(R.string.hiddenHandleStartVisible)
+    // iOS: AppStrings+HiddenLocks.swift:16
+    fun hiddenHandleEndVisible(): String = tr(R.string.hiddenHandleEndVisible)
+    // iOS: AppStrings+HiddenLocks.swift:17
+    fun hiddenHandleDragInward(): String = tr(R.string.hiddenHandleDragInward)
+    // iOS: AppStrings+HiddenLocks.swift:18
+    fun hiddenHandleParkingOnly(): String = tr(R.string.hiddenHandleParkingOnly)
+    // iOS: AppStrings+HiddenLocks.swift:19
+    fun hiddenHandleBeforeDeparture(duration: String): String = tr(R.string.hiddenHandleBeforeDeparture, duration)
+    // iOS: AppStrings+HiddenLocks.swift:23
+    fun hiddenHandleAfterStop(duration: String): String = tr(R.string.hiddenHandleAfterStop, duration)
+    // iOS: AppStrings+HiddenLocks.swift:27
+    fun hiddenHandleUntil(time: String): String = tr(R.string.hiddenHandleUntil, time)
+    // iOS: AppStrings+HiddenLocks.swift:31
+    fun hiddenHandleFrom(time: String): String = tr(R.string.hiddenHandleFrom, time)
+    // iOS: AppStrings+HiddenLocks.swift:35
+    fun hiddenSectionRemoved(): String = tr(R.string.hiddenSectionRemoved)
+    // iOS: AppStrings+HiddenLocks.swift:36
+    fun hiddenSummaryStartParking(): String = tr(R.string.hiddenSummaryStartParking)
+    // iOS: AppStrings+HiddenLocks.swift:37
+    fun hiddenSummaryEndParking(): String = tr(R.string.hiddenSummaryEndParking)
+    // iOS: AppStrings+HiddenLocks.swift:38
+    fun hiddenHandleMoveForward(): String = tr(R.string.hiddenHandleMoveForward)
+    // iOS: AppStrings+HiddenLocks.swift:39
+    fun hiddenHandleMoveBack(): String = tr(R.string.hiddenHandleMoveBack)
+    // iOS: AppStrings+HiddenLocks.swift:40
+    fun hiddenHandleStartLabel(): String = tr(R.string.hiddenHandleStartLabel)
+    // iOS: AppStrings+HiddenLocks.swift:41
+    fun hiddenHandleEndLabel(): String = tr(R.string.hiddenHandleEndLabel)
     // iOS: AppStrings+HiddenParts.swift:4
     fun hiddenEditorTitle(): String = tr(R.string.hiddenEditorTitle)
     // iOS: AppStrings+HiddenParts.swift:5
@@ -63,14 +99,6 @@ abstract class ResourceAppStrings {
     fun hiddenEnd(): String = tr(R.string.hiddenEnd)
     // iOS: AppStrings+HiddenParts.swift:9
     fun hiddenNone(): String = tr(R.string.hiddenNone)
-    // iOS: AppStrings+HiddenParts.swift:10
-    fun hiddenDefault(): String = tr(R.string.hiddenDefault)
-    // iOS: AppStrings+HiddenParts.swift:11
-    fun hiddenTapMapHint(): String = tr(R.string.hiddenTapMapHint)
-    // iOS: AppStrings+HiddenParts.swift:12
-    fun hiddenTapStart(): String = tr(R.string.hiddenTapStart)
-    // iOS: AppStrings+HiddenParts.swift:13
-    fun hiddenTapEnd(): String = tr(R.string.hiddenTapEnd)
     // iOS: AppStrings+HiddenParts.swift:22
     fun hiddenNothing(): String = tr(R.string.hiddenNothing)
     // iOS: AppStrings+HiddenParts.swift:57
@@ -96,32 +124,30 @@ abstract class ResourceAppStrings {
     // iOS: AppStrings+HiddenParts.swift:148
     fun hiddenLocalOnlyNotice(): String = tr(R.string.hiddenLocalOnlyNotice)
     // iOS: AppStrings+HiddenParts.swift:149
-    fun hiddenChooseEdge(): String = tr(R.string.hiddenChooseEdge)
-    // iOS: AppStrings+HiddenParts.swift:150
     fun hiddenSectionStartHandle(): String = tr(R.string.hiddenSectionStartHandle)
-    // iOS: AppStrings+HiddenParts.swift:151
+    // iOS: AppStrings+HiddenParts.swift:150
     fun hiddenSectionEndHandle(): String = tr(R.string.hiddenSectionEndHandle)
-    // iOS: AppStrings+HiddenParts.swift:152
+    // iOS: AppStrings+HiddenParts.swift:151
     fun hiddenQuestionTitle(): String = tr(R.string.hiddenQuestionTitle)
-    // iOS: AppStrings+HiddenParts.swift:153
+    // iOS: AppStrings+HiddenParts.swift:152
     fun hiddenQuestionBody(): String = tr(R.string.hiddenQuestionBody)
-    // iOS: AppStrings+HiddenParts.swift:167
+    // iOS: AppStrings+HiddenParts.swift:166
     fun hiddenSave(): String = tr(R.string.hiddenSave)
-    // iOS: AppStrings+HiddenParts.swift:168
+    // iOS: AppStrings+HiddenParts.swift:167
     fun hiddenSettingsFootnote(): String = tr(R.string.hiddenSettingsFootnote)
-    // iOS: AppStrings+HiddenParts.swift:169
+    // iOS: AppStrings+HiddenParts.swift:168
     fun hiddenPublishPreviewTitle(): String = tr(R.string.hiddenPublishPreviewTitle)
-    // iOS: AppStrings+HiddenParts.swift:175
+    // iOS: AppStrings+HiddenParts.swift:174
     fun hiddenOvernightHint(): String = tr(R.string.hiddenOvernightHint)
-    // iOS: AppStrings+HiddenParts.swift:176
+    // iOS: AppStrings+HiddenParts.swift:175
     fun hiddenHomeHint(): String = tr(R.string.hiddenHomeHint)
-    // iOS: AppStrings+HiddenParts.swift:177
+    // iOS: AppStrings+HiddenParts.swift:176
     fun hiddenQuickHide(distance: String): String = tr(R.string.hiddenQuickHide, distance)
-    // iOS: AppStrings+HiddenParts.swift:181
+    // iOS: AppStrings+HiddenParts.swift:180
     fun hiddenPrivacyIntro(): String = tr(R.string.hiddenPrivacyIntro)
-    // iOS: AppStrings+HiddenParts.swift:182
+    // iOS: AppStrings+HiddenParts.swift:181
     fun hiddenPrivacyModeFootnote(): String = tr(R.string.hiddenPrivacyModeFootnote)
-    // iOS: AppStrings+HiddenParts.swift:183
+    // iOS: AppStrings+HiddenParts.swift:182
     fun hiddenRouteLockAccessibility(): String = tr(R.string.hiddenRouteLockAccessibility)
     // iOS: AppStrings+ProfileDesign.swift:4
     fun profileDetailsGroup(): String = tr(R.string.profileDetailsGroup)
@@ -179,7 +205,9 @@ abstract class ResourceAppStrings {
     fun recordingDiscardAction(): String = tr(R.string.recordingDiscardAction)
     // iOS: AppStrings+RecordingOutcome.swift:41
     fun recordingReturn(): String = tr(R.string.recordingReturn)
-    // iOS: AppStrings+RecordingOutcome.swift:96
+    // iOS: AppStrings+RecordingOutcome.swift:116
+    fun recordingDiscardedNoPoints(): String = tr(R.string.recordingDiscardedNoPoints)
+    // iOS: AppStrings+RecordingOutcome.swift:134
     fun recordingDiscardedSlow(): String = tr(R.string.recordingDiscardedSlow)
     // iOS: AppStrings+RemoteConfig.swift:6
     fun remoteUpdateTitle(): String = tr(R.string.remoteUpdateTitle)

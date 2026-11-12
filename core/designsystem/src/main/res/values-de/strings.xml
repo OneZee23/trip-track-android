@@ -885,10 +885,23 @@
     <string name="hiddenAddSection" formatted="false">+ Mittelabschnitt verbergen</string>
     <string name="hiddenAllTrip" formatted="false">Ganze Fahrt</string>
     <string name="hiddenAlreadySeen" formatted="false">Wer die Fahrt schon gesehen hat, kann sich die ganze Route gemerkt haben.</string>
-    <string name="hiddenChooseEdge" formatted="false">Entfernung verbergen</string>
-    <string name="hiddenDefault" formatted="false">Standard</string>
+    <string name="hiddenDragHint" formatted="false">Ziehen Sie die Schlösser entlang der Route. Um einen Abschnitt in der Mitte zu verbergen, halten Sie den Finger auf der Linie.</string>
     <string name="hiddenEditorTitle" formatted="false">Vor anderen verbergen</string>
     <string name="hiddenEnd" formatted="false">Ende</string>
+    <string name="hiddenHandleAfterStop">%1$s nach dem Anhalten</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s vor der Abfahrt</string>
+    <string name="hiddenHandleDragInward" formatted="false">Zum Verbergen entlang der Route ziehen</string>
+    <string name="hiddenHandleEndHidden">Ende verborgen: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Grenze des verborgenen Endes</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Ende ist sichtbar</string>
+    <string name="hiddenHandleFrom">ab %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Entlang der Route nach hinten verschieben</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Entlang der Route nach vorn verschieben</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Nur die Standzeit ist verborgen</string>
+    <string name="hiddenHandleStartHidden">Anfang verborgen: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Grenze des verborgenen Anfangs</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Anfang ist sichtbar</string>
+    <string name="hiddenHandleUntil">bis %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Anfang verbergen? Hier ist dein Zuhause</string>
     <string name="hiddenLocalCardBody">%1$s und %2$s davon erscheinen weder im Feed noch in der Cloud-Kopie.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nichts davon erscheint im Feed oder in der Cloud-Kopie.</string>
@@ -914,15 +927,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Grenze eines verborgenen Abschnitts</string>
     <string name="hiddenSave" formatted="false">Speichern</string>
     <string name="hiddenSectionEndHandle" formatted="false">Ende des verborgenen Abschnitts</string>
+    <string name="hiddenSectionRemoved" formatted="false">Abschnitt entfernt</string>
     <string name="hiddenSectionStartHandle" formatted="false">Anfang des verborgenen Abschnitts</string>
     <string name="hiddenSectionTitle">Abschnitt %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Ändern unter Einstellungen → Privatsphäre</string>
     <string name="hiddenShowOwn" formatted="false">Deine Fahrt</string>
     <string name="hiddenShowPublic" formatted="false">So sehen es andere</string>
     <string name="hiddenStart" formatted="false">Anfang</string>
-    <string name="hiddenTapEnd" formatted="false">Tippe auf das Routenende des Abschnitts</string>
-    <string name="hiddenTapMapHint" formatted="false">Tippe auf die Route, um einen Abschnitt zu wählen</string>
-    <string name="hiddenTapStart" formatted="false">Tippe auf den Routenanfang des Abschnitts</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Standzeit am Ende</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Standzeit am Anfang</string>
     <string name="hiddenTitleHint">Der Titel „%1$s“ nennt den Zielort. Titel ändern</string>
     <string name="hiddenTitleHintStart">Der Titel „%1$s“ nennt den Startort. Titel ändern</string>
     <string name="hiddenWithoutHidden" formatted="false">Ohne verborgene Abschnitte</string>
@@ -1667,6 +1680,7 @@
     <string name="recordTripCta" formatted="false">Fahrt aufzeichnen</string>
     <string name="recordingDiscardAction" formatted="false">Ohne Speichern beenden</string>
     <string name="recordingDiscardTitle" formatted="false">Ohne Speichern beenden?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Es wurden keine GPS-Punkte aufgezeichnet. Diese Aufnahme wurde verworfen.</string>
     <string name="recordingDiscardedSlow" formatted="false">Fahrt nicht gespeichert — die Geschwindigkeit war zu niedrig</string>
     <string name="recordingPausedPill" formatted="false">Aufnahme pausiert</string>
     <string name="recordingReturn" formatted="false">Zurück zur Aufzeichnung</string>

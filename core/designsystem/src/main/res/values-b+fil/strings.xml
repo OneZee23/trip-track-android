@@ -885,10 +885,23 @@
     <string name="hiddenAddSection" formatted="false">+ Itago ang gitnang bahagi</string>
     <string name="hiddenAllTrip" formatted="false">Buong biyahe</string>
     <string name="hiddenAlreadySeen" formatted="false">Maaaring maalala ng nakakita na ang buong ruta.</string>
-    <string name="hiddenChooseEdge" formatted="false">Distansyang itatago</string>
-    <string name="hiddenDefault" formatted="false">default</string>
+    <string name="hiddenDragHint" formatted="false">I-drag ang mga kandado sa kahabaan ng ruta. Para itago ang bahagi sa gitna, pindutin nang matagal ang linya.</string>
     <string name="hiddenEditorTitle" formatted="false">Itago sa iba</string>
     <string name="hiddenEnd" formatted="false">Dulo</string>
+    <string name="hiddenHandleAfterStop">%1$s pagkatapos huminto</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s bago umalis</string>
+    <string name="hiddenHandleDragInward" formatted="false">I-drag sa ruta para itago</string>
+    <string name="hiddenHandleEndHidden">Nakatago ang dulo: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Hangganan ng nakatagong dulo</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Nakikita ang dulo</string>
+    <string name="hiddenHandleFrom">mula %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Ilipat pabalik sa ruta</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Ilipat pasulong sa ruta</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Ang paradahan lang ang nakatago</string>
+    <string name="hiddenHandleStartHidden">Nakatago ang simula: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Hangganan ng nakatagong simula</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Nakikita ang simula</string>
+    <string name="hiddenHandleUntil">hanggang %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Itago ang simula? Nandito ang bahay mo</string>
     <string name="hiddenLocalCardBody">Hindi mapupunta sa feed o cloud copy ang %1$s at %2$s kasama nito.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Walang lalabas dito sa feed o cloud copy.</string>
@@ -914,15 +927,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Hangganan ng nakatagong bahagi</string>
     <string name="hiddenSave" formatted="false">I-save</string>
     <string name="hiddenSectionEndHandle" formatted="false">Dulo ng nakatagong bahagi</string>
+    <string name="hiddenSectionRemoved" formatted="false">Inalis ang bahagi</string>
     <string name="hiddenSectionStartHandle" formatted="false">Simula ng nakatagong bahagi</string>
     <string name="hiddenSectionTitle">Bahagi %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Palitan sa Settings → Privacy</string>
     <string name="hiddenShowOwn" formatted="false">Iyong biyahe</string>
     <string name="hiddenShowPublic" formatted="false">Pampublikong preview</string>
     <string name="hiddenStart" formatted="false">Simula</string>
-    <string name="hiddenTapEnd" formatted="false">I-tap kung saan nagtatapos ang bahagi</string>
-    <string name="hiddenTapMapHint" formatted="false">I-tap ang ruta para pumili ng bahagi</string>
-    <string name="hiddenTapStart" formatted="false">I-tap kung saan nagsisimula ang bahagi</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Paradahan sa dulo</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Paradahan sa simula</string>
     <string name="hiddenTitleHint">Itinuturo ng pamagat na “%1$s” ang dulo. Palitan ang pamagat</string>
     <string name="hiddenTitleHintStart">Itinuturo ng pamagat na “%1$s” ang pinagsimulan. Palitan ang pamagat</string>
     <string name="hiddenWithoutHidden" formatted="false">Walang mga nakatagong bahagi</string>
@@ -1667,6 +1680,7 @@
     <string name="recordTripCta" formatted="false">Mag-record ng biyahe</string>
     <string name="recordingDiscardAction" formatted="false">Tapusin nang hindi sine-save</string>
     <string name="recordingDiscardTitle" formatted="false">Tapusin nang hindi sine-save?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Walang naitalang GPS point. Itinapon ang recording na ito.</string>
     <string name="recordingDiscardedSlow" formatted="false">Hindi na-save ang biyahe — masyadong mababa ang bilis</string>
     <string name="recordingPausedPill" formatted="false">Naka-pause ang pag-record</string>
     <string name="recordingReturn" formatted="false">Bumalik sa pag-record</string>

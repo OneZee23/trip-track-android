@@ -100,6 +100,7 @@ class SwiftParserTests(unittest.TestCase):
                     var table = tr1
                     table.merge(Translations.hiddenPrivacyTR) { _, new in new }
                     table.merge(Translations.hiddenPartsTR) { _, new in new }
+                    table.merge(Translations.hiddenLocksTR) { _, new in new }
                     return table
                 }()
                 private static let tr1: [String: String] = ["other": "value"]
@@ -110,9 +111,14 @@ class SwiftParserTests(unittest.TestCase):
                 static let hiddenPartsTR = makeHiddenParts(["Başlangıç", "Bitiş"])
                 static let hiddenPartsDE = makeHiddenParts(["Start", "End"])
             }''', encoding="utf-8")
+            (root / "Translations+HiddenLocks.swift").write_text('''extension Translations {
+                static let hiddenLocksTR: [String: String] = ["hiddenDragHint": "Kilidi sürükle"]
+                static let hiddenLocksDE: [String: String] = ["hiddenDragHint": "Schloss ziehen"]
+            }''', encoding="utf-8")
             table = read_translations(path)
             self.assertEqual(table["privacyEdge200"][0], "avlu")
             self.assertEqual(table["hiddenEnd"][0], "Bitiş")
+            self.assertEqual(table["hiddenDragHint"][0], "Kilidi sürükle")
             self.assertNotIn("hiddenPrivacyDE", table)
 
 

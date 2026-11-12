@@ -885,10 +885,23 @@
     <string name="hiddenAddSection" formatted="false">+ Hide a middle section</string>
     <string name="hiddenAllTrip" formatted="false">Whole trip</string>
     <string name="hiddenAlreadySeen" formatted="false">People who saw this trip may remember the full route.</string>
-    <string name="hiddenChooseEdge" formatted="false">Hide distance</string>
-    <string name="hiddenDefault" formatted="false">default</string>
+    <string name="hiddenDragHint" formatted="false">Drag the locks along the route. To hide a part in the middle, press and hold on the line.</string>
     <string name="hiddenEditorTitle" formatted="false">Hide from others</string>
     <string name="hiddenEnd" formatted="false">End</string>
+    <string name="hiddenHandleAfterStop">%1$s after you stopped</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s before you set off</string>
+    <string name="hiddenHandleDragInward" formatted="false">Drag along the route to hide</string>
+    <string name="hiddenHandleEndHidden">End hidden: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Hidden end boundary</string>
+    <string name="hiddenHandleEndVisible" formatted="false">End is visible</string>
+    <string name="hiddenHandleFrom">from %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Move back along the route</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Move forward along the route</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Only the parked time is hidden</string>
+    <string name="hiddenHandleStartHidden">Start hidden: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Hidden start boundary</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Start is visible</string>
+    <string name="hiddenHandleUntil">until %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Hide the start? Your home is here</string>
     <string name="hiddenLocalCardBody">%1$s and %2$s from them won\'t reach the feed or cloud copy.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nothing hidden will appear in the feed or cloud copy.</string>
@@ -914,15 +927,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Hidden route boundary</string>
     <string name="hiddenSave" formatted="false">Save</string>
     <string name="hiddenSectionEndHandle" formatted="false">Hidden section end</string>
+    <string name="hiddenSectionRemoved" formatted="false">Section removed</string>
     <string name="hiddenSectionStartHandle" formatted="false">Hidden section start</string>
     <string name="hiddenSectionTitle">Section %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Change this in Settings → Privacy</string>
     <string name="hiddenShowOwn" formatted="false">Your trip</string>
     <string name="hiddenShowPublic" formatted="false">How others will see it</string>
     <string name="hiddenStart" formatted="false">Start</string>
-    <string name="hiddenTapEnd" formatted="false">Tap where the section ends</string>
-    <string name="hiddenTapMapHint" formatted="false">Tap the route to choose a section</string>
-    <string name="hiddenTapStart" formatted="false">Tap where the section starts</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Parked time at the end</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Parked time at the start</string>
     <string name="hiddenTitleHint">The title “%1$s” names the finish. Change title</string>
     <string name="hiddenTitleHintStart">The title “%1$s” names the starting place. Rename</string>
     <string name="hiddenWithoutHidden" formatted="false">Visible parts</string>
@@ -1667,6 +1680,7 @@
     <string name="recordTripCta" formatted="false">Record a trip</string>
     <string name="recordingDiscardAction" formatted="false">Finish without saving</string>
     <string name="recordingDiscardTitle" formatted="false">Finish without saving?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">No GPS points were recorded. This recording was discarded.</string>
     <string name="recordingDiscardedSlow" formatted="false">Trip not saved — the speed stayed too low</string>
     <string name="recordingPausedPill" formatted="false">Recording paused</string>
     <string name="recordingReturn" formatted="false">Back to recording</string>

@@ -885,10 +885,23 @@
     <string name="hiddenAddSection" formatted="false">+ Orta bölümü gizle</string>
     <string name="hiddenAllTrip" formatted="false">Tüm yolculuk</string>
     <string name="hiddenAlreadySeen" formatted="false">Yolculuğu görenler tüm rotayı hatırlayabilir.</string>
-    <string name="hiddenChooseEdge" formatted="false">Gizlenecek mesafe</string>
-    <string name="hiddenDefault" formatted="false">varsayılan</string>
+    <string name="hiddenDragHint" formatted="false">Kilitleri rota boyunca sürükleyin. Ortadaki bir bölümü gizlemek için parmağınızı çizginin üzerinde basılı tutun.</string>
     <string name="hiddenEditorTitle" formatted="false">Başkalarından gizle</string>
     <string name="hiddenEnd" formatted="false">Bitiş</string>
+    <string name="hiddenHandleAfterStop">Durduktan sonra %1$s</string>
+    <string name="hiddenHandleBeforeDeparture">Yola çıkmadan önce %1$s</string>
+    <string name="hiddenHandleDragInward" formatted="false">Gizlemek için rota boyunca sürükleyin</string>
+    <string name="hiddenHandleEndHidden">Bitiş gizlendi: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Gizli bitiş sınırı</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Bitiş görünüyor</string>
+    <string name="hiddenHandleFrom">%1$s itibarıyla</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Rota boyunca geri taşı</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Rota boyunca ileri taşı</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Yalnızca park süresi gizlendi</string>
+    <string name="hiddenHandleStartHidden">Başlangıç gizlendi: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Gizli başlangıç sınırı</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Başlangıç görünüyor</string>
+    <string name="hiddenHandleUntil">%1$s saatine kadar</string>
     <string name="hiddenHomeHint" formatted="false">Başlangıcı gizle? Eviniz burada</string>
     <string name="hiddenLocalCardBody">%1$s ve bunlardan %2$s akışa veya bulut kopyasına gitmez.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Bunların hiçbiri akışta veya bulut kopyasında görünmez.</string>
@@ -914,15 +927,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Gizli bölüm sınırı</string>
     <string name="hiddenSave" formatted="false">Kaydet</string>
     <string name="hiddenSectionEndHandle" formatted="false">Gizli bölümün sonu</string>
+    <string name="hiddenSectionRemoved" formatted="false">Bölüm kaldırıldı</string>
     <string name="hiddenSectionStartHandle" formatted="false">Gizli bölümün başlangıcı</string>
     <string name="hiddenSectionTitle">Bölüm %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Ayarlar → Gizlilik bölümünden değiştirebilirsiniz</string>
     <string name="hiddenShowOwn" formatted="false">Yolculuğunuz</string>
     <string name="hiddenShowPublic" formatted="false">Herkese açık önizleme</string>
     <string name="hiddenStart" formatted="false">Başlangıç</string>
-    <string name="hiddenTapEnd" formatted="false">Bölümün bittiği yere dokunun</string>
-    <string name="hiddenTapMapHint" formatted="false">Bir bölüm seçmek için rotaya dokunun</string>
-    <string name="hiddenTapStart" formatted="false">Bölümün başladığı yere dokunun</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Sondaki park süresi</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Başlangıçtaki park süresi</string>
     <string name="hiddenTitleHint">“%1$s” başlığı varış yerini belirtiyor. Başlığı değiştir</string>
     <string name="hiddenTitleHintStart">“%1$s” başlığı başlangıç yerini belirtiyor. Başlığı değiştir</string>
     <string name="hiddenWithoutHidden" formatted="false">Gizli bölümler olmadan</string>
@@ -1667,6 +1680,7 @@
     <string name="recordTripCta" formatted="false">Gezi kaydet</string>
     <string name="recordingDiscardAction" formatted="false">Kaydetmeden bitir</string>
     <string name="recordingDiscardTitle" formatted="false">Kaydetmeden bitirilsin mi?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">GPS noktası kaydedilmedi. Bu kayıt silindi.</string>
     <string name="recordingDiscardedSlow" formatted="false">Yolculuk kaydedilmedi — hız çok düşüktü</string>
     <string name="recordingPausedPill" formatted="false">Kayıt duraklatıldı</string>
     <string name="recordingReturn" formatted="false">Kayda dön</string>

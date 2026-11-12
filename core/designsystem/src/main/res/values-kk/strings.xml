@@ -885,10 +885,23 @@
     <string name="hiddenAddSection" formatted="false">+ Орта бөлікті жасыру</string>
     <string name="hiddenAllTrip" formatted="false">Бүкіл сапар</string>
     <string name="hiddenAlreadySeen" formatted="false">Сапарды көргендер бүкіл бағытты есте сақтауы мүмкін.</string>
-    <string name="hiddenChooseEdge" formatted="false">Жасырылатын қашықтық</string>
-    <string name="hiddenDefault" formatted="false">әдепкі</string>
+    <string name="hiddenDragHint" formatted="false">Құлыптарды маршрут бойымен жылжытыңыз. Ортасындағы бөлікті жасыру үшін саусақты сызықта ұстап тұрыңыз.</string>
     <string name="hiddenEditorTitle" formatted="false">Басқалардан жасыру</string>
     <string name="hiddenEnd" formatted="false">Соңы</string>
+    <string name="hiddenHandleAfterStop">Тоқтағаннан кейін %1$s</string>
+    <string name="hiddenHandleBeforeDeparture">Жолға шыққанға дейін %1$s</string>
+    <string name="hiddenHandleDragInward" formatted="false">Жасыру үшін маршрут бойымен жылжытыңыз</string>
+    <string name="hiddenHandleEndHidden">Соңы жасырылды: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Жасырын соңның шекарасы</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Соңы көрінеді</string>
+    <string name="hiddenHandleFrom">%1$s бастап</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Маршрут бойымен артқа жылжыту</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Маршрут бойымен алға жылжыту</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Тек тұрақ жасырылды</string>
+    <string name="hiddenHandleStartHidden">Басы жасырылды: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Жасырын бастың шекарасы</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Басы көрінеді</string>
+    <string name="hiddenHandleUntil">%1$s дейін</string>
     <string name="hiddenHomeHint" formatted="false">Басын жасыру керек пе? Үйіңіз осында</string>
     <string name="hiddenLocalCardBody">%1$s пен олардағы %2$s лентаға да, бұлттағы көшірмеге де жіберілмейді.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Мұның ешқайсысы таспаға да, бұлттағы көшірмеге де түспейді.</string>
@@ -914,15 +927,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Жасырын бөліктің шекарасы</string>
     <string name="hiddenSave" formatted="false">Сақтау</string>
     <string name="hiddenSectionEndHandle" formatted="false">Жасырын бөліктің соңы</string>
+    <string name="hiddenSectionRemoved" formatted="false">Бөлік алынды</string>
     <string name="hiddenSectionStartHandle" formatted="false">Жасырын бөліктің басы</string>
     <string name="hiddenSectionTitle">Бөлік %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Параметрлер → Құпиялық бөлімінен өзгертуге болады</string>
     <string name="hiddenShowOwn" formatted="false">Сапарыңыз</string>
     <string name="hiddenShowPublic" formatted="false">Ашық алдын ала көрініс</string>
     <string name="hiddenStart" formatted="false">Басы</string>
-    <string name="hiddenTapEnd" formatted="false">Бөлік аяқталатын жерді басыңыз</string>
-    <string name="hiddenTapMapHint" formatted="false">Бөлікті таңдау үшін бағытты басыңыз</string>
-    <string name="hiddenTapStart" formatted="false">Бөлік басталатын жерді басыңыз</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Соңындағы тұрақ</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Басындағы тұрақ</string>
     <string name="hiddenTitleHint">«%1$s» атауында баратын жер көрсетілген. Атауын өзгерту</string>
     <string name="hiddenTitleHintStart">«%1$s» атауында басталған жер көрсетілген. Атауын өзгерту</string>
     <string name="hiddenWithoutHidden" formatted="false">Жасырын бөліктерсіз</string>
@@ -1667,6 +1680,7 @@
     <string name="recordTripCta" formatted="false">Сапар жазу</string>
     <string name="recordingDiscardAction" formatted="false">Сақтамай аяқтау</string>
     <string name="recordingDiscardTitle" formatted="false">Сақтамай аяқтау керек пе?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">GPS нүктелері жазылмады. Бұл жазба жойылды.</string>
     <string name="recordingDiscardedSlow" formatted="false">Сапар сақталмады — жылдамдық тым төмен болды</string>
     <string name="recordingPausedPill" formatted="false">Жазу кідіртілді</string>
     <string name="recordingReturn" formatted="false">Жазуға оралу</string>

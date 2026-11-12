@@ -10,6 +10,7 @@ import java.time.Instant
 // iOS: TripHiddenPartsResolver.swift.
 data class TripHiddenPartsResolution(
     val hidden: List<Boolean>,
+    val odometerPrefix: List<Double>,
     val visibleRuns: List<IntRange>,
     val hiddenRanges: List<HiddenRange>,
     val hiddenPointIndex: Map<Long, List<GeoPoint>>,
@@ -47,6 +48,11 @@ object TripHiddenPartsResolver {
     const val sliverMetres = 100.0
     const val photoNearMetres = 150.0
 
+    fun odometerPrefix(points: List<TrackPoint>, recordingBreaks: List<Instant>): List<Double> {
+        val segments = points.map { point -> recordingBreaks.count { point.timestamp >= it } }
+        return buildPrefix(points, segments)
+    }
+
     fun resolve(
         points: List<TrackPoint>,
         recordingBreaks: List<Instant>,
@@ -55,9 +61,9 @@ object TripHiddenPartsResolver {
         sections: List<HiddenSection>,
         home: Pair<GeoPoint, Double>?,
     ): TripHiddenPartsResolution {
-        if (points.isEmpty()) return TripHiddenPartsResolution(emptyList(), emptyList(), emptyList(), emptyMap(), emptyList(), emptyList(), 0.0, null, null)
+        if (points.isEmpty()) return TripHiddenPartsResolution(emptyList(), emptyList(), emptyList(), emptyList(), emptyMap(), emptyList(), emptyList(), 0.0, null, null)
         val segment = points.map { point -> recordingBreaks.count { point.timestamp >= it } }
-        val distance = prefix(points, segment)
+        val distance = buildPrefix(points, segment)
         val total = distance.last()
         val hidden = BooleanArray(points.size) { i ->
             val point = points[i]
@@ -94,7 +100,7 @@ object TripHiddenPartsResolver {
         }
         val visibleDistance = runs.sumOf { distance[it.last] - distance[it.first] }
         return TripHiddenPartsResolution(
-            hidden = hidden.toList(), visibleRuns = runs, hiddenRanges = hiddenRanges, hiddenPointIndex = hiddenPointIndex,
+            hidden = hidden.toList(), odometerPrefix = distance, visibleRuns = runs, hiddenRanges = hiddenRanges, hiddenPointIndex = hiddenPointIndex,
             previewPoints = previewPoints, previewBreaks = previewBreaks,
             visibleDistance = visibleDistance, visibleStart = runs.firstOrNull()?.let { points[it.first].timestamp },
             visibleEnd = runs.lastOrNull()?.let { points[it.last].timestamp },
@@ -135,7 +141,7 @@ object TripHiddenPartsResolver {
         )
     }
 
-    private fun prefix(points: List<TrackPoint>, segment: List<Int>): List<Double> {
+    private fun buildPrefix(points: List<TrackPoint>, segment: List<Int>): List<Double> {
         val out = ArrayList<Double>(points.size)
         var total = 0.0
         var anchor = 0

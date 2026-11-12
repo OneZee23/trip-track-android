@@ -1,6 +1,7 @@
 package com.onezee.triptrack.map
 
 import android.annotation.SuppressLint
+import android.graphics.PointF
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import com.onezee.triptrack.logic.MapRect
@@ -113,7 +114,11 @@ internal class MapController(
             ready.addOnCameraMoveStartedListener { reason ->
                 if (reason == MapLibreMap.OnCameraMoveStartedListener.REASON_API_GESTURE) state.gestureRevision++
             }
-            ready.addOnCameraMoveListener { updateRegionLabels(); updateCarScale() }
+            ready.addOnCameraMoveListener {
+                state.projectionRevision++
+                updateRegionLabels()
+                updateCarScale()
+            }
             // Also covers location updates while the camera rests. The callback runs on the UI
             // thread, as MapView's own compass/annotation updates do.
             mapView.addOnDidFinishRenderingFrameListener { _, _, _ -> updateRegionLabels() }
@@ -210,6 +215,12 @@ internal class MapController(
         if (gesturesEnabled == value) return
         gesturesEnabled = value
         applyGestures()
+    }
+
+    fun screenPosition(point: GeoPoint): PointF? = map?.projection?.toScreenLocation(LatLng(point.latitude, point.longitude))
+
+    fun coordinateAt(x: Float, y: Float): GeoPoint? = map?.projection?.fromScreenLocation(PointF(x, y))?.let {
+        GeoPoint(it.latitude, it.longitude)
     }
 
     private fun applyGestures() {

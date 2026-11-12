@@ -143,16 +143,21 @@ def integer_tokens(function):
 def read_translations(path):
     """Resolve chunks in actual merge order, then apply table[key] overrides."""
     tokens = lex(path.read_text(encoding="utf-8"))
-    extra_path = path.parent / "Translations+HiddenPrivacy.swift"
-    extra_tokens = lex(extra_path.read_text(encoding="utf-8")) if extra_path.exists() else []
+    extra_paths = ("Translations+HiddenPrivacy.swift", "Translations+HiddenLocks.swift")
+    extra_sources = [
+        lex(extra_path.read_text(encoding="utf-8"))
+        for extra_name in extra_paths
+        if (extra_path := path.parent / extra_name).exists()
+    ]
     language_suffix = path.stem.split("+")[-1]
     chunks, main, hidden_parts_keys = {}, None, None
-    for source_tokens in (tokens, extra_tokens):
+    for source_tokens in (tokens, *extra_sources):
+        is_extra = source_tokens is not tokens
         for index in range(len(source_tokens) - 2):
             if [token.value for token in source_tokens[index:index + 2]] != ["static", "let"]:
                 continue
             name = source_tokens[index + 2].value
-            if source_tokens is extra_tokens and name != "hiddenPartsKeys" and name.startswith(("hiddenPrivacy", "hiddenParts")) and not name.endswith(language_suffix):
+            if is_extra and name != "hiddenPartsKeys" and name.startswith(("hiddenPrivacy", "hiddenParts", "hiddenLocks")) and not name.endswith(language_suffix):
                 continue
             equals = index + 3
             while source_tokens[equals].value != "=":
@@ -440,6 +445,7 @@ class Generator:
             self.source(path)
             self.tables[lang] = read_translations(path)
         self.source(localization / "Translations/Translations+HiddenPrivacy.swift")
+        self.source(localization / "Translations/Translations+HiddenLocks.swift")
         paths = sorted(path for path in localization.glob("*.swift") if path.name.startswith("AppStrings") or "extension AppStrings" in path.read_text(encoding="utf-8"))
         if not paths:
             raise Unsupported("no AppStrings sources found")

@@ -951,10 +951,23 @@
     <string name="hiddenAddSection" formatted="false">+ Ukryj środkowy odcinek</string>
     <string name="hiddenAllTrip" formatted="false">Cała podróż</string>
     <string name="hiddenAlreadySeen" formatted="false">Osoby, które widziały podróż, mogą pamiętać całą trasę.</string>
-    <string name="hiddenChooseEdge" formatted="false">Odległość do ukrycia</string>
-    <string name="hiddenDefault" formatted="false">domyślnie</string>
+    <string name="hiddenDragHint" formatted="false">Przeciągaj kłódki wzdłuż trasy. Aby ukryć odcinek w środku, przytrzymaj palec na linii.</string>
     <string name="hiddenEditorTitle" formatted="false">Ukryj przed innymi</string>
     <string name="hiddenEnd" formatted="false">Koniec</string>
+    <string name="hiddenHandleAfterStop">%1$s po zatrzymaniu</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s przed wyjazdem</string>
+    <string name="hiddenHandleDragInward" formatted="false">Przeciągnij wzdłuż trasy, aby ukryć</string>
+    <string name="hiddenHandleEndHidden">Ukryty koniec: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Granica ukrytego końca</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Koniec jest widoczny</string>
+    <string name="hiddenHandleFrom">od %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Przesuń do tyłu wzdłuż trasy</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Przesuń do przodu wzdłuż trasy</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Ukryty jest tylko postój</string>
+    <string name="hiddenHandleStartHidden">Ukryty początek: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Granica ukrytego początku</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Początek jest widoczny</string>
+    <string name="hiddenHandleUntil">do %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Ukryć początek? Tu jest twój dom</string>
     <string name="hiddenLocalCardBody">%1$s i %2$s stamtąd nie trafią do kanału ani kopii w chmurze.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Nic z tego nie trafi do kanału ani kopii w chmurze.</string>
@@ -980,15 +993,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Granica ukrytego odcinka</string>
     <string name="hiddenSave" formatted="false">Zapisz</string>
     <string name="hiddenSectionEndHandle" formatted="false">Koniec ukrytego odcinka</string>
+    <string name="hiddenSectionRemoved" formatted="false">Odcinek usunięty</string>
     <string name="hiddenSectionStartHandle" formatted="false">Początek ukrytego odcinka</string>
     <string name="hiddenSectionTitle">Odcinek %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Zmienisz to w Ustawieniach → Prywatność</string>
     <string name="hiddenShowOwn" formatted="false">Twoja podróż</string>
     <string name="hiddenShowPublic" formatted="false">Podgląd publiczny</string>
     <string name="hiddenStart" formatted="false">Początek</string>
-    <string name="hiddenTapEnd" formatted="false">Dotknij miejsca, gdzie kończy się odcinek</string>
-    <string name="hiddenTapMapHint" formatted="false">Dotknij trasy, aby wybrać odcinek</string>
-    <string name="hiddenTapStart" formatted="false">Dotknij miejsca, gdzie zaczyna się odcinek</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Postój na końcu</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Postój na początku</string>
     <string name="hiddenTitleHint">Tytuł „%1$s” wskazuje miejsce końca. Zmień tytuł</string>
     <string name="hiddenTitleHintStart">Tytuł „%1$s” wskazuje miejsce startu. Zmień tytuł</string>
     <string name="hiddenWithoutHidden" formatted="false">Bez ukrytych odcinków</string>
@@ -1733,6 +1746,7 @@
     <string name="recordTripCta" formatted="false">Nagraj trasę</string>
     <string name="recordingDiscardAction" formatted="false">Zakończ bez zapisywania</string>
     <string name="recordingDiscardTitle" formatted="false">Zakończyć bez zapisywania?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Nie zapisano punktów GPS. To nagranie zostało usunięte.</string>
     <string name="recordingDiscardedSlow" formatted="false">Trasa niezapisana — prędkość była zbyt niska</string>
     <string name="recordingPausedPill" formatted="false">Nagrywanie wstrzymane</string>
     <string name="recordingReturn" formatted="false">Wróć do nagrywania</string>

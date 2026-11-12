@@ -1,5 +1,6 @@
 package com.onezee.triptrack.map
 
+import android.graphics.PointF
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,8 +76,15 @@ class MapHostState {
         controller?.execute(command) ?: pending.add(command)
     }
 
+    fun screenPosition(point: GeoPoint): PointF? = controller?.screenPosition(point)
+
+    fun coordinateAt(x: Float, y: Float): GeoPoint? = controller?.coordinateAt(x, y)
+
     /** The camera after the last completed move; null until the map has one. */
     var camera: MapCamera? by mutableStateOf(null)
+        internal set
+
+    var projectionRevision: Int by mutableStateOf(0)
         internal set
 
     /** iOS: didChange userTrackingMode. Only a person's gesture cancels camera following. */

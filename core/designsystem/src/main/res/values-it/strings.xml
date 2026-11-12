@@ -918,10 +918,23 @@
     <string name="hiddenAddSection" formatted="false">+ Nascondi un tratto centrale</string>
     <string name="hiddenAllTrip" formatted="false">Viaggio intero</string>
     <string name="hiddenAlreadySeen" formatted="false">Chi ha già visto il viaggio potrebbe ricordare tutto il percorso.</string>
-    <string name="hiddenChooseEdge" formatted="false">Distanza da nascondere</string>
-    <string name="hiddenDefault" formatted="false">predefinito</string>
+    <string name="hiddenDragHint" formatted="false">Trascina i lucchetti lungo il percorso. Per nascondere un tratto nel mezzo, tieni premuto sulla linea.</string>
     <string name="hiddenEditorTitle" formatted="false">Nascondi agli altri</string>
     <string name="hiddenEnd" formatted="false">Fine</string>
+    <string name="hiddenHandleAfterStop">%1$s dopo l’arrivo</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s prima della partenza</string>
+    <string name="hiddenHandleDragInward" formatted="false">Trascina lungo il percorso per nascondere</string>
+    <string name="hiddenHandleEndHidden">Fine nascosta: %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Limite della fine nascosta</string>
+    <string name="hiddenHandleEndVisible" formatted="false">La fine è visibile</string>
+    <string name="hiddenHandleFrom">dalle %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Sposta indietro lungo il percorso</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Sposta in avanti lungo il percorso</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">È nascosta solo la sosta</string>
+    <string name="hiddenHandleStartHidden">Inizio nascosto: %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Limite dell’inizio nascosto</string>
+    <string name="hiddenHandleStartVisible" formatted="false">L’inizio è visibile</string>
+    <string name="hiddenHandleUntil">fino alle %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Nascondere l’inizio? Qui c’è casa tua</string>
     <string name="hiddenLocalCardBody">%1$s e %2$s non finiranno nel feed né nella copia cloud.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Niente di tutto questo apparirà nel feed né nella copia cloud.</string>
@@ -947,15 +960,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Confine del tratto nascosto</string>
     <string name="hiddenSave" formatted="false">Salva</string>
     <string name="hiddenSectionEndHandle" formatted="false">Fine del tratto nascosto</string>
+    <string name="hiddenSectionRemoved" formatted="false">Tratto rimosso</string>
     <string name="hiddenSectionStartHandle" formatted="false">Inizio del tratto nascosto</string>
     <string name="hiddenSectionTitle">Tratto %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Puoi cambiarlo in Impostazioni → Privacy</string>
     <string name="hiddenShowOwn" formatted="false">Il tuo viaggio</string>
     <string name="hiddenShowPublic" formatted="false">Anteprima pubblica</string>
     <string name="hiddenStart" formatted="false">Inizio</string>
-    <string name="hiddenTapEnd" formatted="false">Tocca dove finisce il tratto</string>
-    <string name="hiddenTapMapHint" formatted="false">Tocca il percorso per scegliere un tratto</string>
-    <string name="hiddenTapStart" formatted="false">Tocca dove inizia il tratto</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Sosta alla fine</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Sosta all’inizio</string>
     <string name="hiddenTitleHint">Il titolo «%1$s» indica la destinazione. Cambia titolo</string>
     <string name="hiddenTitleHintStart">Il titolo «%1$s» indica il luogo di partenza. Cambia titolo</string>
     <string name="hiddenWithoutHidden" formatted="false">Senza i tratti nascosti</string>
@@ -1700,6 +1713,7 @@
     <string name="recordTripCta" formatted="false">Registra un viaggio</string>
     <string name="recordingDiscardAction" formatted="false">Termina senza salvare</string>
     <string name="recordingDiscardTitle" formatted="false">Terminare senza salvare?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">Non sono stati registrati punti GPS. Questa registrazione è stata eliminata.</string>
     <string name="recordingDiscardedSlow" formatted="false">Viaggio non salvato: la velocità era troppo bassa</string>
     <string name="recordingPausedPill" formatted="false">Registrazione in pausa</string>
     <string name="recordingReturn" formatted="false">Torna alla registrazione</string>

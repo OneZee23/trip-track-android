@@ -951,10 +951,23 @@
     <string name="hiddenAddSection" formatted="false">+ Скрыть участок в середине</string>
     <string name="hiddenAllTrip" formatted="false">Вся поездка</string>
     <string name="hiddenAlreadySeen" formatted="false">Кто уже видел поездку, мог запомнить её целиком.</string>
-    <string name="hiddenChooseEdge" formatted="false">Скрыть расстояние</string>
-    <string name="hiddenDefault" formatted="false">по умолчанию</string>
+    <string name="hiddenDragHint" formatted="false">Тяните замки по маршруту. Чтобы скрыть участок в середине, задержите палец на линии.</string>
     <string name="hiddenEditorTitle" formatted="false">Скрыть от других</string>
     <string name="hiddenEnd" formatted="false">Конец</string>
+    <string name="hiddenHandleAfterStop">%1$s после остановки</string>
+    <string name="hiddenHandleBeforeDeparture">%1$s до выезда</string>
+    <string name="hiddenHandleDragInward" formatted="false">Тяните по маршруту, чтобы скрыть</string>
+    <string name="hiddenHandleEndHidden">Скрыт конец %1$s</string>
+    <string name="hiddenHandleEndLabel" formatted="false">Граница скрытого конца</string>
+    <string name="hiddenHandleEndVisible" formatted="false">Конец виден</string>
+    <string name="hiddenHandleFrom">с %1$s</string>
+    <string name="hiddenHandleMoveBack" formatted="false">Сдвинуть назад по маршруту</string>
+    <string name="hiddenHandleMoveForward" formatted="false">Сдвинуть вперёд по маршруту</string>
+    <string name="hiddenHandleParkingOnly" formatted="false">Скрыта только стоянка</string>
+    <string name="hiddenHandleStartHidden">Скрыто начало %1$s</string>
+    <string name="hiddenHandleStartLabel" formatted="false">Граница скрытого начала</string>
+    <string name="hiddenHandleStartVisible" formatted="false">Начало видно</string>
+    <string name="hiddenHandleUntil">до %1$s</string>
     <string name="hiddenHomeHint" formatted="false">Скрыть начало? Здесь ваш дом</string>
     <string name="hiddenLocalCardBody">%1$s и %2$s оттуда не попадут ни в ленту, ни в облачную копию.</string>
     <string name="hiddenLocalCardEmpty" formatted="false">Ничего отсюда не попадёт ни в ленту, ни в облачную копию.</string>
@@ -980,15 +993,15 @@
     <string name="hiddenRouteLockAccessibility" formatted="false">Граница скрытого участка</string>
     <string name="hiddenSave" formatted="false">Сохранить</string>
     <string name="hiddenSectionEndHandle" formatted="false">Конец скрытого участка</string>
+    <string name="hiddenSectionRemoved" formatted="false">Участок убран</string>
     <string name="hiddenSectionStartHandle" formatted="false">Начало скрытого участка</string>
     <string name="hiddenSectionTitle">Участок %1$s — %2$s</string>
     <string name="hiddenSettingsFootnote" formatted="false">Поменять можно в Настройках → Приватность</string>
     <string name="hiddenShowOwn" formatted="false">Ваша поездка</string>
     <string name="hiddenShowPublic" formatted="false">Как увидят другие</string>
     <string name="hiddenStart" formatted="false">Начало</string>
-    <string name="hiddenTapEnd" formatted="false">Нажмите на маршрут, где заканчивается участок</string>
-    <string name="hiddenTapMapHint" formatted="false">Нажмите на маршрут, чтобы выбрать участок</string>
-    <string name="hiddenTapStart" formatted="false">Нажмите на маршрут, где начинается участок</string>
+    <string name="hiddenSummaryEndParking" formatted="false">Стоянка в конце</string>
+    <string name="hiddenSummaryStartParking" formatted="false">Стоянка в начале</string>
     <string name="hiddenTitleHint">Название «%1$s» называет место финиша. Изменить название</string>
     <string name="hiddenTitleHintStart">Название «%1$s» называет место старта. Изменить название</string>
     <string name="hiddenWithoutHidden" formatted="false">Без скрытого</string>
@@ -1733,6 +1746,7 @@
     <string name="recordTripCta" formatted="false">Записать поездку</string>
     <string name="recordingDiscardAction" formatted="false">Завершить без сохранения</string>
     <string name="recordingDiscardTitle" formatted="false">Завершить без сохранения?</string>
+    <string name="recordingDiscardedNoPoints" formatted="false">В записи нет точек GPS. Она удалена.</string>
     <string name="recordingDiscardedSlow" formatted="false">Поездка не сохранена — скорость была слишком низкой</string>
     <string name="recordingPausedPill" formatted="false">Запись на паузе</string>
     <string name="recordingReturn" formatted="false">Вернуться к записи</string>

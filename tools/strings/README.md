@@ -31,6 +31,7 @@ python3 tools/strings/validate.py \
 - `TripTrack/Localization/AppStrings*.swift`: `tr`, простые языковые `switch`, счётные слова.
 - Другие `.swift` в том же каталоге с `extension AppStrings`, включая `AtlasCopy.swift`.
 - `Translations/Translations+XX.swift`: словари, порядок `table.merge`, поздние `table[key]`.
+- `Translations/Translations+HiddenLocks.swift`: переводы замков для скрытых участков.
 - `TripTrack/Resources/<lang>.lproj/InfoPlist.strings`: ключи с префиксом `permission_`.
 - `TripTrackShared/LiveActivityStrings.swift`: ключи с префиксом `live_`.
 - `tools/strings/android.json`: Android-тексты и замены платформенных формулировок iOS.

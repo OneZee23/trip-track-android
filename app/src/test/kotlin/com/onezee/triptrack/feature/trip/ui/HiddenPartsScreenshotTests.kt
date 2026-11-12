@@ -6,10 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.captureScreenRoboImage
 import com.onezee.triptrack.designsystem.strings.AppLanguage
 import com.onezee.triptrack.designsystem.theme.AppTheme
@@ -73,6 +78,44 @@ class HiddenPartsScreenshotTests(private val dark: Boolean) {
     @Test fun editor() {
         frame { HiddenPartsEditorSheet(trip, 500, GeoPoint(45.0, 38.0) to 100.0, {}, {}) }
         captureScreenRoboImage("src/test/screenshots/hidden_parts_editor_$theme.png")
+    }
+
+    @Test fun draggingEndHandleUpdatesSummary() {
+        frame { HiddenPartsEditorSheet(trip, 500, null, {}, {}) }
+        fun summary() = compose.onNodeWithTag("hidden_summary", useUnmergedTree = true).fetchSemanticsNode()
+            .config[SemanticsProperties.Text].joinToString("") { it.text }
+        val before = summary()
+        compose.onNodeWithTag("hidden_handle_end", useUnmergedTree = true).performTouchInput {
+            down(center)
+            moveTo(Offset(center.x, center.y + 100.dp.toPx()))
+            up()
+        }
+        compose.waitForIdle()
+        org.junit.Assert.assertNotEquals(before, summary())
+    }
+
+    @Test fun longPressOnVisibleRouteCreatesSection() {
+        val denseTrip = trip.copy(trackPoints = (0..100).map { index ->
+            TrackPoint(
+                latitude = 45.0,
+                longitude = 38.0 + index * 10.0 / 78_500.0,
+                altitude = 10.0,
+                speed = 1.0,
+                horizontalAccuracy = 5.0,
+                timestamp = t0.plusSeconds(index * 10L),
+            )
+        })
+        frame { HiddenPartsEditorSheet(denseTrip, 0, null, {}, {}) }
+        val overlayBounds = compose.onNodeWithTag("hidden_lock_overlay").fetchSemanticsNode().boundsInRoot
+        val panelTop = compose.onNodeWithTag("hidden_editor_sheet").fetchSemanticsNode().boundsInRoot.top - overlayBounds.top
+        compose.onNodeWithTag("hidden_lock_overlay").performTouchInput {
+            longClick(Offset(width / 2f, panelTop * .4f))
+        }
+        compose.waitForIdle()
+        compose.onNodeWithTag("hidden_section_title", useUnmergedTree = true).performScrollTo()
+        val title = compose.onNodeWithTag("hidden_section_title", useUnmergedTree = true).fetchSemanticsNode()
+            .config[SemanticsProperties.Text].joinToString("") { it.text }
+        org.junit.Assert.assertTrue(title, title.startsWith("Участок "))
     }
 
     /** A middle section reads «Участок 13:01 — 13:03» with its length; build 15 printed raw ISO instants. */

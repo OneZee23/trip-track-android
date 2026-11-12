@@ -97,6 +97,8 @@ import com.onezee.triptrack.feature.trip.TripDetailState
 import com.onezee.triptrack.feature.trip.TripDetailViewModel
 import com.onezee.triptrack.feature.trip.TripExportFormat
 import com.onezee.triptrack.feature.trip.TripSummary
+import com.onezee.triptrack.logic.HiddenLockHandleMath
+import com.onezee.triptrack.logic.TripHiddenPartsResolver
 import com.onezee.triptrack.feature.journey.ui.JourneyComposerSheet
 import com.onezee.triptrack.feature.social.ui.TripPosterSheet
 import com.onezee.triptrack.logic.elevation
@@ -117,6 +119,7 @@ import com.onezee.triptrack.ui.LiveMaps
 import com.onezee.triptrack.ui.LocalLiveMaps
 import com.onezee.triptrack.model.Journey
 import com.onezee.triptrack.model.Trip
+import com.onezee.triptrack.model.TripHiddenParts
 import com.onezee.triptrack.model.Measure
 import com.onezee.triptrack.model.TripConfirmation
 import com.onezee.triptrack.model.TripOrigin
@@ -296,6 +299,7 @@ private fun TripDetailContent(
     var editingTrip by remember { mutableStateOf(false) }
     var showHiddenEntryInEdit by remember { mutableStateOf(false) }
     var editingHiddenParts by remember { mutableStateOf(false) }
+    var focusedHiddenHandleKey by remember { mutableStateOf<String?>(null) }
     var editVehicles by remember { mutableStateOf<List<Vehicle>>(emptyList()) }
     LaunchedEffect(state.isOwn, trip?.id) {
         if (state.isOwn && trip != null) editVehicles = runCatching { feature.vehicles() }.getOrDefault(emptyList())
@@ -424,6 +428,26 @@ private fun TripDetailContent(
         playback, if (playback != null) replay.litFraction else null, lockPoints)
     val currentInput by rememberUpdatedState(mapInput)
     val dark = AppTheme.isDark
+    fun openHiddenHandle(id: String): Boolean {
+        if (!state.isOwn || !id.startsWith("hidden_lock:")) return false
+        val pointIndex = id.substringAfter(':').toIntOrNull() ?: return false
+        val ownTrip = state.sourceTrip ?: return false
+        val point = lockPoints.getOrNull(pointIndex) ?: return false
+        val prefix = TripHiddenPartsResolver.odometerPrefix(ownTrip.trackPoints, ownTrip.recordingBreaks)
+        val parts = ownTrip.hiddenParts ?: TripHiddenParts()
+        val key = HiddenLockHandleMath.nearestHandleKey(
+            ownTrip.trackPoints,
+            prefix,
+            parts,
+            feature.defaultHiddenEdgeMetres(),
+            point,
+        ) ?: return false
+        focusedHiddenHandleKey = key
+        editingHiddenParts = true
+        selectedMarker = null
+        replay.pause()
+        return true
+    }
     val mapContent = remember {
         movableContentOf { modifier: Modifier, fullscreen: Boolean, insets: MapInsets, onTap: (String) -> Unit ->
             TripLiveMap(mapState, currentInput, fullscreen, dark, insets, { onTap(it.id) }, modifier)
@@ -496,7 +520,7 @@ private fun TripDetailContent(
                     expansionPresented = expansion.state.presented,
                     live = live,
                     rendered = rendered,
-                    map = { mapContent(Modifier.fillMaxSize(), false, MapInsets.Zero) {} },
+                    map = { mapContent(Modifier.fillMaxSize(), false, MapInsets.Zero, ::openHiddenHandle) },
                     onExpand = { haptics.tap(); heroCamera = mapState.camera; expansion.expand() },
                 )
                 InfoPanel(
@@ -586,6 +610,7 @@ private fun TripDetailContent(
         if (expansion.state.presented) {
             FullscreenLayer(expansion.opacity.value) {
                 if (live) mapContent(Modifier.fillMaxSize(), true, MapInsets(top = 64.0, bottom = (if (replay.canPlay) 190.0 else 36.0) + cardHeight)) { id ->
+                    if (openHiddenHandle(id)) return@mapContent
                     haptics.selection()
                     replay.pause()
                     val photoId = id.removePrefix("photo:").takeIf { id.startsWith("photo:") }
@@ -690,6 +715,8 @@ private fun TripDetailContent(
         onRename = { editingHiddenParts = false; showHiddenEntryInEdit = false; editingTrip = true },
         onDismissRequest = { editingHiddenParts = false },
         localityLookup = vm::cachedLocality,
+        focusedHandleKey = focusedHiddenHandleKey,
+        onFocusConsumed = { focusedHiddenHandleKey = null },
     )
     if (showPoster && trip != null) TripPosterSheet(
         trip = posterTrip ?: trip,
