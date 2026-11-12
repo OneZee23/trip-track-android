@@ -224,11 +224,11 @@ internal fun HiddenLockHandleOverlay(
                 val lifted = key == liftedKey
                 val scale = if (lifted) 1.2f else 1f
                 val radius = 10.5.dp.toPx() * scale
-                val ink = if (handle.ghost) colors.textTertiary else colors.text
+                val ink = if (handle.ghost) LockInk.copy(alpha = .58f) else LockInk
                 drawCircle(Color.Black.copy(alpha = if (lifted) .26f else .12f), radius = radius, center = center + Offset(0f, if (lifted) 3.dp.toPx() else 1.5.dp.toPx()))
                 if (key == pulseKey && pulseAlpha > 0f) {
                     drawCircle(
-                        colors.text.copy(alpha = pulseAlpha),
+                        AppTheme.accent.copy(alpha = pulseAlpha),
                         radius = radius + 2.dp.toPx() + 10.dp.toPx() * pulseProgress,
                         center = center,
                         style = Stroke(width = 1.5.dp.toPx()),
@@ -314,7 +314,7 @@ internal fun HiddenLockHandleOverlay(
                         .offset { IntOffset(bubbleLeft.roundToInt(), bubbleTop.roundToInt()) }
                         .onSizeChanged { bubbleSize = it }
                         .shadow(8.dp, RoundedCornerShape(12.dp))
-                        .background(colors.text, RoundedCornerShape(12.dp))
+                        .background(BubbleInk, RoundedCornerShape(12.dp))
                         .padding(horizontal = 11.dp, vertical = 7.dp),
                 ) {
                     Column {
@@ -410,3 +410,11 @@ private inline fun <T, K, V> Iterable<T>.associateNotNull(transform: (T) -> Pair
     for (item in this) transform(item)?.let { result[it.first] = it.second }
     return result
 }
+
+/** The lock glyph's ink, the same as the trip map's lock pins ([hiddenLockBitmap]). The theme's text
+ * colour is near white in the dark theme, which drew a white lock on a white disc. */
+private val LockInk = Color(0xFF5A5B65)
+
+/** The bubble stays dark in both themes, as on iOS: on `colors.text` the dark theme got white text
+ * on a white plate. */
+private val BubbleInk = Color(0xF21E1E1E)
